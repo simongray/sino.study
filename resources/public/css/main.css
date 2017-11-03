@@ -1,3 +1,15 @@
-#hello-message {
-	font-weight: bold;
+#study-input {
+	max-width: 80em;
+	margin-right: 0.5em;
+	flex: 1;
+}
+
+#study-button {
+}
+
+#study-form {
+	display: flex;
+}
+
+div #study-form {
 }
