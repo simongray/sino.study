@@ -1,1 +1,0 @@
-(ns sinostudy.core)
