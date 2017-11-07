@@ -2,6 +2,11 @@
   (:require [re-frame.core :as re-frame]))
 
 (re-frame/reg-sub
- ::study-button-label
- (fn [db]
-   (:study-button-label db)))
+  ::button-label
+  (fn [db]
+    (:button-label db)))
+
+(re-frame/reg-sub
+  ::input
+  (fn [db]
+    (:input db)))
