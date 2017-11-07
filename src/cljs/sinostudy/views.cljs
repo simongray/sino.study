@@ -1,5 +1,5 @@
 (ns sinostudy.views
-  (:require [re-frame.core :as re-frame]
+  (:require [re-frame.core :as rf]
             [sinostudy.subs :as subs]
             [sinostudy.events :as events]))
 
@@ -16,21 +16,21 @@
 (defn click-study-button
   [e]
   (.preventDefault e)
-  (re-frame/dispatch [::events/study]))
+  (rf/dispatch [::events/study]))
 
 (defn change-study-input
   [e]
-  (re-frame/dispatch [::events/input-change (-> e .-target .-value)]))
+  (rf/dispatch [::events/input-change (-> e .-target .-value)]))
 
 (defn study-input []
-  (let [input (re-frame/subscribe [::subs/input])]
+  (let [input (rf/subscribe [::subs/input])]
     [:input#study-input
      {:type      :text
       :value     @input
       :on-change change-study-input}]))
 
 (defn study-button []
-  (let [label (re-frame/subscribe [::subs/button-label])]
+  (let [label (rf/subscribe [::subs/button-label])]
     [:button#study-button
      {:type :submit
       :on-click click-study-button}

@@ -1,12 +1,12 @@
 (ns sinostudy.subs
-  (:require [re-frame.core :as re-frame]))
+  (:require [re-frame.core :as rf]))
 
-(re-frame/reg-sub
+(rf/reg-sub
   ::button-label
   (fn [db]
     (:button-label db)))
 
-(re-frame/reg-sub
+(rf/reg-sub
   ::input
   (fn [db]
     (:input db)))
