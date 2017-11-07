@@ -2,4 +2,5 @@
 
 (def default-db
   {:button-label "go"
-   :input ""})
+   :input ""
+   :queries '()}) ; using list as stack

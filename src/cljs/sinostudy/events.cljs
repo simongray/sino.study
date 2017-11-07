@@ -13,7 +13,8 @@
     (assoc db :input new-input)))
 
 (rf/reg-event-db
-  ::study
-  (fn [db _]
-    (do (println db) ; smelly! just for testing
-        db)))
+  ::query
+  (fn [db [_ input]]
+    (do
+      (println "before: " db) ; smelly
+      (assoc db :queries (conj (:queries db) input)))))

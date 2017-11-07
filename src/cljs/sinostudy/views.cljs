@@ -13,27 +13,22 @@
 ;; EXAMPLES
 ;; https://github.com/Day8/re-frame/blob/master/examples/simple/src/simple/core.cljs
 
-(defn click-study-button
-  [e]
-  (.preventDefault e)
-  (rf/dispatch [::events/study]))
-
-(defn change-study-input
-  [e]
-  (rf/dispatch [::events/input-change (-> e .-target .-value)]))
-
 (defn study-input []
   (let [input (rf/subscribe [::subs/input])]
     [:input#study-input
      {:type      :text
       :value     @input
-      :on-change change-study-input}]))
+      :on-change (fn [e]
+                   (rf/dispatch [::events/input-change (-> e .-target .-value)]))}]))
 
 (defn study-button []
-  (let [label (rf/subscribe [::subs/button-label])]
+  (let [label (rf/subscribe [::subs/button-label])
+        input (rf/subscribe [::subs/input])]
     [:button#study-button
-     {:type :submit
-      :on-click click-study-button}
+     {:type     :submit
+      :on-click (fn [e]
+                  (.preventDefault e)
+                  (rf/dispatch [::events/query @input]))}
      @label]))
 
 (defn study-form []
