@@ -10,3 +10,8 @@
   ::input
   (fn [db]
     (:input db)))
+
+(rf/reg-sub
+  ::queries
+  (fn [db]
+    (:queries db)))

@@ -15,6 +15,7 @@
 (rf/reg-event-db
   ::query
   (fn [db [_ input]]
-    (do
-      (println "before: " db) ; smelly
-      (assoc db :queries (conj (:queries db) input)))))
+    (let [existing-queries (:queries db)
+          id (count existing-queries)
+          new-query {:content input :id id}]
+      (assoc db :queries (conj existing-queries new-query)))))

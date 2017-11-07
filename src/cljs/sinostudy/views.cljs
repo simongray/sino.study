@@ -31,6 +31,12 @@
                   (rf/dispatch [::events/query @input]))}
      @label]))
 
+(defn study-history []
+  (let [queries (rf/subscribe [::subs/queries])]
+    [:ul
+     (for [query @queries]
+       [:li {:key (:id query)} (:content query)])]))
+
 (defn study-form []
   [:form#study-form
    [study-input]
@@ -38,4 +44,5 @@
 
 (defn main-panel []
   [:div
-   [study-form]])
+   [study-form]
+   [study-history]])
