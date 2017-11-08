@@ -1,7 +1,21 @@
 (ns sinostudy.events
   (:require [re-frame.core :as rf]
-            [sinostudy.db :as db]
-            [sinostudy.effects :as effects]))
+            [sinostudy.db :as db]))
+
+;;;; CO-EFFECTS
+
+(rf/reg-cofx
+  ::now
+  (fn [cofx _]
+    (assoc cofx :now (js/Date.))))
+
+(rf/reg-cofx
+  ::local-storage
+  (fn [cofx local-storage-key]
+    (assoc cofx :local-storage (js->clj (.getItem js/localStorage local-storage-key)))))
+
+
+;;;; EVENTS
 
 (rf/reg-event-db
   ::initialize-db
@@ -25,13 +39,13 @@
 
 (rf/reg-event-fx
    ::query
-   [(rf/inject-cofx ::effects/now)]
+   [(rf/inject-cofx ::now)]
    (fn [cofx [_ input]]
      (let [db (:db cofx)
            now (:now cofx)
            existing-queries (:queries db)
            id (count existing-queries)
-           new-query {:content (str input " - " now) :id id}]
+           new-query {:content input :id id :timestamp now}]
        {:db (-> db
                 (assoc :queries (conj existing-queries new-query))
                 (assoc :input ""))})))
