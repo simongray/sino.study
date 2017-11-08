@@ -18,4 +18,6 @@
     (let [existing-queries (:queries db)
           id (count existing-queries)
           new-query {:content input :id id}]
-      (assoc db :queries (conj existing-queries new-query)))))
+      (-> db
+          (assoc :queries (conj existing-queries new-query))
+          (assoc :input "")))))
