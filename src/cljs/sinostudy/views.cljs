@@ -1,7 +1,8 @@
 (ns sinostudy.views
   (:require [re-frame.core :as rf]
             [sinostudy.subs :as subs]
-            [sinostudy.events :as events]))
+            [sinostudy.events :as events]
+            [reanimated.core :as anim]))
 
 ;; https://purelyfunctional.tv/guide/reagent/
 ;; https://purelyfunctional.tv/guide/re-frame-building-blocks/
@@ -12,6 +13,7 @@
 
 ;; EXAMPLES
 ;; https://github.com/Day8/re-frame/blob/master/examples/simple/src/simple/core.cljs
+;  http://timothypratley.github.io/reanimated/#!/examples.core
 
 (defn study-input []
   (let [input (rf/subscribe [::subs/input])]
@@ -35,7 +37,8 @@
   (let [queries (rf/subscribe [::subs/queries])]
     [:ul
      (for [query @queries]
-       [:li {:key (:id query)} (:content query)])]))
+       [:li {:key (:id query)}
+        [:div {:class "study-card"} (:content query)]])]))
 
 (defn study-form []
   [:form#study-form
