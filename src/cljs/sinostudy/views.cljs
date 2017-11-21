@@ -35,10 +35,10 @@
 
 (defn study-history []
   (let [queries (rf/subscribe [::subs/queries])]
-    [:ul
+    [:ul#card-list
      (for [query @queries]
        [:li {:key (:id query)}
-        [:div {:class "study-card"} (:content query)]])]))
+        [:div.card (:content query)]])]))
 
 (defn study-form []
   [:form#study-form
@@ -46,6 +46,6 @@
    [study-button]])
 
 (defn main-panel []
-  [:div
+  [:div#study-app
    [study-form]
    [study-history]])

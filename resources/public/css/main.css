@@ -1,9 +1,3 @@
-#study-input {
-	max-width: 80em;
-	margin-right: 0.5em;
-	flex: 1;
-}
-
 /* https://www.w3schools.com/css/css3_animations.asp */
 @keyframes fade-in {
 	from {
@@ -14,17 +8,32 @@
 	}
 }
 
-#study-button {
+div#study-app {
+	margin: auto;
+	max-width: 80em;
+	border: 1px solid red; /* dev */
 }
 
-#study-form {
+form#study-form {
 	display: flex;
 }
 
-div #study-form {
+input#study-input {
+	margin-right: 0.5em;
+	flex: 1;
 }
 
-.study-card {
+button#study-button {
+}
+
+ul#card-list {
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+}
+
+div.card {
+	border: 1px solid blue; /* dev */
 	animation-name: fade-in;
 	animation-duration: 1s;
 	animation-timing-function: ease;
