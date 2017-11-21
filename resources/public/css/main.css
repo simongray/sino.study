@@ -4,6 +4,7 @@
 	flex: 1;
 }
 
+/* https://www.w3schools.com/css/css3_animations.asp */
 @keyframes fade-in {
 	from {
 		opacity: 0;
