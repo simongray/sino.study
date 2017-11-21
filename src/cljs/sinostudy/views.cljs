@@ -15,6 +15,9 @@
 ;; https://github.com/Day8/re-frame/blob/master/examples/simple/src/simple/core.cljs
 ;  http://timothypratley.github.io/reanimated/#!/examples.core
 
+(defn logo []
+  [:h1#logo "sino·study"])
+
 (defn study-input []
   (let [input (rf/subscribe [::subs/input])]
     [:input#study-input
@@ -46,6 +49,7 @@
    [study-button]])
 
 (defn main-panel []
-  [:div#study-app
+  [:div#page
+   [logo]
    [study-form]
    [study-history]])
