@@ -39,7 +39,7 @@ ul#card-list {
 	margin: 0;
 }
 
-div.card {
+li.card {
 	border: 1px dashed blue; /* dev */
 	animation-name: fade-in;
 	animation-duration: 1s;

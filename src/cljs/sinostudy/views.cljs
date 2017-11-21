@@ -40,8 +40,7 @@
   (let [queries (rf/subscribe [::subs/queries])]
     [:ul#card-list
      (for [query @queries]
-       [:li {:key (:id query)}
-        [:div.card (:content query)]])]))
+       [:li.card {:key (:id query)} (:content query)])]))
 
 (defn study-form []
   [:form#study-form
