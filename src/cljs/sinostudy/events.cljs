@@ -27,16 +27,7 @@
   (fn [db [_ new-input]]
     (assoc db :input new-input)))
 
-(rf/reg-event-db
-  ::query
-  (fn [db [_ input]]
-    (let [existing-queries (:queries db)
-          id (count existing-queries)
-          new-query {:content input :id id}]
-      (-> db
-          (assoc :queries (conj existing-queries new-query))
-          (assoc :input "")))))
-
+;; send a query away for processing
 (rf/reg-event-fx
    ::query
    [(rf/inject-cofx ::now)]
