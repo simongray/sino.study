@@ -11,18 +11,15 @@
 h1#logo {
 	text-align: center;
 	margin: 0;
-	border: 1px dashed green; /* dev */
 }
 
 div#page {
 	margin: auto;
 	max-width: 80em;
-	border: 1px dashed orange; /* dev */
 }
 
 form#study-form {
 	display: flex;
-	border: 1px dashed red; /* dev */
 }
 
 input#study-input {
@@ -44,8 +41,25 @@ ul#card-list {
 }
 
 li.card {
-	border: 1px dashed blue; /* dev */
 	animation-name: fade-in;
 	animation-duration: 1s;
 	animation-timing-function: ease;
+}
+
+/* DEV STYLE */
+
+h1#logo {
+	border: 1px dashed green;
+}
+
+div#page {
+	border: 1px dashed orange;
+}
+
+form#study-form {
+	border: 1px dashed red;
+}
+
+li.card {
+	border: 1px dashed blue;
 }
