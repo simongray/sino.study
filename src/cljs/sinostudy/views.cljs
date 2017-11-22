@@ -1,8 +1,7 @@
 (ns sinostudy.views
   (:require [re-frame.core :as rf]
             [sinostudy.subs :as subs]
-            [sinostudy.events :as events]
-            [reanimated.core :as anim]))
+            [sinostudy.events :as events]))
 
 ;; https://purelyfunctional.tv/guide/reagent/
 ;; https://purelyfunctional.tv/guide/re-frame-building-blocks/
