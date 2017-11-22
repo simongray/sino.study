@@ -34,7 +34,7 @@
     (if (and
           (not (empty? new-input))
           (= (:input db) new-input)) ; only evaluate up-to-date input
-        (assoc db :evaluation "evaluated") ; CSS class name
+        (assoc db :evaluation "evaluated")
         db)))
 
 ;; dispatched every time the input field changes
@@ -61,4 +61,5 @@
            new-query {:content input :id id :timestamp now}]
        {:db (-> db
                 (assoc :queries (conj existing-queries new-query))
-                (assoc :input ""))})))
+                (assoc :input "")
+                (assoc :evaluation nil))})))
