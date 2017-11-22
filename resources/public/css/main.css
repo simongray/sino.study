@@ -27,11 +27,8 @@ input#study-input {
 	flex: 1;
 }
 
-.evaluated {
+input.evaluated {
 	background-color: LightYellow;
-}
-
-button#study-button {
 }
 
 ul#card-list {
@@ -41,13 +38,10 @@ ul#card-list {
 }
 
 li.card {
-	animation-name: fade-in;
-	animation-duration: 1s;
-	animation-timing-function: ease;
+	animation: fade-in 1s ease;
 }
 
-/* DEV STYLE */
-
+/* DEV STYLES */
 h1#logo {
 	border: 1px dashed green;
 }
