@@ -30,6 +30,10 @@ input#study-input {
 	flex: 1;
 }
 
+.evaluated {
+	background-color: LightYellow;
+}
+
 button#study-button {
 }
 

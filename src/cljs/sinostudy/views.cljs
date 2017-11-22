@@ -18,10 +18,12 @@
   [:h1#logo "sino·study"])
 
 (defn study-input []
-  (let [input (rf/subscribe [::subs/input])]
+  (let [input (rf/subscribe [::subs/input])
+        evaluation (rf/subscribe [::subs/evaluation])]
     [:input#study-input
-     {:type      :text
-      :value     @input
+     {:type :text
+      :value @input
+      :class @evaluation
       :on-change (fn [e]
                    (rf/dispatch [::events/input-change (-> e .-target .-value)]))}]))
 
@@ -29,7 +31,7 @@
   (let [label (rf/subscribe [::subs/button-label])
         input (rf/subscribe [::subs/input])]
     [:button#study-button
-     {:type     :submit
+     {:type :submit
       :on-click (fn [e]
                   (.preventDefault e)
                   (rf/dispatch [::events/query @input]))}

@@ -34,9 +34,7 @@
     (if (and
           (not (empty? new-input))
           (= (:input db) new-input)) ; only evaluate up-to-date input
-        (-> db
-            (assoc :evaluation 1) ; test data
-            (assoc :input (str new-input " (evaluated)"))) ; test output
+        (assoc db :evaluation "evaluated") ; CSS class name
         db)))
 
 ;; dispatched every time the input field changes

@@ -12,6 +12,11 @@
     (:input db)))
 
 (rf/reg-sub
+  ::evaluation
+  (fn [db]
+    (:evaluation db)))
+
+(rf/reg-sub
   ::queries
   (fn [db]
     (:queries db)))
