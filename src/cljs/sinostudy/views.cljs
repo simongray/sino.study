@@ -19,10 +19,12 @@
 
 (defn study-input []
   (let [input (rf/subscribe [::subs/input])
+        input-placeholder (rf/subscribe [::subs/input-placeholder])
         evaluation (rf/subscribe [::subs/evaluation])]
     [:input#study-input
      {:type :text
       :value @input
+      :placeholder @input-placeholder
       :class @evaluation
       :on-change (fn [e]
                    (rf/dispatch [::events/input-change (-> e .-target .-value)]))}]))

@@ -12,6 +12,11 @@
     (:input db)))
 
 (rf/reg-sub
+  ::input-placeholder
+  (fn [db]
+    (:input-placeholder db)))
+
+(rf/reg-sub
   ::evaluation
   (fn [db]
     (:evaluation db)))
