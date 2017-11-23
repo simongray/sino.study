@@ -23,7 +23,7 @@ form#study-form {
 }
 
 input#study-input {
-	margin-right: 0.5em;
+	margin-right: 1ch;
 	flex: 1;
 }
 
