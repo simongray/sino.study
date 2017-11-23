@@ -15,7 +15,7 @@ h1#logo {
 
 div#page {
 	margin: auto;
-	max-width: 80em;
+	max-width: 80ch;
 }
 
 form#study-form {
