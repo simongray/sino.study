@@ -38,6 +38,9 @@ div#study-hint {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+
+	/* make sure the hint keeps its height when empty */
+	height: 1em;
 }
 
 ul#card-list {

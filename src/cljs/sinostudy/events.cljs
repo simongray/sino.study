@@ -34,7 +34,10 @@
     (if (and
           (not (empty? new-input))
           (= (:input db) new-input)) ; only evaluate up-to-date input
-        (assoc db :evaluation "evaluated")
+        (let [hints (:hints db)]
+          (-> db
+              (assoc :evaluation "evaluated")
+              (assoc :hint (:default hints))))
         db)))
 
 ;; dispatched every time the input field changes
@@ -42,10 +45,12 @@
   ::input-change
   (fn [cofx [_ new-input]]
     (let [db (:db cofx)
+          hints (:hints db)
           now (:now cofx)]
       {:db (-> db
                (assoc :input new-input)
-               (assoc :evaluation nil))
+               (assoc :evaluation nil)
+               (assoc :hint (:evaluating hints)))
        :dispatch-later [{:ms 1000
                          :dispatch [::evaluate-input new-input]}]})))
 
@@ -55,6 +60,7 @@
    [(rf/inject-cofx ::now)]
    (fn [cofx [_ input]]
      (let [db (:db cofx)
+           hints (:hints db)
            now (:now cofx)
            existing-queries (:queries db)
            id (count existing-queries)
@@ -62,4 +68,5 @@
        {:db (-> db
                 (assoc :queries (conj existing-queries new-query))
                 (assoc :input "")
-                (assoc :evaluation nil))})))
+                (assoc :evaluation nil)
+                (assoc :hint (:examining hints)))})))
