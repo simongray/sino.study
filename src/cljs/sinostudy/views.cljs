@@ -37,16 +37,16 @@
                   (rf/dispatch [::events/query @input]))}
      @label]))
 
+(defn study-form []
+  [:form#study-form
+   [study-input]
+   [study-button]])
+
 (defn study-history []
   (let [queries (rf/subscribe [::subs/queries])]
     [:ul#card-list
      (for [query @queries]
        [:li.card {:key (:id query)} (:content query)])]))
-
-(defn study-form []
-  [:form#study-form
-   [study-input]
-   [study-button]])
 
 (defn main-panel []
   [:div#page
