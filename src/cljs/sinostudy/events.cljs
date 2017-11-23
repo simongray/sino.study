@@ -3,6 +3,12 @@
             [re-frame.core :as rf]
             [sinostudy.db :as db]))
 
+(defn evaluate
+  [s]
+  (if (string/blank? s)
+    nil
+    "evaluated"))
+
 ;;;; CO-EFFECTS
 
 (rf/reg-cofx
@@ -28,13 +34,12 @@
 (rf/reg-event-db
   ::evaluate-input
   (fn [db [_ new-input]]
-    (let [hints (:hints db)
-          css-class (if (string/blank? new-input) nil "evaluated")]
+    (let [hints (:hints db)]
       ;; only evaluates the latest input (no change while still evaluating)
       ;; improves performance when coupled with delayed dispatching
       (if (= (:input db) new-input)
         (-> db
-            (assoc :evaluation css-class)
+            (assoc :evaluation (evaluate new-input))
             (assoc :hint (:default hints)))
         db))))
 
@@ -63,11 +68,13 @@
            now (:now cofx)
            existing-queries (:queries db)
            id (count existing-queries)
-           new-query {:content input :id id :timestamp now}]
-       (if (string/blank? input)
-         db
+           new-query {:content input :id id :timestamp now}
+           ;; always force an evaluation if missing
+           evaluation (if (:evaluation db) (:evaluation db) (evaluate input))]
+       (if evaluation
          {:db (-> db
                   (assoc :queries (conj existing-queries new-query))
                   (assoc :input "")
                   (assoc :evaluation nil)
-                  (assoc :hint (:examining hints)))}))))
+                  (assoc :hint (:examining hints)))}
+         db))))
