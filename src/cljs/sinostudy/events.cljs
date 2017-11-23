@@ -3,9 +3,6 @@
             [re-frame.core :as rf]
             [sinostudy.db :as db]))
 
-;; built-in effects: https://github.com/Day8/re-frame/blob/master/src/re_frame/fx.cljc
-
-
 ;;;; CO-EFFECTS
 
 (rf/reg-cofx
@@ -15,8 +12,8 @@
 
 (rf/reg-cofx
   ::local-storage
-  (fn [cofx local-storage-key]
-    (assoc cofx :local-storage (js->clj (.getItem js/localStorage local-storage-key)))))
+  (fn [cofx key]
+    (assoc cofx :local-storage (js->clj (.getItem js/localStorage key)))))
 
 
 ;;;; EVENTS

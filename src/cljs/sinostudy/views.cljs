@@ -3,17 +3,6 @@
             [sinostudy.subs :as subs]
             [sinostudy.events :as events]))
 
-;; https://purelyfunctional.tv/guide/reagent/
-;; https://purelyfunctional.tv/guide/re-frame-building-blocks/
-;; https://github.com/Day8/re-frame/wiki/Creating-Reagent-Components
-;; http://reagent-project.github.io/
-
-;; https://www.w3schools.com/tags/tag_input.asp
-
-;; EXAMPLES
-;; https://github.com/Day8/re-frame/blob/master/examples/simple/src/simple/core.cljs
-;  http://timothypratley.github.io/reanimated/#!/examples.core
-
 (defn logo []
   [:h1#logo "sino·study"])
 
@@ -27,7 +16,9 @@
       :placeholder @input-placeholder
       :class @evaluation
       :on-change (fn [e]
-                   (rf/dispatch [::events/input-change (-> e .-target .-value)]))}]))
+                   (rf/dispatch [::events/input-change (-> e
+                                                           .-target
+                                                           .-value)]))}]))
 
 (defn study-button []
   (let [label (rf/subscribe [::subs/button-label])
