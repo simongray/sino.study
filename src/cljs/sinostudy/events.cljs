@@ -68,14 +68,14 @@
      (let [db (:db cofx)
            hints (:hints db)
            now (:now cofx)
-           existing-queries (:queries db)
-           id (count existing-queries)
+           queries (:queries db)
+           id (count queries)
            new-query {:content input :id id :timestamp now}
            ;; always force an evaluation if missing
            evaluation (if (:evaluation db) (:evaluation db) (evaluate input))]
        (if evaluation
          {:db (-> db
-                  (assoc :queries (conj existing-queries new-query))
+                  (assoc :queries (conj queries new-query))
                   (assoc :input "")
                   (assoc :evaluation nil)
                   (assoc :hint (:examining hints)))}
