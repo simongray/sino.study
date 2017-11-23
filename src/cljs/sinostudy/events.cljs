@@ -49,13 +49,15 @@
   (fn [cofx [_ new-input]]
     (let [db (:db cofx)
           hints (:hints db)
-          no-input (string/blank? new-input)]
+          no-input (string/blank? new-input)
+          new-hint (if no-input (:default hints) (:evaluating hints))
+          evaluation-lag (if no-input 0 500)]
       {:db (-> db
                (assoc :input new-input)
                (assoc :evaluation nil)
-               (assoc :hint (if no-input (:default hints) (:evaluating hints)))
+               (assoc :hint new-hint)
                (assoc :input-placeholder "")) ; prevents respawn
-       :dispatch-later [{:ms (if no-input 0 500)
+       :dispatch-later [{:ms evaluation-lag
                          :dispatch [::evaluate-input new-input]}]})))
 
 ;; send a query away for processing
