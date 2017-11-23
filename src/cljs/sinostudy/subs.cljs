@@ -17,6 +17,11 @@
     (:evaluation db)))
 
 (rf/reg-sub
+  ::hint
+  (fn [db]
+    (:hint db)))
+
+(rf/reg-sub
   ::queries
   (fn [db]
     (:queries db)))

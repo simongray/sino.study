@@ -42,6 +42,11 @@
    [study-input]
    [study-button]])
 
+(defn study-hint []
+  (let [hint (rf/subscribe [::subs/hint])]
+    [:div#study-hint
+     @hint]))
+
 (defn study-history []
   (let [queries (rf/subscribe [::subs/queries])]
     [:ul#card-list
@@ -52,4 +57,5 @@
   [:div#page
    [logo]
    [study-form]
+   [study-hint]
    [study-history]])
