@@ -1,12 +1,13 @@
-# sinostudy
-
+# sino·study
 The repository for [sino.study](https://sino.study), a web app designed to
 assist students of the Chinese language in various ways.
 
-The website is written entirely in Clojure(Script).
+The app is written in Clojure and ClojureScript.
 The frontend uses reagent/re-frame and the backend is a compojure service.
+The functionality is built around my own wrapper library for Stanford CoreNLP,
+[corenlp-clj](https://github.com/simongray/corenlp-clj).
 
-## Development Mode
+## Development
 
 ### Run re-frame application
 ```
@@ -35,4 +36,3 @@ To start a web server for the application, run:
 lein ring server
 ````
 Wait a bit, then browse to [http://localhost:3000](http://localhost:3000).
-
