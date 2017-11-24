@@ -1,7 +1,8 @@
 (ns sinostudy.events
   (:require [clojure.string :as string]
             [re-frame.core :as rf]
-            [sinostudy.db :as db]))
+            [sinostudy.db :as db]
+            [ajax.core :as ajax]))
 
 (defn evaluate
   [s]
@@ -60,6 +61,29 @@
        :dispatch-later [{:ms evaluation-lag
                          :dispatch [::evaluate-input new-input]}]})))
 
+(rf/reg-event-fx
+  ::query-success
+  [(rf/inject-cofx ::now)]
+  (fn [cofx [_ result]]
+    (let [db (:db cofx)
+          hints (:hints db)
+          queries (:queries db)
+          id (count queries)
+          now (:now cofx)
+          new-query {:content result :id id :timestamp now}]
+      {:db (-> db
+               (assoc :queries (conj queries new-query))
+               (assoc :hint (:default hints)))})))
+
+(rf/reg-event-fx
+  ::query-failure
+  [(rf/inject-cofx ::now)]
+  (fn [cofx [_ result]]
+    (let [db (:db cofx)
+          hints (:hints db)
+          now (:now cofx)]
+      {:db (assoc db :hint (str "query failed: " result))})))
+
 ;; send a query away for processing
 (rf/reg-event-fx
    ::query
@@ -68,15 +92,17 @@
      (let [db (:db cofx)
            hints (:hints db)
            now (:now cofx)
-           queries (:queries db)
-           id (count queries)
-           new-query {:content input :id id :timestamp now}
            ;; always force an evaluation if missing
            evaluation (if (:evaluation db) (:evaluation db) (evaluate input))]
        (if evaluation
          {:db (-> db
-                  (assoc :queries (conj queries new-query))
                   (assoc :input "")
                   (assoc :evaluation nil)
-                  (assoc :hint (:examining hints)))}
+                  (assoc :hint (:examining hints)))
+          :http-xhrio {:uri "http://localhost:3000/query"
+                       :method :get
+                       :timeout 5000
+                       :response-format (ajax/text-response-format)
+                       :on-success [::query-success]
+                       :on-failure [::query-failure]}}
          db))))
