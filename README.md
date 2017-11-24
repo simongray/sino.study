@@ -1,6 +1,10 @@
 # sinostudy
 
-A [re-frame](https://github.com/Day8/re-frame) application designed to ... well, that part is up to you.
+The repository for [sino.study](https://sino.study), a web app designed to
+assist students of the Chinese language in various ways.
+
+The website is written entirely in Clojure(Script).
+The frontend uses reagent/re-frame and the backend is a compojure service.
 
 ## Development Mode
 
@@ -13,6 +17,9 @@ lein figwheel dev
 Figwheel will automatically push cljs changes to the browser.
 
 Wait a bit, then browse to [http://localhost:3449](http://localhost:3449).
+
+If there are any issues getting the app to show up (e.g. blank page), 
+then try clearing the browser cache.
 
 ## Production Build
 To compile clojurescript to javascript:
