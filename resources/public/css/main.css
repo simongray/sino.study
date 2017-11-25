@@ -33,6 +33,7 @@ input.evaluated {
 
 div#study-hint {
 	max-width: 100%;
+	animation: fade-in 0.5s ease;
 
 	/* make sure text stays on a single line */
 	white-space: nowrap;

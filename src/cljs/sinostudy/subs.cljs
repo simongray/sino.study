@@ -45,8 +45,8 @@
   ::hint-key
   (fn [_]
     [(rf/subscribe [::hint])])
-  (fn [hint]
-    (if (= (:type hint) :evaluation)
+  (fn [[hint]]
+    (if (= (:type hint) :evaluating)
       "evaluation"
       (:id hint))))
 
