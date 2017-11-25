@@ -10,6 +10,15 @@
     nil
     "evaluated"))
 
+(defn add-query
+  "Returns a list of queries with the new query prepended."
+  [queries state content timestamp]
+  (conj queries {:id (count queries)
+                 :state state
+                 :content content
+                 :timestamp timestamp}))
+
+
 ;;;; CO-EFFECTS
 
 (rf/reg-cofx
@@ -68,11 +77,9 @@
     (let [db (:db cofx)
           hints (:hints db)
           queries (:queries db)
-          id (count queries)
-          now (:now cofx)
-          new-query {:content result :id id :timestamp now}]
+          now (:now cofx)]
       {:db (-> db
-               (assoc :queries (conj queries new-query))
+               (assoc :queries (add-query queries :success result now))
                (assoc :hint (:default hints)))})))
 
 (rf/reg-event-fx
@@ -81,8 +88,11 @@
   (fn [cofx [_ result]]
     (let [db (:db cofx)
           hints (:hints db)
+          queries (:queries db)
           now (:now cofx)]
-      {:db (assoc db :hint (str "query failed: " result))})))
+      {:db (-> db
+               (assoc :queries (add-query queries :failure result now))
+               (assoc :hint (:query-failure hints)))})))
 
 ;; send a query away for processing
 (rf/reg-event-fx

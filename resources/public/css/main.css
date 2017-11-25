@@ -53,6 +53,10 @@ li.card {
 	animation: fade-in 1s ease;
 }
 
+li.query-failure {
+	color: red;
+}
+
 /* DEV STYLES */
 h1#logo {
 	border: 1px dashed green;

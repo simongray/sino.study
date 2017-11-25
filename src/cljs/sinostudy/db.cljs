@@ -8,5 +8,6 @@
    :hint "write something in Chinese and press the button"
    :hints {:evaluating "evaluating..."
            :examining "retrieving analysis..."
+           :query-failure "query failed!"
            :default ""}
-   :queries '()}) ; using list as stack
+   :queries '()})

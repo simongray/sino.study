@@ -44,7 +44,10 @@
   (let [queries (rf/subscribe [::subs/queries])]
     [:ul#card-list
      (for [query @queries]
-       [:li.card {:key (:id query)} (:content query)])]))
+       [:li.card
+        {:key (:id query)
+         :class (when (= (:state query) :failure) "query-failure")}
+        (:content query)])]))
 
 (defn main-panel []
   [:div#page
