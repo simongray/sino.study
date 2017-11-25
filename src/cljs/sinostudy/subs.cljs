@@ -24,7 +24,7 @@
 (rf/reg-sub
   ::hint
   (fn [db]
-    (:hint db)))
+    (:content (first (:hints db)))))
 
 (rf/reg-sub
   ::queries

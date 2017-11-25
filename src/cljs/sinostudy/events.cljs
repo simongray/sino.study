@@ -18,6 +18,13 @@
                  :content content
                  :timestamp timestamp}))
 
+(defn add-hint
+  "Returns a list of hints with the new hint prepended."
+  [hints content timestamp]
+  (conj hints {:id (count hints)
+               :content content
+               :timestamp timestamp}))
+
 
 ;;;; CO-EFFECTS
 
@@ -39,34 +46,43 @@
   (fn [_ _]
     db/default-db))
 
+(rf/reg-event-fx
+  ::hint
+  [(rf/inject-cofx ::now)]
+  (fn [cofx [_ hint-type]]
+    (let [db (:db cofx)
+          hints (:hints db)
+          hint-types (:hint-types db)
+          content (hint-type hint-types)
+          now (:now cofx)]
+      {:db (assoc db :hints (add-hint hints content now))})))
+
 ;; evaluate input (e.g. to display proper hints)
 ;; this event is dispatched by ::input-change
-(rf/reg-event-db
+(rf/reg-event-fx
   ::evaluate-input
-  (fn [db [_ new-input]]
-    (let [hint-types (:hint-types db)]
+  (fn [cofx [_ new-input]]
+    (let [db (:db cofx)]
       ;; only evaluates the latest input (no change while still evaluating)
       ;; improves performance when coupled with delayed dispatching
       (if (= (:input db) new-input)
-        (-> db
-            (assoc :evaluation (evaluate new-input))
-            (assoc :hint (:default hint-types)))
-        db))))
+        {:db (assoc db :evaluation (evaluate new-input))
+         :dispatch [::hint :default]}
+        {:db db}))))
 
 ;; dispatched every time the input field changes
 (rf/reg-event-fx
   ::input-change
   (fn [cofx [_ new-input]]
     (let [db (:db cofx)
-          hint-types (:hint-types db)
           no-input (string/blank? new-input)
-          new-hint (if no-input (:default hint-types) (:evaluating hint-types))
+          new-hint (if no-input :default :evaluating)
           evaluation-lag (if no-input 0 500)]
       {:db (-> db
                (assoc :input new-input)
                (assoc :evaluation nil)
-               (assoc :hint new-hint)
                (assoc :input-placeholder "")) ; prevents respawn
+       :dispatch [::hint new-hint]
        :dispatch-later [{:ms evaluation-lag
                          :dispatch [::evaluate-input new-input]}]})))
 
@@ -75,25 +91,20 @@
   [(rf/inject-cofx ::now)]
   (fn [cofx [_ result]]
     (let [db (:db cofx)
-          hint-types (:hint-types db)
           queries (:queries db)
           now (:now cofx)]
-      {:db (-> db
-               (assoc :queries (add-query queries :success result now))
-               (assoc :hint (:default hint-types)))})))
+      {:db (assoc db :queries (add-query queries :success result now))
+       :dispatch [::hint :default]})))
 
 (rf/reg-event-fx
   ::query-failure
   [(rf/inject-cofx ::now)]
   (fn [cofx [_ result]]
     (let [db (:db cofx)
-          hint-types (:hint-types db)
           queries (:queries db)
           now (:now cofx)]
-      {:db (-> db
-               (assoc :queries (add-query queries :failure result now))
-               (assoc :hint (:query-failure hint-types))
-               (assoc :hint (:query-failure hint-types)))})))
+      {:db (assoc db :queries (add-query queries :failure result now))
+       :dispatch [::hint :query-failure]})))
 
 ;; send a query away for processing
 (rf/reg-event-fx
@@ -101,15 +112,14 @@
    [(rf/inject-cofx ::now)]
    (fn [cofx [_ input]]
      (let [db (:db cofx)
-           hint-types (:hint-types db)
            now (:now cofx)
            ;; always force an evaluation if missing
            evaluation (if (:evaluation db) (:evaluation db) (evaluate input))]
        (if evaluation
          {:db (-> db
                   (assoc :input "")
-                  (assoc :evaluation nil)
-                  (assoc :hint (:examining hint-types)))
+                  (assoc :evaluation nil))
+          :dispatch [::hint :examining]
           :http-xhrio {:uri "http://localhost:3000/query"
                        :method :get
                        :timeout 5000
