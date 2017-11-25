@@ -6,8 +6,8 @@
    :input-placeholder "e.g. 我爱学习中文。"
    :evaluation nil ; refers directly to a CSS class name (for now)
    :hint "write something in Chinese and press the button"
-   :hints {:evaluating "evaluating..."
-           :examining "retrieving analysis..."
-           :query-failure "query failed!"
-           :default ""}
+   :hint-types {:evaluating    "evaluating..."
+                :examining     "retrieving analysis..."
+                :query-failure "query failed!"
+                :default       ""}
    :queries '()})

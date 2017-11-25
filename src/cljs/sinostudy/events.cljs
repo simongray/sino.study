@@ -44,13 +44,13 @@
 (rf/reg-event-db
   ::evaluate-input
   (fn [db [_ new-input]]
-    (let [hints (:hints db)]
+    (let [hint-types (:hint-types db)]
       ;; only evaluates the latest input (no change while still evaluating)
       ;; improves performance when coupled with delayed dispatching
       (if (= (:input db) new-input)
         (-> db
             (assoc :evaluation (evaluate new-input))
-            (assoc :hint (:default hints)))
+            (assoc :hint (:default hint-types)))
         db))))
 
 ;; dispatched every time the input field changes
@@ -58,9 +58,9 @@
   ::input-change
   (fn [cofx [_ new-input]]
     (let [db (:db cofx)
-          hints (:hints db)
+          hint-types (:hint-types db)
           no-input (string/blank? new-input)
-          new-hint (if no-input (:default hints) (:evaluating hints))
+          new-hint (if no-input (:default hint-types) (:evaluating hint-types))
           evaluation-lag (if no-input 0 500)]
       {:db (-> db
                (assoc :input new-input)
@@ -75,24 +75,25 @@
   [(rf/inject-cofx ::now)]
   (fn [cofx [_ result]]
     (let [db (:db cofx)
-          hints (:hints db)
+          hint-types (:hint-types db)
           queries (:queries db)
           now (:now cofx)]
       {:db (-> db
                (assoc :queries (add-query queries :success result now))
-               (assoc :hint (:default hints)))})))
+               (assoc :hint (:default hint-types)))})))
 
 (rf/reg-event-fx
   ::query-failure
   [(rf/inject-cofx ::now)]
   (fn [cofx [_ result]]
     (let [db (:db cofx)
-          hints (:hints db)
+          hint-types (:hint-types db)
           queries (:queries db)
           now (:now cofx)]
       {:db (-> db
                (assoc :queries (add-query queries :failure result now))
-               (assoc :hint (:query-failure hints)))})))
+               (assoc :hint (:query-failure hint-types))
+               (assoc :hint (:query-failure hint-types)))})))
 
 ;; send a query away for processing
 (rf/reg-event-fx
@@ -100,7 +101,7 @@
    [(rf/inject-cofx ::now)]
    (fn [cofx [_ input]]
      (let [db (:db cofx)
-           hints (:hints db)
+           hint-types (:hint-types db)
            now (:now cofx)
            ;; always force an evaluation if missing
            evaluation (if (:evaluation db) (:evaluation db) (evaluate input))]
@@ -108,7 +109,7 @@
          {:db (-> db
                   (assoc :input "")
                   (assoc :evaluation nil)
-                  (assoc :hint (:examining hints)))
+                  (assoc :hint (:examining hint-types)))
           :http-xhrio {:uri "http://localhost:3000/query"
                        :method :get
                        :timeout 5000
