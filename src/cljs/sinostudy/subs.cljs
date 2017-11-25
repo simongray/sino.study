@@ -24,7 +24,31 @@
 (rf/reg-sub
   ::hint
   (fn [db]
-    (:content (first (:hints db)))))
+    (first (:hints db))))
+
+(rf/reg-sub
+  ::hint-types
+  (fn [db]
+    (:hint-types db)))
+
+(rf/reg-sub
+  ::hint-content
+  (fn [_]
+    [(rf/subscribe [::hint])
+     (rf/subscribe [::hint-types])])
+  (fn [[hint hint-types]]
+    (get hint-types (if hint
+                      (:type hint)
+                      :default))))
+
+(rf/reg-sub
+  ::hint-key
+  (fn [_]
+    [(rf/subscribe [::hint])])
+  (fn [hint]
+    (if (= (:type hint) :evaluation)
+      "evaluation"
+      (:id hint))))
 
 (rf/reg-sub
   ::queries

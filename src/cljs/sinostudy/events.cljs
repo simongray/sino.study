@@ -20,9 +20,9 @@
 
 (defn add-hint
   "Returns a list of hints with the new hint prepended."
-  [hints content timestamp]
-  (conj hints {:id (count hints)
-               :content content
+  [hints hint-type timestamp]
+  (conj hints {:id        (count hints)
+               :type      hint-type
                :timestamp timestamp}))
 
 
@@ -53,10 +53,8 @@
   (fn [cofx [_ hint-type]]
     (let [db (:db cofx)
           hints (:hints db)
-          hint-types (:hint-types db)
-          content (hint-type hint-types)
           now (:now cofx)]
-      {:db (assoc db :hints (add-hint hints content now))})))
+      {:db (assoc db :hints (add-hint hints hint-type now))})))
 
 ;; evaluate input query
 ;; this event is dispatched by ::input-change

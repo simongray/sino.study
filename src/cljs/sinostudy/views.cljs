@@ -36,9 +36,11 @@
    [study-button]])
 
 (defn study-hint []
-  (let [hint (rf/subscribe [::subs/hint])]
+  (let [hint-key (rf/subscribe [::subs/hint-key])
+        hint-content (rf/subscribe [::subs/hint-content])]
     [:div#study-hint
-     @hint]))
+     {:key @hint-key}
+     @hint-content]))
 
 (defn study-history []
   (let [queries (rf/subscribe [::subs/queries])]
