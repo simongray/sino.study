@@ -46,6 +46,7 @@
   (fn [_ _]
     db/default-db))
 
+;; display hints below the input field
 (rf/reg-event-fx
   ::hint
   [(rf/inject-cofx ::now)]
@@ -57,7 +58,7 @@
           now (:now cofx)]
       {:db (assoc db :hints (add-hint hints content now))})))
 
-;; evaluate input (e.g. to display proper hints)
+;; evaluate input query
 ;; this event is dispatched by ::input-change
 (rf/reg-event-fx
   ::evaluate-input
@@ -86,6 +87,7 @@
        :dispatch-later [{:ms evaluation-lag
                          :dispatch [::evaluate-input new-input]}]})))
 
+;; dispatched upon a successful retrieval of a query result
 (rf/reg-event-fx
   ::query-success
   [(rf/inject-cofx ::now)]
@@ -96,6 +98,7 @@
       {:db (assoc db :queries (add-query queries :success result now))
        :dispatch [::hint :default]})))
 
+;; dispatched upon an unsuccessful retrieval of a query result
 (rf/reg-event-fx
   ::query-failure
   [(rf/inject-cofx ::now)]
