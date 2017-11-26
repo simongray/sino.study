@@ -3,7 +3,7 @@
 (def default-db
   {:button-label "go"
    :input ""
-   :input-placeholder "e.g. 我爱学习中文。"
+   :input-placeholder ""
    :evaluation nil ; refers directly to a CSS class name (for now)
    :hints '()
    :hint-contents {:evaluating    "evaluating..."
