@@ -8,8 +8,17 @@
 	}
 }
 
+body {
+	font-family: "Gill Sans", sans-serif;
+	font-weight: lighter;
+}
+
 header {
 	text-align: center;
+}
+
+p {
+	letter-spacing: 0.4ch;
 }
 
 h1#logo {
@@ -23,7 +32,7 @@ h1#logo {
 	font-family: Didot, serif;
 	font-weight: lighter;
 	font-size: 36pt;
-	letter-spacing: 0.4ch;
+    letter-spacing: 0.4ch;
 }
 
 span#logo-sino {
@@ -46,11 +55,11 @@ p#slogan {
 	margin: 0.3em 0 0 0;
 
 	/* text-related */
-	font-family: Helvetica, sans-serif;
+	font-family: "Gill Sans", sans-serif;
     font-weight: lighter;
     font-variant: small-caps;
-    font-size: 10pt;
-    color: #999999;
+    font-size: 12pt;
+    color: #AAAAAA;
     letter-spacing: 0.6ch;
 }
 
@@ -110,13 +119,11 @@ div#study-hint {
 	animation: fade-in 0.5s ease;
 
 	/* text-related */
-	font-family: Helvetica, sans-serif;
-    font-weight: lighter;
-    font-size: 8pt;
-    color: #999999;
+    font-size: 9pt;
+    color: #AAAAAA;
     margin: 0 0 1em 0;
     padding: 0.5ch;
-    letter-spacing: 0.4ch;
+    letter-spacing: 0.6ch;
 
 	/* make sure text stays on a single line */
 	white-space: nowrap;
@@ -140,9 +147,7 @@ li.card {
 	margin: 1.2em 0;
 
 	/* text-related */
-    font-family: Helvetica, sans-serif;
-    font-weight: lighter;
-    font-size: 10pt;
+    font-size: 12pt;
     color: #999999;
     letter-spacing: 0.2ch;
 
@@ -164,11 +169,8 @@ footer {
 	text-align: center;
 
 	/* text-related */
-    font-family: Helvetica, sans-serif;
-    font-weight: lighter;
-    font-size: 8pt;
+    font-size: 10pt;
     color: #999999;
-    letter-spacing: 0.6ch;
 }
 
 a {
