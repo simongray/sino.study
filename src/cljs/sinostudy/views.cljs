@@ -61,11 +61,8 @@
    [:p
     [:a {:href "/help"} "Help"]
     " · "
-    [:a {:href "/about"} "About"]]
-   [:p
-    "© 2017 Simon Gray ("
-    [:a {:href "https://github.com/simongray"} "github"]
-    ")"]])
+    [:a {:href "/about"} "About"]
+    " · © 2017 Simon Gray"]])
 
 (defn main-panel []
   [:div#page
