@@ -143,6 +143,27 @@ li.query-failure {
 	color: red;
 }
 
+footer {
+	text-align: center;
+
+	/* text-related */
+    font-family: Helvetica, sans-serif;
+    font-weight: lighter;
+    font-size: 8pt;
+    color: #999999;
+    letter-spacing: 0.6ch;
+}
+
+a {
+	color: #2222BB;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #2222FF;
+	text-decoration: underline;
+}
+
 /* DEV STYLES
 h1#logo {
 	border: 1px dashed green;

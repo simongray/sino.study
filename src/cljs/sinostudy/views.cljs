@@ -4,11 +4,12 @@
             [sinostudy.events :as events]))
 
 (defn header []
-  [:header [:h1#logo
-            [:span#logo-sino "sino"]
-            [:span#logo-dot "·"]
-            [:span#logo-study "study"]]
-           [:p#slogan "the Chinese learner's multitool"]])
+  [:header
+   [:h1#logo
+    [:span#logo-sino "sino"]
+    [:span#logo-dot "·"]
+    [:span#logo-study "study"]]
+   [:p#slogan "the Chinese language multitool"]])
 
 (defn study-input []
   (let [input (rf/subscribe [::subs/input])
@@ -55,9 +56,21 @@
          :class (when (= (:state query) :failure) "query-failure")}
         (:content query)])]))
 
+(defn footer []
+  [:footer
+   [:p
+    [:a {:href "/help"} "Help"]
+    " · "
+    [:a {:href "/about"} "About"]]
+   [:p
+    "© 2017 Simon Gray ("
+    [:a {:href "https://github.com/simongray"} "github"]
+    ")"]])
+
 (defn main-panel []
   [:div#page
    [header]
    [study-form]
    [study-hint]
-   [study-history]])
+   [study-history]
+   [footer]])
