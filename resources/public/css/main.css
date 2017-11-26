@@ -71,6 +71,7 @@ button#study-button {
 	letter-spacing: 0.2ch;
 
 	/* box */
+	min-width: 6ch;
 	border: 1pt solid #999999;
 	border-radius: 0.5ch;
 	background-color: #F9F9F9;
