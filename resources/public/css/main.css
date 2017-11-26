@@ -9,8 +9,16 @@
 }
 
 h1#logo {
+	/* positioning */
 	text-align: center;
 	margin: 0;
+	padding: 0.6em 0 0.3em 0;
+
+	/* text-related */
+	font-family: Helvetica, sans-serif;
+	font-weight: lighter;
+	font-size: 32pt;
+	letter-spacing: 0.4ch;
 }
 
 div#page {
@@ -23,17 +31,47 @@ form#study-form {
 }
 
 input#study-input {
-	margin-right: 1ch;
+	/* positioning */
 	flex: 1;
+	margin-right: 1ch;
+
+	/* text-related */
+	font-size: 12pt;
+
+	/* box */
+	padding: 0.5ch;
+	border: 1pt solid #999999;
+	border-radius: 0.5ch;
+}
+
+button#study-button {
+	/* text-related */
+	font-family: Helvetica, sans-serif;
+	font-weight: lighter;
+	font-size: 12pt;
+	letter-spacing: 0.2ch;
+
+	/* box */
+	border: 1pt solid #999999;
+	border-radius: 0.5ch;
+	background-color: #F9F9F9;
 }
 
 input.evaluated {
-	background-color: LightYellow;
+	background-color: #DDFFCC;
 }
 
 div#study-hint {
 	max-width: 100%;
 	animation: fade-in 0.5s ease;
+
+	/* text-related */
+	font-family: Helvetica, sans-serif;
+    font-weight: lighter;
+    font-size: 8pt;
+    color: #999999;
+    margin: 0 0 1em 0;
+    padding: 0.5ch;
 
 	/* make sure text stays on a single line */
 	white-space: nowrap;
@@ -52,13 +90,21 @@ ul#card-list {
 
 li.card {
 	animation: fade-in 1s ease;
+
+	/* positioning */
+	margin: 0.3em 0;
+
+	/* box */
+	padding: 1ch;
+    border: 1pt solid #BBBBBB;
+    border-radius: 0.5ch;
 }
 
 li.query-failure {
 	color: red;
 }
 
-/* DEV STYLES */
+/* DEV STYLES
 h1#logo {
 	border: 1px dashed green;
 }
