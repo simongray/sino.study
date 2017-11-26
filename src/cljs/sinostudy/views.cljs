@@ -4,7 +4,10 @@
             [sinostudy.events :as events]))
 
 (defn logo []
-  [:h1#logo "sino·study"])
+  [:h1#logo
+   [:span#logo-sino "sino"]
+   [:span#logo-dot "·"]
+   [:span#logo-study "study"]])
 
 (defn study-input []
   (let [input (rf/subscribe [::subs/input])

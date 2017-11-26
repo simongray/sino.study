@@ -9,6 +9,8 @@
 }
 
 h1#logo {
+	animation: fade-in 0.5s ease;
+
 	/* positioning */
 	text-align: center;
 	margin: 0;
@@ -21,6 +23,19 @@ h1#logo {
 	letter-spacing: 0.4ch;
 }
 
+span#logo-sino {
+	color: #333333;
+}
+
+span#logo-dot {
+	animation: fade-in 1.5s ease-in;
+	color: #BBBBBB;
+}
+
+span#logo-study {
+	color: #BB2222;
+}
+
 div#page {
 	margin: auto;
 	max-width: 80ch;
@@ -31,6 +46,8 @@ form#study-form {
 }
 
 input#study-input {
+	animation: fade-in 1s ease;
+
 	/* positioning */
 	flex: 1;
 	margin-right: 1ch;
@@ -45,6 +62,8 @@ input#study-input {
 }
 
 button#study-button {
+	animation: fade-in 1.5s ease;
+
 	/* text-related */
 	font-family: Helvetica, sans-serif;
 	font-weight: lighter;
@@ -92,12 +111,14 @@ li.card {
 	animation: fade-in 1s ease;
 
 	/* positioning */
-	margin: 0.3em 0;
+	margin: 1.2em 0;
 
 	/* box */
 	padding: 1ch;
-    border: 1pt solid #BBBBBB;
+    border: 1pt solid #DDDDDD;
+    background: white;
     border-radius: 0.5ch;
+    /*box-shadow: 0 0.2sem 0.2em #EBEBEB;*/
 }
 
 li.query-failure {
