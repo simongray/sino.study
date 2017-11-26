@@ -1,6 +1,6 @@
 # sino·study
-The repository for [sino.study](https://sino.study), a web app designed to
-assist students of the Chinese language in various ways.
+This is the repository for [sino·study](https://sino.study), 
+a web app designed to assist students of the Chinese language in various ways.
 
 The app is written in Clojure and ClojureScript.
 The frontend uses reagent/re-frame and the backend is a compojure service.
