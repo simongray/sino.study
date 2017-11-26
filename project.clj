@@ -22,8 +22,9 @@
             ;; compojure
             [lein-ring "0.9.7"]]
 
-                                  ;; reagent/re-frame
+                                 ;; reagent/re-frame
   :profiles {:dev {:dependencies [[binaryage/devtools "0.9.4"]
+                                  [re-frisk "0.5.2"]
 
                                   ;; compojure
                                   [javax.servlet/servlet-api "2.5"]
@@ -46,7 +47,7 @@
                                        :output-dir           "resources/public/js/compiled/out"
                                        :asset-path           "js/compiled/out"
                                        :source-map-timestamp true
-                                       :preloads             [devtools.preload]
+                                       :preloads             [devtools.preload re-frisk.preload]
                                        :external-config      {:devtools/config {:features-to-install :all}}}}
 
                        {:id           "min"
