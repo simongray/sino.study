@@ -131,6 +131,13 @@ li.card {
 	/* positioning */
 	margin: 1.2em 0;
 
+	/* text-related */
+    font-family: Helvetica, sans-serif;
+    font-weight: lighter;
+    font-size: 10pt;
+    color: #999999;
+    letter-spacing: 0.2ch;
+
 	/* box */
 	padding: 1ch;
     border: 1pt solid #DDDDDD;
