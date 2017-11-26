@@ -27,19 +27,19 @@
     (first (:hints db))))
 
 (rf/reg-sub
-  ::hint-types
+  ::hint-contents
   (fn [db]
-    (:hint-types db)))
+    (:hint-contents db)))
 
 (rf/reg-sub
   ::hint-content
   (fn [_]
     [(rf/subscribe [::hint])
-     (rf/subscribe [::hint-types])])
-  (fn [[hint hint-types]]
-    (get hint-types (if hint
-                      (:type hint)
-                      :default))))
+     (rf/subscribe [::hint-contents])])
+  (fn [[hint hint-contents]]
+    (get hint-contents (if hint
+                         (:type hint)
+                         :default))))
 
 (rf/reg-sub
   ::hint-key
