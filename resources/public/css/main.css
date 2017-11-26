@@ -86,12 +86,17 @@ button#study-button {
 	font-weight: lighter;
 	font-size: 12pt;
 	letter-spacing: 0.2ch;
+	color: white;
 
 	/* box */
 	min-width: 6ch;
-	border: 1pt solid #999999;
+	border: none;
 	border-radius: 0.5ch;
-	background-color: #F9F9F9;
+	background-color: #BB5544;
+}
+
+button#study-button:hover {
+	background-color: #BB2222;
 }
 
 input.evaluated {
