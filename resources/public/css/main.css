@@ -93,7 +93,7 @@ button#study-button {
 	animation: fade-in 1.5s ease;
 
 	/* text-related */
-	font-family: Didot, sans-serif;
+	font-family: Didot, serif;
 	font-weight: lighter;
 	font-size: 12pt;
 	letter-spacing: 0.2ch;
