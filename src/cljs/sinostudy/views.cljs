@@ -3,11 +3,12 @@
             [sinostudy.subs :as subs]
             [sinostudy.events :as events]))
 
-(defn logo []
-  [:h1#logo
-   [:span#logo-sino "sino"]
-   [:span#logo-dot "·"]
-   [:span#logo-study "study"]])
+(defn header []
+  [:header [:h1#logo
+            [:span#logo-sino "sino"]
+            [:span#logo-dot "·"]
+            [:span#logo-study "study"]]
+           [:p#slogan "the Chinese learner's multitool"]])
 
 (defn study-input []
   (let [input (rf/subscribe [::subs/input])
@@ -56,7 +57,7 @@
 
 (defn main-panel []
   [:div#page
-   [logo]
+   [header]
    [study-form]
    [study-hint]
    [study-history]])

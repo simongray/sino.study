@@ -8,13 +8,16 @@
 	}
 }
 
+header {
+	text-align: center;
+}
+
 h1#logo {
 	animation: fade-in 0.5s ease;
 
 	/* positioning */
-	text-align: center;
-	margin: 0;
-	padding: 0.6em 0 0.3em 0;
+	margin: 0.6em 0 0 0;
+	padding: 0;
 
 	/* text-related */
 	font-family: Helvetica, sans-serif;
@@ -36,6 +39,19 @@ span#logo-study {
 	color: #BB2222;
 }
 
+p#slogan {
+	padding: 0;
+	margin: 0.3em 0 0 0;
+
+	/* text-related */
+	font-family: Helvetica, sans-serif;
+    font-weight: lighter;
+    font-variant: small-caps;
+    font-size: 10pt;
+    color: #999999;
+    letter-spacing: 0.6ch;
+}
+
 div#page {
 	margin: auto;
 	max-width: 80ch;
@@ -43,6 +59,7 @@ div#page {
 
 form#study-form {
 	display: flex;
+	margin: 1.2em 0 0 0;
 }
 
 input#study-input {
