@@ -9,7 +9,7 @@
     [:span#logo-sino "sino"]
     [:span#logo-dot "·"]
     [:span#logo-study "study"]]
-   [:p#slogan "the Chinese language multitool"]])
+   [:p#slogan "the multitool for learning Chinese"]])
 
 (defn study-input []
   (let [input (rf/subscribe [::subs/input])
