@@ -62,7 +62,7 @@
   ::evaluate-input
   (fn [cofx [_ new-input]]
     (let [db (:db cofx)]
-      ;; only evaluates the latest input (no change while still evaluating)
+      ;; only evaluates the latest input (no change while still writing)
       ;; improves performance when coupled with delayed dispatching
       (if (= (:input db) new-input)
         {:db (assoc db :evaluation (evaluate new-input))
@@ -75,7 +75,7 @@
   (fn [cofx [_ new-input]]
     (let [db (:db cofx)
           no-input (string/blank? new-input)
-          new-hint (if no-input :default :evaluating)
+          new-hint (if no-input :default :writing)
           evaluation-lag (if no-input 0 500)]
       {:db (-> db
                (assoc :input new-input)
