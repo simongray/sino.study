@@ -14,7 +14,7 @@
    :actions {:digits->diacritics "convert tone digits to diacritics"
              :diacritics->digits "convert tone diacritics to digits"
              :analyse-text "get a grammatical analysis"
-             :look-up-word "look up word in the dictionary"
+             :look-up-word "look up the word"
              :choose-action "choose an action"
              :default "submit input"}
    :queries '()})
