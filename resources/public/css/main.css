@@ -21,46 +21,18 @@ p {
 	letter-spacing: 0.4ch;
 }
 
-h1#logo {
+div#logo {
 	animation: fade-in 0.5s ease;
 
+	background-image: url("/img/logo_min.svg");
+	background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 5em;
+
 	/* positioning */
-	margin: 0.3em 0 0 0;
-	padding: 0;
-
-	/* text-related */
-	font-family: Didot, serif;
-	font-weight: lighter;
-	font-size: 36pt;
-    letter-spacing: 0.4ch;
-}
-
-span#logo-sino {
-	color: #333333;
-}
-
-span#logo-dot {
-	animation: fade-in 1.5s ease-in;
-	color: #BBBBBB;
-}
-
-span#logo-study {
-	color: #BB2222;
-}
-
-p#slogan {
-	animation: fade-in 1s ease;
-
-	padding: 0;
-	margin: 0.3em 0 0 0;
-
-	/* text-related */
-	font-family: "Gill Sans", sans-serif;
-    font-weight: lighter;
-    font-variant: small-caps;
-    font-size: 12pt;
-    color: #AAAAAA;
-    letter-spacing: 0.6ch;
+    margin: 1em auto 0 auto;
+    padding: 0;
 }
 
 div#page {
@@ -70,7 +42,7 @@ div#page {
 
 form#study-form {
 	display: flex;
-	margin: 1.2em 0 0 0;
+	margin: 1.4em 0 0 0;
 }
 
 input#study-input {

@@ -5,11 +5,7 @@
 
 (defn header []
   [:header
-   [:h1#logo
-    [:span#logo-sino "sino"]
-    [:span#logo-dot "·"]
-    [:span#logo-study "study"]]
-   [:p#slogan "the multitool for learning Chinese"]])
+   [:div#logo]])
 
 (defn study-input []
   (let [input (rf/subscribe [::subs/input])
