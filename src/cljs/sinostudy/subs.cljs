@@ -46,9 +46,7 @@
   (fn [_]
     [(rf/subscribe [::hint])])
   (fn [[hint]]
-    (if (= (:type hint) :evaluating)
-      "evaluation"
-      (:id hint))))
+    (str (:type hint))))
 
 (rf/reg-sub
   ::queries
