@@ -14,7 +14,8 @@
 (defn mount-root []
   (rf/clear-subscription-cache!)
   (reagent/render [views/main-panel]
-                  (.getElementById js/document "app")))
+                  (.getElementById js/document "app"))
+  (.focus (.getElementById js/document "study-input")))
 
 (defn ^:export init []
   (rf/dispatch-sync [::events/initialize-db])
