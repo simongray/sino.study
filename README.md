@@ -1,4 +1,5 @@
-# sino·study
+![sino·study](https://raw.githubusercontent.com/simongray/sino.study/master/resources/public/img/logo_min.svg)
+
 This is the repository for [sino·study](https://sino.study), 
 a web app designed to assist students of the Chinese language in various ways.
 
