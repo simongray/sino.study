@@ -58,6 +58,8 @@
     [:a {:href "/help"} "Help"]
     " · "
     [:a {:href "/about"} "About"]
+    " · "
+    [:a {:href "/blog"} "Blog"]
     " · © 2018 Simon Gray"]])
 
 (defn main-panel []
