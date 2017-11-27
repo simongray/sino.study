@@ -9,5 +9,12 @@
    :hint-contents {:writing "writing..."
                    :examining "examining..."
                    :query-failure "error!"
+                   :awaiting-action "press enter to"
                    :default ""}
+   :actions {:digits->diacritics "convert tone digits to diacritics"
+             :diacritics->digits "convert tone diacritics to digits"
+             :analyse-text "get a grammatical analysis"
+             :look-up-word "look up word in the dictionary"
+             :choose-action "choose an action"
+             :default "submit input"}
    :queries '()})
