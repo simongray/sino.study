@@ -2,15 +2,8 @@
   (:require [clojure.string :as string]
             [re-frame.core :as rf]
             [sinostudy.db :as db]
+            [sinostudy.evaluation :refer [evaluate-query]]
             [ajax.core :as ajax]))
-
-(defn evaluate-query
-  "Evaluates a piece of input text and returns a vector of possible actions."
-  [s]
-  (cond
-    (= s "") []
-    (= s "bad") []
-    :else [:analyse-text])) ; TODO
 
 (defn add-query
   "Returns a list of queries with the new query prepended."

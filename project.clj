@@ -2,7 +2,7 @@
   :description "The sino.study project."
   :url "http://sino.study"
   :min-lein-version "2.5.3"
-  :source-paths ["src/clj"]
+  :source-paths ["src/clj" "src/cljc"]
 
   :dependencies [[org.clojure/clojure "1.8.0"]
 
@@ -40,7 +40,7 @@
   :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"]
   :figwheel {:css-dirs ["resources/public/css"]}
   :cljsbuild {:builds [{:id           "dev"
-                        :source-paths ["src/cljs"]
+                        :source-paths ["src/cljs" "src/cljc"]
                         :figwheel     {:on-jsload "sinostudy.core/mount-root"}
                         :compiler     {:main                 sinostudy.core
                                        :output-to            "resources/public/js/compiled/app.js"
