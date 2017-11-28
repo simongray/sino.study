@@ -9,17 +9,14 @@
 
 (defn study-input []
   (let [input (rf/subscribe [::subs/input])
-        input-placeholder (rf/subscribe [::subs/input-placeholder])
-        evaluation (rf/subscribe [::subs/evaluation])]
+        css-class (rf/subscribe [::subs/input-css-class])]
     [:input#study-input
-     {:type :text
-      :value @input
-      :placeholder @input-placeholder
-      :class @evaluation
-      :on-change (fn [e]
-                   (rf/dispatch [::events/input-change (-> e
-                                                           .-target
-                                                           .-value)]))}]))
+     {:type        :text
+      :value       @input
+      :class       @css-class
+      :on-change   (fn [e]
+                     (rf/dispatch [::events/on-input-change
+                                   (-> e .-target .-value)]))}]))
 
 (defn study-button []
   (let [label (rf/subscribe [::subs/button-label])
@@ -28,7 +25,7 @@
      {:type :submit
       :on-click (fn [e]
                   (.preventDefault e)
-                  (rf/dispatch [::events/query @input]))}
+                  (rf/dispatch [::events/on-study-button-press @input]))}
      @label]))
 
 (defn study-form []

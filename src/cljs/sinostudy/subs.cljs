@@ -1,5 +1,6 @@
 (ns sinostudy.subs
-  (:require [re-frame.core :as rf]))
+  (:require [re-frame.core :as rf]
+            [sinostudy.db :refer [static-db]]))
 
 (rf/reg-sub
   ::button-label
@@ -12,14 +13,20 @@
     (:input db)))
 
 (rf/reg-sub
-  ::input-placeholder
-  (fn [db]
-    (:input-placeholder db)))
-
-(rf/reg-sub
   ::evaluation
   (fn [db]
-    (:evaluation db)))
+    (first (:evaluations db))))
+
+(rf/reg-sub
+  ::input-css-class
+  (fn [_]
+    [(rf/subscribe [::input])
+     (rf/subscribe [::evaluation])])
+  (fn [[input evaluation]]
+    (when (and evaluation
+               (empty? (:actions evaluation))
+               (not= "" (:query evaluation)))
+      "no-actions")))
 
 (rf/reg-sub
   ::hint
@@ -27,26 +34,19 @@
     (first (:hints db))))
 
 (rf/reg-sub
-  ::hint-contents
-  (fn [db]
-    (:hint-contents db)))
-
-(rf/reg-sub
   ::hint-content
   (fn [_]
-    [(rf/subscribe [::hint])
-     (rf/subscribe [::hint-contents])])
-  (fn [[hint hint-contents]]
-    (get hint-contents (if hint
-                         (:type hint)
-                         :default))))
+    [(rf/subscribe [::hint])])
+  (fn [[hint]]
+    (let [hint-type (if hint (:type hint) :default)]
+      (get (:hint-content static-db) hint-type))))
 
 (rf/reg-sub
   ::hint-key
   (fn [_]
     [(rf/subscribe [::hint])])
   (fn [[hint]]
-    (str (:type hint))))
+    (:type hint)))
 
 (rf/reg-sub
   ::queries

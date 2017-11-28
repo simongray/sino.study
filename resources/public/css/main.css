@@ -82,8 +82,8 @@ button#study-button:hover {
 	background-color: #BB2222;
 }
 
-input.evaluated {
-	background-color: #dcffc6;
+input.no-actions {
+	background-color: #ffdcc6;
 }
 
 div#study-hint {
