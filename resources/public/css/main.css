@@ -93,7 +93,7 @@ div#study-hint {
 	/* text-related */
     font-size: 9pt;
     color: #AAAAAA;
-    margin: 0 0 1em 0;
+    margin: 0.3em 0 1em 0;
     padding: 0.5ch;
     letter-spacing: 0.6ch;
 
@@ -104,6 +104,14 @@ div#study-hint {
 
 	/* make sure the hint keeps its height when empty */
 	height: 1em;
+}
+
+span.keypress {
+	padding: 0 0.8ch;
+	border: 1pt solid #AAAAAA;
+    border-radius: 0.5ch;
+    background-color: #FAFAFA;
+    color: #888888;
 }
 
 ul#card-list {
