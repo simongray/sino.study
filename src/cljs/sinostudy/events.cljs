@@ -85,16 +85,20 @@
 (rf/reg-event-fx
   ::evaluate-input
   (fn [cofx [_ input]]
-    (let [db (:db cofx)]
-      (when (and (= input (:input db)))
-        (let [actions (evaluate-query input)
+    (let [db (:db cofx)
+          latest-evaluation (first (:evaluations db))
+          trimmed-input (string/trim input)
+          query-changed? (not= trimmed-input (:query latest-evaluation))]
+      (when (and query-changed?
+                 (= input (:input db)))
+        (let [actions (evaluate-query trimmed-input)
               action-count (count actions)
               new-hint (cond
-                         (= "" input) :default
+                         (= "" trimmed-input) :default
                          (= 0 action-count) :no-actions
                          (= 1 action-count) (first actions)
                          :else :choose-action)]
-          {:dispatch-n (list [::save-evaluation input actions]
+          {:dispatch-n (list [::save-evaluation trimmed-input actions]
                              [::display-hint new-hint])})))))
 
 ;; dispatched every time the input field changes
@@ -108,12 +112,11 @@
   (fn [cofx [_ input]]
     (let [db (:db cofx)
           blank-input? (string/blank? input)
-          evaluation-lag (if blank-input? 0 500)
-          trimmed-input (string/trim input)]
+          evaluation-lag (if blank-input? 0 500)]
       {:db (assoc db :input input)
        :dispatch (when blank-input? [::display-hint :default])
        :dispatch-later [{:ms evaluation-lag
-                         :dispatch [::evaluate-input trimmed-input]}]})))
+                         :dispatch [::evaluate-input input]}]})))
 
 ;; dispatched upon a successful retrieval of a query result
 (rf/reg-event-fx
