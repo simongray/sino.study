@@ -51,7 +51,7 @@
                                        :external-config      {:devtools/config {:features-to-install :all}}}}
 
                        {:id           "min"
-                        :source-paths ["src/cljs"]
+                        :source-paths ["src/cljs" "src/cljc"]
                         :compiler     {:main            sinostudy.core
                                        :output-to       "resources/public/js/compiled/app.js"
                                        :optimizations   :advanced
