@@ -1,13 +1,13 @@
 (ns sinostudy.pinyin.core
   (:require [clojure.string :as str]
-            #?(:clj [clojure.spec.alpha :as spec]
+            #?(:clj  [clojure.spec.alpha :as spec]
                :cljs [cljs.spec.alpha :as spec])
             [sinostudy.pinyin.data :as data]))
 
 (defn parse-int
   "Parses a string s into an integer."
   [s]
-  #?(:clj (Integer/parseInt s)
+  #?(:clj  (Integer/parseInt s)
      :cljs (js/parseInt s)))
 
 (defn umlaut
@@ -44,9 +44,9 @@
   tone diacritic. When converting more than a single syllable at a time,
   use digits->diacritics instead!"
   [s]
-  (let [tone (parse-int (str (last s)))
-        s* (subs s 0 (dec (count s)))
-        char (nth s (diacritic-index s))
+  (let [tone           (parse-int (str (last s)))
+        s*             (subs s 0 (dec (count s)))
+        char           (nth s (diacritic-index s))
         char+diacritic (diacritic char tone)]
     (str/replace s* char char+diacritic)))
 
@@ -56,10 +56,10 @@
   longest allowed Pinyin final + the digit. The Pinyin final that is returned
   is the one immediately before the digit, i.e. the last final."
   [s]
-  (let [digit (last s)
-        end (dec (count s)) ; decrementing to account for affixed digit
+  (let [digit  (last s)
+        end    (dec (count s))      ; decrementing to account for affixed digit
         length (if (< end 4) end 4) ; most cases will be <4
-        start (- end length)]
+        start  (- end length)]
     (loop [candidate (subs s start end)]
       (cond
         (empty? candidate) nil
@@ -72,10 +72,10 @@
   digit with a tone diacritic. The diacritic is placed in the Pinyin final
   immediately before tone digit."
   [s]
-  (let [final (last-final s)
+  (let [final           (last-final s)
         final+diacritic (digit->diacritic final)
         ;; prefix = preceding neutral tone syllables + the initial
-        prefix (subs s 0 (- (count s) (count final)))]
+        prefix          (subs s 0 (- (count s) (count final)))]
     (str prefix final+diacritic)))
 
 (defn digits->diacritics
@@ -86,10 +86,10 @@
   any occurrence of V is treated as and implicitly converted into a Ü."
   [s & {:keys [v-as-umlaut] :or {v-as-umlaut true} :as opts}]
   (if (string? s)
-    (let [s* (if v-as-umlaut (umlaut s) s)
-          digit-strings (re-seq #"[^\d]+\d" s*)
+    (let [s*                (if v-as-umlaut (umlaut s) s)
+          digit-strings     (re-seq #"[^\d]+\d" s*)
           diacritic-strings (map diacritic-string digit-strings)
-          suffix (re-seq #"[^\d]+$" s*)]
+          suffix            (re-seq #"[^\d]+$" s*)]
       (apply str (concat diacritic-strings suffix)))
     nil))
 
