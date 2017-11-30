@@ -108,9 +108,13 @@
   [s]
   #(data/syllables (str/lower-case %)))
 
+;; reverse-sorting the list of syllables prevents eager resolution in JS regex
+; otherwise, syllables like "wang" will not match (they eagerly resolve as "wa")
+(def ^:private rev-syllables
+  (reverse (sort data/syllables)))
+
 (def ^:private pinyin-pattern
-  (let [syllables (reverse (sort data/syllables)) ; prevents eager resolution
-        syllable (str "(" (str/join "|" data/syllables) ")")
+  (let [syllable (str "(" (str/join "|" rev-syllables) ")")
         syllable+ (str syllable "+")
         syllable* (str "('?" syllable ")*")]
     (re-pattern (str "(?i)" syllable+ syllable*))))
@@ -121,8 +125,7 @@
   (re-matches pinyin-pattern s))
 
 (def ^:private pinyin+digits-pattern
-  (let [syllables (reverse (sort data/syllables)) ; prevents eager resolution
-        syllable (str "((" (str/join "|" syllables) ")[012345]?)")
+  (let [syllable (str "((" (str/join "|" rev-syllables) ")[012345]?)")
         syllable+ (str syllable "+")
         syllable* (str "('?" syllable ")*")]
     (re-pattern (str "(?i)" syllable+ syllable*))))
@@ -131,6 +134,18 @@
   "Is this a block of pinyin with tone digits?"
   [s]
   (re-matches pinyin+digits-pattern s))
+
+(def ^:private pinyin+digits+punct-pattern
+  (let [syllable (str "((" (str/join "|" rev-syllables) ")[012345]?)")
+        syllable+ (str syllable "+")
+        syllable* (str "('?" syllable ")*")
+        word (str "(" syllable+ syllable* ")")]
+    (re-pattern (str "(?i)" word "(" word "|[^\\w]+)*"))))
+
+(defn pinyin+digits+punct?
+  "Is this a sentence containing Pinyin with tone digits?"
+  [s]
+  (re-matches pinyin+digits+punct-pattern s))
 
 (defn pinyin+diacritics?
   "Is this a block of pinyin with tone diacritics?
