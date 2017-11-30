@@ -2,7 +2,7 @@
   (:require [clojure.string :as string]
             [re-frame.core :as rf]
             [sinostudy.db :as db]
-            [sinostudy.evaluation :refer [evaluate-query]]
+            [sinostudy.evaluation :refer [eval-query]]
             [sinostudy.pinyin.core :as pinyin]
             [ajax.core :as ajax]))
 
@@ -81,18 +81,18 @@
   (fn [cofx [_ input]]
     (let [db (:db cofx)
           latest-evaluation (first (:evaluations db))
-          trimmed-input (string/trim input)
-          query-changed? (not= trimmed-input (:query latest-evaluation))]
+          query (string/trim input)
+          query-changed? (not= query (:query latest-evaluation))]
       (when (and query-changed?
                  (= input (:input db)))
-        (let [actions (evaluate-query trimmed-input)
+        (let [actions (eval-query query)
               action-count (count actions)
               new-hint (cond
-                         (= "" trimmed-input) :default
+                         (= "" query) :default
                          (= 0 action-count) :no-actions
                          (= 1 action-count) (first actions)
                          :else :choose-action)]
-          {:dispatch-n (list [::save-evaluation trimmed-input actions]
+          {:dispatch-n (list [::save-evaluation query actions]
                              [::display-hint new-hint])})))))
 
 ;; dispatched every time the input field changes
@@ -172,7 +172,7 @@
           query (string/trim input)
           query-changed? (not= query (:query latest-evaluation))
           actions (if query-changed?
-                    (evaluate-query query)
+                    (eval-query query)
                     (:actions latest-evaluation))
           action-count (count actions)]
       {:dispatch-n [(when query-changed?
