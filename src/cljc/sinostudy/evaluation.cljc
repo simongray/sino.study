@@ -1,5 +1,7 @@
 (ns sinostudy.evaluation
-  (:require [sinostudy.pinyin.core :refer [pinyin+punct? pinyin+digits+punct?]]))
+  (:require [sinostudy.pinyin.core :refer [umlaut
+                                           pinyin+punct?
+                                           pinyin+digits+punct?]]))
 
 ;; cljsjs/xregexp doesn't include the extensions allowing for \p{Script=Han}
 ;; will just use this to generate suitable regex used in both clj and cljs:
@@ -15,5 +17,7 @@
 (defn eval-query
   "Evaluate a query string to get a vector of possible actions."
   [query]
-  (cond-> []
-          (digits->diacritics? query) (conj :digits->diacritics)))
+  ;; some tests need an umlaut'ed query
+  (let [query* (umlaut query)]
+    (cond-> []
+            (digits->diacritics? query*) (conj :digits->diacritics))))
