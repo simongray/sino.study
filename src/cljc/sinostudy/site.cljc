@@ -2,14 +2,27 @@
 
 (defn header []
   [:header
-   [:div#logo]])
+   [:a {:href "/"}
+    [:img#logo {:src "/img/logo_min.svg"}]]])
 
-(defn footer []
-  [:footer
-   [:p
-    [:a {:href "/help"} "Help"]
-    " · "
-    [:a {:href "/about"} "About"]
-    " · "
-    [:a {:href "/blog"} "Blog"]
-    " · © 2018 Simon Gray"]])
+(defn navlink
+  [from to text]
+  (if (not= from to)
+    [:a {:href to} text]
+    [:a.current-page text]))
+
+
+(defn footer [page]
+  (fn []
+    [:footer
+     [:p
+      (navlink page "/" "Home")
+      " · "
+      (navlink page "/help" "Help")
+      " · "
+      (navlink page "/about" "About")
+      " · "
+      (navlink page "/blog" "Blog")]
+     [:p#copyright "© 2018 Simon Gray ("
+      [:a {:href "https://github.com/simongray"} "github"]
+      ")"]]))

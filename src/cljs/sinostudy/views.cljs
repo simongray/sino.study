@@ -52,4 +52,4 @@
    [study-form]
    [study-hint]
    [study-history]
-   [site/footer]])
+   [(site/footer "/")]])

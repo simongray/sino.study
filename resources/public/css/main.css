@@ -21,14 +21,14 @@ p {
 	letter-spacing: 0.4ch;
 }
 
-div#logo {
+img#logo {
 	animation: fade-in 0.5s ease;
+	user-drag: none;
+    user-select: none;
 
-	background-image: url("/img/logo_min.svg");
-	background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    height: 4.5em;
+	/* size */
+	max-width: 50ch;
+	width: 100%;
 
 	/* positioning */
     margin: 1em auto 0 auto;
@@ -149,8 +149,12 @@ footer {
 	text-align: center;
 
 	/* text-related */
-    font-size: 10pt;
+    font-size: 12pt;
     color: #999999;
+}
+
+p#copyright {
+	font-size: 8pt;
 }
 
 a {
@@ -161,6 +165,12 @@ a {
 a:hover {
 	color: #2222FF;
 	text-decoration: underline;
+}
+
+a.current-page, a.current-page:hover {
+	color: #444444;
+	font-weight: bold;
+    text-decoration: none;
 }
 
 /* DEV STYLES
