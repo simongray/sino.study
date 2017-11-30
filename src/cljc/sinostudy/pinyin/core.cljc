@@ -124,6 +124,18 @@
   [s]
   (re-matches pinyin-pattern s))
 
+(def ^:private pinyin+punct-pattern
+  (let [syllable (str "(" (str/join "|" rev-syllables) ")")
+        syllable+ (str syllable "+")
+        syllable* (str "('?" syllable ")*")
+        word (str "(" syllable+ syllable* ")")]
+    (re-pattern (str "(?i)" word "(" word "|[^\\w]+)*"))))
+
+(defn pinyin+punct?
+  "Is this a sentence containing Pinyin without any tone digits or diacritics?"
+  [s]
+  (re-matches pinyin+punct-pattern s))
+
 (def ^:private pinyin+digits-pattern
   (let [syllable (str "((" (str/join "|" rev-syllables) ")[012345]?)")
         syllable+ (str syllable "+")
