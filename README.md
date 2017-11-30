@@ -6,7 +6,7 @@ a web app designed to assist students of the Chinese language in various ways.
 The app is written in Clojure and ClojureScript.
 The frontend uses reagent/re-frame and the backend is a compojure service.
 The functionality is built around my own wrapper library for Stanford CoreNLP,
-[corenlp-clj](https://github.com/simongray/corenlp-clj).
+[Computerese](https://github.com/simongray/Computerese).
 
 ## Development
 
