@@ -153,9 +153,11 @@
     (let [db (:db cofx)
           input (:input db)]
       (case action
-        :digits->diacritics {:db (assoc db ; TODO: support spaces, punctuation
-                                   :input
-                                   (pinyin/digits->diacritics input))}))))
+        :digits->diacritics
+        (let [new-input (pinyin/digits->diacritics input)]
+          {:db (assoc db :input new-input)
+           ;; TODO: perhaps dispatch ::evaluate-input instead?
+           :dispatch [::display-hint :default]})))))
 
 (rf/reg-event-fx
   ::choose-action
