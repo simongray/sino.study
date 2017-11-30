@@ -108,22 +108,29 @@
   [s]
   #(data/syllables (str/lower-case %)))
 
+(def ^:private pinyin-pattern
+  (let [syllables (reverse (sort data/syllables)) ; prevents eager resolution
+        syllable (str "(" (str/join "|" data/syllables) ")")
+        syllable+ (str syllable "+")
+        syllable* (str "('?" syllable ")*")]
+    (re-pattern (str "(?i)" syllable+ syllable*))))
+
 (defn pinyin?
   "Is this a plain block of pinyin (no digits or diacritics allowed)?"
   [s]
-  (let [syllables+ (str "(" (str/join "|" data/syllables) ")+")
-        syllables* (str "('?(" (str/join "|" data/syllables) "))*")
-        pattern (re-pattern (str "(?i)" syllables+ syllables*))]
-    (re-matches pattern s)))
+  (re-matches pinyin-pattern s))
 
-;; TODO: in JS, syllables like wang or wan suddenly don't work!
+(def ^:private pinyin+digits-pattern
+  (let [syllables (reverse (sort data/syllables)) ; prevents eager resolution
+        syllable (str "((" (str/join "|" syllables) ")[012345]?)")
+        syllable+ (str syllable "+")
+        syllable* (str "('?" syllable ")*")]
+    (re-pattern (str "(?i)" syllable+ syllable*))))
+
 (defn pinyin+digits?
   "Is this a block of pinyin with tone digits?"
   [s]
-  (let [syllables+ (str "((" (str/join "|" data/syllables) ")[012345]?)+")
-        syllables* (str "('?(" (str/join "|" data/syllables) ")[012345]?)*")
-        pattern (re-pattern (str "(?i)" syllables+ syllables*))]
-    (re-matches pattern s)))
+  (re-matches pinyin+digits-pattern s))
 
 (defn pinyin+diacritics?
   "Is this a block of pinyin with tone diacritics?
