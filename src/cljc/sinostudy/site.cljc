@@ -1,4 +1,5 @@
-(ns sinostudy.site)
+(ns sinostudy.site
+  (:require [clojure.string :as str]))
 
 (defn header []
   [:header
@@ -23,14 +24,12 @@
 (defn footer [page]
   (fn []
     [:footer
-     [:p
-      (navlink page "/" "Home")
-      " · "
-      (navlink page "/help" "Help")
-      " · "
-      (navlink page "/about" "About")
-      " · "
-      (navlink page "/blog" "Blog")]
+     [:nav
+      (interpose " · "
+        [(navlink page "/" "Home")
+         (navlink page "/help" "Help")
+         (navlink page "/about" "About")
+         (navlink page "/blog" "Blog")])]
      [:p#copyright "© " year-string " Simon Gray ("
       [:a {:href "https://github.com/simongray"} "github"]
       ")"]]))
