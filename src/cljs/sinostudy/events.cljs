@@ -3,6 +3,7 @@
             [re-frame.core :as rf]
             [sinostudy.db :as db]
             [sinostudy.evaluation :refer [evaluate-query]]
+            [sinostudy.pinyin.core :as pinyin]
             [ajax.core :as ajax]))
 
 (defn add-query
@@ -147,6 +148,16 @@
                    :on-failure [::on-query-failure]}}))
 
 (rf/reg-event-fx
+  ::do-action
+  (fn [cofx [_ action]]
+    (let [db (:db cofx)
+          input (:input db)]
+      (case action
+        :digits->diacritics {:db (assoc db ; TODO: support spaces, punctuation
+                                   :input
+                                   (pinyin/digits->diacritics input))}))))
+
+(rf/reg-event-fx
   ::choose-action
   (fn [_ _]
     {})) ;; TODO
@@ -158,15 +169,15 @@
   (fn [cofx [_ input]]
     (let [db (:db cofx)
           latest-evaluation (first (:evaluations db))
-          trimmed-input (string/trim input)
-          query-changed? (not= trimmed-input (:query latest-evaluation))
+          query (string/trim input)
+          query-changed? (not= query (:query latest-evaluation))
           actions (if query-changed?
-                    (evaluate-query trimmed-input)
+                    (evaluate-query query)
                     (:actions latest-evaluation))
           action-count (count actions)]
       {:dispatch-n [(when query-changed?
-                      [::save-evaluation trimmed-input actions])
+                      [::save-evaluation query actions])
                     (cond
                       (= 0 action-count) [::display-hint :no-actions]
-                      (= 1 action-count) [::send-query trimmed-input]
+                      (= 1 action-count) [::do-action (first actions)]
                       :else              [::choose-action actions])]})))
