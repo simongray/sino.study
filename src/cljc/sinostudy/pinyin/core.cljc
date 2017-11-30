@@ -116,11 +116,12 @@
         pattern (re-pattern (str "(?i)" syllables+ syllables*))]
     (re-matches pattern s)))
 
+;; TODO: in JS, syllables like wang or wan suddenly don't work!
 (defn pinyin+digits?
   "Is this a block of pinyin with tone digits?"
   [s]
-  (let [syllables+ (str "((" (str/join "|" data/syllables) ")[01234]?)+")
-        syllables* (str "('?(" (str/join "|" data/syllables) ")[01234]?)*")
+  (let [syllables+ (str "((" (str/join "|" data/syllables) ")[012345]?)+")
+        syllables* (str "('?(" (str/join "|" data/syllables) ")[012345]?)*")
         pattern (re-pattern (str "(?i)" syllables+ syllables*))]
     (re-matches pattern s)))
 
