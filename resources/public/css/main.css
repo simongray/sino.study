@@ -35,9 +35,35 @@ img#logo {
     padding: 0;
 }
 
-div#page {
-	margin: auto;
+/* Centering vertically is still fucking hard!
+https://stackoverflow.com/questions/356809/best-way-to-center-a-div-on-a-page-vertically-and-horizontally */
+.vcenter {
+	position: fixed;
+	min-width: 98%; /* expand entirely, but always keep a little margin*/
+	max-width: 80%; /* fixes problem with layout when hint length > page width */
+	top: 40%; /* using 50% looks off somehow...*/
+	left: 50%;
+	transform: translate(-50%, -40%);
+	-webkit-transform: translate(-50%, -40%);
+    -moz-transform: translate(-50%, -40%);
+    -o-transform: translate(-50%, -40%);
+    -ms-transform: translate(-50%, -40%);
+}
+
+.vcenter.top {
+	position: fixed;
+	transition: all 0.5s; /* must be "all", not individual attributes */
+    transform: translate(-50%, 0);
+    top: 0em;
+}
+
+/* 	aligner is necessary for limiting width and centering horisontally!
+	without "min-width:98%;" in .vcenter, .vcentor gets crammed,
+	so this extra class is necessary to get a max-width.
+*/
+div#aligner {
 	max-width: 80ch;
+	margin: auto;
 }
 
 form#study-form {
@@ -103,7 +129,7 @@ div#study-hint {
 	text-overflow: ellipsis;
 
 	/* make sure the hint keeps its height when empty */
-	height: 1em;
+	height: 1.2em; /* 1em is having problems displaying span.keypress */
 }
 
 span.keypress {

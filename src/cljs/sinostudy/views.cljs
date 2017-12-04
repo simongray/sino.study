@@ -47,9 +47,11 @@
         (:content query)])]))
 
 (defn main-panel []
-  [:div#page
-   [site/header]
-   [study-form]
-   [study-hint]
-   [study-history]
-   [(site/footer "/")]])
+  (let [started-typing? (rf/subscribe [::subs/started-typing?])]
+    [:div#page {:class (if @started-typing? "vcenter top" "vcenter")}
+     [:div#aligner
+      [site/header]
+      [study-form]
+      [study-hint]
+      [study-history]
+      [(site/footer "/")]]]))

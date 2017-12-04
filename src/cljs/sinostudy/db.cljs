@@ -1,11 +1,12 @@
 (ns sinostudy.db)
 
 (def default-db
-  {:button-label "go"
-   :input        ""
-   :evaluations  '()
-   :hints        '()
-   :queries      '()})
+  {:button-label    "go"
+   :input           ""
+   :started-typing? false
+   :evaluations     '()
+   :hints           '()
+   :queries         '()})
 
 (defn press-enter-to [s]
   [:div "press " [:span.keypress "enter"] " to " s])

@@ -13,6 +13,11 @@
     (:input db)))
 
 (rf/reg-sub
+  ::started-typing?
+  (fn [db]
+    (:started-typing? db)))
+
+(rf/reg-sub
   ::evaluation
   (fn [db]
     (first (:evaluations db))))
