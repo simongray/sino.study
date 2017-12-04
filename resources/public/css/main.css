@@ -173,6 +173,22 @@ li.query-failure {
 footer {
 	animation: fade-in 2s ease;
 	text-align: center;
+
+	/* box */
+	border-top: 1pt solid #999999;
+	padding-top: 1em;
+	min-width: 98%;
+
+	/* position */
+	margin-bottom: 0.5em;
+	position:fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 0);
+    -webkit-transform: translate(-50%, 0);
+    -moz-transform: translate(-50%, 0);
+    -o-transform: translate(-50%, 0);
+    -ms-transform: translate(-50%, 0);
 }
 
 nav {

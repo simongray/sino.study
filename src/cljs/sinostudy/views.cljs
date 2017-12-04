@@ -51,10 +51,11 @@
 
 (defn main-panel []
   (let [typing? (rf/subscribe [::subs/typing?])]
-    [:div#page {:class (if @typing? "vcenter top" "vcenter")}
-     [:div#aligner
-      [site/header]
-      [study-form]
-      [study-hint]
-      [study-history]
-      [footer]]]))
+    [:div
+     [:div#page {:class (if @typing? "vcenter top" "vcenter")}
+      [:div#aligner
+       [site/header]
+       [study-form]
+       [study-hint]
+       [study-history]]]
+     [footer]]))
