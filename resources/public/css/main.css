@@ -10,7 +10,10 @@
 
 body {
 	font-family: "Gill Sans", sans-serif;
-	font-weight: normal;
+	font-weight: lighter;
+
+	/* otherwise safari fonts become too thin */
+	-webkit-font-smoothing: subpixel-antialiased;
 }
 
 header {
