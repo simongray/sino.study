@@ -46,12 +46,15 @@
          :class (when (= (:state query) :failure) "query-failure")}
         (:content query)])]))
 
+(def footer
+  (site/footer "/"))
+
 (defn main-panel []
-  (let [started-typing? (rf/subscribe [::subs/started-typing?])]
-    [:div#page {:class (if @started-typing? "vcenter top" "vcenter")}
+  (let [typing? (rf/subscribe [::subs/typing?])]
+    [:div#page {:class (if @typing? "vcenter top" "vcenter")}
      [:div#aligner
       [site/header]
       [study-form]
       [study-hint]
       [study-history]
-      [(site/footer "/")]]]))
+      [footer]]]))

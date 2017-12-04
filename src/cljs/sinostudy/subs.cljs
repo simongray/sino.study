@@ -13,9 +13,9 @@
     (:input db)))
 
 (rf/reg-sub
-  ::started-typing?
+  ::typing?
   (fn [db]
-    (:started-typing? db)))
+    (not (empty? (:input db)))))
 
 (rf/reg-sub
   ::evaluation

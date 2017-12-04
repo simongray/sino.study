@@ -43,6 +43,7 @@ https://stackoverflow.com/questions/356809/best-way-to-center-a-div-on-a-page-ve
 	max-width: 80%; /* fixes problem with layout when hint length > page width */
 	top: 40%; /* using 50% looks off somehow...*/
 	left: 50%;
+	transition: all 0.3s; /* must be "all", not individual attributes */
 	transform: translate(-50%, -40%);
 	-webkit-transform: translate(-50%, -40%);
     -moz-transform: translate(-50%, -40%);

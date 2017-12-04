@@ -107,9 +107,7 @@
     (let [db (:db cofx)
           blank-input? (string/blank? input)
           evaluation-lag (if blank-input? 0 500)]
-      {:db             (-> db
-                           (assoc :input input)
-                           (assoc :started-typing? true))
+      {:db             (assoc db :input input)
        :dispatch       (when blank-input? [::display-hint :default])
        :dispatch-later [{:ms       evaluation-lag
                          :dispatch [::evaluate-input input]}]})))

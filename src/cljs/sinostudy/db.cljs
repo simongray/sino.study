@@ -3,7 +3,6 @@
 (def default-db
   {:button-label    "go"
    :input           ""
-   :started-typing? false
    :evaluations     '()
    :hints           '()
    :queries         '()})
