@@ -77,7 +77,6 @@ input#study-input {
 
 	/* positioning */
 	flex: 1;
-	margin-right: 0.5ch;
 
 	/* text-related */
 	font-size: 12pt;
@@ -89,20 +88,29 @@ input#study-input {
 }
 
 button#study-button {
+	/* hiding using trick: https://stackoverflow.com/questions/477691/submitting-a-form-by-pressing-enter-without-a-submit-button*/
+	border:0;
+	padding:0;
+	font-size:0
+
+	/*
+
 	animation: fade-in 1.5s ease;
 
-	/* text-related */
+	/* text-related
 	font-family: Didot, serif;
 	font-weight: lighter;
 	font-size: 12pt;
 	letter-spacing: 0.2ch;
 	color: white;
 
-	/* box */
+	/* box
 	min-width: 6ch;
 	border: none;
 	border-radius: 0.5ch;
 	background-color: #BB5544;
+
+	*/
 }
 
 button#study-button:hover {
