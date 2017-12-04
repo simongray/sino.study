@@ -10,7 +10,7 @@
 
 body {
 	font-family: "Gill Sans", sans-serif;
-	font-weight: lighter;
+	font-weight: normal;
 }
 
 header {
@@ -127,6 +127,7 @@ div#study-hint {
 
 	/* text-related */
     font-size: 9pt;
+    font-weight: lighter;
     color: #AAAAAA;
     margin: 0.3em 0 1em 0;
     padding: 0.5ch;
@@ -183,12 +184,13 @@ footer {
 	text-align: center;
 
 	/* box */
+	background: #BB5544;
 	border-top: 1pt solid #999999;
-	padding-top: 1em;
-	min-width: 98%;
+	padding: 1em 0 0.5em 0;
+	width: 100%;
 
 	/* position */
-	margin-bottom: 0.5em;
+	margin: 0;
 	position:fixed;
     bottom: 0;
     left: 50%;
@@ -203,13 +205,13 @@ nav {
 	/* text-related */
 	font-family: "Gill Sans", sans-serif;
     font-size: 12pt;
-    color: #999999;
+    color: #DD8888;
 }
 
 p#copyright {
 	margin-top: 1.5em;
 	font-size: 8pt;
-    color: #AAAAAA;
+    color: #773333;
 }
 
 a {
@@ -223,9 +225,22 @@ a:hover {
 }
 
 a.current-page, a.current-page:hover {
-	color: #444444;
+	color: #661111;
 	font-weight: bold;
-    text-decoration: none;
+	text-decoration: none;
+}
+
+footer a {
+	color: white;
+}
+
+footer a:hover {
+	color: white;
+	text-decoration: underline;
+}
+
+#copyright a {
+	color: #DD8888
 }
 
 /* DEV STYLES
