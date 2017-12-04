@@ -65,6 +65,7 @@ https://stackoverflow.com/questions/356809/best-way-to-center-a-div-on-a-page-ve
 div#aligner {
 	max-width: 80ch;
 	margin: auto;
+	padding: 0 1ch;
 }
 
 form#study-form {
