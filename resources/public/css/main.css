@@ -181,7 +181,7 @@ li.query-failure {
 }
 
 footer {
-	animation: fade-in 2s ease;
+	animation: fade-in 1.5s ease;
 	text-align: center;
 
 	/* box */
