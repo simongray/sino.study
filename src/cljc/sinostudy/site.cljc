@@ -28,8 +28,8 @@
       (interpose " · "
         [(navlink page "/" "Home")
          (navlink page "/help" "Help")
-         (navlink page "/about" "About")
-         (navlink page "/blog" "Blog")])]
+         (navlink page "/blog" "Blog")
+         (navlink page "/about" "About")])]
      [:p#copyright "© " year-string " Simon Gray ("
       [:a {:href "https://github.com/simongray"} "github"]
       ")"]]))
