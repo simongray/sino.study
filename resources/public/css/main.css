@@ -185,7 +185,10 @@ li.query-failure {
 
 footer {
 	animation: fade-in 1.5s ease;
+
+	/* text */
 	text-align: center;
+	color: #DD8888;
 
 	/* box */
 	background: #BB5544;
@@ -209,13 +212,11 @@ nav {
 	/* text-related */
 	font-family: "Gill Sans", sans-serif;
     font-size: 12pt;
-    color: #DD8888;
 }
 
 p#copyright {
 	margin-top: 1.5em;
 	font-size: 8pt;
-    color: #773333;
 }
 
 a {
@@ -243,9 +244,6 @@ footer a:hover {
 	text-decoration: underline;
 }
 
-#copyright a {
-	color: #DD8888
-}
 
 /* DEV STYLES
 h1#logo {
