@@ -154,13 +154,7 @@ span.keypress {
     color: #888888;
 }
 
-ul#card-list {
-	list-style-type: none;
-	padding: 0;
-	margin: 0;
-}
-
-li.card {
+div#page-content {
 	animation: fade-in 1s ease;
 
 	/* positioning */
@@ -177,10 +171,6 @@ li.card {
     background: white;
     border-radius: 0.5ch;
     /*box-shadow: 0 0.2sem 0.2em #EBEBEB;*/
-}
-
-li.query-failure {
-	color: red;
 }
 
 footer {

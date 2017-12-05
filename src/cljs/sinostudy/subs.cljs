@@ -25,19 +25,23 @@
 (rf/reg-sub
   ::page
   (fn [db]
-    (get-in db (:current db))))
+    (let [current (get-in db [:pages :current])]
+      (when current
+        (get-in db (concat [:pages] current))))))
 
 (rf/reg-sub
   ::page?
-  (fn [db]
-    (not (nil? (:current db)))))
+  (fn [_]
+    [(rf/subscribe [::page])])
+  (fn [[page]]
+    (not (nil? page))))
 
 (rf/reg-sub
   ::page-content
   (fn [_]
     [(rf/subscribe [::page])])
   (fn [[page]]
-    (if page
+    (when page
       (:content page))))
 
 (rf/reg-sub

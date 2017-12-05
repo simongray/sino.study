@@ -4,7 +4,7 @@
             [sinostudy.subs :as subs]
             [sinostudy.events :as events]))
 
-(defn study-input []
+(defn input-field []
   (let [input (rf/subscribe [::subs/input])
         css-class (rf/subscribe [::subs/input-css-class])]
     [:input#study-input
@@ -15,7 +15,7 @@
                      (rf/dispatch [::events/on-input-change
                                    (-> e .-target .-value)]))}]))
 
-(defn study-button []
+(defn input-button []
   (let [label (rf/subscribe [::subs/button-label])
         input (rf/subscribe [::subs/input])]
     [:button#study-button
@@ -25,26 +25,24 @@
                   (rf/dispatch [::events/on-study-button-press @input]))}
      @label]))
 
-(defn study-form []
+(defn form []
   [:form#study-form
-   [study-input]
-   [study-button]])
+   [input-field]
+   [input-button]])
 
-(defn study-hint []
+(defn hint []
   (let [hint-key (rf/subscribe [::subs/hint-key])
         hint-content (rf/subscribe [::subs/hint-content])]
     [:div#study-hint
      {:key @hint-key}
      @hint-content]))
 
-(defn study-history []
-  (let [queries (rf/subscribe [::subs/queries])]
-    [:ul#card-list
-     (for [query @queries]
-       [:li.card
-        {:key (:id query)
-         :class (when (= (:state query) :failure) "query-failure")}
-        (:content query)])]))
+(defn page []
+  (let [page? (rf/subscribe [::subs/page?])
+        page-content (rf/subscribe [::subs/page-content])]
+    (when @page?
+      [:div#page
+       @page-content])))
 
 (def footer
   (site/footer "/"))
@@ -52,10 +50,10 @@
 (defn main-panel []
   (let [typing? (rf/subscribe [::subs/typing?])]
     [:div
-     [:div#page {:class (if @typing? "vcenter top" "vcenter")}
+     [:div {:class (if @typing? "vcenter top" "vcenter")}
       [:div#aligner
        [site/header]
-       [study-form]
-       [study-hint]
-       [study-history]]]
+       [form]
+       [hint]
+       [page]]]
      [footer]]))

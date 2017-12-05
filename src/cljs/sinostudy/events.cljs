@@ -159,11 +159,14 @@
   (fn [cofx _]
     (let [db (:db cofx)
           pages (:pages db)
+          page-type :tests
+          key "test"
+          content-type :hiccup
+          content  [:div [:h1 "Test" ] [:p "This is a test page."]]
           now (:now cofx)
-          content  [:h1 "Test" [:p "This is a test page."]]
           new-pages (-> pages
-                        (assoc :current [:test "test"])
-                        (add-page :tests "test" :hiccup content now))]
+                        (assoc :current [page-type key])
+                        (add-page page-type key content-type content now))]
       {:db (-> db
                (assoc :pages new-pages)
                (assoc :input ""))
