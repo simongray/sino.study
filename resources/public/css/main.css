@@ -243,21 +243,3 @@ footer a:hover {
 	color: white;
 	text-decoration: underline;
 }
-
-
-/* DEV STYLES
-h1#logo {
-	border: 1px dashed green;
-}
-
-div#page {
-	border: 1px dashed orange;
-}
-
-form#study-form {
-	border: 1px dashed red;
-}
-
-li.card {
-	border: 1px dashed blue;
-}
