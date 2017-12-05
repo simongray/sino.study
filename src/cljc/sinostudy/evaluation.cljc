@@ -1,5 +1,6 @@
 (ns sinostudy.evaluation
-  (:require [sinostudy.pinyin.core :refer [umlaut
+  (:require [clojure.string :as str]
+            [sinostudy.pinyin.core :refer [umlaut
                                            pinyin+punct?
                                            pinyin+digits+punct?]]))
 
@@ -14,10 +15,28 @@
   (and (pinyin+digits+punct? query)
        (not (pinyin+punct? query))))
 
+(defn- command?
+  [query]
+  (str/starts-with? query "/"))
+
+(defn- eval-command
+  "Evaluate a command query to get a vector of possible actions."
+  [query]
+  (case query
+    "/clear" [:clear]
+    []))
+
+(defn eval-pinyin
+  "Evaluate a Pinyin query to get a vector of possible actions."
+  [query]
+  (cond-> []
+          (digits->diacritics? query) (conj :digits->diacritics)))
+
 (defn eval-query
   "Evaluate a query string to get a vector of possible actions."
   [query]
   ;; some tests need an umlaut'ed query
   (let [query* (umlaut query)]
-    (cond-> []
-            (digits->diacritics? query*) (conj :digits->diacritics))))
+    (cond
+      (command? query) (eval-command query)
+      :else (eval-pinyin query*))))
