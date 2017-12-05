@@ -164,7 +164,9 @@
           new-pages (-> pages
                         (assoc :current [:test "test"])
                         (add-page :tests "test" :hiccup content now))]
-      {:db (assoc db :pages new-pages)
+      {:db (-> db
+               (assoc :pages new-pages)
+               (assoc :input ""))
        :dispatch [::display-hint :default]})))
 
 ;; dispatched by ::do-action
@@ -183,6 +185,7 @@
           input (:input db)]
       (case action
         :test {:dispatch [::test]}
+        :clear {:dispatch [::initialize-db]}
         :digits->diacritics {:dispatch [::digits->diacritics input]}))))
 
 (rf/reg-event-fx
