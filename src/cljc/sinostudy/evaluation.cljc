@@ -24,6 +24,7 @@
   [query]
   (case query
     "/clear" [:clear]
+    "/test" [:test]
     []))
 
 (defn eval-pinyin

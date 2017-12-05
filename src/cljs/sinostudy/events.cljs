@@ -29,6 +29,11 @@
                      :actions   actions
                      :timestamp timestamp}))
 
+(defn add-page
+  "Returns a new page map with the specified page updated."
+  [pages page-type key content-type content timestamp]
+  (assoc-in pages [page-type key] {:content content
+                                   :timestamp timestamp}))
 
 ;;;; CO-EFFECTS
 
@@ -147,17 +152,38 @@
                    :on-success [::on-query-success]
                    :on-failure [::on-query-failure]}}))
 
+;; dispatched by ::do-action
+(rf/reg-event-fx
+  ::test
+  [(rf/inject-cofx ::now)]
+  (fn [cofx _]
+    (let [db (:db cofx)
+          pages (:pages db)
+          now (:now cofx)
+          content  [:h1 "Test" [:p "This is a test page."]]
+          new-pages (-> pages
+                        (assoc :current [:test "test"])
+                        (add-page :tests "test" :hiccup content now))]
+      {:db (assoc db :pages new-pages)
+       :dispatch [::display-hint :default]})))
+
+;; dispatched by ::do-action
+(rf/reg-event-fx
+  ::digits->diacritics
+  (fn [cofx [_ input]]
+    (let [db (:db cofx)
+          new-input (pinyin/digits->diacritics input)]
+      {:db (assoc db :input new-input)
+       :dispatch [::display-hint :default]})))
+
 (rf/reg-event-fx
   ::do-action
   (fn [cofx [_ action]]
     (let [db (:db cofx)
           input (:input db)]
       (case action
-        :digits->diacritics
-        (let [new-input (pinyin/digits->diacritics input)]
-          {:db (assoc db :input new-input)
-           ;; TODO: perhaps dispatch ::evaluate-input instead?
-           :dispatch [::display-hint :default]})))))
+        :test {:dispatch [::test]}
+        :digits->diacritics {:dispatch [::digits->diacritics input]}))))
 
 (rf/reg-event-fx
   ::choose-action

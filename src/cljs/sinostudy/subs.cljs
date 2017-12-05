@@ -23,6 +23,24 @@
     (first (:evaluations db))))
 
 (rf/reg-sub
+  ::page
+  (fn [db]
+    (get-in db (:current db))))
+
+(rf/reg-sub
+  ::page?
+  (fn [db]
+    (not (nil? (:current db)))))
+
+(rf/reg-sub
+  ::page-content
+  (fn [_]
+    [(rf/subscribe [::page])])
+  (fn [[page]]
+    (if page
+      (:content page))))
+
+(rf/reg-sub
   ::input-css-class
   (fn [_]
     [(rf/subscribe [::input])
