@@ -189,6 +189,7 @@ footer {
 
 	/* box */
 	background: #BB5544;
+	border: 1pt solid #BB5544; /* fixes problem with transparent left border */
 	padding: 1.5em 0 0.5em 0;
 	width: 100%;
 
