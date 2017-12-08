@@ -21,19 +21,25 @@ body {
 	margin: 0;
 	padding: 0;
 
+	/*  grey glow behind input textfield
+		(gradients don't support transitions, unfortunately) */
+	background: white; /* for browsers w/o gradient support */
+	background: radial-gradient(circle, #FDFFFA, white);
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+
 	/* otherwise safari fonts become too thin */
 	-webkit-font-smoothing: subpixel-antialiased;
 }
 
 #bg {
-	/*  grey glow behind input textfield
-		(gradients don't support transitions, unfortunately) */
-	background: white; /* for browsers w/o gradient support */
-	background: radial-gradient(circle, #FDFFFA, white);
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-
     min-height: 100vh; /* necessary to fill screen */
+    transition: all 1s;
+}
+
+#bg.with-page {
+	background: white;
+	transition: all 1s;
 }
 
 header {

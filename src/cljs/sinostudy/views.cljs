@@ -54,9 +54,9 @@
   (site/footer "/"))
 
 (defn main-panel []
-  (let [page? (rf/subscribe [::subs/page?])]
-    [:div#bg
-     [:div {:class (if @page? "main top" "main")}
+  (let [page? @(rf/subscribe [::subs/page?])]
+    [:div#bg {:class (if page? "with-page" "")}
+     [:div {:class (if page? "main top" "main")}
       [:div#aligner
        [header]]]
      [page]
