@@ -55,7 +55,7 @@
 
 (defn main-panel []
   (let [page? (rf/subscribe [::subs/page?])]
-    [:div
+    [:div#bg
      [:div {:class (if @page? "main top" "main")}
       [:div#aligner
        [header]]]

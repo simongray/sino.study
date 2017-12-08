@@ -20,8 +20,20 @@ body {
 	letter-spacing: 0.4ch;
 	margin: 0;
 	padding: 0;
+
 	/* otherwise safari fonts become too thin */
 	-webkit-font-smoothing: subpixel-antialiased;
+}
+
+#bg {
+	/*  grey glow behind input textfield
+		(gradients don't support transitions, unfortunately) */
+	background: white; /* for browsers w/o gradient support */
+	background: radial-gradient(circle, #FDFFFA, white);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+
+    min-height: 100vh; /* necessary to fill screen */
 }
 
 header {
@@ -48,7 +60,6 @@ img#logo {
 /* Centering vertically is still fucking hard!
 https://stackoverflow.com/questions/356809/best-way-to-center-a-div-on-a-page-vertically-and-horizontally */
 .main {
-	background: white;
 	z-index: 1;
 	position: fixed;
 	min-width: 100%; /* expand entirely, but always keep a little margin*/
@@ -61,12 +72,12 @@ https://stackoverflow.com/questions/356809/best-way-to-center-a-div-on-a-page-ve
     -moz-transform: translate(-50%, -40%);
     -o-transform: translate(-50%, -40%);
     -ms-transform: translate(-50%, -40%);
-	border-bottom: solid 1pt rgba(233, 233, 233, 0);
+	border-bottom: solid 2pt rgba(233, 233, 233, 0);
 }
 
 .main.top {
-	border-bottom: solid 1pt rgba(233, 233, 233, 1);
-	background: #FDFEFC;
+	background: #FDFFFA;
+	border-bottom: solid 1pt rgba(220, 220, 220, 1);
 	top: 0;
 	position: fixed;
 	transition: all 0.5s; /* must be "all", not individual attributes */
@@ -199,7 +210,7 @@ footer {
 
 	/* box */
 	border-top: solid 1pt #AA4433;
-	background: #BB5544;
+	background: linear-gradient(#BB5544, #AB4230);
 	border-left: 1pt solid #BB5544; /* fixes problem with transparent left border */
 	padding: 1.5em 0 0.5em 0;
 	width: 100%;
