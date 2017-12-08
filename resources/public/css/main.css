@@ -158,11 +158,9 @@ p, h1 {
 h1 {
 	font-family: Didot, serif;
 	font-weight: normal;
-	font-size: 24pt;
+	font-size: 28pt;
 
-	padding-bottom: 0.1em;
-	border-bottom: 1pt solid #DDDDDD;
-	margin: 0 0 0.5em 0;
+	margin: 0 0 0.2em 0;
 }
 
 p {
