@@ -24,7 +24,7 @@ body {
 	/*  grey glow behind input textfield
 		(gradients don't support transitions, unfortunately) */
 	background: white; /* for browsers w/o gradient support */
-	background: radial-gradient(circle, #FDFFFA, white);
+	background: radial-gradient(circle, #FCFCFB, white);
 	background-repeat: no-repeat;
 	background-attachment: fixed;
 
@@ -82,7 +82,7 @@ https://stackoverflow.com/questions/356809/best-way-to-center-a-div-on-a-page-ve
 }
 
 .main.top {
-	background: #FDFFFA;
+	background: #FCFCFB;
 	border-bottom: solid 1pt rgba(220, 220, 220, 1);
 	top: 0;
 	position: fixed;
@@ -144,7 +144,7 @@ div#study-hint {
 	/* text-related */
     font-size: 9pt;
     font-weight: lighter;
-    color: #AAAAAA;
+    color: #999999;
     margin: 0.3em 0 1em 0;
     padding: 0.5ch;
     letter-spacing: 0.6ch;
@@ -169,13 +169,14 @@ span.keypress {
 p, h1 {
 	color: #555555;
 	margin: 0;
+	letter-spacing: 0.4ch;
 }
 
 
 h1 {
 	font-family: Didot, serif;
 	font-weight: normal;
-	font-size: 28pt;
+	font-size: 24pt;
 
 	margin: 0 0 0.2em 0;
 }
