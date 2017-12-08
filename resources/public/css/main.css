@@ -162,8 +162,8 @@ span.keypress {
 	padding: 0 0.8ch;
 	border: 1pt solid #AAAAAA;
     border-radius: 0.5ch;
-    background-color: #FAFAFA;
-    color: #888888;
+    background-color: white;
+    color: #666666;
 }
 
 p, h1 {
