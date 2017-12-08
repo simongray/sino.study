@@ -149,6 +149,27 @@ span.keypress {
     color: #888888;
 }
 
+p, h1 {
+	color: #555555;
+	margin: 0;
+}
+
+
+h1 {
+	font-family: Didot, serif;
+	font-weight: normal;
+	font-size: 24pt;
+
+	padding-bottom: 0.1em;
+	border-bottom: 1pt solid #DDDDDD;
+	margin: 0 0 0.5em 0;
+}
+
+p {
+	font-size: 12pt;
+	margin: 0 0 1em 0;
+}
+
 article {
 	animation: fade-in 1s ease;
 
@@ -156,7 +177,7 @@ article {
 
 	/* positioning */
 	position: relative;
-	top: 11.5em; /* pos relative to header varies a bit on different browsers */
+	top: 13em; /* pos relative to header varies a bit on different browsers */
 	margin: auto;
 
 	/* text-related */
@@ -198,6 +219,7 @@ nav {
 }
 
 p#copyright {
+	color: #DD8888;
 	margin-top: 1.5em;
 	font-size: 8pt;
 }
