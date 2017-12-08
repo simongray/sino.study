@@ -48,7 +48,7 @@
   (site/footer "/"))
 
 (defn main-panel []
-  (let [typing? (rf/subscribe [::subs/typing?])]
+  (let [typing? (rf/subscribe [::subs/page?])]
     [:div
      [:div {:class (if @typing? "vcenter top" "vcenter")}
       [:div#aligner
