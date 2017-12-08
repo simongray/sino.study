@@ -37,23 +37,27 @@
      {:key @hint-key}
      @hint-content]))
 
+(defn header []
+  [:div
+   [site/header]
+   [form]
+   [hint]])
+
 (defn page []
   (let [page? (rf/subscribe [::subs/page?])
         page-content (rf/subscribe [::subs/page-content])]
     (when @page?
-      [:div#page
+      [:article
        @page-content])))
 
 (def footer
   (site/footer "/"))
 
 (defn main-panel []
-  (let [typing? (rf/subscribe [::subs/page?])]
+  (let [page? (rf/subscribe [::subs/page?])]
     [:div
-     [:div {:class (if @typing? "vcenter top" "vcenter")}
+     [:div {:class (if @page? "main top" "main")}
       [:div#aligner
-       [site/header]
-       [form]
-       [hint]
-       [page]]]
+       [header]]]
+     [page]
      [footer]]))
