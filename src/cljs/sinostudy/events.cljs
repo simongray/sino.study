@@ -111,7 +111,7 @@
   (fn [cofx [_ input]]
     (let [db (:db cofx)
           blank-input? (string/blank? input)
-          evaluation-lag (if blank-input? 0 500)]
+          evaluation-lag (if blank-input? 0 1000)]
       {:db             (assoc db :input input)
        :dispatch       (when blank-input? [::display-hint :default])
        :dispatch-later [{:ms       evaluation-lag
