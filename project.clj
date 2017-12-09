@@ -4,7 +4,7 @@
   :min-lein-version "2.5.3"
   :source-paths ["src/clj" "src/cljc"]
 
-  :dependencies [[org.clojure/clojure "1.9.0-RC2"]
+  :dependencies [[org.clojure/clojure "1.9.0"]
 
                  ;; reagent/re-frame
                  [org.clojure/clojurescript "1.9.946"]
