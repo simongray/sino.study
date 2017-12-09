@@ -203,7 +203,7 @@ p {
 
 	/* 	to make sure the page can reached on small screen sizes,
 		otherwise the footer might block the view */
-	border-bottom: 6em solid rgba(255,255,255,0);
+	border-bottom: 5.5em solid rgba(255,255,255,0);
 }
 
 article {
