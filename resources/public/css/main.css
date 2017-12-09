@@ -186,26 +186,31 @@ p {
 	margin: 0 0 1em 0;
 }
 
+.pedestal {
+	/* positioning */
+    position: relative;
+    top: 13em; /* pos relative to header varies a bit on different browsers */
+    margin: auto;
+    padding: 0 1ch;
+
+	/* 	to make sure the page can reached on small screen sizes,
+		otherwise the footer might block the view */
+	border-bottom: 6em solid rgba(255,255,255,0);
+}
+
 article {
 	animation: fade-in 1s ease;
 
+	/* box */
 	max-width: 80ch;
 
 	/* positioning */
-	position: relative;
-	top: 13em; /* pos relative to header varies a bit on different browsers */
-	margin: auto;
+    margin: auto;
 
 	/* text-related */
     font-size: 12pt;
     color: #999999;
     letter-spacing: 0.2ch;
-
-	/* box */
-	padding: 1.5ch;
-
-    /* fake bottom border to help with scrolling past footer */
-    border-bottom: 6em solid rgba(255, 255, 255, 0)
 }
 
 footer {

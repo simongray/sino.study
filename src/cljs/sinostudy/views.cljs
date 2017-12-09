@@ -47,8 +47,9 @@
   (let [page?        (rf/subscribe [::subs/page?])
         page-content (rf/subscribe [::subs/page-content])]
     (when @page?
-      [:article
-       @page-content])))
+      [:div.pedestal
+       [:article
+        @page-content]])))
 
 (def footer
   (site/footer "/"))
