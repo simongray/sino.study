@@ -47,13 +47,13 @@
 (rf/reg-sub
   ::input-css-class
   (fn [_]
-    [(rf/subscribe [::input])
-     (rf/subscribe [::evaluation])])
-  (fn [[input evaluation]]
-    (when (and evaluation
+    [(rf/subscribe [::evaluation])])
+  (fn [[evaluation]]
+    (if (and evaluation
                (empty? (:actions evaluation))
                (not= "" (:query evaluation)))
-      "no-actions")))
+      "default no-actions"
+      "default")))
 
 (rf/reg-sub
   ::hint

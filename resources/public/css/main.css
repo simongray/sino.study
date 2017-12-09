@@ -132,9 +132,15 @@ button#study-button {
 	width: 0;
 }
 
+input.default {
+	background-color: white;
+	transition: all 0.5s;
+}
+
 /* red colouring of input when evaluation returns 0 actions */
 input.no-actions {
 	background-color: #ffdcc6;
+	transition: all 0.5s;
 }
 
 div#study-hint {
