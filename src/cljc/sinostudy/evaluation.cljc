@@ -22,7 +22,7 @@
 (defn- eval-command
   "Evaluate a command query to get a vector of possible actions."
   [query]
-  (case query
+  (case (str/lower-case query)
     "/clear" [:clear]
     "/test" [:test]
     []))
