@@ -1,8 +1,8 @@
 (ns sinostudy.pinyin.core
   (:require [clojure.string :as str]
-            #?(:clj  [clojure.spec.alpha :as spec]
-               :cljs [cljs.spec.alpha :as spec])
-            [sinostudy.pinyin.data :as data]))
+    #?(:clj [clojure.spec.alpha :as spec]
+       :cljs [cljs.spec.alpha :as spec])
+      [sinostudy.pinyin.data :as data]))
 
 (defn parse-int
   "Parses a string s into an integer."
@@ -57,8 +57,8 @@
   is the one immediately before the digit, i.e. the last final."
   [s]
   (let [digit  (last s)
-        end    (dec (count s))      ; decrementing to account for affixed digit
-        length (if (< end 4) end 4) ; most cases will be <4
+        end    (dec (count s))           ; decrementing b/c of affixed digit
+        length (if (< end 4) end 4)      ; most cases will be <4
         start  (- end length)]
     (loop [candidate (subs s start end)]
       (cond

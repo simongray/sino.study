@@ -5,21 +5,21 @@
             [sinostudy.events :as events]))
 
 (defn input-field []
-  (let [input (rf/subscribe [::subs/input])
+  (let [input     (rf/subscribe [::subs/input])
         css-class (rf/subscribe [::subs/input-css-class])]
     [:input#study-input
-     {:type        :text
-      :value       @input
-      :class       @css-class
-      :on-change   (fn [e]
-                     (rf/dispatch [::events/on-input-change
-                                   (-> e .-target .-value)]))}]))
+     {:type      :text
+      :value     @input
+      :class     @css-class
+      :on-change (fn [e]
+                   (rf/dispatch [::events/on-input-change
+                                 (-> e .-target .-value)]))}]))
 
 (defn input-button []
   (let [label (rf/subscribe [::subs/button-label])
         input (rf/subscribe [::subs/input])]
     [:button#study-button
-     {:type :submit
+     {:type     :submit
       :on-click (fn [e]
                   (.preventDefault e)
                   (rf/dispatch [::events/on-study-button-press @input]))}
@@ -31,7 +31,7 @@
    [input-button]])
 
 (defn hint []
-  (let [hint-key (rf/subscribe [::subs/hint-key])
+  (let [hint-key     (rf/subscribe [::subs/hint-key])
         hint-content (rf/subscribe [::subs/hint-content])]
     [:div#study-hint
      {:key @hint-key}
@@ -44,7 +44,7 @@
    [hint]])
 
 (defn page []
-  (let [page? (rf/subscribe [::subs/page?])
+  (let [page?        (rf/subscribe [::subs/page?])
         page-content (rf/subscribe [::subs/page-content])]
     (when @page?
       [:article

@@ -13,7 +13,7 @@
     [:a {:href to} text]))
 
 (def current-year
-  #?(:clj (.getYear (java.time.LocalDateTime/now))
+  #?(:clj  (.getYear (java.time.LocalDateTime/now))
      :cljs (.getFullYear (js/Date.))))
 
 (def year-string
@@ -26,10 +26,10 @@
     [:footer
      [:nav
       (interpose " · "
-        [(navlink page "/" "Home")
-         (navlink page "/help" "Help")
-         (navlink page "/blog" "Blog")
-         (navlink page "/about" "About")])]
+                 [(navlink page "/" "Home")
+                  (navlink page "/help" "Help")
+                  (navlink page "/blog" "Blog")
+                  (navlink page "/about" "About")])]
      [:p#copyright "© " year-string " Simon Gray ("
       [:a {:href "https://github.com/simongray"} "github"]
       ")"]]))
