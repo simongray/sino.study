@@ -175,21 +175,23 @@ span.keypress {
 p, h1 {
 	color: #555555;
 	margin: 0;
-	letter-spacing: 0.4ch;
+	letter-spacing: 0.2ch;
 }
 
 
 h1 {
 	font-family: Didot, serif;
-	font-weight: normal;
+	font-weight: 600;
 	font-size: 24pt;
 
 	margin: 0 0 0.2em 0;
 }
 
 p {
-	font-size: 12pt;
+	font-size: 14pt;
+	font-weight: 100;
 	margin: 0 0 1em 0;
+	color: #777777;
 }
 
 .pedestal {
@@ -214,7 +216,6 @@ article {
     margin: auto;
 
 	/* text-related */
-    font-size: 12pt;
     color: #999999;
     letter-spacing: 0.2ch;
 }
