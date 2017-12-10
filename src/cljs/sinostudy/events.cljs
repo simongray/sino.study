@@ -35,6 +35,13 @@
   (assoc-in pages [page-type key] {:content   content
                                    :timestamp timestamp}))
 
+(defn new-page
+  "Returns an updated page map with the current page set to the new page."
+  [pages page-type key content-type content timestamp]
+  (-> pages
+      (assoc :history (conj (:history pages) [page-type key]))
+      (add-page page-type key content-type content timestamp)))
+
 ;;;; CO-EFFECTS
 
 (rf/reg-cofx
@@ -164,9 +171,7 @@
           content-type :hiccup
           content      [:div [:h1 "Test"] [:p "This is a test page."]]
           now          (:now cofx)
-          new-pages    (-> pages
-                           (assoc :current [page-type key])
-                           (add-page page-type key content-type content now))]
+          new-pages    (new-page pages page-type key content-type content now)]
       {:db       (-> db
                      (assoc :pages new-pages)
                      (assoc :input ""))

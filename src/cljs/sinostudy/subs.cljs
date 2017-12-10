@@ -23,11 +23,26 @@
     (first (:evaluations db))))
 
 (rf/reg-sub
-  ::page
+  ::pages
   (fn [db]
-    (let [current (get-in db [:pages :current])]
-      (when current
-        (get-in db (concat [:pages] current))))))
+    (:pages db)))
+
+(rf/reg-sub
+  ::page-history
+  (fn [_]
+    [(rf/subscribe [::pages])])
+  (fn [[pages]]
+    (:history pages)))
+
+(rf/reg-sub
+  ::page
+  (fn [_]
+    [(rf/subscribe [::pages])
+     (rf/subscribe [::page-history])])
+  (fn [[pages page-history]]
+    (when page-history
+      (let [current-page (first page-history)]
+        (get-in pages current-page)))))
 
 (rf/reg-sub
   ::page?
