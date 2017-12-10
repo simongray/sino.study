@@ -161,7 +161,7 @@
                   :on-failure      [::on-query-failure]}}))
 
 (rf/reg-event-fx
-  ::do-action
+  ::perform-action
   (fn [cofx [_ action]]
     (let [db    (:db cofx)
           input (:input db)]
@@ -189,7 +189,7 @@
                               (:actions latest-evaluation))]
       {:dispatch-n [(case (count actions)
                       0 [::display-hint :no-actions]
-                      1 [::do-action (first actions)]
+                      1 [::perform-action (first actions)]
                       [::choose-action actions])
                     (when new-query? [::save-evaluation query actions])]})))
 
