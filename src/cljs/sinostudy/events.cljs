@@ -34,8 +34,9 @@
 (defn add-page
   "Returns a new page map with the specified page updated."
   [pages page-type key content-type content timestamp]
-  (assoc-in pages [page-type key] {:content   content
-                                   :timestamp timestamp}))
+  (assoc-in pages [page-type key] {:content      content
+                                   :content-type content-type
+                                   :timestamp    timestamp}))
 
 (defn new-page
   "Returns an updated page map with the current page set to the new page."
