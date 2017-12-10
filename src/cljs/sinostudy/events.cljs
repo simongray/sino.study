@@ -163,10 +163,10 @@
   (fn [cofx [_ action]]
     (let [db    (:db cofx)
           input (:input db)]
-      (case action
-        :test {:dispatch [::test]}
-        :clear {:dispatch [::initialize-db]}
-        :digits->diacritics {:dispatch [::digits->diacritics input]}))))
+      {:dispatch (case action
+                   :test [::test]
+                   :clear [::initialize-db]
+                   :digits->diacritics [::digits->diacritics input])})))
 
 (rf/reg-event-fx
   ::choose-action
