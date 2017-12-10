@@ -88,15 +88,16 @@
 ;; dispatched by ::on-input-change
 ;; only evaluates the latest input (no change while still writing)
 ;; this improves performance when coupled with delayed dispatching
+;; also doesn't evaluate the same query twice in a row!
 (rf/reg-event-fx
   ::evaluate-input
   (fn [cofx [_ input]]
     (let [db                (:db cofx)
           latest-evaluation (first (:evaluations db))
+          latest-input?     (= input (:input db))
           query             (string/trim input)
-          query-changed?    (not= query (:query latest-evaluation))]
-      (when (and query-changed?
-                 (= input (:input db)))
+          new-query?    (not= query (:query latest-evaluation))]
+      (when (and latest-input? new-query?)
         (let [actions      (eval-query query)
               action-count (count actions)
               new-hint     (cond
