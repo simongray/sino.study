@@ -158,6 +158,7 @@
                   :on-success      [::on-query-success]
                   :on-failure      [::on-query-failure]}}))
 
+;; dispatched by ::on-submit
 (rf/reg-event-fx
   ::perform-action
   (fn [cofx [_ action]]
@@ -168,6 +169,7 @@
                    :clear [::initialize-db]
                    :digits->diacritics [::digits->diacritics input])})))
 
+;; dispatched by ::on-submit
 (rf/reg-event-fx
   ::choose-action
   (fn [_ _]
@@ -194,7 +196,6 @@
 
 ;;;; ACTIONS (= events triggered by submitting input)
 
-;; dispatched by ::do-action
 (rf/reg-event-fx
   ::test
   [(rf/inject-cofx ::now)]
@@ -212,7 +213,6 @@
                      (assoc :input ""))
        :dispatch [::display-hint :default]})))
 
-;; dispatched by ::do-action
 (rf/reg-event-fx
   ::digits->diacritics
   (fn [cofx [_ input]]
