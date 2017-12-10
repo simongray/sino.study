@@ -96,7 +96,7 @@
           latest-evaluation (first (:evaluations db))
           latest-input?     (= input (:input db))
           query             (string/trim input)
-          new-query?    (not= query (:query latest-evaluation))]
+          new-query?        (not= query (:query latest-evaluation))]
       (when (and latest-input? new-query?)
         (let [actions      (eval-query query)
               action-count (count actions)
@@ -117,13 +117,13 @@
 (rf/reg-event-fx
   ::on-input-change
   (fn [cofx [_ input]]
-    (let [db             (:db cofx)
-          blank-input?   (string/blank? input)
-          evaluation-lag (if blank-input? 0 1000)]
-      {:db             (assoc db :input input)
-       :dispatch       (when blank-input? [::display-hint :default])
-       :dispatch-later [{:ms       evaluation-lag
-                         :dispatch [::evaluate-input input]}]})))
+    (let [db (:db cofx)
+          fx {:db (assoc db :input input)}]
+      (if (string/blank? input)
+        (assoc fx :dispatch-n [[::display-hint :default]
+                               [::evaluate-input input]])
+        (assoc fx :dispatch-later [{:dispatch [::evaluate-input input]
+                                    :ms       1000}])))))
 
 ;; dispatched upon a successful retrieval of a query result
 (rf/reg-event-fx
