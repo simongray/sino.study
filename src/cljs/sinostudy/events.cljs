@@ -69,23 +69,22 @@
   ::display-hint
   [(rf/inject-cofx ::now)]
   (fn [cofx [_ hint-type]]
-    (let [db    (:db cofx)
-          hints (:hints db)
-          now   (:now cofx)]
-      {:db (assoc db :hints (add-hint hints hint-type now))})))
+    (let [db        (:db cofx)
+          hints     (:hints db)
+          now       (:now cofx)
+          new-hints (add-hint hints hint-type now)]
+      {:db (assoc db :hints new-hints)})))
 
 ;; dispatched by both ::evaluate-input and ::on-study-button-press
 (rf/reg-event-fx
   ::save-evaluation
   [(rf/inject-cofx ::now)]
   (fn [cofx [_ query actions]]
-    (let [db          (:db cofx)
-          evaluations (:evaluations db)
-          now         (:now cofx)]
-      {:db (assoc db :evaluations (add-evaluation evaluations
-                                                  query
-                                                  actions
-                                                  now))})))
+    (let [db              (:db cofx)
+          evaluations     (:evaluations db)
+          now             (:now cofx)
+          new-evaluations (add-evaluation evaluations query actions now)]
+      {:db (assoc db :evaluations new-evaluations)})))
 
 ;; dispatched by ::on-input-change
 ;; only evaluates the latest input (no change while still writing)
