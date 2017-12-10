@@ -22,7 +22,7 @@
      {:type     :submit
       :on-click (fn [e]
                   (.preventDefault e)
-                  (rf/dispatch [::events/on-study-button-press @input]))}
+                  (rf/dispatch [::events/on-submit @input]))}
      @label]))
 
 (defn form []

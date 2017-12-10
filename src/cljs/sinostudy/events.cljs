@@ -203,7 +203,7 @@
 ;; dispatched by clicking the study button (= pressing enter)
 ;; forces an evaluation for the latest input if it hasn't been evaluated yet
 (rf/reg-event-fx
-  ::on-study-button-press
+  ::on-submit
   (fn [cofx [_ input]]
     (let [db                (:db cofx)
           latest-evaluation (first (:evaluations db))
