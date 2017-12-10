@@ -147,8 +147,6 @@
       {:db       (assoc db :queries (add-query queries :failure result now))
        :dispatch [::display-hint :query-failure]})))
 
-
-;; dispatched by ::on-study-button-press
 (rf/reg-event-fx
   ::send-query
   (fn [cofx [_ query]]
@@ -202,7 +200,7 @@
   (fn [_ _]
     {}))                                                    ;; TODO
 
-;; dispatched by clicking the study button
+;; dispatched by clicking the study button (= pressing enter)
 ;; forces an evaluation for the latest input if it hasn't been evaluated yet
 (rf/reg-event-fx
   ::on-study-button-press
@@ -210,14 +208,12 @@
     (let [db                (:db cofx)
           latest-evaluation (first (:evaluations db))
           query             (string/trim input)
-          query-changed?    (not= query (:query latest-evaluation))
-          actions           (if query-changed?
+          new-query?        (not= query (:query latest-evaluation))
+          actions           (if new-query?
                               (eval-query query)
-                              (:actions latest-evaluation))
-          action-count      (count actions)]
-      {:dispatch-n [(when query-changed?
-                      [::save-evaluation query actions])
-                    (cond
-                      (= 0 action-count) [::display-hint :no-actions]
-                      (= 1 action-count) [::do-action (first actions)]
-                      :else [::choose-action actions])]})))
+                              (:actions latest-evaluation))]
+      {:dispatch-n [(case (count actions)
+                      0 [::display-hint :no-actions]
+                      1 [::do-action (first actions)]
+                      [::choose-action actions])
+                    (when new-query? [::save-evaluation query actions])]})))
