@@ -6,6 +6,8 @@
             [sinostudy.pinyin.core :as pinyin]
             [ajax.core :as ajax]))
 
+;;;; HELPER FUNCTIONS
+
 (defn add-query
   "Returns a list of queries with the new query prepended."
   [queries state content timestamp]
@@ -158,33 +160,6 @@
                   :on-success      [::on-query-success]
                   :on-failure      [::on-query-failure]}}))
 
-;; dispatched by ::do-action
-(rf/reg-event-fx
-  ::test
-  [(rf/inject-cofx ::now)]
-  (fn [cofx _]
-    (let [db           (:db cofx)
-          pages        (:pages db)
-          page-type    :tests
-          key          "test"
-          content-type :hiccup
-          content      [:div [:h1 "Test"] [:p "This is a test page."]]
-          now          (:now cofx)
-          new-pages    (new-page pages page-type key content-type content now)]
-      {:db       (-> db
-                     (assoc :pages new-pages)
-                     (assoc :input ""))
-       :dispatch [::display-hint :default]})))
-
-;; dispatched by ::do-action
-(rf/reg-event-fx
-  ::digits->diacritics
-  (fn [cofx [_ input]]
-    (let [db        (:db cofx)
-          new-input (pinyin/digits->diacritics input)]
-      {:db       (assoc db :input new-input)
-       :dispatch [::display-hint :default]})))
-
 (rf/reg-event-fx
   ::do-action
   (fn [cofx [_ action]]
@@ -217,3 +192,33 @@
                       1 [::do-action (first actions)]
                       [::choose-action actions])
                     (when new-query? [::save-evaluation query actions])]})))
+
+
+;;;; ACTIONS (= events triggered by submitting input)
+
+;; dispatched by ::do-action
+(rf/reg-event-fx
+  ::test
+  [(rf/inject-cofx ::now)]
+  (fn [cofx _]
+    (let [db           (:db cofx)
+          pages        (:pages db)
+          page-type    :tests
+          key          "test"
+          content-type :hiccup
+          content      [:div [:h1 "Test"] [:p "This is a test page."]]
+          now          (:now cofx)
+          new-pages    (new-page pages page-type key content-type content now)]
+      {:db       (-> db
+                     (assoc :pages new-pages)
+                     (assoc :input ""))
+       :dispatch [::display-hint :default]})))
+
+;; dispatched by ::do-action
+(rf/reg-event-fx
+  ::digits->diacritics
+  (fn [cofx [_ input]]
+    (let [db        (:db cofx)
+          new-input (pinyin/digits->diacritics input)]
+      {:db       (assoc db :input new-input)
+       :dispatch [::display-hint :default]})))
