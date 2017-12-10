@@ -40,8 +40,8 @@
     [(rf/subscribe [::pages])
      (rf/subscribe [::page-history])])
   (fn [[pages page-history]]
-    (when page-history
-      (let [current-page (first page-history)]
+    (let [current-page (first page-history)]
+      (when (not (nil? current-page))
         (get-in pages current-page)))))
 
 (rf/reg-sub
