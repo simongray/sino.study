@@ -27,6 +27,7 @@
      [:nav
       (interpose " · "
                  [(navlink page "/" "Home")
+                  (navlink page "/test" "Test") ;; TODO: remove
                   (navlink page "/help" "Help")
                   (navlink page "/blog" "Blog")
                   (navlink page "/about" "About")])]

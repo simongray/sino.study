@@ -2,6 +2,7 @@
   (:require [reagent.core :as reagent]
             [re-frame.core :as rf]
             [day8.re-frame.http-fx]
+            [sinostudy.routes :as routes]
             [sinostudy.events :as events]
             [sinostudy.views :as views]
             [sinostudy.config :as config]))
@@ -18,6 +19,7 @@
   (.focus (.getElementById js/document "study-input")))
 
 (defn ^:export init []
+  (routes/app-routes)
   (rf/dispatch-sync [::events/initialize-db])
   (dev-setup)
   (mount-root))
