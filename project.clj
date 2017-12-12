@@ -25,6 +25,7 @@
                                  ;; reagent/re-frame
   :profiles {:dev {:dependencies [[binaryage/devtools "0.9.4"]
                                   [re-frisk "0.5.2"]
+                                  [day8.re-frame/trace "0.1.13"] ; Ctrl+h to toggle
 
                                   ;; compojure
                                   [javax.servlet/servlet-api "2.5"]
@@ -47,7 +48,8 @@
                                        :output-dir           "resources/public/js/compiled/out"
                                        :asset-path           "js/compiled/out"
                                        :source-map-timestamp true
-                                       :preloads             [devtools.preload re-frisk.preload]
+                                       :closure-defines      {"re_frame.trace.trace_enabled_QMARK_" true}
+                                       :preloads             [devtools.preload re-frisk.preload day8.re-frame.trace.preload]
                                        :external-config      {:devtools/config {:features-to-install :all}}}}
 
                        {:id           "min"
