@@ -44,18 +44,17 @@
    [hint]])
 
 (defn page []
-  (let [page?        (rf/subscribe [::subs/page?])
-        page-content (rf/subscribe [::subs/page-content])]
-    (when @page?
+  (let [page-content @(rf/subscribe [::subs/page-content])]
+    (when page-content
       [:div.pedestal
        [:article
-        @page-content]])))
+        page-content]])))
 
 (def footer
   (site/footer "/"))
 
 (defn main-panel []
-  (let [page? @(rf/subscribe [::subs/page?])]
+  (let [page? @(rf/subscribe [::subs/current-page])]
     [:div#bg {:class (if page? "with-page" "")}
      [:div {:class (if page? "main top" "main")}
       [:div#aligner

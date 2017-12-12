@@ -28,31 +28,24 @@
     (:pages db)))
 
 (rf/reg-sub
-  ::page-history
+  ::history
   (fn [db]
     (:history db)))
 
 (rf/reg-sub
-  ::page
+  ::current-page
   (fn [_]
     [(rf/subscribe [::pages])
-     (rf/subscribe [::page-history])])
+     (rf/subscribe [::history])])
   (fn [[pages page-history]]
     (let [[current-page _] (first page-history)]
       ;; non-existing pages revert to the home page by returning nil
       (get-in pages current-page))))
 
 (rf/reg-sub
-  ::page?
-  (fn [_]
-    [(rf/subscribe [::page])])
-  (fn [[page]]
-    (not (nil? page))))
-
-(rf/reg-sub
   ::page-content
   (fn [_]
-    [(rf/subscribe [::page])])
+    [(rf/subscribe [::current-page])])
   (fn [[page]]
     (when page
       (:content page))))
