@@ -3,10 +3,11 @@
 (def default-db
   {:button-label "go"
    :input        ""
-   :pages        {:history  '()
-                  :analyses {}
+   :pages        {:analyses {}
                   :words    {}
+                  :static   {}
                   :tests    {}}
+   :history      '()
    :evaluations  '()
    :hints        '()
    :queries      '()})

@@ -29,10 +29,8 @@
 
 (rf/reg-sub
   ::page-history
-  (fn [_]
-    [(rf/subscribe [::pages])])
-  (fn [[pages]]
-    (:history pages)))
+  (fn [db]
+    (:history db)))
 
 (rf/reg-sub
   ::page
@@ -40,9 +38,9 @@
     [(rf/subscribe [::pages])
      (rf/subscribe [::page-history])])
   (fn [[pages page-history]]
-    (let [current-page (first page-history)]
-      (when (not (nil? current-page))
-        (get-in pages current-page)))))
+    (let [[current-page _] (first page-history)]
+      ;; non-existing pages revert to the home page by returning nil
+      (get-in pages current-page))))
 
 (rf/reg-sub
   ::page?
@@ -65,8 +63,8 @@
     [(rf/subscribe [::evaluation])])
   (fn [[evaluation]]
     (if (and evaluation
-               (empty? (:actions evaluation))
-               (not= "" (:query evaluation)))
+             (empty? (:actions evaluation))
+             (not= "" (:query evaluation)))
       "default no-actions"
       "default")))
 

@@ -38,12 +38,6 @@
                                    :content-type content-type
                                    :timestamp    timestamp}))
 
-(defn new-page
-  "Returns an updated page map with the current page set to the new page."
-  [pages page-type key content-type content timestamp]
-  (-> pages
-      (assoc :history (conj (:history pages) [page-type key]))
-      (add-page page-type key content-type content timestamp)))
 
 ;;;; CO-EFFECTS
 
@@ -193,20 +187,19 @@
                       [::choose-action actions])
                     (when new-query? [::save-evaluation query actions])]})))
 
-;;;; ACTIONS (= events triggered by submitting input)
-
-;; TODO: remove and refactor page-changing mechanic into event
+;; dispatched by clicking links or through actions
+;; link-clicking is facilitated by frontend routing (secretary + accountant)
 (rf/reg-event-fx
-  ::home
-  (fn [cofx _]
+  ::change-page
+  [(rf/inject-cofx ::now)]
+  (fn [cofx [_ page]]
     (let [db        (:db cofx)
-          pages     (:pages db)
-          history   (:history pages)
-          new-pages (assoc-in pages [:history] (conj history nil))]
-      {:db       (-> db
-                     (assoc :pages new-pages)
-                     (assoc :input ""))
-       :dispatch [::display-hint :default]})))
+          history   (:history db)
+          timestamp (:now cofx)]
+      {:db (assoc db :history (conj history [page timestamp]))})))
+
+
+;;;; ACTIONS (= events triggered by submitting input)
 
 (rf/reg-event-fx
   ::test
@@ -219,11 +212,12 @@
           content-type :hiccup
           content      [:div [:h1 "Test"] [:p "This is a test page."]]
           now          (:now cofx)
-          new-pages    (new-page pages page-type key content-type content now)]
-      {:db       (-> db
-                     (assoc :pages new-pages)
-                     (assoc :input ""))
-       :dispatch [::display-hint :default]})))
+          new-pages    (add-page pages page-type key content-type content now)]
+      {:db         (-> db
+                       (assoc :pages new-pages)
+                       (assoc :input ""))
+       :dispatch-n [[::change-page [:tests "test"]]
+                    [::display-hint :default]]})))
 
 (rf/reg-event-fx
   ::digits->diacritics
