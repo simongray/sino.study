@@ -193,8 +193,20 @@
                       [::choose-action actions])
                     (when new-query? [::save-evaluation query actions])]})))
 
-
 ;;;; ACTIONS (= events triggered by submitting input)
+
+;; TODO: remove and refactor page-changing mechanic into event
+(rf/reg-event-fx
+  ::home
+  (fn [cofx _]
+    (let [db        (:db cofx)
+          pages     (:pages db)
+          history   (:history pages)
+          new-pages (assoc-in pages [:history] (conj history nil))]
+      {:db       (-> db
+                     (assoc :pages new-pages)
+                     (assoc :input ""))
+       :dispatch [::display-hint :default]})))
 
 (rf/reg-event-fx
   ::test
