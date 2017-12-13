@@ -3,8 +3,12 @@
 This is the repository for [sino·study](https://sino.study), 
 a web app designed to assist students of the Chinese language in various ways.
 
-The app is written in Clojure and ClojureScript.
-The frontend uses reagent/re-frame and the backend is a compojure service.
+It is a single-page application written in Clojure and ClojureScript.
+The frontend uses [Reagent](https://github.com/reagent-project/reagent) 
+and [re-frame](https://github.com/Day8/re-frame).
+Furthermore, it makes use of [secretary](https://github.com/gf3/secretary) 
+and [Accountant](https://github.com/venantius/accountant) for frontend routing.
+The backend is a [Compojure](https://github.com/weavejester/compojure) service.
 The functionality is built around my own wrapper library for Stanford CoreNLP,
 [Computerese](https://github.com/simongray/Computerese).
 
