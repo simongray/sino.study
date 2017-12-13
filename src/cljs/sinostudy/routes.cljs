@@ -23,8 +23,25 @@
   ;; furthermore, it may impede on some other functionality
   (secretary/set-config! :prefix "#")
 
-  (defroute "/" [] (re-frame/dispatch [::events/change-page [:static :home]]))
-  (defroute "/test" [] (re-frame/dispatch [::events/test]))
+  (defroute
+    "/" []
+    (re-frame/dispatch [::events/change-page [:static "/"]]))
+
+  (defroute
+    "/help" []
+    (re-frame/dispatch [::events/change-page [:static "/help"]]))
+
+  (defroute
+    "/blog" []
+    (re-frame/dispatch [::events/change-page [:static "/blog"]]))
+
+  (defroute
+    "/about" []
+    (re-frame/dispatch [::events/change-page [:static "/about"]]))
+
+  (defroute
+    "/test" []
+    (re-frame/dispatch [::events/change-page [:static "/test"]]))
 
   (hook-browser-navigation!)
 

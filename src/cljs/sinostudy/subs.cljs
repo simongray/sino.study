@@ -37,10 +37,21 @@
   (fn [_]
     [(rf/subscribe [::pages])
      (rf/subscribe [::history])])
-  (fn [[pages page-history]]
-    (let [[current-page _] (first page-history)]
+  (fn [[pages history]]
+    (let [[current-page _] (first history)]
       ;; non-existing pages revert to the home page by returning nil
       (get-in pages current-page))))
+
+;; the currently active link in the nav section
+(rf/reg-sub
+  ::current-nav
+  (fn [_]
+    [(rf/subscribe [::history])])
+  (fn [[history]]
+    (let [[[page-category key] _] (first history)]
+      (if (= page-category :static)
+        key
+        "/"))))
 
 (rf/reg-sub
   ::page-content
@@ -49,6 +60,14 @@
   (fn [[page]]
     (when page
       (:content page))))
+
+(rf/reg-sub
+  ::page-key
+  (fn [_]
+    [(rf/subscribe [::history])])
+  (fn [[history]]
+    (let [[[page-category key] _] (first history)]
+      (str page-category key))))
 
 (rf/reg-sub
   ::input-css-class

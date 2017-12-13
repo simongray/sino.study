@@ -1,11 +1,27 @@
-(ns sinostudy.db)
+(ns sinostudy.db
+  (:require [sinostudy.site :as site]))
+
+(def static
+  (let [timestamp (site/current-year)]
+    {"/test"  {:timestamp    timestamp
+               :content-type :hiccup
+               :content      [:div [:h1 "Test"] [:p "This is a test page."]]}
+     "/help"  {:timestamp    timestamp
+               :content-type :hiccup
+               :content      [:div [:h1 "Help"] [:p "This is the Help page."]]}
+     "/blog"  {:timestamp    timestamp
+               :content-type :hiccup
+               :content      [:div [:h1 "Blog"] [:p "This is the Blog page."]]}
+     "/about" {:timestamp    timestamp
+               :content-type :hiccup
+               :content      [:div [:h1 "About"] [:p "This is the About page."]]}}))
 
 (def default-db
   {:button-label "go"
    :input        ""
    :pages        {:analyses {}
                   :words    {}
-                  :static   {}
+                  :static   static
                   :tests    {}}
    :history      '()
    :evaluations  '()

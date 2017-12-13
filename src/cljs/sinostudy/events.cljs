@@ -216,7 +216,7 @@
       {:db         (-> db
                        (assoc :pages new-pages)
                        (assoc :input ""))
-       :dispatch-n [[::change-page [:tests "test"]]
+       :dispatch-n [[::change-page [:static "/test"]]
                     [::display-hint :default]]})))
 
 (rf/reg-event-fx

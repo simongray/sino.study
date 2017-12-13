@@ -207,7 +207,7 @@ p {
 }
 
 article {
-	animation: fade-in 1s ease;
+	animation: fade-in 0.5s ease;
 
 	/* box */
 	max-width: 80ch;
@@ -264,7 +264,6 @@ a:hover {
 
 a.current-page, a.current-page:hover {
 	color: #661111;
-	font-weight: bold;
 	text-decoration: none;
 }
 

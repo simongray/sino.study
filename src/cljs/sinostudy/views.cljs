@@ -4,6 +4,11 @@
             [sinostudy.subs :as subs]
             [sinostudy.events :as events]))
 
+(defn logo []
+  [:header
+   [:a {:href "/"}
+    [:img#logo {:src "/img/logo_min.svg"}]]])
+
 (defn input-field []
   (let [input     (rf/subscribe [::subs/input])
         css-class (rf/subscribe [::subs/input-css-class])]
@@ -39,19 +44,45 @@
 
 (defn header []
   [:div
-   [site/header]
+   [logo]
    [form]
    [hint]])
 
 (defn page []
-  (let [page-content @(rf/subscribe [::subs/page-content])]
+  (let [page-content @(rf/subscribe [::subs/page-content])
+        page-key     @(rf/subscribe [::subs/page-key])]
     (when page-content
       [:div.pedestal
-       [:article
+       [:article {:key page-content}
         page-content]])))
 
-(def footer
-  (site/footer "/"))
+(defn navlink
+  [from to text]
+  (let [key (str from "->" to)]
+    (if (= from to)
+      [:a.current-page {:key key} text]
+      [:a {:href to :key key} text])))
+
+(defn navify [from links]
+  (map (fn [[to text]] (navlink from to text)) links))
+
+(def year-string
+  (let [year (site/current-year)]
+    (if (> year 2017)
+      (str "2017-" year)
+      "2017")))
+
+(defn footer []
+  (let [from  (rf/subscribe [::subs/current-nav])
+        links [["/" "Home"]
+               ["/help" "Help"]
+               ["/blog" "Blog"]
+               ["/about" "About"]]]
+    [:footer
+     [:nav (interpose " · " (navify @from links))]
+     [:p#copyright "© " year-string " Simon Gray ("
+      [:a {:href "https://github.com/simongray"} "github"]
+      ")"]]))
 
 (defn main-panel []
   (let [page? @(rf/subscribe [::subs/current-page])]
