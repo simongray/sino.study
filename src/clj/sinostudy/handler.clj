@@ -4,8 +4,14 @@
             [compojure.route :as route]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]))
 
+(def index-html
+  (io/as-file "./resources/public/index.html"))
+
 (defroutes app-routes
-  (GET "/" [] (io/as-file "./resources/public/index.html"))
+  (GET "/" [] index-html)
+  (GET "/help" [] index-html)
+  (GET "/blog" [] index-html)
+  (GET "/about" [] index-html)
 
   ;; TODO: use coercions for regex check of input
   ;; https://weavejester.github.io/compojure/compojure.coercions.html
