@@ -119,3 +119,4 @@ Temporary Items
 # End of https://www.gitignore.io/api/macos,clojure,intellij,leiningen
 
 .idea/codeStyleSettings.xml
+cedict_ts.u8
