@@ -16,6 +16,12 @@
   (rf/clear-subscription-cache!)
   (reagent/render [views/main-panel]
                   (.getElementById js/document "app"))
+  ;; Start the CLJS app from current page in the address bar.
+  ;; The routing mostly takes place on the frontend,
+  ;; so the app needs to orient itself on hard page loads.
+  (let [current-page (-> js/window .-location .-pathname)]
+    (when (not= "/" current-page)
+      (rf/dispatch [::events/change-page [:static current-page]])))
   (.focus (.getElementById js/document "study-input")))
 
 (defn ^:export init []
