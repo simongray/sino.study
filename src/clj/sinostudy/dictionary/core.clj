@@ -9,7 +9,7 @@
 
 (defn add-entry
   "Add (or update) an entry in the dictionary."
-  [dictionary [_ simp trad pinyin definition]]
+  [dictionary [_ trad simp pinyin definition]]
   (if-let [entry (get dictionary simp)]
     (-> dictionary
         (assoc-in [simp :pinyin] (conj (:pinyin entry) pinyin))
@@ -25,13 +25,11 @@
   ;; regex:   TRADITIONAL SIMPLIFIED [PINYIN] /DEFINITION/
   (re-matches #"^([^ ]+) ([^ ]+) \[([^]]+)\] /(.+)/" line))
 
-(def dictionary
-  (with-open [reader (io/reader "cedict_ts.u8")]
+(defn load-dictionary
+  "Load the contents of a CC-CEDICT dictionary file into a map."
+  [file]
+  (with-open [reader (io/reader file)]
     (->> (line-seq reader)
          (filter entry?)
          (map extract-entry)
          (reduce add-entry {}))))
-
-;; testing...
-(doseq [entry (take 30 (seq dictionary))]
-  (println entry))

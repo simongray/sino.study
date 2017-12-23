@@ -2,16 +2,23 @@
   (:require [clojure.java.io :as io]
             [compojure.core :refer :all]
             [compojure.route :as route]
-            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]))
+            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
+            [sinostudy.dictionary.core :as dict]))
 
 (def index-html
   (io/as-file "./resources/public/index.html"))
+
+(defonce dictionary
+  (dict/load-dictionary "./resources/cedict_ts.u8"))
 
 (defroutes app-routes
   (GET "/" [] index-html)
   (GET "/help" [] index-html)
   (GET "/blog" [] index-html)
   (GET "/about" [] index-html)
+
+  (GET "/word/:word" [word]
+    (str (get dictionary "中国")))
 
   ;; TODO: use coercions for regex check of input
   ;; https://weavejester.github.io/compojure/compojure.coercions.html
