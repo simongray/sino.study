@@ -18,7 +18,7 @@
   (GET "/about" [] index-html)
 
   (GET "/word/:word" [word]
-    (str (get dictionary "中国")))
+    (str (get dictionary word)))
 
   ;; TODO: use coercions for regex check of input
   ;; https://weavejester.github.io/compojure/compojure.coercions.html
