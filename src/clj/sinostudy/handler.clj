@@ -8,8 +8,8 @@
 (def index-html
   (io/as-file "./resources/public/index.html"))
 
-(defonce dictionary
-  (dict/load-dictionary "./resources/cedict_ts.u8"))
+(defonce dictionaries
+  (dict/load-dictionaries "./resources/cedict_ts.u8"))
 
 (defroutes app-routes
   (GET "/" [] index-html)
@@ -18,7 +18,9 @@
   (GET "/about" [] index-html)
 
   (GET "/word/:word" [word]
-    (str (get dictionary word)))
+    (str {:traditional (get (nth dictionaries 0) word)
+          :simplified  (get (nth dictionaries 1) word)
+          :pinyin      (get (nth dictionaries 2) word)}))
 
   ;; TODO: use coercions for regex check of input
   ;; https://weavejester.github.io/compojure/compojure.coercions.html
