@@ -26,7 +26,7 @@
 
 ;; compiles a vector of 3 dictionary maps with different look-up keys:
 ;; traditional, simplified, and pinyin
-(def add-entries
+(def compile-dictionaries
   (let [add-trad   (partial add-entry 1)
         add-simp   (partial add-entry 2)
         add-pinyin (partial add-entry 3)]
@@ -48,4 +48,4 @@
     (->> (line-seq reader)
          (filter entry?)
          (map extract-entry)
-         add-entries)))
+         compile-dictionaries)))
