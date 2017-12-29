@@ -4,12 +4,12 @@
             [sinostudy.pinyin.core :as pinyin]))
 
 (defn entry?
-  "Determines if a line is a dictionary entry."
+  "Determine if a line is a dictionary entry."
   [line]
   (not (str/starts-with? line "#")))
 
 (defn split-def
-  "Splits the definition string into separate parts."
+  "Split the definition string into separate parts."
   [definition]
   (set (str/split definition #"/")))
 
@@ -35,8 +35,8 @@
       (assoc dictionary key #{entry}))))
 
 (def compile-dictionaries
-  "Compiles a vector of 3 dictionary maps with different look-up keys:
-  traditional, simplified, and basic Pinyin"
+  "Compile a vector of 3 dictionary maps with different look-up keys:
+  traditional, simplified, and basic Pinyin."
   (let [add-trad   (partial add-entry 0)
         add-simp   (partial add-entry 1)
         add-pinyin (partial add-entry 2)]
@@ -45,8 +45,7 @@
           (partial reduce add-pinyin {}))))
 
 (defn load-dictionaries
-  "Load the contents of a CC-CEDICT dictionary file into a 3 dictionary maps:
-  traditional, simplified, and Pinyin."
+  "Load the contents of a CC-CEDICT dictionary file into Clojure maps."
   [file]
   (with-open [reader (io/reader file)]
     (->> (line-seq reader)
@@ -55,7 +54,7 @@
          compile-dictionaries)))
 
 (defn look-up
-  "Looks up the specified word in each dictionary and merges the results."
+  "Look up the specified word in each dictionary map and merge the results."
   [word dictionaries]
   (let [check-dict (fn [n] (get (nth dictionaries n) word))]
     (->> (map check-dict (range (count dictionaries)))
