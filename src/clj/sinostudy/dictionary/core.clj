@@ -53,3 +53,11 @@
          (filter entry?)
          (map extract-entry)
          compile-dictionaries)))
+
+(defn look-up
+  "Looks up the specified word in each dictionary and merges the results."
+  [word dictionaries]
+  (let [check-dict (fn [n] (get (nth dictionaries n) word))]
+    (->> (map check-dict (range (count dictionaries)))
+         (filter (comp not nil?))
+         (reduce conj))))

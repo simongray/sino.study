@@ -18,9 +18,7 @@
   (GET "/about" [] index-html)
 
   (GET "/word/:word" [word]
-    (str {:traditional (get (nth dictionaries 0) word)
-          :simplified  (get (nth dictionaries 1) word)
-          :pinyin      (get (nth dictionaries 2) word)}))
+    (str (dict/look-up word dictionaries)))
 
   ;; TODO: use coercions for regex check of input
   ;; https://weavejester.github.io/compojure/compojure.coercions.html
