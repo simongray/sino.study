@@ -23,7 +23,7 @@
       [trad simp (pinyin/pinyin-key pinyin) pinyin (split-def definition)])))
 
 (defn add-entry
-  "Add (or extend) an entry in the dictionary; n marks the look-up key."
+  "Add (or extend) an entry in the dictionary map; n marks the look-up key."
   [n dictionary [trad simp pinyin-key pinyin definition :as entry]]
   (let [key   (nth entry n)
         entry {:traditional trad
@@ -35,7 +35,7 @@
       (assoc dictionary key #{entry}))))
 
 (def compile-dictionaries
-  "Compile a vector of 3 dictionary maps with different look-up keys:
+  "Reduce into a vector of 3 dictionary maps with different look-up keys:
   traditional, simplified, and basic Pinyin."
   (let [add-trad   (partial add-entry 0)
         add-simp   (partial add-entry 1)
