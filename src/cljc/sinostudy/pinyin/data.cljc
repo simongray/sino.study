@@ -52,7 +52,7 @@
 
     "e" "ei" "en" "eng" "er"
 
-    "fa" "fan" "fang" "fei" "fen" "feng" "fo" "fou" "fu"
+    "fa" "fan" "fang" "fei" "fen" "feng" "fiao" "fo" "fou" "fu"
 
     "ga" "gai" "gan" "gang" "gao" "ge" "gei" "gen" "geng" "gong" "gou" "gu"
     "gua" "guai" "guan" "guang" "gui" "gun" "guo"
