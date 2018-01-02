@@ -35,6 +35,7 @@
    "ü" #"[ǖǘǚǜ]", "Ü" #"[ǕǗǙǛ]"})
 
 ;; adapted from http://pinyin.info/rules/initials_finals.html
+;; some non-standard syllables have been added: fiao, lo, yo
 (def syllables
   #{"a" "ai" "an" "ang" "ao"
 
@@ -66,8 +67,8 @@
     "kua" "kuai" "kuan" "kuang" "kui" "kun" "kuo"
 
     "la" "lai" "lan" "lang" "lao" "le" "lei" "leng" "li" "lia" "lian" "liang"
-    "liao" "lie" "lin" "ling" "liu" "long" "lou" "lu" "luan" "lun" "luo" "lü"
-    "lüe"
+    "liao" "lie" "lin" "ling" "liu" "lo" "long" "lou" "lu" "luan" "lun" "luo"
+    "lü" "lüe"
 
     "ma" "mai" "man" "mang" "mao" "me" "mei" "men" "meng" "mi" "mian" "miao"
     "mie" "min" "ming" "miu" "mo" "mou" "mu"
