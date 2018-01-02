@@ -98,10 +98,10 @@
     "wa" "wai" "wan" "wang" "wei" "wen" "weng" "wo" "wu"
 
     "xi" "xia" "xian" "xiang" "xiao" "xie" "xin" "xing" "xiong" "xiu" "xu"
-    "xuan" "xue"
+    "xuan" "xun" "xue"
 
     "ya" "yan" "yang" "yao" "ye" "yi" "yin" "ying" "yong" "you" "yu" "yuan"
-    "yue"
+    "yun" "yue"
 
     "za" "zai" "zan" "zang" "zao" "ze" "zei" "zen" "zeng" "zha" "zhai" "zhan"
     "zhang" "zhao" "zhe" "zhei" "zhen" "zheng" "zhi" "zhong" "zhou" "zhu" "zhua"
