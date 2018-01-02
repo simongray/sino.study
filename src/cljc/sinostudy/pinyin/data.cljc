@@ -7,11 +7,15 @@
     "s" "zh" "ch" "sh" "r" "w" "y"})
 
 ;; includes all possible forms in use (e.g. "ue" as shorthand for "üe")
+;; r is a common special case final (technically not a final)
+;; m is a super rare, special case final
 (def finals
   #{"a" "ai" "an" "ang" "ao"
     "e" "ei" "en" "eng" "er"
     "i" "ia" "ian" "iang" "iao" "ie" "in" "ing" "iong" "iu"
+    "m"
     "o" "ong" "ou"
+    "r"
     "u" "ua" "uai" "uan" "uang" "ue" "ui" "un" "uo"
     "ü" "üe"})
 
@@ -25,17 +29,26 @@
    \i "iīíǐìi", \I "IĪÍǏÌI"
    \ü "üǖǘǚǜü", \Ü "ÜǕǗǙǛÜ"})
 
+;; m is a super rare, special case final
+;; the vec is index-aligned like the diacritics above (skip 6 for upper case)
+;; note: the diacriticised versions are multi-char and may ruin formatting!
+(def m-diacritics
+  ["m" "m̄" "ḿ" "m̌" "m̀" "m"
+   "M" "M̄" "Ḿ" "M̌" "M̀" "M"])
+
 ;; only used to search and replace diacritics
+;; also handles special case diacritic char, m
 (def diacritic-patterns
   {"a" #"[āáǎà]", "A" #"[ĀÁǍÀ]"
    "o" #"[ōóǒò]", "O" #"[ŌÓǑÒ]"
    "e" #"[ēéěè]", "E" #"[ĒÉĚÈ]"
    "u" #"[ūúǔù]", "U" #"[ŪÚǓÙ]"
    "i" #"[īíǐì]", "I" #"[ĪÍǏÌ]"
-   "ü" #"[ǖǘǚǜ]", "Ü" #"[ǕǗǙǛ]"})
+   "ü" #"[ǖǘǚǜ]", "Ü" #"[ǕǗǙǛ]"
+   "m" #"(m̄|ḿ|m̌|m̀)" "M" #"(M̄|Ḿ|M̌|M̀)"})
 
 ;; adapted from http://pinyin.info/rules/initials_finals.html
-;; some non-standard syllables have been added: fiao, lo, yo
+;; some non-standard syllables have been added: fiao, lo, r, yo
 (def syllables
   #{"a" "ai" "an" "ang" "ao"
 
@@ -70,7 +83,7 @@
     "liao" "lie" "lin" "ling" "liu" "lo" "long" "lou" "lu" "luan" "lun" "luo"
     "lü" "lüe"
 
-    "ma" "mai" "man" "mang" "mao" "me" "mei" "men" "meng" "mi" "mian" "miao"
+    "m" "ma" "mai" "man" "mang" "mao" "me" "mei" "men" "meng" "mi" "mian" "miao"
     "mie" "min" "ming" "miu" "mo" "mou" "mu"
 
     "na" "nai" "nan" "nang" "nao" "ne" "nei" "nen" "neng" "ni" "nian" "niang"
@@ -85,7 +98,7 @@
     "qi" "qia" "qian" "qiang" "qiao" "qie" "qin" "qing" "qiong" "qiu" "qu"
     "quan" "que" "qun"
 
-    "ran" "rang" "rao" "re" "ren" "reng" "ri" "rong" "rou" "ru" "rua" "ruan"
+    "r" "ran" "rang" "rao" "re" "ren" "reng" "ri" "rong" "rou" "ru" "rua" "ruan"
     "rui" "run" "ruo"
 
     "sa" "sai" "san" "sang" "sao" "se" "sen" "seng" "sha" "shai" "shan" "shang"

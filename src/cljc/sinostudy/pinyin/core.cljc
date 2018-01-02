@@ -35,28 +35,36 @@
   "Get the index in s where a diacritic should be put according to Pinyin rules;
   s is a Pinyin syllable with/without an affixed digit (e.g. wang2 or lao)."
   [s]
-  (if (string? s)
-    (let [s* (re-find #"[^\d]+" (str/lower-case s))]
-      (cond
-        (empty? s*) nil
-        (str/includes? s* "a") (str/index-of s* "a")
-        (str/includes? s* "e") (str/index-of s* "e")
-        (str/includes? s* "ou") (str/index-of s* "o")
-        :else (if-let [index (str/last-index-of s* "n")]
-                (- index 1)
-                (- (count s*) 1))))
-    nil))
+  (let [s* (re-find #"[^\d]+" (str/lower-case s))]
+    (cond
+      (empty? s*) nil
+      (str/includes? s* "a") (str/index-of s* "a")
+      (str/includes? s* "e") (str/index-of s* "e")
+      (str/includes? s* "ou") (str/index-of s* "o")
+      :else (if-let [index (str/last-index-of s* "n")]
+              (- index 1)
+              (- (count s*) 1)))))
+
+(defn handle-m
+  "Handle the super rare, special case final, m."
+  [s]
+  (when (re-matches #"[mM]\d" s)
+    (let [tone (parse-int (str (last s)))
+          skip (if (= \M (first s)) 6 0)]
+      (nth data/m-diacritics (+ tone skip)))))
 
 (defn digit->diacritic
   "Convert a Pinyin syllable/final s with an affixed tone digit into one with a
   tone diacritic. When converting more than a single syllable at a time,
   use digits->diacritics instead!"
   [s]
-  (let [tone           (parse-int (str (last s)))
-        s*             (subs s 0 (dec (count s)))
-        char           (nth s (diacritic-index s))
-        char+diacritic (diacritic char tone)]
-    (str/replace s* char char+diacritic)))
+  (if-let [m (handle-m s)]
+    m
+    (let [tone           (parse-int (str (last s)))
+          s*             (subs s 0 (dec (count s)))
+          char           (nth s (diacritic-index s))
+          char+diacritic (diacritic char tone)]
+      (str/replace s* char char+diacritic))))
 
 ;; used by diacritic-string to find the bounds of the last Pinyin final
 (defn- last-final
@@ -74,17 +82,24 @@
         (contains? data/finals (str/lower-case candidate)) (str candidate digit)
         :else (recur (apply str (rest candidate)))))))
 
+(defn- handle-r
+  "Handle the common special case final, r."
+  [s]
+  (when (contains? #{"r5" "R5" "r0" "R0"} s) (subs s 0 1)))
+
 ;; used by digits->diacritics to convert tone digits into diacritics
 (defn- diacritic-string
   "Take a string with a single affixed tone digit as input and substitutes the
   digit with a tone diacritic. The diacritic is placed in the Pinyin final
   immediately before tone digit."
   [s]
-  (let [final           (last-final s)
-        final+diacritic (digit->diacritic final)
-        ;; prefix = preceding neutral tone syllables + the initial
-        prefix          (subs s 0 (- (count s) (count final)))]
-    (str prefix final+diacritic)))
+  (if-let [r (handle-r s)]
+    r
+    (let [final           (last-final s)
+          final+diacritic (digit->diacritic final)
+          ;; prefix = preceding neutral tone syllables + the initial
+          prefix          (subs s 0 (- (count s) (count final)))]
+      (str prefix final+diacritic))))
 
 (defn digits->diacritics
   "Convert a Pinyin string s with one or several tone digits into a string with
@@ -93,13 +108,11 @@
   result in no diacritic being added, i.e. marking a neutral tone. Furthermore,
   any occurrence of V is treated as and implicitly converted into a Ü."
   [s & {:keys [v-as-umlaut] :or {v-as-umlaut true} :as opts}]
-  (if (string? s)
-    (let [s*                (if v-as-umlaut (umlaut s) s)
-          digit-strings     (re-seq #"[^\d]+\d" s*)
-          diacritic-strings (map diacritic-string digit-strings)
-          suffix            (re-seq #"[^\d]+$" s*)]
-      (apply str (concat diacritic-strings suffix)))
-    nil))
+  (let [s*                (if v-as-umlaut (umlaut s) s)
+        digit-strings     (re-seq #"[^\d]+\d" s*)
+        diacritic-strings (map diacritic-string digit-strings)
+        suffix            (re-seq #"[^\d]+$" s*)]
+    (apply str (concat diacritic-strings suffix))))
 
 ;; used by the pinyin+diacritics? (allows for evaluation as plain Pinyin)
 (defn no-diacritics

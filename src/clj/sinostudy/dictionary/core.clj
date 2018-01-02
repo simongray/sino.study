@@ -1,7 +1,9 @@
 (ns sinostudy.dictionary.core
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
-            [sinostudy.pinyin.core :as pinyin]))
+            [clojure.set :as set]
+            [sinostudy.pinyin.core :as pinyin]
+            [sinostudy.pinyin.patterns :as patterns]))
 
 (defn entry?
   "Determine if a line is a dictionary entry."
@@ -9,9 +11,53 @@
   (not (str/starts-with? line "#")))
 
 (defn split-def
-  "Split the definition string into separate parts."
+  "Split the CC-CEDICT definition string into separate, unique parts."
   [definition]
   (set (str/split definition #"/")))
+
+(defn u:->umlaut
+  "Replace the CC-CEDICT substitute u: with the proper Pinyin ü."
+  [pinyin]
+  (str/replace pinyin "u:" "ü"))
+
+(defn join-abbr
+  "Join the uppercase letters in a CC-CEDICT Pinyin string into blocks."
+  [pinyin]
+  (let [abbr-letters  #"([A-Z]( [A-Z])+)( |$)"
+        remove-spaces #(str (str/replace (% 1) " " "") (% 3))]
+    (str/replace pinyin abbr-letters remove-spaces)))
+
+(defn ->diacritics
+  "Convert (only) Pinyin+digit syllables to diacritics."
+  [s]
+  (if (patterns/pinyin-block+digits? s)
+    (pinyin/digits->diacritics s)
+    s))
+
+(defn pinyin-seq
+  "Transform the CC-CEDICT Pinyin string into a seq of diacritised syllables."
+  [pinyin]
+  (map ->diacritics (str/split pinyin #" ")))
+
+;; TODO: use this during comparisons and for storing pinyin-key
+;; relatively common punctuation that should be ignored during comparisons
+(def punctuation
+  #{"·" ","})
+
+;; CC-CEDICT mistakes and oddities that are ignored during import
+(def cc-cedict-oddities
+  #{"xx5" "xx" "ging1"})
+
+(defn preprocess
+  "Apply preprocessing functions to a CC-CEDICT Pinyin string."
+  [s]
+  (if (contains? cc-cedict-oddities s)
+    []
+    (-> s
+        u:->umlaut
+        join-abbr
+        pinyin-seq
+        vec)))
 
 (defn extract-entry
   "Extract the constituents of a matching dictionary entry according to regex:
@@ -20,7 +66,10 @@
   (let [pattern #"^([^ ]+) ([^ ]+) \[([^]]+)\] /(.+)/"
         [_ trad simp pinyin definition :as entry] (re-matches pattern line)]
     (when entry
-      [trad simp (pinyin/pinyin-key pinyin) pinyin (split-def definition)])))
+      (let [pinyin-key        (pinyin/pinyin-key pinyin)
+            pinyin+diacritics (preprocess pinyin)
+            definitions       (split-def definition)]
+        [trad simp pinyin-key pinyin+diacritics definitions]))))
 
 (defn add-entry
   "Add (or extend) an entry in the dictionary map; n marks the look-up key."
@@ -59,4 +108,4 @@
   (let [check-dict (fn [n] (get (nth dictionaries n) word))]
     (->> (map check-dict (range (count dictionaries)))
          (filter (comp not nil?))
-         (reduce conj))))
+         (apply set/union))))
