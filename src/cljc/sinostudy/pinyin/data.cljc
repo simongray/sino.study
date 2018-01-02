@@ -49,7 +49,7 @@
     "da" "dai" "dan" "dang" "dao" "de" "dei" "den" "deng" "di" "dia" "dian"
     "diao" "die" "ding" "diu" "dong" "dou" "du" "duan" "dui" "dun" "duo"
 
-    "e" "ei" "en" "eng"
+    "e" "ei" "en" "eng" "er"
 
     "fa" "fan" "fang" "fei" "fen" "feng" "fo" "fou" "fu"
 
