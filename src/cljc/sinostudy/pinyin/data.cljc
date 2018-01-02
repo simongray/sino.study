@@ -100,7 +100,7 @@
     "xi" "xia" "xian" "xiang" "xiao" "xie" "xin" "xing" "xiong" "xiu" "xu"
     "xuan" "xun" "xue"
 
-    "ya" "yan" "yang" "yao" "ye" "yi" "yin" "ying" "yong" "you" "yu" "yuan"
+    "ya" "yan" "yang" "yao" "ye" "yi" "yin" "ying" "yo" "yong" "you" "yu" "yuan"
     "yun" "yue"
 
     "za" "zai" "zan" "zang" "zao" "ze" "zei" "zen" "zeng" "zha" "zhai" "zhan"
