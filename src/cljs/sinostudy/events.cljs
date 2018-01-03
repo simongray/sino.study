@@ -25,14 +25,14 @@
                :timestamp timestamp}))
 
 (defn add-evaluation
-  "Returns a list of evaluations with the new evaluation prepended."
+  "Returns a list of query evaluations with the new evaluation prepended."
   [evaluations query actions timestamp]
   (conj evaluations {:id        (count evaluations)
                      :query     query
                      :actions   actions
                      :timestamp timestamp}))
 
-;; all query responses from the Compojure backend are Transit-encoded
+;; all responses from the Compojure backend are Transit-encoded
 (def transit-reader
   (transit/reader :json))
 
