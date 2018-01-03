@@ -3,19 +3,9 @@
             [sinostudy.db :as db]))
 
 (rf/reg-sub
-  ::button-label
-  (fn [db]
-    (:button-label db)))
-
-(rf/reg-sub
   ::input
   (fn [db]
     (:input db)))
-
-(rf/reg-sub
-  ::typing?
-  (fn [db]
-    (not (empty? (:input db)))))
 
 (rf/reg-sub
   ::evaluation
@@ -33,55 +23,48 @@
     (:history db)))
 
 (rf/reg-sub
-  ::current-page-key
+  ::page
   (fn [_]
-    [(rf/subscribe [::history])])
-  (fn [[history]]
+    (rf/subscribe [::history]))
+  (fn [history]
     (let [[page _] (first history)]
       page)))
 
-(rf/reg-sub
-  ::current-page-value
-  (fn [_]
-    [(rf/subscribe [::pages])
-     (rf/subscribe [::current-page-key])])
-  (fn [[pages page]]
-    ;; non-existing pages revert to the home page by returning nil
-    (get-in pages page)))
-
 ;; the currently active link in the nav section
+;; used to determine which top-level link to disable
 (rf/reg-sub
-  ::current-nav
+  ::nav
   (fn [_]
-    [(rf/subscribe [::current-page-key])])
-  (fn [[[page-category key]]]
-    (when (= page-category :static) key)))
+    (rf/subscribe [::page]))
+  (fn [[page-type key]]
+    (when (= page-type :static) key)))
 
 (rf/reg-sub
   ::page-content
   (fn [_]
-    [(rf/subscribe [::current-page-key])
-     (rf/subscribe [::current-page-value])])
-  (fn [[page page-value]]
+    [(rf/subscribe [::page])
+     (rf/subscribe [::pages])])
+  (fn [[page pages]]
     (when page
-      (let [page-category (first page)]
-        (case page-category
-          :static (:content page-value)
-          :word [:p (str page-value)]))))) ;TODO: make it look nice
+      (let [page-type    (first page)
+            page-content (get-in pages page)]
+        (case page-type
+          :static (:content page-content)
+          :word [:p (str page-content)])))))                ;TODO: make it look nice
 
 (rf/reg-sub
   ::page-key
   (fn [_]
-    [(rf/subscribe [::history])])
-  (fn [[history]]
-    (let [[[page-category key] _] (first history)]
-      (str page-category key))))
+    (rf/subscribe [::page]))
+  (fn [[page-category key]]
+    (str page-category key)))
 
+;; controls whether the input bar is coloured
 (rf/reg-sub
   ::input-css-class
   (fn [_]
-    [(rf/subscribe [::evaluation])])
-  (fn [[evaluation]]
+    (rf/subscribe [::evaluation]))
+  (fn [evaluation]
     (if (and evaluation
              (empty? (:actions evaluation))
              (not= "" (:query evaluation)))
@@ -94,19 +77,20 @@
     (first (:hints db))))
 
 (rf/reg-sub
-  ::hint-content
+  ::hint-type
   (fn [_]
-    [(rf/subscribe [::hint])])
-  (fn [[hint]]
-    (let [hint-type (if hint (:type hint) :default)]
-      (get db/hint-contents hint-type))))
+    (rf/subscribe [::hint]))
+  (fn [hint]
+    (if hint
+      (:type hint)
+      :default)))
 
 (rf/reg-sub
-  ::hint-key
+  ::hint-content
   (fn [_]
-    [(rf/subscribe [::hint])])
-  (fn [[hint]]
-    (:type hint)))
+    (rf/subscribe [::hint-type]))
+  (fn [hint-type]
+    (get db/hint-contents hint-type)))
 
 (rf/reg-sub
   ::queries

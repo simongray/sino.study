@@ -21,14 +21,13 @@
                                  (-> e .-target .-value)]))}]))
 
 (defn input-button []
-  (let [label (rf/subscribe [::subs/button-label])
-        input (rf/subscribe [::subs/input])]
+  (let [input (rf/subscribe [::subs/input])]
     [:button#study-button
      {:type     :submit
       :on-click (fn [e]
                   (.preventDefault e)
                   (rf/dispatch [::events/on-submit @input]))}
-     @label]))
+     "go"]))
 
 (defn form []
   [:form#study-form
@@ -36,7 +35,7 @@
    [input-button]])
 
 (defn hint []
-  (let [hint-key     (rf/subscribe [::subs/hint-key])
+  (let [hint-key     (rf/subscribe [::subs/hint-type])
         hint-content (rf/subscribe [::subs/hint-content])]
     [:div#study-hint
      {:key @hint-key}
@@ -73,7 +72,7 @@
       "2017")))
 
 (defn footer []
-  (let [from  (rf/subscribe [::subs/current-nav])
+  (let [from  (rf/subscribe [::subs/nav])
         links [["/" "Home"]
                ["/help" "Help"]
                ["/blog" "Blog"]
