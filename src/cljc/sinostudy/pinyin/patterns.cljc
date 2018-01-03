@@ -45,7 +45,7 @@
 (defn pinyin-syllable?
   "Is this a single Pinyin syllable (no digits or diacritics allowed)?"
   [s]
-  #(data/syllables (str/lower-case %)))
+  (contains? data/syllables (str/lower-case s)))
 
 (defn pinyin-block?
   "Is this a plain block of Pinyin (no digits or diacritics allowed)?"

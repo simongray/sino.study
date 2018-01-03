@@ -71,6 +71,7 @@
             definitions       (split-def definition)]
         [trad simp pinyin-key pinyin+diacritics definitions]))))
 
+;; Note: do not remove pinyin-key -- it is not unused, just indirectly used!
 (defn add-entry
   "Add (or extend) an entry in the dictionary map; n marks the look-up key."
   [n dictionary [trad simp pinyin-key pinyin definition :as entry]]
