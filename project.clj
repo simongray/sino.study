@@ -13,10 +13,12 @@
                  [day8.re-frame/http-fx "0.1.4"]
                  [secretary "1.2.3"]
                  [venantius/accountant "0.2.3"]
+                 [com.cognitect/transit-cljs "0.8.243"]
 
                  ;; compojure
                  [compojure "1.5.1"]
-                 [ring/ring-defaults "0.2.1"]]
+                 [ring/ring-defaults "0.2.1"]
+                 [com.cognitect/transit-clj "0.8.300"]]
 
             ;; reagent/re-frame
   :plugins [[lein-cljsbuild "1.1.5"]

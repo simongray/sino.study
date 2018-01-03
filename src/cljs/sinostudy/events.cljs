@@ -4,7 +4,8 @@
             [sinostudy.db :as db]
             [sinostudy.evaluation :refer [eval-query]]
             [sinostudy.pinyin.core :as pinyin]
-            [ajax.core :as ajax]))
+            [ajax.core :as ajax]
+            [cognitect.transit :as transit]))
 
 ;;;; HELPER FUNCTIONS
 
@@ -38,6 +39,9 @@
                                    :content-type content-type
                                    :timestamp    timestamp}))
 
+;; all query responses from the Compojure backend are Transit-encoded
+(def transit-reader
+  (transit/reader :json))
 
 ;;;; CO-EFFECTS
 
@@ -126,8 +130,9 @@
   (fn [cofx [_ result]]
     (let [db      (:db cofx)
           queries (:queries db)
+          content (transit/read transit-reader result)
           now     (:now cofx)]
-      {:db       (assoc db :queries (add-query queries :success result now))
+      {:db       (assoc db :queries (add-query queries :success content now))
        :dispatch [::display-hint :default]})))
 
 ;; dispatched upon an unsuccessful retrieval of a query result
@@ -143,14 +148,19 @@
 
 (rf/reg-event-fx
   ::send-query
-  (fn [cofx [_ query]]
-    {:dispatch   [::display-hint :examining]
-     :http-xhrio {:uri             "http://localhost:3000/query"
-                  :method          :get
-                  :timeout         5000
-                  :response-format (ajax/text-response-format)
-                  :on-success      [::on-query-success]
-                  :on-failure      [::on-query-failure]}}))
+  (fn [_ [_ query]]
+    (let [default-request {:method          :get
+                           :timeout         5000
+                           :response-format (ajax/text-response-format)
+                           :on-success      [::on-query-success]
+                           :on-failure      [::on-query-failure]}
+          base-uri        "http://localhost:3000/query/"
+          query-type      (first query)
+          query-string    (second query)
+          uri             (str base-uri query-type "/" query-string)
+          request         (assoc default-request :uri uri)]
+      {:dispatch   [::display-hint :examining]
+       :http-xhrio request})))
 
 ;; dispatched by ::on-submit
 (rf/reg-event-fx
@@ -205,19 +215,7 @@
   ::test
   [(rf/inject-cofx ::now)]
   (fn [cofx _]
-    (let [db           (:db cofx)
-          pages        (:pages db)
-          page-type    :tests
-          key          "test"
-          content-type :hiccup
-          content      [:div [:h1 "Test"] [:p "This is a test page."]]
-          now          (:now cofx)
-          new-pages    (add-page pages page-type key content-type content now)]
-      {:db         (-> db
-                       (assoc :pages new-pages)
-                       (assoc :input ""))
-       :dispatch-n [[::change-page [:static "/test"]]
-                    [::display-hint :default]]})))
+    {:dispatch [::send-query ["word" "你好"]]}))
 
 (rf/reg-event-fx
   ::digits->diacritics
