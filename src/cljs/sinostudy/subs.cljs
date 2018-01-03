@@ -66,10 +66,11 @@
     [(rf/subscribe [::current-page-key])
      (rf/subscribe [::current-page-value])])
   (fn [[page page-value]]
-    (let [page-category (first page)]
-      (case page-category
-        :static (:content page-value)
-        :word [:p (str page-value)])))) ;TODO: make it look nice
+    (when page
+      (let [page-category (first page)]
+        (case page-category
+          :static (:content page-value)
+          :word [:p (str page-value)]))))) ;TODO: make it look nice
 
 (rf/reg-sub
   ::page-key
