@@ -1,6 +1,6 @@
 (ns sinostudy.subs
   (:require [re-frame.core :as rf]
-            [sinostudy.db :refer [static-db]]))
+            [sinostudy.db :as db]))
 
 (rf/reg-sub
   ::button-label
@@ -91,7 +91,7 @@
     [(rf/subscribe [::hint])])
   (fn [[hint]]
     (let [hint-type (if hint (:type hint) :default)]
-      (get (:hint-content static-db) hint-type))))
+      (get db/hint-contents hint-type))))
 
 (rf/reg-sub
   ::hint-key
