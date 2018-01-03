@@ -32,13 +32,6 @@
                      :actions   actions
                      :timestamp timestamp}))
 
-(defn add-page
-  "Returns a new page map with the specified page updated."
-  [pages page-type key content-type content timestamp]
-  (assoc-in pages [page-type key] {:content      content
-                                   :content-type content-type
-                                   :timestamp    timestamp}))
-
 ;; all query responses from the Compojure backend are Transit-encoded
 (def transit-reader
   (transit/reader :json))
