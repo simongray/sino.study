@@ -3,10 +3,7 @@
 
 (def static
   (let [timestamp (site/current-year)]
-    {"/test"  {:timestamp    timestamp
-               :content-type :hiccup
-               :content      [:div [:h1 "Test"] [:p "This is a test page."]]}
-     "/help"  {:timestamp    timestamp
+    {"/help"  {:timestamp    timestamp
                :content-type :hiccup
                :content      [:div [:h1 "Help"] [:p "This is the Help page."]]}
      "/blog"  {:timestamp    timestamp

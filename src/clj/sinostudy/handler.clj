@@ -51,11 +51,14 @@
                     :result result})))
 
 (defroutes app-routes
+  ;; Top-level pages all resolve to the ClojureScript app.
+  ;; The internal routing of the app then provides the correct presentation.
   (GET "/" [] index-html)
   (GET "/help" [] index-html)
   (GET "/blog" [] index-html)
   (GET "/about" [] index-html)
 
+  ;; ANY rather than GET is necessary to allow cross origin requests during dev.
   (ANY "/query/:query-type/:query-string" [query-type query-string]
     {:status  200
      :headers ajax-headers
