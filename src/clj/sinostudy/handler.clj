@@ -45,18 +45,19 @@
 (defn query-result
   "Get the Transit-encoded result of a query."
   [query-type query-string]
-  (let [result (execute-query query-type query-string)]
-    (transit-write {:type query-type
-                    :query query-string
+  (let [result (execute-query query-type query-string)
+        page-category (keyword query-type)]
+    (transit-write {:page [page-category query-string]
                     :result result})))
 
 (defroutes app-routes
-  ;; Top-level pages all resolve to the ClojureScript app.
+  ;; HTML pages all resolve to the ClojureScript app.
   ;; The internal routing of the app then provides the correct presentation.
   (GET "/" [] index-html)
   (GET "/help" [] index-html)
   (GET "/blog" [] index-html)
   (GET "/about" [] index-html)
+  (GET "/word/:word" [] index-html)
 
   ;; ANY rather than GET is necessary to allow cross origin requests during dev.
   (ANY "/query/:query-type/:query-string" [query-type query-string]

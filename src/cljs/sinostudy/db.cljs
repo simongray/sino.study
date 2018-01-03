@@ -16,10 +16,9 @@
 (def default-db
   {:button-label "go"
    :input        ""
-   :pages        {:analyses {}
-                  :words    {}
-                  :static   static
-                  :tests    {}}
+   :pages        {:sentence {}
+                  :word     {}
+                  :static   static}
    :history      '()
    :evaluations  '()
    :hints        '()

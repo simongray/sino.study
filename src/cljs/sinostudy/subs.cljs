@@ -33,14 +33,21 @@
     (:history db)))
 
 (rf/reg-sub
-  ::current-page
+  ::current-page-key
+  (fn [_]
+    [(rf/subscribe [::history])])
+  (fn [[history]]
+    (let [[page _] (first history)]
+      page)))
+
+(rf/reg-sub
+  ::current-page-value
   (fn [_]
     [(rf/subscribe [::pages])
-     (rf/subscribe [::history])])
-  (fn [[pages history]]
-    (let [[current-page _] (first history)]
-      ;; non-existing pages revert to the home page by returning nil
-      (get-in pages current-page))))
+     (rf/subscribe [::current-page-key])])
+  (fn [[pages page]]
+    ;; non-existing pages revert to the home page by returning nil
+    (get-in pages page)))
 
 ;; the currently active link in the nav section
 (rf/reg-sub
@@ -56,10 +63,13 @@
 (rf/reg-sub
   ::page-content
   (fn [_]
-    [(rf/subscribe [::current-page])])
-  (fn [[page]]
-    (when page
-      (:content page))))
+    [(rf/subscribe [::current-page-key])
+     (rf/subscribe [::current-page-value])])
+  (fn [[page page-value]]
+    (let [page-category (first page)]
+      (case page-category
+        :static (:content page-value)
+        :word [:p (str page-value)])))) ;TODO: make it look nice
 
 (rf/reg-sub
   ::page-key

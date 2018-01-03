@@ -123,6 +123,13 @@
         (assoc fx :dispatch-later [{:dispatch [::evaluate-input input]
                                     :ms       1000}])))))
 
+;; dispatched by ::on-query-success
+(rf/reg-event-db
+  ::save-page
+  (fn [db [_ {:keys [page result]}]]
+    (let [path (into [:pages] page)]
+      (assoc-in db path result))))
+
 ;; dispatched upon a successful retrieval of a query result
 (rf/reg-event-fx
   ::on-query-success
@@ -133,7 +140,7 @@
           content (transit/read transit-reader result)
           now     (:now cofx)]
       {:db       (assoc db :queries (add-query queries :success content now))
-       :dispatch [::display-hint :default]})))
+       :dispatch [::save-page content]})))
 
 ;; dispatched upon an unsuccessful retrieval of a query result
 (rf/reg-event-fx
@@ -146,6 +153,7 @@
       {:db       (assoc db :queries (add-query queries :failure result now))
        :dispatch [::display-hint :query-failure]})))
 
+;; dispatched by ::load-content
 (rf/reg-event-fx
   ::send-query
   (fn [_ [_ query]]
@@ -155,12 +163,11 @@
                            :on-success      [::on-query-success]
                            :on-failure      [::on-query-failure]}
           base-uri        "http://localhost:3000/query/"
-          query-type      (first query)
+          query-type      (name (first query))
           query-string    (second query)
           uri             (str base-uri query-type "/" query-string)
           request         (assoc default-request :uri uri)]
-      {:dispatch   [::display-hint :examining]
-       :http-xhrio request})))
+      {:http-xhrio request})))
 
 ;; dispatched by ::on-submit
 (rf/reg-event-fx
@@ -197,8 +204,21 @@
                       [::choose-action actions])
                     (when new-query? [::save-evaluation query actions])]})))
 
+;; dispatched by ::change-page
+(rf/reg-event-fx
+  ::load-content
+  (fn [cofx [_ page]]
+    (let [db        (:db cofx)
+          pages     (:pages db)
+          page-type (first page)]
+      (case page-type
+        :static {}
+        :word (if (not (get-in pages page))
+                {:dispatch [::send-query page]}
+                {})))))
+
 ;; dispatched by clicking links or through actions
-;; link-clicking is facilitated by frontend routing (secretary + accountant)
+;; link-clicking is facilitated by frontend routing (secretary + Accountant)
 (rf/reg-event-fx
   ::change-page
   [(rf/inject-cofx ::now)]
@@ -206,16 +226,16 @@
     (let [db        (:db cofx)
           history   (:history db)
           timestamp (:now cofx)]
-      {:db (assoc db :history (conj history [page timestamp]))})))
-
+      {:db       (assoc db :history (conj history [page timestamp]))
+       :dispatch [::load-content page]})))
 
 ;;;; ACTIONS (= events triggered by submitting input)
 
 (rf/reg-event-fx
   ::test
   [(rf/inject-cofx ::now)]
-  (fn [cofx _]
-    {:dispatch [::send-query ["word" "你好"]]}))
+  (fn [_ _]
+    {:dispatch [::send-query [:word "你好"]]}))
 
 (rf/reg-event-fx
   ::digits->diacritics

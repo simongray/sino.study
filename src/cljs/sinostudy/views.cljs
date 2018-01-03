@@ -53,7 +53,7 @@
         page-key     @(rf/subscribe [::subs/page-key])]
     (when page-content
       [:div.pedestal
-       [:article {:key page-content}
+       [:article {:key page-key}
         page-content]])))
 
 (defn navlink
@@ -77,7 +77,8 @@
         links [["/" "Home"]
                ["/help" "Help"]
                ["/blog" "Blog"]
-               ["/about" "About"]]]
+               ["/about" "About"]
+               ["/word/你好" "你好"]]] ;TODO: remove after debugging
     [:footer
      [:nav (interpose " · " (navify @from links))]
      [:p#copyright "© " year-string " Simon Gray ("
@@ -85,9 +86,9 @@
       ")"]]))
 
 (defn main-panel []
-  (let [page? @(rf/subscribe [::subs/current-page])]
-    [:div#bg {:class (if page? "with-page" "")}
-     [:div {:class (if page? "main top" "main")}
+  (let [content? @(rf/subscribe [::subs/page-content])]
+    [:div#bg {:class (if content? "with-page" "")}
+     [:div {:class (if content? "main top" "main")}
       [:div#aligner
        [header]]]
      [page]

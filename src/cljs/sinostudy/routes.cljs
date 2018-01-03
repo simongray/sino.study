@@ -23,23 +23,16 @@
   ;; furthermore, it may impede on some other functionality
   (secretary/set-config! :prefix "#")
 
-  ;; Regex routes don't seem to work in combination with Accountant.
-  ;; I would have loved to just make a single regex for sinost.site/pages!
-  (defroute
-    "/" []
+  ;; Combining the root route with the other page routes don't seem to work.
+  (defroute "/" []
     (re-frame/dispatch [::events/change-page [:static "/"]]))
 
-  (defroute
-    "/help" []
-    (re-frame/dispatch [::events/change-page [:static "/help"]]))
+  (defroute "/:page" [page]
+    (re-frame/dispatch [::events/change-page [:static (str "/" page)]]))
 
   (defroute
-    "/blog" []
-    (re-frame/dispatch [::events/change-page [:static "/blog"]]))
-
-  (defroute
-    "/about" []
-    (re-frame/dispatch [::events/change-page [:static "/about"]]))
+    "/word/:word" [word]
+    (re-frame/dispatch [::events/change-page [:word word]]))
 
   (hook-browser-navigation!)
 
