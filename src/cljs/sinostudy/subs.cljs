@@ -53,12 +53,9 @@
 (rf/reg-sub
   ::current-nav
   (fn [_]
-    [(rf/subscribe [::history])])
-  (fn [[history]]
-    (let [[[page-category key] _] (first history)]
-      (if (= page-category :static)
-        key
-        "/"))))
+    [(rf/subscribe [::current-page-key])])
+  (fn [[[page-category key]]]
+    (when (= page-category :static) key)))
 
 (rf/reg-sub
   ::page-content
