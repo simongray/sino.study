@@ -9,6 +9,8 @@ and [re-frame](https://github.com/Day8/re-frame).
 Furthermore, it makes use of [secretary](https://github.com/gf3/secretary) 
 and [Accountant](https://github.com/venantius/accountant) for frontend routing.
 The backend is a [Compojure](https://github.com/weavejester/compojure) service.
+Communication between the backend web service and the frontend app is
+facilitated by [Transit](https://github.com/cognitect/transit-format).
 The functionality is built around my own wrapper library for Stanford CoreNLP,
 [Computerese](https://github.com/simongray/Computerese).
 
