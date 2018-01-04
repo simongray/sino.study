@@ -2,34 +2,39 @@
   (:require [re-frame.core :as rf]
             [sinostudy.site :as site]
             [sinostudy.subs :as subs]
-            [sinostudy.events :as events]
-            [sinostudy.dictionary.common :as dict]))
+            [sinostudy.events :as events]))
 
 ;;;; HELPER FUNCTIONS
 
 (defn dictionary-li
   "Converts a dictionary entry into a hiccup list item."
-  [entry]
+  [search-term [entry id]]
   [:li {:key (str entry)}
-   (interpose " "
-     [[:span.simplified.hanzi (:simplified entry)]
-      [:span.traditional.hanzi (:traditional entry)]
-      [:span.pinyin (:pinyin entry)]
-      (for [definition (:definition entry)]
-        [:span.definition definition])])])
+   [:a {:href (str "/word/" search-term "/" id)}
+    (interpose " "
+      [[:span.simplified.hanzi (:simplified entry)]
+       [:span.traditional.hanzi (:traditional entry)]
+       [:span.pinyin (:pinyin entry)]
+       (for [definition (:definition entry)]
+         [:span.definition definition])])]])
 
 (defn entries->hiccup
   "Convert a list of dictionary entries into hiccup."
-  [entries]
-  [:ul.dictionary-entries
-   (map dictionary-li entries)])
+  [search-term entries]
+  [:div
+   [:h1.list-header search-term]
+   [:ul.dictionary-entries
+    (let [ids            (range (count entries))
+          dictionary-li* (partial dictionary-li search-term)
+          entries+ids    (map list entries ids)]
+      (map dictionary-li* entries+ids))]])
 
 (defn render-page
   "Render a page for display based on the page-type and content."
-  [page-type content]
+  [[page-type page-key] content]
   (case page-type
     :static (:content content)
-    :word (entries->hiccup content)))
+    :word (entries->hiccup page-key content)))
 
 (defn navlink
   [from to text]
@@ -94,13 +99,12 @@
    [hint]])
 
 (defn page []
-  (let [page-content @(rf/subscribe [::subs/page-content])
-        page-type    @(rf/subscribe [::subs/page-type])
-        page-key     @(rf/subscribe [::subs/page-key])]
-    (when page-content
+  (let [content @(rf/subscribe [::subs/page-content])
+        page    @(rf/subscribe [::subs/page])]
+    (when content
       [:div.pedestal
-       [:article {:key page-key}
-        (render-page page-type page-content)]])))
+       [:article {:key (str page)}
+        (render-page page content)]])))
 
 (defn footer []
   (let [from  (rf/subscribe [::subs/nav])
@@ -108,7 +112,7 @@
                ["/help" "Help"]
                ["/blog" "Blog"]
                ["/about" "About"]
-               ["/word/miao" "miao"]]] ;TODO: remove after debugging
+               ["/word/蒙" "蒙"]]]                          ;TODO: remove after debugging
     [:footer
      [:nav (interpose " · " (navify @from links))]
      [:p#copyright "© " year-string " Simon Gray ("

@@ -48,21 +48,6 @@
     (when page
       (get-in pages page))))
 
-(rf/reg-sub
-  ::page-type
-  (fn [_]
-    (rf/subscribe [::page]))
-  (fn [[page-type _]]
-    page-type))
-
-;; key used by React to avoid re-rendering (for performance reasons)
-(rf/reg-sub
-  ::page-key
-  (fn [_]
-    (rf/subscribe [::page]))
-  (fn [[page-type key]]
-    (str page-type key)))
-
 ;; controls whether the input bar is coloured
 (rf/reg-sub
   ::input-css-class

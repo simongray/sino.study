@@ -183,8 +183,12 @@ h1 {
 	font-family: Didot, serif;
 	font-weight: 600;
 	font-size: 24pt;
-
 	margin: 0 0 0.2em 0;
+}
+
+/* headers above lists (e.g. search results) should be centered */
+h1.list-header {
+	text-align: center;
 }
 
 p {
@@ -220,6 +224,13 @@ article {
     letter-spacing: 0.2ch;
 }
 
+hr {
+    height: 1pt;
+    background: rgba(220, 220, 220, 1);
+    font-size: 0;
+    border: 0;
+}
+
 .dictionary-entries {
 	font-size: 16pt;
 	list-style-type: none;
@@ -236,12 +247,29 @@ article {
 	text-overflow: ellipsis;
 }
 
+.dictionary-entries a {
+	color: inherit;
+}
+
+.dictionary-entries a:hover {
+	color: #333333;
+	text-decoration: none;
+}
+
+.dictionary-entries a:hover .hanzi {
+	color: #333333;
+}
+
+.dictionary-entries a:hover .pinyin {
+	color: #333333;
+}
+
 .dictionary-entries .hanzi {
-	font-size: 32pt;
+	font-size: 24pt;
 }
 
 .hanzi {
-	color: #333333;
+	color: #555555;
 	/* http://www.kendraschaefer.com/2012/06/chinese-standard-web-fonts-the-ultimate-guide-to-css-font-family-declarations-for-web-design-in-simplified-chinese/ */
 	font-family: Georgia, "Times New Roman", "KaiTi", "楷体", STKaiti, "华文楷体", serif;
 }
