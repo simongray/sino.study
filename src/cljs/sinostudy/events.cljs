@@ -101,10 +101,9 @@
           query             (string/trim input)
           new-query?        (not= query (:query latest-evaluation))]
       (when (and latest-input? new-query?)
-        (let [actions  (if (empty? query) -1 (eval-query query))
+        (let [actions  (eval-query query)
               new-hint (case (count actions)
-                         -1 :default
-                         0 :no-actions
+                         0 (if (empty? query) :default :no-actions)
                          1 (first actions)
                          :choose-action)]
           {:dispatch-n (list [::save-evaluation query actions]
