@@ -27,16 +27,17 @@ Figwheel will automatically push cljs changes to the browser.
 Wait a bit, then browse to [http://localhost:3449](http://localhost:3449).
 
 If there are any issues getting the app to show up (e.g. blank page), 
-then try clearing the browser cache.
+then try clearing the browser cache. Note that some functionality will require
+the backend to be running too, e.g. dictionary results.
 
-## Production Build
-To compile clojurescript to javascript:
+## Compiling a frontend production build
+To compile ClojureScript to JavaScript:
 
 ```
 lein clean
 lein cljsbuild once min
 ```
-## Run compojure application
+## Run Compojure application
 To start a web server for the application, run:
 
 ````
