@@ -27,17 +27,18 @@
         remove-spaces #(str (str/replace (% 1) " " "") (% 3))]
     (str/replace pinyin abbr-letters remove-spaces)))
 
-(defn ->diacritics
-  "Convert (only) Pinyin+digit syllables to diacritics."
+(defn neutral-as-0
+  "Convert the neutral tone digits (represented as 5 in CC-CEDICT) to 0.
+  This ensures that the Pinyin strings are alphabetically sortable."
   [s]
   (if (patterns/pinyin-block+digits? s)
-    (pinyin/digits->diacritics s)
+    (str/replace s "5" "0")
     s))
 
 (defn pinyin-seq
   "Transform the CC-CEDICT Pinyin string into a seq of diacritised syllables."
   [pinyin]
-  (map ->diacritics (str/split pinyin #" ")))
+  (map neutral-as-0 (str/split pinyin #" ")))
 
 ;; TODO: use this during comparisons and for storing pinyin-key
 ;; relatively common punctuation that should be ignored during comparisons

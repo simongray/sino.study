@@ -46,18 +46,22 @@
      (rf/subscribe [::pages])])
   (fn [[page pages]]
     (when page
-      (let [page-type    (first page)
-            page-content (get-in pages page)]
-        (case page-type
-          :static (:content page-content)
-          :word [:p (str page-content)])))))                ;TODO: make it look nice
+      (get-in pages page))))
 
+(rf/reg-sub
+  ::page-type
+  (fn [_]
+    (rf/subscribe [::page]))
+  (fn [[page-type _]]
+    page-type))
+
+;; key used by React to avoid re-rendering (for performance reasons)
 (rf/reg-sub
   ::page-key
   (fn [_]
     (rf/subscribe [::page]))
-  (fn [[page-category key]]
-    (str page-category key)))
+  (fn [[page-type key]]
+    (str page-type key)))
 
 ;; controls whether the input bar is coloured
 (rf/reg-sub
