@@ -2,6 +2,7 @@
   (:require [reagent.core :as reagent]
             [re-frame.core :as rf]
             [day8.re-frame.http-fx]
+            [secretary.core :as secretary]
             [sinostudy.routes :as routes]
             [sinostudy.events :as events]
             [sinostudy.views :as views]
@@ -20,8 +21,7 @@
   ;; The routing mostly takes place on the frontend,
   ;; so the app needs to orient itself on hard page loads.
   (let [current-page (-> js/window .-location .-pathname)]
-    (when (not= "/" current-page)
-      (rf/dispatch [::events/change-page [:static current-page]])))
+    (secretary/dispatch! current-page))
   (.focus (.getElementById js/document "study-input")))
 
 (defn ^:export init []
