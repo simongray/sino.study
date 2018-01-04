@@ -231,6 +231,11 @@ hr {
     border: 0;
 }
 
+/* currently just applies to the word definitions */
+ol li {
+	margin: 0.5em;
+}
+
 .dictionary-entries {
 	font-size: 16pt;
 	list-style-type: none;
