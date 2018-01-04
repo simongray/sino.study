@@ -1,7 +1,6 @@
 (ns sinostudy.handler
   (:import (java.io ByteArrayOutputStream))
-  (:require [clojure.java.io :as io]
-            [compojure.core :refer :all]
+  (:require [compojure.core :refer :all]
             [compojure.route :as route]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [cognitect.transit :as transit]
@@ -13,8 +12,8 @@
 ;; TODO: use coercions for regex check of input
 ;; https://weavejester.github.io/compojure/compojure.coercions.html
 
-(def index-html
-  (io/as-file "./resources/public/index.html"))
+(def reframe-app
+  (slurp "./resources/public/index.html"))
 
 (defonce dictionaries
   (dict/load-dictionaries "./resources/cedict_ts.u8"))
@@ -53,11 +52,11 @@
 (defroutes app-routes
   ;; HTML pages all resolve to the ClojureScript app.
   ;; The internal routing of the app then provides the correct presentation.
-  (GET "/" [] index-html)
-  (GET "/help" [] index-html)
-  (GET "/blog" [] index-html)
-  (GET "/about" [] index-html)
-  (GET "/word/:word" [] index-html)
+  (GET "/" [] reframe-app)
+  (GET "/help" [] reframe-app)
+  (GET "/blog" [] reframe-app)
+  (GET "/about" [] reframe-app)
+  (GET "/word/:word" [] reframe-app)
 
   ;; ANY rather than GET is necessary to allow cross origin requests during dev.
   (ANY "/query/:query-type/:query-string" [query-type query-string]
