@@ -4,6 +4,7 @@
             [sinostudy.db :as db]
             [sinostudy.evaluation :refer [eval-query]]
             [sinostudy.pinyin.core :as pinyin]
+            [sinostudy.dictionary.common :as dict]
             [ajax.core :as ajax]
             [cognitect.transit :as transit]))
 
@@ -35,6 +36,14 @@
 ;; all responses from the Compojure backend are Transit-encoded
 (def transit-reader
   (transit/reader :json))
+
+(defn preprocess-content
+  "Process content coming from the web service before storing locally,
+  e.g. presort word lists and the like."
+  [page-type content]
+  (case page-type
+    :word (dict/prepare-entries content)
+    content))
 
 
 ;;;; CO-EFFECTS
@@ -122,8 +131,10 @@
 (rf/reg-event-db
   ::save-page
   (fn [db [_ {:keys [page result]}]]
-    (let [path (into [:pages] page)]
-      (assoc-in db path result))))
+    (let [path (into [:pages] page)
+          page-type (first page)
+          content (preprocess-content page-type result)]
+      (assoc-in db path content))))
 
 ;; dispatched upon a successful retrieval of a query result
 (rf/reg-event-fx

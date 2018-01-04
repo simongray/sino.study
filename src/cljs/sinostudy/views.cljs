@@ -29,7 +29,7 @@
   [page-type content]
   (case page-type
     :static (:content content)
-    :word (entries->hiccup (dict/prepare-entries content))))
+    :word (entries->hiccup content)))
 
 (defn navlink
   [from to text]
