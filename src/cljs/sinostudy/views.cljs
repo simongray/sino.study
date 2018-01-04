@@ -11,16 +11,17 @@
   "Converts a dictionary entry into a hiccup list item."
   [entry]
   [:li {:key (str entry)}
-   [:span.simplified (:simplified entry)]
-   " "
-   [:span.traditional (:traditional entry)]
-   " "
-   [:span.pinyin (:pinyin entry)]])
+   (interpose " "
+     [[:span.simplified.hanzi (:simplified entry)]
+      [:span.traditional.hanzi (:traditional entry)]
+      [:span.pinyin (:pinyin entry)]
+      (for [definition (:definition entry)]
+        [:span.definition definition])])])
 
 (defn entries->hiccup
   "Convert a list of dictionary entries into hiccup."
   [entries]
-  [:ul
+  [:ul.dictionary-entries
    (map dictionary-li entries)])
 
 (defn render-page

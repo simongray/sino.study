@@ -220,6 +220,56 @@ article {
     letter-spacing: 0.2ch;
 }
 
+.dictionary-entries {
+	font-size: 16pt;
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+}
+
+.dictionary-entries li {
+    margin-bottom: 1em;
+
+    /* make sure text stays on a single line */
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.dictionary-entries .hanzi {
+	font-size: 32pt;
+}
+
+.hanzi {
+	color: #333333;
+	/* http://www.kendraschaefer.com/2012/06/chinese-standard-web-fonts-the-ultimate-guide-to-css-font-family-declarations-for-web-design-in-simplified-chinese/ */
+	font-family: Georgia, "Times New Roman", "KaiTi", "楷体", STKaiti, "华文楷体", serif;
+}
+
+.traditional {
+	display: none; /* TODO: support both */
+}
+
+.simplified {
+	/*display: none;*/
+}
+
+.pinyin {
+	color: #DD8888;
+}
+
+.pinyin::before {
+	content: "[";
+}
+
+.pinyin::after {
+	content: "]";
+}
+
+.definition + .definition::before {
+	content: "; ";
+}
+
 footer {
 	animation: fade-in 1.5s ease;
 
