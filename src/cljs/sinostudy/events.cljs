@@ -36,6 +36,7 @@
 (def transit-reader
   (transit/reader :json))
 
+
 ;;;; CO-EFFECTS
 
 (rf/reg-cofx
@@ -222,6 +223,7 @@
           timestamp (:now cofx)]
       {:db       (assoc db :history (conj history [page timestamp]))
        :dispatch [::load-content page]})))
+
 
 ;;;; ACTIONS (= events triggered by submitting input)
 
