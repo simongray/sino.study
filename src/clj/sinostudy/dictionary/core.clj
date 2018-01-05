@@ -2,7 +2,7 @@
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
             [clojure.set :as set]
-            [sinostudy.pinyin.core :as pinyin]
+            [sinostudy.dictionary.common :as dict]
             [sinostudy.pinyin.patterns :as patterns]))
 
 (defn entry?
@@ -67,7 +67,7 @@
   (let [pattern #"^([^ ]+) ([^ ]+) \[([^]]+)\] /(.+)/"
         [_ trad simp pinyin definition :as entry] (re-matches pattern line)]
     (when entry
-      (let [pinyin-key        (pinyin/pinyin-key pinyin)
+      (let [pinyin-key        (dict/pinyin-key pinyin)
             pinyin+diacritics (preprocess pinyin)
             definitions       (split-def definition)]
         [trad simp pinyin-key pinyin+diacritics definitions]))))

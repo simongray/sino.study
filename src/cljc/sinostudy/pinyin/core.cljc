@@ -2,16 +2,6 @@
   (:require [clojure.string :as str]
             [sinostudy.pinyin.data :as data]))
 
-;; using CC-CEDICT Pinyin directly for dictionary look-ups is too strict
-(defn pinyin-key
-  "Converts CC-CEDICT Pinyin string into a plain form for use as a map key.
-  Spaces and tone digits are removed entirely and the text is made lowercase."
-  [s]
-  (-> s
-      (str/replace " " "")
-      (str/replace #"\d" "")
-      str/lower-case))
-
 (defn parse-int
   "Parses a string s into an integer."
   [s]
