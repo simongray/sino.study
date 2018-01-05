@@ -42,7 +42,7 @@
    [:h1
     [:span.simplified.hanzi (add-links (:simplified entry))]
     [:span.traditional.hanzi (add-links (:traditional entry))]]
-   [:p.subheader [:span.pinyin (add-links (:pinyin entry))]]
+   [:p.subheader [:span.pinyin (interpose " " (add-links (:pinyin entry)))]]
    [:ol
     (for [definition (:definition entry)]
       [:li {:key definition} [:span.definition definition]])]])
