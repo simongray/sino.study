@@ -144,8 +144,7 @@
         links [["/" "Home"]
                ["/help" "Help"]
                ["/blog" "Blog"]
-               ["/about" "About"]
-               ["/word/de" "de"]]]                          ;TODO: remove after debugging
+               ["/about" "About"]]]
     [:footer
      [:nav (interpose " · " (navify @from links))]
      [:p#copyright "© " year-string " Simon Gray ("
