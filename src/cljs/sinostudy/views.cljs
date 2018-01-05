@@ -146,9 +146,9 @@
       ")"]]))
 
 (defn main-panel []
-  (let [content? @(rf/subscribe [::subs/page-content])]
-    [:div#bg {:class (if content? "with-page" "")}
-     [:div {:class (if content? "main top" "main")}
+  (let [not-home? (not= "/" @(rf/subscribe [::subs/nav]))]
+    [:div#bg {:class (if not-home? "with-page" "")}
+     [:div {:class (if not-home? "main top" "main")}
       [:div#aligner
        [header]]]
      [page]
