@@ -33,15 +33,14 @@
 (defn entry->hiccup
   "Convert a single dictionary entry into hiccup."
   [entry]
-  [:div
+  [:div.dictionary-entry
    [:h1
     [:span.simplified.hanzi (:simplified entry)]
     [:span.traditional.hanzi (:traditional entry)]]
-   [:p
-    [:span.pinyin (str/join " " (:pinyin entry))]
-    [:ol
-     (for [definition (:definition entry)]
-       [:li {:key definition} [:span.definition definition]])]]])
+   [:p.subheader [:span.pinyin (str/join " " (:pinyin entry))]]
+   [:ol
+    (for [definition (:definition entry)]
+      [:li {:key definition} [:span.definition definition]])]])
 
 (defn unknown-word
   [word]
@@ -141,7 +140,7 @@
                ["/help" "Help"]
                ["/blog" "Blog"]
                ["/about" "About"]
-               ["/word/de/3" "de"]]]                          ;TODO: remove after debugging
+               ["/word/de" "de"]]]                          ;TODO: remove after debugging
     [:footer
      [:nav (interpose " · " (navify @from links))]
      [:p#copyright "© " year-string " Simon Gray ("

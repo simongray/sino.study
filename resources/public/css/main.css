@@ -236,8 +236,11 @@ ol li {
 	margin: 0.5em;
 }
 
+.dictionary-entry, .dictionary-entries {
+	font-size: 14pt;
+}
+
 .dictionary-entries {
-	font-size: 16pt;
 	list-style-type: none;
 	padding: 0;
 	margin: 0;
@@ -245,6 +248,7 @@ ol li {
 
 .dictionary-entries li {
     margin-bottom: 1em;
+    padding: 0.5em 0;
 
     /* make sure text stays on a single line */
 	white-space: nowrap;
@@ -263,6 +267,7 @@ ol li {
 
 .dictionary-entries a:hover .hanzi {
 	color: #333333;
+	border-color: #333333;
 }
 
 .dictionary-entries a:hover .pinyin {
@@ -270,7 +275,24 @@ ol li {
 }
 
 .dictionary-entries .hanzi {
-	font-size: 24pt;
+	font-size: 20pt;
+	padding: 0.3em;
+	border: 1pt solid #AAAAAA;
+	border-radius: 0.5ch;
+	background-color: white;
+	color: #666666;
+}
+
+.dictionary-entry h1 {
+	font-size: 52pt;
+}
+
+.dictionary-entry h1 .hanzi {
+	font-weight: 100;
+}
+
+.dictionary-entry .subheader {
+	font-size: 18pt;
 }
 
 .hanzi {
