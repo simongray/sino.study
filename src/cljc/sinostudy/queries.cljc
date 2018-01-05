@@ -1,7 +1,7 @@
 (ns sinostudy.queries
   (:require [clojure.string :as str]
             [sinostudy.pinyin.core :as pinyin]
-            [sinostudy.pinyin.eval :as peval]))
+            [sinostudy.pinyin.eval :as pe]))
 
 ;; cljsjs/xregexp doesn't include the extensions allowing for \p{Script=Han}
 ;; will just use this to generate suitable regex used in both clj and cljs:
@@ -11,13 +11,13 @@
 ;; but the action shouldn't appear if the sentence contains no tone digits!
 (defn- digits->diacritics?
   [query]
-  (and (peval/pinyin+digits+punct? query)
-       (not (peval/pinyin+punct? query))))
+  (and (pe/pinyin+digits+punct? query)
+       (not (pe/pinyin+punct? query))))
 
 (defn- hanzi?
   [query]
-  (or (peval/hanzi? query)
-      (peval/pinyin-block? query)))
+  (or (pe/hanzi? query)
+      (pe/pinyin-block? query)))
 
 (defn- command?
   [query]
@@ -35,7 +35,7 @@
   "Evaluate a Pinyin query to get a vector of possible actions."
   [query]
   (cond-> []
-          (peval/pinyin-block? query) (conj :look-up-word)
+          (pe/pinyin-block? query) (conj :look-up-word)
           (digits->diacritics? query) (conj :digits->diacritics)))
 
 (defn eval-query
