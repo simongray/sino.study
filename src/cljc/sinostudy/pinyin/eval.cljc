@@ -7,27 +7,27 @@
 (defn pinyin-syllable?
   "Is this a single Pinyin syllable (no digits or diacritics allowed)?"
   [s]
-  (re-matches patterns/pinyin-syllable-pattern s))
+  (re-matches patterns/pinyin-syllable s))
 
 (defn pinyin-block?
   "Is this a plain block of Pinyin (no digits or diacritics allowed)?"
   [s]
-  (re-matches patterns/pinyin-pattern s))
+  (re-matches patterns/pinyin-block s))
 
 (defn pinyin+punct?
   "Is this a sentence containing Pinyin without any tone digits or diacritics?"
   [s]
-  (re-matches patterns/pinyin+punct-pattern s))
+  (re-matches patterns/pinyin+punct s))
 
 (defn pinyin-block+digits?
   "Is this a block of Pinyin with tone digits?"
   [s]
-  (re-matches patterns/pinyin+digits-pattern s))
+  (re-matches patterns/pinyin+digits s))
 
 (defn pinyin+digits+punct?
   "Is this a sentence containing Pinyin with tone digits?"
   [s]
-  (re-matches patterns/pinyin+digits+punct-pattern s))
+  (re-matches patterns/pinyin+digits+punct s))
 
 (defn pinyin-block+diacritics?
   "Is this a block of Pinyin with tone diacritics?

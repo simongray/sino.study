@@ -27,19 +27,19 @@
 (def punct
   "[^\\w]+")
 
-(def pinyin-syllable-pattern
+(def pinyin-syllable
   (re-pattern (str "(?i)" syllable)))
 
-(def pinyin-pattern
+(def pinyin-block
   (re-pattern (str "(?i)" block)))
 
-(def pinyin+punct-pattern
+(def pinyin+punct
   (re-pattern (str "(?i)" block "(" block "|" punct ")*")))
 
-(def pinyin+digits-pattern
+(def pinyin+digits
   (re-pattern (str "(?i)" block+digit)))
 
-(def pinyin+digits+punct-pattern
+(def pinyin+digits+punct
   (re-pattern (str "(?i)" block+digit "(" block+digit "|" punct ")*")))
 
 ;; from http://kourge.net/projects/regexp-unicode-block
