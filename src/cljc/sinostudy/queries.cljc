@@ -1,4 +1,4 @@
-(ns sinostudy.eval
+(ns sinostudy.queries
   (:require [clojure.string :as str]
             [sinostudy.pinyin.core :as pinyin]
             [sinostudy.pinyin.eval :as peval]))

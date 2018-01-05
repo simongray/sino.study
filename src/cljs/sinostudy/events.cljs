@@ -3,7 +3,7 @@
             [re-frame.core :as rf]
             [accountant.core :as accountant]
             [sinostudy.db :as db]
-            [sinostudy.eval :as eval]
+            [sinostudy.queries :as q]
             [sinostudy.pinyin.core :as pinyin]
             [sinostudy.dictionary.common :as dict]
             [ajax.core :as ajax]
@@ -102,7 +102,7 @@
           query             (string/trim input)
           new-query?        (not= query (:query latest-evaluation))]
       (when (and latest-input? new-query?)
-        (let [actions  (eval/eval-query query)
+        (let [actions  (q/eval-query query)
               ;; hints must match the name of the action!
               new-hint (case (count actions)
                          0 (if (empty? query) :default :no-actions)
@@ -204,7 +204,7 @@
           query             (string/trim input)
           new-query?        (not= query (:query latest-evaluation))
           actions           (if new-query?
-                              (eval/eval-query query)
+                              (q/eval-query query)
                               (:actions latest-evaluation))]
       {:dispatch-n [(case (count actions)
                       0 [::display-hint :no-actions]
