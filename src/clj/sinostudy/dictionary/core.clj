@@ -95,6 +95,12 @@
           (partial reduce add-simp {})
           (partial reduce add-pinyin {}))))
 
+;; TODO: remove entries w/ "surname X" def and add tag to referenced entry
+;; TODO: remove "(!old) variant of X" if the referenced char is identical
+;;       (note: trad and simp may differ!)
+;; TODO: autolinking of common patterns Trad|Simp[Pin] and Char[Pin]
+;; TODO: remove CL pattern defs and add classifier list to entry instead
+
 (defn load-dictionaries
   "Load the contents of a CC-CEDICT dictionary file into Clojure maps."
   [file]
