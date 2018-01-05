@@ -3,7 +3,7 @@
             [clojure.string :as str]
             [clojure.set :as set]
             [sinostudy.dictionary.common :as dict]
-            [sinostudy.pinyin.patterns :as patterns]))
+            [sinostudy.pinyin.eval :as peval]))
 
 (defn entry?
   "Determine if a line is a dictionary entry."
@@ -31,7 +31,7 @@
   "Convert the neutral tone digits (represented as 5 in CC-CEDICT) to 0.
   This ensures that the Pinyin strings are alphabetically sortable."
   [s]
-  (if (patterns/pinyin-block+digits? s)
+  (if (peval/pinyin-block+digits? s)
     (str/replace s "5" "0")
     s))
 

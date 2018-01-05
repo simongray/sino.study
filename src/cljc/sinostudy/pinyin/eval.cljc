@@ -1,4 +1,4 @@
-(ns sinostudy.pinyin.patterns
+(ns sinostudy.pinyin.eval
   (:require #?(:clj [clojure.spec.alpha :as spec]
                :cljs [cljs.spec.alpha :as spec])
             [clojure.string :as str]
@@ -29,6 +29,9 @@
 ;; note: technically matches non-Latin, e.g. also matches hanzi
 (def ^:private punct
   "[^\\w]+")
+
+(def ^:private pinyin-syllable-pattern
+  (re-pattern syllable))
 
 (def ^:private pinyin-pattern
   (re-pattern (str "(?i)" block)))
