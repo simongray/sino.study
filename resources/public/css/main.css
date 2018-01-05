@@ -240,6 +240,23 @@ ol li {
 	font-size: 14pt;
 }
 
+.dictionary-entry h1 a {
+	color: inherit;
+}
+
+.dictionary-entry h1 a:hover {
+	color: black;
+	text-decoration: none;
+}
+
+.dictionary-entry .pinyin a {
+	color: inherit;
+}
+
+.dictionary-entry .pinyin a:hover {
+	color: black;
+}
+
 .dictionary-entries {
 	list-style-type: none;
 	padding: 0;

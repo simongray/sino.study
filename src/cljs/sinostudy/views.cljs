@@ -7,6 +7,11 @@
 
 ;;;; HELPER FUNCTIONS
 
+(defn add-links
+  [text]
+  (let [link-up (fn [word] [:a {:href (str "/word/" word)} word])]
+    (map link-up text)))
+
 (defn entry-li
   "Converts a dictionary entry into a hiccup list item."
   [word [entry id]]
@@ -35,9 +40,9 @@
   [entry]
   [:div.dictionary-entry
    [:h1
-    [:span.simplified.hanzi (:simplified entry)]
-    [:span.traditional.hanzi (:traditional entry)]]
-   [:p.subheader [:span.pinyin (str/join " " (:pinyin entry))]]
+    [:span.simplified.hanzi (add-links (:simplified entry))]
+    [:span.traditional.hanzi (add-links (:traditional entry))]]
+   [:p.subheader [:span.pinyin (add-links (:pinyin entry))]]
    [:ol
     (for [definition (:definition entry)]
       [:li {:key definition} [:span.definition definition]])]])
