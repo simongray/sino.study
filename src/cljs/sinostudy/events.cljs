@@ -1,6 +1,7 @@
 (ns sinostudy.events
   (:require [clojure.string :as string]
             [re-frame.core :as rf]
+            [accountant.core :as accountant]
             [sinostudy.db :as db]
             [sinostudy.evaluation :refer [eval-query]]
             [sinostudy.pinyin.core :as pinyin]
@@ -181,12 +182,11 @@
   (fn [cofx [_ action]]
     (let [db    (:db cofx)
           input (:input db)]
-      {:dispatch-n (case action
-                     :test [[::test]]
-                     :clear [[::initialize-db]]
-                     :look-up-word [[::change-page [:word input]]
-                                    [::clear-input]]
-                     :digits->diacritics [[::digits->diacritics input]])})))
+      {:dispatch (case action
+                   :test [::test]
+                   :clear [::initialize-db]
+                   :look-up-word [::look-up-word input]
+                   :digits->diacritics [::digits->diacritics input])})))
 
 ;; dispatched by ::on-submit
 (rf/reg-event-fx
@@ -226,8 +226,9 @@
                   {:dispatch [::send-query word-page]}
                   {}))))))
 
-;; dispatched by clicking links or through actions
-;; link-clicking is facilitated by frontend routing (secretary + Accountant)
+;; Dispatched by clicking links only!
+;; It's never dispatched directly, as we want to leave a browser history trail.
+;; Link-clicking is facilitated by frontend routing (secretary + Accountant).
 (rf/reg-event-fx
   ::change-page
   [(rf/inject-cofx ::now)]
@@ -237,6 +238,15 @@
           timestamp (:now cofx)]
       {:db       (assoc db :history (conj history [page timestamp]))
        :dispatch [::load-content page]})))
+
+
+;;;; EFFECTS (= side effects)
+
+;; Dispatched by actions that need to change the page (and browser history).
+(rf/reg-fx
+  :navigate-to
+  (fn [path]
+    (accountant/navigate! path)))
 
 
 ;;;; ACTIONS (= events triggered by submitting input)
@@ -251,6 +261,14 @@
   ::clear-input
   (fn [db _]
     (assoc db :input "")))
+
+(rf/reg-event-fx
+  ::look-up-word
+  (fn [cofx [_ word]]
+    (let [db (:db cofx)]
+      {:db          (assoc db :input "")
+       :navigate-to (str "/word/" word)
+       :dispatch    [::display-hint :default]})))
 
 (rf/reg-event-fx
   ::digits->diacritics
