@@ -1,15 +1,13 @@
 (ns sinostudy.pinyin.eval
   (:require #?(:clj [clojure.spec.alpha :as spec]
                :cljs [cljs.spec.alpha :as spec])
-              [clojure.string :as str]
               [sinostudy.pinyin.core :as core]
-              [sinostudy.pinyin.data :as data]
               [sinostudy.pinyin.patterns :as patterns]))
 
 (defn pinyin-syllable?
   "Is this a single Pinyin syllable (no digits or diacritics allowed)?"
   [s]
-  (contains? data/syllables (str/lower-case s)))
+  (re-matches patterns/pinyin-syllable-pattern s))
 
 (defn pinyin-block?
   "Is this a plain block of Pinyin (no digits or diacritics allowed)?"

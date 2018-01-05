@@ -28,7 +28,7 @@
   "[^\\w]+")
 
 (def pinyin-syllable-pattern
-  (re-pattern syllable))
+  (re-pattern (str "(?i)" syllable)))
 
 (def pinyin-pattern
   (re-pattern (str "(?i)" block)))
