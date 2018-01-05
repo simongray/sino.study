@@ -34,4 +34,5 @@
   (->> entries
        (map sort-defs)
        (sort-by pinyin>case>character)
-       (map add-diacritics)))
+       (map add-diacritics)
+       (vec)))                                              ; allow fetching by index

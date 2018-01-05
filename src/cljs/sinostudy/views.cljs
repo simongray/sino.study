@@ -1,5 +1,6 @@
 (ns sinostudy.views
   (:require [re-frame.core :as rf]
+            [clojure.string :as str]
             [sinostudy.site :as site]
             [sinostudy.subs :as subs]
             [sinostudy.events :as events]))
@@ -14,7 +15,7 @@
     (interpose " "
       [[:span.simplified.hanzi (:simplified entry)]
        [:span.traditional.hanzi (:traditional entry)]
-       [:span.pinyin (:pinyin entry)]
+       [:span.pinyin (str/join " " (:pinyin entry))]
        (for [definition (:definition entry)]
          [:span.definition definition])])]])
 
@@ -37,7 +38,7 @@
     [:span.simplified.hanzi (:simplified entry)]
     [:span.traditional.hanzi (:traditional entry)]]
    [:p
-    [:span.pinyin (:pinyin entry)]
+    [:span.pinyin (str/join " " (:pinyin entry))]
     [:ol
      (for [definition (:definition entry)]
        [:li {:key definition} [:span.definition definition]])]]])
@@ -48,12 +49,14 @@
    [:p "There are no dictionary entries for the word \"" word "\"."]])
 
 (defn render-word
-  "Render a word page for display."
-  [word entries]
-  (case (count entries)
-    0 (unknown-word word)
-    1 (entry->hiccup (first entries))
-    (entries->hiccup word entries)))
+  "Render a word page for display; word can be a vector or a map (one entry)."
+  [word content]
+  (if (sequential? content)
+    (case (count content)
+      0 (unknown-word word)
+      1 (entry->hiccup (first content))
+      (entries->hiccup word content))
+    (entry->hiccup content)))
 
 (defn render-page
   "Render a page for display based on the page-type and content."
@@ -138,7 +141,7 @@
                ["/help" "Help"]
                ["/blog" "Blog"]
                ["/about" "About"]
-               ["/word/统治" "统治"]]]                          ;TODO: remove after debugging
+               ["/word/de/3" "de"]]]                          ;TODO: remove after debugging
     [:footer
      [:nav (interpose " · " (navify @from links))]
      [:p#copyright "© " year-string " Simon Gray ("

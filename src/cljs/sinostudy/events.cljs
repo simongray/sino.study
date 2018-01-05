@@ -218,9 +218,10 @@
           page-type (first page)]
       (case page-type
         :static {}
-        :word (if (not (get-in pages page))
-                {:dispatch [::send-query page]}
-                {})))))
+        :word (let [word-page (subvec page 0 2)]            ; remove numbering
+                (if (not (get-in pages word-page))
+                  {:dispatch [::send-query word-page]}
+                  {}))))))
 
 ;; dispatched by clicking links or through actions
 ;; link-clicking is facilitated by frontend routing (secretary + Accountant)

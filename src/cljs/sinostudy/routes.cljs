@@ -34,6 +34,10 @@
     "/word/:word" [word]
     (re-frame/dispatch [::events/change-page [:word word]]))
 
+  (defroute
+    "/word/:word/:n" [word n]
+    (re-frame/dispatch [::events/change-page [:word word (js/parseInt n)]]))
+
   (hook-browser-navigation!)
 
   ;; following instructions at https://github.com/venantius/accountant

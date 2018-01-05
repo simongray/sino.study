@@ -57,6 +57,7 @@
   (GET "/blog" [] reframe-app)
   (GET "/about" [] reframe-app)
   (GET "/word/:word" [] reframe-app)
+  (GET "/word/:word/:n" [] reframe-app)
 
   ;; ANY rather than GET is necessary to allow cross origin requests during dev.
   (ANY "/query/:query-type/:query-string" [query-type query-string]

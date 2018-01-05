@@ -39,6 +39,11 @@
   (fn [[page-type key]]
     (when (= page-type :static) key)))
 
+;; loads the actual page content
+;; the page is a vector describing the path to the content in (:pages db)
+;; in the case of a static web page it looks like e.g. [:static "/about"]
+;; for words it might look [:word "你好"] or [:word "de" 3],
+;; in which case the 3 will look up the word at index 3 in the list of entries
 (rf/reg-sub
   ::page-content
   (fn [_]
