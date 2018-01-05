@@ -14,9 +14,10 @@
   (and (patterns/pinyin+digits+punct? query)
        (not (patterns/pinyin+punct? query))))
 
-(defn- word?
+(defn- hanzi?
   [query]
-  (patterns/hanzi? query))
+  (or (patterns/hanzi? query)
+      (patterns/pinyin-block? query)))
 
 (defn- command?
   [query]
@@ -34,6 +35,7 @@
   "Evaluate a Pinyin query to get a vector of possible actions."
   [query]
   (cond-> []
+          (patterns/pinyin-block? query) (conj :look-up-word)
           (digits->diacritics? query) (conj :digits->diacritics)))
 
 (defn eval-query
@@ -43,5 +45,5 @@
   (let [query* (pinyin/umlaut query)]
     (cond
       (command? query) (eval-command query)
-      (word? query) [:look-up-word]
+      (hanzi? query) [:look-up-word]
       :else (eval-pinyin query*))))
