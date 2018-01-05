@@ -1,6 +1,6 @@
 (ns sinostudy.queries
   (:require [clojure.string :as str]
-            [sinostudy.pinyin.core :as pinyin]
+            [sinostudy.pinyin.core :as p]
             [sinostudy.pinyin.eval :as pe]))
 
 ;; cljsjs/xregexp doesn't include the extensions allowing for \p{Script=Han}
@@ -42,7 +42,7 @@
   "Evaluate a query string to get a vector of possible actions."
   [query]
   ;; some tests need an umlaut'ed query
-  (let [query* (pinyin/umlaut query)]
+  (let [query* (p/umlaut query)]
     (cond
       (command? query) (eval-command query)
       (hanzi? query) [:look-up-word]

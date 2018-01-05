@@ -1,6 +1,6 @@
 (ns sinostudy.dictionary.common
   (:require [clojure.string :as str]
-            [sinostudy.pinyin.core :as pinyin]
+            [sinostudy.pinyin.core :as p]
             [sinostudy.pinyin.eval :as pe]))
 
 ;; using CC-CEDICT Pinyin directly for dictionary look-ups is too strict
@@ -27,7 +27,7 @@
   "Convert (only) Pinyin+digit syllables to diacritics."
   [s]
   (if (pe/pinyin-block+digits? s)
-    (pinyin/digits->diacritics s)
+    (p/digits->diacritics s)
     s))
 
 (defn add-diacritics

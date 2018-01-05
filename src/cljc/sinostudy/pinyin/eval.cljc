@@ -1,7 +1,7 @@
 (ns sinostudy.pinyin.eval
   (:require #?(:clj [clojure.spec.alpha :as spec]
                :cljs [cljs.spec.alpha :as spec])
-              [sinostudy.pinyin.core :as core]
+              [sinostudy.pinyin.core :as p]
               [sinostudy.pinyin.patterns :as patterns]))
 
 (defn pinyin-syllable?
@@ -33,13 +33,13 @@
   "Is this a block of Pinyin with tone diacritics?
    Note that this function does not validate the *placement* of diacritics!"
   [s]
-  (pinyin-block? (core/no-diacritics s)))
+  (pinyin-block? (p/no-diacritics s)))
 
 (defn pinyin+diacritics+punct?
   "Is this a sentence containing Pinyin with tone diacritics?
    Note that this function does not validate the *placement* of diacritics!"
   [s]
-  (pinyin+punct? (core/no-diacritics s)))
+  (pinyin+punct? (p/no-diacritics s)))
 
 (defn hanzi?
   [s]
