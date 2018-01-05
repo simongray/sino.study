@@ -102,6 +102,7 @@
           new-query?        (not= query (:query latest-evaluation))]
       (when (and latest-input? new-query?)
         (let [actions  (eval-query query)
+              ;; hints must match the name of the action!
               new-hint (case (count actions)
                          0 (if (empty? query) :default :no-actions)
                          1 (first actions)
@@ -180,10 +181,12 @@
   (fn [cofx [_ action]]
     (let [db    (:db cofx)
           input (:input db)]
-      {:dispatch (case action
-                   :test [::test]
-                   :clear [::initialize-db]
-                   :digits->diacritics [::digits->diacritics input])})))
+      {:dispatch-n (case action
+                     :test [[::test]]
+                     :clear [[::initialize-db]]
+                     :look-up-word [[::change-page [:word input]]
+                                    [::clear-input]]
+                     :digits->diacritics [[::digits->diacritics input]])})))
 
 ;; dispatched by ::on-submit
 (rf/reg-event-fx
@@ -243,6 +246,11 @@
   [(rf/inject-cofx ::now)]
   (fn [_ _]
     {:dispatch [::send-query [:word "你好"]]}))
+
+(rf/reg-event-db
+  ::clear-input
+  (fn [db _]
+    (assoc db :input "")))
 
 (rf/reg-event-fx
   ::digits->diacritics

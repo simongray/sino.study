@@ -42,6 +42,24 @@
 (def ^:private pinyin+digits+punct-pattern
   (re-pattern (str "(?i)" block+digit "(" block+digit "|" punct ")*")))
 
+;; from http://kourge.net/projects/regexp-unicode-block
+(def ^:private hanzi-unicode-blocks
+  {"CJK Radicals Supplement"            #"\u2E80-\u2EFF"
+   "Kangxi Radicals"                    #"\u2F00-\u2FDF"
+   "Ideographic Description Characters" #"\u2FF0-\u2FFF"
+   "CJK Symbols and Punctuation"        #"\u3000-\u303F"
+   "CJK Strokes"                        #"\u31C0-\u31EF"
+   "Enclosed CJK Letters and Months"    #"\u3200-\u32FF"
+   "CJK Compatibility"                  #"\u3300-\u33FF"
+   "CJK Unified Ideographs Extension A" #"\u3400-\u4DBF"
+   "Yijing Hexagram Symbols"            #"\u4DC0-\u4DFF"
+   "CJK Unified Ideographs"             #"\u4E00-\u9FFF"
+   "CJK Compatibility Ideographs"       #"\uF900-\uFAFF"
+   "CJK Compatibility Forms"            #"\uFE30-\uFE4F"})
+
+(def ^:private hanzi-pattern
+  (re-pattern (str "[" (str/join (map str (vals hanzi-unicode-blocks))) "]+")))
+
 (defn pinyin-syllable?
   "Is this a single Pinyin syllable (no digits or diacritics allowed)?"
   [s]
@@ -78,6 +96,10 @@
    Note that this function does not validate the *placement* of diacritics!"
   [s]
   (pinyin+punct? (core/no-diacritics s)))
+
+(defn hanzi?
+  [s]
+  (re-matches hanzi-pattern s))
 
 (spec/def ::pinyin-syllable pinyin-syllable?)
 

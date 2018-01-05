@@ -14,6 +14,10 @@
   (and (patterns/pinyin+digits+punct? query)
        (not (patterns/pinyin+punct? query))))
 
+(defn- word?
+  [query]
+  (patterns/hanzi? query))
+
 (defn- command?
   [query]
   (str/starts-with? query "/"))
@@ -39,4 +43,5 @@
   (let [query* (pinyin/umlaut query)]
     (cond
       (command? query) (eval-command query)
+      (word? query) [:look-up-word]
       :else (eval-pinyin query*))))
