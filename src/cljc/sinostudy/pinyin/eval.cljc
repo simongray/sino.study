@@ -56,3 +56,5 @@
 (spec/def ::pinyin-block+diacritics pinyin-block+diacritics?)
 
 (spec/def ::pinyin+diacritics+punct pinyin+diacritics+punct?)
+
+(spec/def ::hanzi hanzi?)
