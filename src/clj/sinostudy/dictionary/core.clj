@@ -96,6 +96,7 @@
           (partial reduce add-pinyin {}))))
 
 ;; TODO: remove entries w/ "surname X" def and add tag to referenced entry
+;; TODO: merge entries where pinyin is capitalised (e.g. Ming2 with ming2)
 ;; TODO: remove "(!old) variant of X" if the referenced char is identical
 ;;       (note: trad and simp may differ!)
 ;; TODO: merge entries that only differ in definitions, trad and simp may differ
