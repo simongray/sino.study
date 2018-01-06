@@ -102,6 +102,7 @@
 ;; TODO: merge entries that only differ in definitions, trad and simp may differ
 ;; TODO: autolinking of common patterns Trad|Simp[Pin] and Char[Pin]
 ;; TODO: remove CL pattern defs and add classifier list to entry instead
+;; TODO: make list of exceptional entries (e.g. 3P) that should be queryable
 
 (defn load-dictionaries
   "Load the contents of a CC-CEDICT dictionary file into Clojure maps."
