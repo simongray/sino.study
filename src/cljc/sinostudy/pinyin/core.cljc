@@ -1,5 +1,6 @@
 (ns sinostudy.pinyin.core
   (:require [clojure.string :as str]
+            [sinostudy.pinyin.patterns :as patterns]
             [sinostudy.pinyin.data :as data]))
 
 (defn parse-int
@@ -113,3 +114,42 @@
    (if (nil? match)
      s
      (recur (str/replace s match replacement) xs))))
+
+(defn- indexes-of
+  "Returns all indexes of a char or a string."
+  [s value]
+  (let [length (if (char? value) 1 (count value))]
+    (loop [remaining s
+           indexes   []]
+      (let [index (str/index-of remaining value)]
+        (if (not index)
+          indexes
+          (recur (subs remaining (+ index length))
+                 (conj indexes index)))))))
+
+;; based on code examples from StackOverflow:
+;; https://stackoverflow.com/questions/3262195/compact-clojure-code-for-regular-expression-matches-and-their-position-in-string
+;; https://stackoverflow.com/questions/18735665/how-can-i-get-the-positions-of-regex-matches-in-clojurescript
+(defn re-pos
+  "Like re-seq, but returns a map of indexes to matches, not a seq of matches."
+  [re s]
+  #?(:clj  (loop [out {}
+                  m   (re-matcher re s)]
+             (if (.find m)
+               (recur (assoc out (.start m) (.group m)) m)
+               out))
+     :cljs (let [keep-mods (fn [re]
+                             (let [m? (.-multiline re)
+                                   i? (.-ignoreCase re)]
+                               (str "g" (when m? "m") (when i? "i"))))
+                 re        (js/RegExp. (.-source re) (keep-mods re))]
+             (loop [out {}]
+               (if-let [m (.exec re s)]
+                 (recur (assoc out (.-index m) (first m)))
+                 out)))))
+
+;(defn diacritics->digits
+;  [s]
+;  (let [s* (no-diacritics s)
+;        x  (map first (re-seq patterns/pinyin-syllable s*))]
+;    s))
