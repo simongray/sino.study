@@ -115,18 +115,6 @@
      s
      (recur (str/replace s match replacement) xs))))
 
-(defn- indexes-of
-  "Returns all indexes of a char or a string."
-  [s value]
-  (let [length (if (char? value) 1 (count value))]
-    (loop [remaining s
-           indexes   []]
-      (let [index (str/index-of remaining value)]
-        (if (not index)
-          indexes
-          (recur (subs remaining (+ index length))
-                 (conj indexes index)))))))
-
 ;; based on code examples from StackOverflow:
 ;; https://stackoverflow.com/questions/3262195/compact-clojure-code-for-regular-expression-matches-and-their-position-in-string
 ;; https://stackoverflow.com/questions/18735665/how-can-i-get-the-positions-of-regex-matches-in-clojurescript
@@ -148,8 +136,42 @@
                  (recur (assoc out (.-index m) (first m)))
                  out)))))
 
-;(defn diacritics->digits
-;  [s]
-;  (let [s* (no-diacritics s)
-;        x  (map first (re-seq patterns/pinyin-syllable s*))]
-;    s))
+(defn- char->tone
+  "Get the tone (0-4) based on a char."
+  [char]
+  (loop [tone 1]
+    (cond
+      (= 5 tone) 0
+      (re-matches (get data/tone-diacritics tone) char) tone
+      :else (recur (inc tone)))))
+
+(defn- replace-at
+  "Like clojure.string/replace, but replaces between index from and to (excl)."
+  [s from to replacement]
+  (str (subs s 0 from) replacement (subs s to)))
+
+(defn- diacritics->digits*
+  "Replaces in s based on a replacements vector."
+  [s replacements]
+  (loop [skip          0
+         s*            s
+         replacements* replacements]
+    (if-let [[from syllable tone] (first replacements*)]
+      (recur (if tone (inc skip) skip)
+             (replace-at s*
+                         (+ skip from)
+                         (+ skip from (count syllable))
+                         (str syllable tone))
+             (rest replacements*))
+      s*)))
+
+;; TODO: works with "níhǎomǎ", but not with many other strings...
+(defn diacritics->digits
+  "Convert a Pinyin string s with tone diacritics into one with tone digits."
+  [s]
+  (let [s*        (no-diacritics s)
+        syllables (re-pos patterns/pinyin-syllable s*)
+        original  #(subs s (first %) (+ (first %) (count (second %))))
+        diacritic #(re-find #"[^\w]" %)
+        tone      (comp char->tone diacritic original)]
+    (diacritics->digits* s (map (juxt first second tone) syllables))))

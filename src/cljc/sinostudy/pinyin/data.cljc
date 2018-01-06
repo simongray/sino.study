@@ -47,6 +47,13 @@
    "ü" #"[ǖǘǚǜ]", "Ü" #"[ǕǗǙǛ]"
    "m" #"(m̄|ḿ|m̌|m̀)" "M" #"(M̄|Ḿ|M̌|M̀)"})
 
+;; used to match diacritics to tones in diacritics->digits
+(def tone-diacritics
+  {1 #"(ā|ō|ē|ū|ī|ǖ|m̄|Ā|Ō|Ē|Ū|Ī|Ǖ|M̄)"
+   2 #"(á|ó|é|ú|í|ǘ|ḿ|Á|Ó|É|Ú|Í|Ǘ|Ḿ)"
+   3 #"(ǎ|ǒ|ě|ǔ|ǐ|ǚ|m̌|Ǎ|Ǒ|Ě|Ǔ|Ǐ|Ǚ|M̌)"
+   4 #"(à|ò|è|ù|ì|ǜ|m̀|À|Ò|È|Ù|Ì|Ǜ|M̀)"})
+
 ;; adapted from http://pinyin.info/rules/initials_finals.html
 ;; some non-standard syllables have been added: fiao, lo, r, yo
 (def syllables
