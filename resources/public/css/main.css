@@ -377,6 +377,11 @@ footer .script-changer {
     padding: 0.2em 0.5em;
     border: 1pt solid #CC6666;
     border-radius: 0.5ch;
+    color: #FFBBBB;
+
+    /* nav links shouldn't jump around when changing script */
+    display: inline-block;
+    min-width: 7ch;
 }
 
 footer a:hover {
