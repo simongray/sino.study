@@ -141,7 +141,7 @@
   [char]
   (loop [tone 1]
     (cond
-      (= 5 tone) 0
+      (or (= nil char) (= 5 tone)) 0
       (re-matches (get data/tone-diacritics tone) char) tone
       :else (recur (inc tone)))))
 
@@ -165,7 +165,6 @@
              (rest replacements*))
       s*)))
 
-;; TODO: works with "níhǎomǎ", but not with many other strings...
 (defn diacritics->digits
   "Convert a Pinyin string s with tone diacritics into one with tone digits."
   [s]
