@@ -102,6 +102,7 @@
 ;; TODO: merge entries that only differ in definitions, trad and simp may differ
 ;; TODO: autolinking of common patterns Trad|Simp[Pin] and Char[Pin]
 ;; TODO: remove CL pattern defs and add classifier list to entry instead
+;;       CL:條|条[tiao2],股[gu3],根[gen1]
 ;; TODO: make list of exceptional entries (e.g. 3P) that should be queryable
 ;; TODO: make the pattern "classifier for X" prominent (CL)
 ;; TODO: make the pattern "to X" prominent (V)
