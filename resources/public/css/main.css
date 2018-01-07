@@ -361,6 +361,9 @@ a:hover {
 .hanzi a:hover, .pinyin a:hover, .dictionary-entries a:hover, a:hover .hanzi, a:hover .pinyin {
 	color: #4477DD;
 	border-color: #4477DD;
+}
+
+.hanzi a:hover {
 	text-decoration: none;
 }
 
