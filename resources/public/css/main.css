@@ -321,7 +321,7 @@ footer {
 	border-top: solid 1pt #AA4433;
 	background: linear-gradient(#BB5544, #AB4230);
 	border-left: 1pt solid #BB5544; /* fixes problem with transparent left border */
-	padding: 1.5em 0 0.5em 0;
+	padding: 1.2em 0 0.5em 0;
 	width: 100%;
 
 	/* position */
@@ -334,11 +334,11 @@ nav {
 	/* text-related */
 	font-family: "Gill Sans", sans-serif;
     font-size: 12pt;
+    margin-bottom: 0.8em;
 }
 
 p#copyright {
 	color: #DD8888;
-	margin-top: 1.5em;
 	font-size: 8pt;
 }
 
