@@ -60,6 +60,15 @@
     (assoc cofx :local-storage (js->clj (.getItem js/localStorage key)))))
 
 
+;;;; EFFECTS (= side effects)
+
+;; Dispatched by actions that need to change the page (and browser history).
+(rf/reg-fx
+  :navigate-to
+  (fn [path]
+    (accountant/navigate! path)))
+
+
 ;;;; EVENTS
 
 (rf/reg-event-db
@@ -238,15 +247,6 @@
           timestamp (:now cofx)]
       {:db       (assoc db :history (conj history [page timestamp]))
        :dispatch [::load-content page]})))
-
-
-;;;; EFFECTS (= side effects)
-
-;; Dispatched by actions that need to change the page (and browser history).
-(rf/reg-fx
-  :navigate-to
-  (fn [path]
-    (accountant/navigate! path)))
 
 
 ;;;; ACTIONS (= events triggered by submitting input)
