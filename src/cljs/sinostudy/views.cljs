@@ -17,6 +17,9 @@
   (let [alt-script (if (= :simplified script) :traditional :simplified)]
     [:a
      {:class    "script-changer fake-link"
+      :title (str "Click to use " (if (= :simplified alt-script)
+                                    "simplified characters"
+                                    "traditional characters"))
       :on-click #(rf/dispatch [::events/change-script alt-script])}
      content]))
 
