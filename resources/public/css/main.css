@@ -247,7 +247,7 @@ ol li {
 }
 
 .dictionary-entries li {
-    margin-bottom: 1em;
+    margin-bottom: 0.5em;
     padding: 0.5em 0;
 
     /* make sure text stays on a single line */
@@ -258,7 +258,7 @@ ol li {
 
 .dictionary-entries .hanzi {
 	font-size: 20pt;
-	padding: 0.3em;
+	padding: 0.2em;
 	border: 1pt solid #AAAAAA;
 	border-radius: 0.5ch;
 	background-color: white;
