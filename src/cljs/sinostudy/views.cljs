@@ -114,9 +114,13 @@
 ;;;; VIEWS
 
 (defn logo []
-  [:header
-   [:a {:href "/"}
-    [:img#logo {:src "/img/logo_min.svg"}]]])
+  (let [nav @(rf/subscribe [::subs/nav])]
+    [:header
+     [:a {:href "/"}
+      [:img#logo {:src "/img/logo_min.svg"
+                  :class (if (= "/" nav)
+                           "big-logo"
+                           "small-logo")}]]]))
 
 (defn input-field []
   (let [input     (rf/subscribe [::subs/input])

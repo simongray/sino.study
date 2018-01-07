@@ -55,12 +55,21 @@ img#logo {
     user-select: none;
 
 	/* size */
-	height: 5em;
 	width: 100%; /* otherwise image could overflow on small page widths */
 
 	/* positioning */
-    margin: 1em auto 0 auto;
     padding: 0;
+}
+
+.big-logo {
+	height: 6em;
+	transition: all 0.3s;
+}
+
+.small-logo {
+	height: 4.5em;
+	margin: 0.8em auto 0 auto;
+	transition: all 0.3s;
 }
 
 /* Centering vertically is still fucking hard!
