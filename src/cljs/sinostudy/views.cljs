@@ -7,11 +7,12 @@
 
 ;;;; HELPER FUNCTIONS
 
-(defn add-links
+(defn add-word-links
   [text]
   (let [link-up (fn [word] [:a {:href (str "/word/" word)} word])]
     (map link-up text)))
 
+;; used both in nav and on dictionary entry pages
 (defn script-changer-link
   [script content]
   (let [alt-script (if (= :simplified script) :traditional :simplified)]
@@ -55,10 +56,10 @@
         different?  (not (= simplified traditional))]
     [:div.dictionary-entry
      [:h1 (if (= :simplified script)
-            [:span.simplified.hanzi (add-links simplified)]
-            [:span.traditional.hanzi (add-links traditional)])]
+            [:span.simplified.hanzi (add-word-links simplified)]
+            [:span.traditional.hanzi (add-word-links traditional)])]
      [:p.subheader
-      [:span.pinyin (interpose " " (add-links (:pinyin entry)))]
+      [:span.pinyin (interpose " " (add-word-links (:pinyin entry)))]
       " "
       (when different?
         [:span.tag.hanzi
@@ -128,6 +129,7 @@
                    (rf/dispatch [::events/on-input-change
                                  (-> e .-target .-value)]))}]))
 
+;; not actually displayed!
 (defn input-button []
   (let [input (rf/subscribe [::subs/input])]
     [:button#study-button
@@ -171,16 +173,11 @@
 
 (defn footer []
   (let [from  @(rf/subscribe [::subs/nav])
-        links [["/" "Home"]
-               ["/help" "Help"]
-               ["/about" "About"]]]
+        links [["/" "Home"] ["/help" "Help"] ["/about" "About"]]]
     [:footer
-     [:nav
-      (interpose " · "
-        (conj (vec (navify from links)) [script-changer]))]
+     [:nav (interpose " · " (conj (vec (navify from links)) [script-changer]))]
      [:p#copyright "© " year-string " Simon Gray ("
-      [:a {:href "https://github.com/simongray"} "github"]
-      ")"]]))
+      [:a {:href "https://github.com/simongray"} "github"] ")"]]))
 
 (defn main-panel []
   (let [not-home? (not= "/" @(rf/subscribe [::subs/nav]))]
