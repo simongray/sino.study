@@ -14,15 +14,14 @@
                :content      [:div [:h1 "About"] [:p "This is the About page."]]}}))
 
 (def default-db
-  {:button-label "go"
-   :input        ""
-   :pages        {:sentence {}
+  {:input       ""
+   :pages       {:sentence {}
                   :word     {}
                   :static   static}
-   :history      '()
-   :evaluations  '()
-   :hints        '()
-   :queries      '()})
+   :history     '()
+   :evaluations '()
+   :hints       '()
+   :queries     '()})
 
 (defn press-enter-to [s]
   [:div "press " [:span.keypress "enter"] " to " s])
