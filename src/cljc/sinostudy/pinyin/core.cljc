@@ -28,6 +28,7 @@
   [s]
   (let [s* (re-find #"[^\d]+" (str/lower-case s))]
     (cond
+      (not (string? s)) nil
       (empty? s*) nil
       (str/includes? s* "a") (str/index-of s* "a")
       (str/includes? s* "e") (str/index-of s* "e")
@@ -99,11 +100,13 @@
   result in no diacritic being added, i.e. marking a neutral tone. Furthermore,
   any occurrence of V is treated as and implicitly converted into a Ü."
   [s & {:keys [v-as-umlaut] :or {v-as-umlaut true}}]
-  (let [s*                (if v-as-umlaut (umlaut s) s)
-        digit-strings     (re-seq #"[^\d]+\d" s*)
-        diacritic-strings (map diacritic-string digit-strings)
-        suffix            (re-seq #"[^\d]+$" s*)]
-    (apply str (concat diacritic-strings suffix))))
+  (if (not (string? s))
+    s
+    (let [s*                (if v-as-umlaut (umlaut s) s)
+          digit-strings     (re-seq #"[^\d]+\d" s*)
+          diacritic-strings (map diacritic-string digit-strings)
+          suffix            (re-seq #"[^\d]+$" s*)]
+      (apply str (concat diacritic-strings suffix)))))
 
 ;; used by the pinyin+diacritics? (allows for evaluation as plain Pinyin)
 (defn no-diacritics
