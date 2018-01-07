@@ -363,7 +363,7 @@ a:hover {
 	border-color: #4477DD;
 }
 
-.hanzi a:hover {
+.hanzi a:hover, .dictionary-entries a:hover {
 	text-decoration: none;
 }
 
