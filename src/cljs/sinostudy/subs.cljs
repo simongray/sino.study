@@ -90,3 +90,8 @@
   ::queries
   (fn [db]
     (:queries db)))
+
+(rf/reg-sub
+  ::script
+  (fn [db]
+    (:script db)))

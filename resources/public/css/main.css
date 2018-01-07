@@ -240,23 +240,6 @@ ol li {
 	font-size: 14pt;
 }
 
-.dictionary-entry h1 a {
-	color: inherit;
-}
-
-.dictionary-entry h1 a:hover {
-	color: black;
-	text-decoration: none;
-}
-
-.dictionary-entry .pinyin a {
-	color: inherit;
-}
-
-.dictionary-entry .pinyin a:hover {
-	color: black;
-}
-
 .dictionary-entries {
 	list-style-type: none;
 	padding: 0;
@@ -273,24 +256,6 @@ ol li {
 	text-overflow: ellipsis;
 }
 
-.dictionary-entries a {
-	color: inherit;
-}
-
-.dictionary-entries a:hover {
-	color: #333333;
-	text-decoration: none;
-}
-
-.dictionary-entries a:hover .hanzi {
-	color: #333333;
-	border-color: #333333;
-}
-
-.dictionary-entries a:hover .pinyin {
-	color: #333333;
-}
-
 .dictionary-entries .hanzi {
 	font-size: 20pt;
 	padding: 0.3em;
@@ -298,6 +263,16 @@ ol li {
 	border-radius: 0.5ch;
 	background-color: white;
 	color: #666666;
+}
+
+/* marks a special tag in a dictionary entry (in the subheader after pinyin) */
+.tag {
+	font-size: 14pt;
+    padding: 0.2em;
+    border: 1pt solid #AAAAAA;
+    border-radius: 0.5ch;
+    background-color: white;
+    color: #666666;
 }
 
 .dictionary-entry h1 {
@@ -316,14 +291,6 @@ ol li {
 	color: #555555;
 	/* http://www.kendraschaefer.com/2012/06/chinese-standard-web-fonts-the-ultimate-guide-to-css-font-family-declarations-for-web-design-in-simplified-chinese/ */
 	font-family: Georgia, "Times New Roman", "KaiTi", "楷体", STKaiti, "华文楷体", serif;
-}
-
-.traditional {
-	display: none; /* TODO: support both */
-}
-
-.simplified {
-	/*display: none;*/
 }
 
 .pinyin {
@@ -375,14 +342,26 @@ p#copyright {
 	font-size: 8pt;
 }
 
+
+/* links */
 a {
-	color: #2222BB;
+	color: #446699;
 	text-decoration: none;
 }
 
+.hanzi a, .pinyin a, .dictionary-entries a {
+	color: inherit;
+}
+
 a:hover {
-	color: #2222FF;
 	text-decoration: underline;
+	color: #4477DD;
+}
+
+.hanzi a:hover, .pinyin a:hover, .dictionary-entries a:hover, a:hover .hanzi, a:hover .pinyin {
+	color: #4477DD;
+	border-color: #4477DD;
+	text-decoration: none;
 }
 
 a.current-page, a.current-page:hover {
@@ -394,7 +373,22 @@ footer a {
 	color: white;
 }
 
+footer .script-changer {
+    padding: 0.2em 0.5em;
+    border: 1pt solid #CC6666;
+    border-radius: 0.5ch;
+}
+
 footer a:hover {
 	color: white;
 	text-decoration: underline;
+}
+
+footer .script-changer:hover {
+	text-decoration: none;
+	border-color: white;
+}
+
+.fake-link {
+	cursor: pointer;
 }

@@ -12,40 +12,61 @@
   (let [link-up (fn [word] [:a {:href (str "/word/" word)} word])]
     (map link-up text)))
 
+(defn script-changer-link
+  [script content]
+  (let [alt-script (if (= :simplified script) :traditional :simplified)]
+    [:a
+     {:class    "script-changer fake-link"
+      :on-click #(rf/dispatch [::events/change-script alt-script])}
+     content]))
+
 (defn entry-li
   "Converts a dictionary entry into a hiccup list item."
-  [word [entry id]]
+  [word script [entry id]]
   [:li {:key (str entry)}
    [:a {:href (str "/word/" word "/" id)}
     (interpose " "
-      [[:span.simplified.hanzi (:simplified entry)]
-       [:span.traditional.hanzi (:traditional entry)]
+      [(if (= :simplified script)
+         [:span.simplified.hanzi (:simplified entry)]
+         [:span.traditional.hanzi (:traditional entry)])
        [:span.pinyin (str/join " " (:pinyin entry))]
        (for [definition (:definition entry)]
          [:span.definition definition])])]])
 
 (defn entries->hiccup
   "Convert a list of dictionary entries into hiccup."
-  [word entries]
+  [word entries script]
   [:div
    [:h1.list-header word]
    [:ul.dictionary-entries
     (let [ids         (range (count entries))
-          entry-li*   (partial entry-li word)
+          entry-li*   (partial entry-li word script)
           entries+ids (map list entries ids)]
       (map entry-li* entries+ids))]])
 
 (defn entry->hiccup
   "Convert a single dictionary entry into hiccup."
-  [entry]
-  [:div.dictionary-entry
-   [:h1
-    [:span.simplified.hanzi (add-links (:simplified entry))]
-    [:span.traditional.hanzi (add-links (:traditional entry))]]
-   [:p.subheader [:span.pinyin (interpose " " (add-links (:pinyin entry)))]]
-   [:ol
-    (for [definition (:definition entry)]
-      [:li {:key definition} [:span.definition definition]])]])
+  [entry script]
+  (let [simplified  (:simplified entry)
+        traditional (:traditional entry)
+        different?  (not (= simplified traditional))]
+    [:div.dictionary-entry
+     [:h1 (if (= :simplified script)
+            [:span.simplified.hanzi (add-links simplified)]
+            [:span.traditional.hanzi (add-links traditional)])]
+     [:p.subheader
+      [:span.pinyin (interpose " " (add-links (:pinyin entry)))]
+      " "
+      (when different?
+        [:span.tag.hanzi
+         (script-changer-link
+           script
+           (if (= :simplified script)
+             [:span.traditional traditional]
+             [:span.simplified simplified]))])]
+     [:ol
+      (for [definition (:definition entry)]
+        [:li {:key definition} [:span.definition definition]])]]))
 
 (defn unknown-word
   [word]
@@ -54,20 +75,20 @@
 
 (defn render-word
   "Render a word page for display; word can be a vector or a map (one entry)."
-  [word content]
+  [word content script]
   (if (sequential? content)
     (case (count content)
       0 (unknown-word word)
-      1 (entry->hiccup (first content))
-      (entries->hiccup word content))
-    (entry->hiccup content)))
+      1 (entry->hiccup (first content) script)
+      (entries->hiccup word content script))
+    (entry->hiccup content script)))
 
 (defn render-page
   "Render a page for display based on the page-type and content."
-  [[page-type page-key] content]
+  [[page-type page-key] content script]
   (case page-type
     :static (:content content)
-    :word (render-word page-key content)))
+    :word (render-word page-key content script)))
 
 (defn navlink
   [from to text]
@@ -133,20 +154,27 @@
 
 (defn page []
   (let [content @(rf/subscribe [::subs/page-content])
-        page    @(rf/subscribe [::subs/page])]
+        page    @(rf/subscribe [::subs/page])
+        script  @(rf/subscribe [::subs/script])]
     (when content
       [:div.pedestal
        [:article {:key (str page)}
-        (render-page page content)]])))
+        (render-page page content script)]])))
+
+(defn script-changer []
+  (let [script @(rf/subscribe [::subs/script])
+        text   (if (= :simplified script) "Simpl." "Trad.")]
+    (script-changer-link script text)))
 
 (defn footer []
-  (let [from  (rf/subscribe [::subs/nav])
+  (let [from  @(rf/subscribe [::subs/nav])
         links [["/" "Home"]
                ["/help" "Help"]
-               ["/blog" "Blog"]
                ["/about" "About"]]]
     [:footer
-     [:nav (interpose " · " (navify @from links))]
+     [:nav
+      (interpose " · "
+        (conj (vec (navify from links)) [script-changer]))]
      [:p#copyright "© " year-string " Simon Gray ("
       [:a {:href "https://github.com/simongray"} "github"]
       ")"]]))

@@ -15,9 +15,10 @@
 
 (def default-db
   {:input       ""
+   :script      :simplified
    :pages       {:sentence {}
-                  :word     {}
-                  :static   static}
+                 :word     {}
+                 :static   static}
    :history     '()
    :evaluations '()
    :hints       '()

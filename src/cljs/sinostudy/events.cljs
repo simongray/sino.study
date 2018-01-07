@@ -248,6 +248,11 @@
       {:db       (assoc db :history (conj history [page timestamp]))
        :dispatch [::load-content page]})))
 
+;; Dispatched by on-click handlers in various places.
+(rf/reg-event-db
+  ::change-script
+  (fn [db [_ script]]
+    (assoc db :script script)))
 
 ;;;; ACTIONS (= events triggered by submitting input)
 
