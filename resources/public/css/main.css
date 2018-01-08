@@ -56,18 +56,15 @@ img#logo {
 
 	/* size */
 	width: 100%; /* otherwise image could overflow on small page widths */
-
-	/* positioning */
-    padding: 0;
 }
 
 .big-logo {
-	height: 6em;
+	max-height: 6.5em;
 	transition: all 0.3s;
 }
 
 .small-logo {
-	height: 4.5em;
+	max-height: 4.5em;
 	margin: 0.8em auto 0 auto;
 	transition: all 0.3s;
 }
@@ -79,7 +76,7 @@ https://stackoverflow.com/questions/356809/best-way-to-center-a-div-on-a-page-ve
 	position: fixed;
 	min-width: 100%; /* expand entirely, but always keep a little margin*/
 	max-width: 80%; /* fixes problem with layout when hint length > page width */
-	top: 40%; /* using 50% looks off somehow...*/
+	top: 42%; /* using 50% looks off somehow...*/
 	left: 50%;
 	transition: all 0.3s; /* must be "all", not individual attributes */
 	transform: translate(-50%, -40%);

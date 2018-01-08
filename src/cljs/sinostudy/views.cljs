@@ -9,7 +9,8 @@
 
 (defn add-word-links
   [text]
-  (let [link-up (fn [word] [:a {:href (str "/word/" word)} word])]
+  (let [href    #(str "/word/" %)
+        link-up (fn [word] [:a {:href (href word), :key (href word)} word])]
     (map link-up text)))
 
 ;; used both in nav and on dictionary entry pages
@@ -17,25 +18,28 @@
   [script content]
   (let [alt-script (if (= :simplified script) :traditional :simplified)]
     [:a
-     {:class    "script-changer fake-link"
-      :title (str "Click to use " (if (= :simplified alt-script)
-                                    "simplified characters"
-                                    "traditional characters"))
+     {:key      alt-script
+      :class    "script-changer fake-link"
+      :title    (str "Click to use " (if (= :simplified alt-script)
+                                       "simplified characters"
+                                       "traditional characters"))
       :on-click #(rf/dispatch [::events/change-script alt-script])}
      content]))
 
 (defn entry-li
   "Converts a dictionary entry into a hiccup list item."
   [word script [entry id]]
-  [:li {:key (str entry)}
-   [:a {:href (str "/word/" word "/" id)}
-    (interpose " "
-      [(if (= :simplified script)
-         [:span.simplified.hanzi (:simplified entry)]
-         [:span.traditional.hanzi (:traditional entry)])
-       [:span.pinyin (str/join " " (:pinyin entry))]
-       (for [definition (:definition entry)]
-         [:span.definition definition])])]])
+  (let [href (str "/word/" word "/" id)
+        defs (:definition entry)]
+    [:li {:key href}
+     [:a {:href href, :key href}
+      (interpose " "
+        [(if (= :simplified script)
+           [:span.simplified.hanzi {:key "hanzi"} (:simplified entry)]
+           [:span.traditional.hanzi {:key "hanzi"} (:traditional entry)])
+         [:span.pinyin {:key "pinyin"} (str/join " " (:pinyin entry))]
+         (for [definition defs]
+           [:span.definition {:key definition} definition])])]]))
 
 (defn entries->hiccup
   "Convert a list of dictionary entries into hiccup."
@@ -179,7 +183,9 @@
   (let [from  @(rf/subscribe [::subs/nav])
         links [["/" "Home"] ["/help" "Help"] ["/about" "About"]]]
     [:footer
-     [:nav (interpose " · " (conj (vec (navify from links)) [script-changer]))]
+     [:nav (interpose " · "
+             (conj (vec (navify from links))
+                   [script-changer {:key "script-changer"}]))]
      [:p#copyright "© " year-string " Simon Gray ("
       [:a {:href "https://github.com/simongray"} "github"] ")"]]))
 
