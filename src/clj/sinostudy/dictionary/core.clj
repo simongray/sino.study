@@ -107,7 +107,7 @@
   "True if everything matches except the definitions and the :pinyin case."
   [e1 e2]
   (and (= (:simplified e1) (:simplified e2))
-       (= (:simplified e1) (:simplified e2))
+       (= (:traditional e1) (:traditional e2))
        (matches-pinyin (:pinyin e1) (:pinyin e2))))
 
 (defn merge-entry
