@@ -38,8 +38,9 @@
            [:span.simplified.hanzi {:key "hanzi"} (:simplified entry)]
            [:span.traditional.hanzi {:key "hanzi"} (:traditional entry)])
          [:span.pinyin {:key "pinyin"} (str/join " " (:pinyin entry))]
-         (for [definition defs]
-           [:span.definition {:key definition} definition])])]]))
+         (interpose "; "
+           (for [definition defs]
+             [:span.definition {:key definition} definition]))])]]))
 
 (defn entries->hiccup
   "Convert a list of dictionary entries into hiccup."

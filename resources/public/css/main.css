@@ -312,10 +312,6 @@ ol li {
 	content: "]";
 }
 
-.definition + .definition::before {
-	content: "; ";
-}
-
 footer {
 	animation: fade-in 1.5s ease;
 
