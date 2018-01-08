@@ -94,7 +94,7 @@
 (defn name-entry?
   "Determine is a dictionary entry is a name entry."
   [entry]
-  (let [first-letter (first (:pinyin entry))]
+  (when-let [first-letter (first (first (:pinyin entry)))]
     (Character/isUpperCase ^char first-letter)))
 
 (defn matches-pinyin
@@ -110,6 +110,21 @@
        (= (:simplified e1) (:simplified e2))
        (matches-pinyin (:pinyin e1) (:pinyin e2))))
 
+(defn merge-entry
+  "Merges in an entry in the existing entries, e.g. a name entry."
+  [dictionary key-type entry]
+  (let [key     (get entry key-type)
+        entries (get dictionary key)
+        matches (filter (partial matches-entry entry) entries)]
+    (loop [matches* matches
+           entries* entries]
+      (if-let [match (first matches*)]
+        (let [new-def (set/union (:definition match) (:definition entry))
+              new-entry (assoc match :definition new-def)]
+          (recur (rest matches*) (conj (disj entries* match) new-entry)))
+        (assoc dictionary key entries*)))))
+
+
 ;; TODO: remove entries w/ "surname X" def and add tag to referenced entry
 ;; TODO: merge entries where pinyin is capitalised (e.g. Ming2 with ming2)
 ;; TODO: remove "(!old) variant of X" if the referenced char is identical
@@ -122,14 +137,21 @@
 ;; TODO: make the pattern "classifier for X" prominent (CL)
 ;; TODO: make the pattern "to X" prominent (V)
 
-(defn load-dictionaries
+(defn load-entries
   "Load the contents of a CC-CEDICT dictionary file into Clojure maps."
   [file]
   (with-open [reader (io/reader file)]
     (->> (line-seq reader)
          (filter entry?)
          (map extract-entry)
-         (compile-dictionaries))))
+         (vec))))
+
+(defn load-dictionaries
+  "Load the contents of a CC-CEDICT dictionary file into Clojure maps."
+  [entries]
+  (let [name-entries  (filter name-entry? entries)
+        other-entries (filter (complement name-entry?) entries)]
+    (compile-dictionaries other-entries)))
 
 (defn look-up
   "Look up the specified word in each dictionary map and merge the results."
