@@ -65,30 +65,50 @@
       (let [pinyin-key        (dict/pinyin-key pinyin)
             pinyin+diacritics (preprocess pinyin)
             definitions       (split-def definition)]
-        [pinyin-key {:traditional trad
-                     :simplified  simp
-                     :pinyin      pinyin+diacritics
-                     :definition  definitions}]))))
+        {:traditional trad
+         :simplified  simp
+         :pinyin      pinyin+diacritics
+         :pinyin-key  pinyin-key
+         :definition  definitions}))))
 
 ;; Note: do not remove pinyin-key -- it is not unused, just indirectly used!
 (defn add-entry
   "Add (or extend) an entry in the dictionary map; key marks the look-up key.
   Pinyin is a special case, as the look-up key is further processed."
-  [key-type dictionary [pinyin-key entry]]
-  (let [key (if (= key-type :pinyin) pinyin-key (get entry key-type))]
+  [key-type dictionary entry]
+  (let [key (get entry key-type)]
     (if-let [entries (get dictionary key)]
       (assoc dictionary key (conj entries entry))
       (assoc dictionary key #{entry}))))
 
 (def compile-dictionaries
   "Reduce into a vector of 3 dictionary maps with different look-up keys:
-  traditional, simplified, and Pinyin."
+  :traditional, :simplified, and :pinyin-key."
   (let [add-traditional (partial add-entry :traditional)
         add-simplified  (partial add-entry :simplified)
-        add-pinyin      (partial add-entry :pinyin)]
+        add-pinyin      (partial add-entry :pinyin-key)]
     (juxt (partial reduce add-traditional {})
           (partial reduce add-simplified {})
           (partial reduce add-pinyin {}))))
+
+(defn name-entry?
+  "Determine is a dictionary entry is a name entry."
+  [entry]
+  (let [first-letter (first (:pinyin entry))]
+    (Character/isUpperCase ^char first-letter)))
+
+(defn matches-pinyin
+  "True if the :pinyin of both entries is equal, disregarding case."
+  [p1 p2]
+  (let [lower-case= #(= (str/lower-case %1) (str/lower-case %2))]
+    (every? true? (map lower-case= p1 p2))))
+
+(defn matches-entry
+  "True if everything matches except the definitions and the :pinyin case."
+  [e1 e2]
+  (and (= (:simplified e1) (:simplified e2))
+       (= (:simplified e1) (:simplified e2))
+       (matches-pinyin (:pinyin e1) (:pinyin e2))))
 
 ;; TODO: remove entries w/ "surname X" def and add tag to referenced entry
 ;; TODO: merge entries where pinyin is capitalised (e.g. Ming2 with ming2)
@@ -109,7 +129,7 @@
     (->> (line-seq reader)
          (filter entry?)
          (map extract-entry)
-         compile-dictionaries)))
+         (compile-dictionaries))))
 
 (defn look-up
   "Look up the specified word in each dictionary map and merge the results."
