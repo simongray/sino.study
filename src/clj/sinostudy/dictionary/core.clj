@@ -111,7 +111,7 @@
        (matches-pinyin (:pinyin e1) (:pinyin e2))))
 
 (defn merge-entry
-  "Merges in an entry in the existing entries, e.g. a name entry."
+  "Merges an entry (e.g. a name entry) into matching existing entries."
   [dictionary key-type entry]
   (let [key     (get entry key-type)
         entries (get dictionary key)
@@ -121,9 +121,8 @@
       (if-let [match (first matches*)]
         (let [new-def (set/union (:definition match) (:definition entry))
               new-entry (assoc match :definition new-def)]
-          (recur (rest matches*) (conj (disj entries* match) new-entry)))
+          (recur (rest matches*) (-> entries* (disj match) (conj new-entry))))
         (assoc dictionary key entries*)))))
-
 
 ;; TODO: remove entries w/ "surname X" def and add tag to referenced entry
 ;; TODO: merge entries where pinyin is capitalised (e.g. Ming2 with ming2)
