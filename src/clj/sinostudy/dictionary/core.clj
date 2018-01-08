@@ -61,8 +61,8 @@
         vec)))
 
 (defn extract-entry
-  "Extract the constituents of a matching dictionary entry according to regex:
-  TRADITIONAL SIMPLIFIED [PINYIN] /DEFINITION/"
+  "Extract the constituents of a matching CC-CEDICT dictionary entry.
+  Returns a [pinyin-key {entry}] vector (the pinyin-key is used for look-ups)."
   [line]
   (let [pattern #"^([^ ]+) ([^ ]+) \[([^]]+)\] /(.+)/"
         [_ trad simp pinyin definition :as entry] (re-matches pattern line)]
@@ -70,29 +70,29 @@
       (let [pinyin-key        (dict/pinyin-key pinyin)
             pinyin+diacritics (preprocess pinyin)
             definitions       (split-def definition)]
-        [trad simp pinyin-key pinyin+diacritics definitions]))))
+        [pinyin-key {:traditional trad
+                     :simplified  simp
+                     :pinyin      pinyin+diacritics
+                     :definition  definitions}]))))
 
 ;; Note: do not remove pinyin-key -- it is not unused, just indirectly used!
 (defn add-entry
-  "Add (or extend) an entry in the dictionary map; n marks the look-up key."
-  [n dictionary [trad simp pinyin-key pinyin definition :as entry]]
-  (let [key   (nth entry n)
-        entry {:traditional trad
-               :simplified  simp
-               :pinyin      pinyin
-               :definition  definition}]
+  "Add (or extend) an entry in the dictionary map; key marks the look-up key.
+  Pinyin is a special case, as the look-up key is further processed."
+  [key-type dictionary [pinyin-key entry]]
+  (let [key (if (= key-type :pinyin) pinyin-key (get entry key-type))]
     (if-let [entries (get dictionary key)]
       (assoc dictionary key (conj entries entry))
       (assoc dictionary key #{entry}))))
 
 (def compile-dictionaries
   "Reduce into a vector of 3 dictionary maps with different look-up keys:
-  traditional, simplified, and basic Pinyin."
-  (let [add-trad   (partial add-entry 0)
-        add-simp   (partial add-entry 1)
-        add-pinyin (partial add-entry 2)]
-    (juxt (partial reduce add-trad {})
-          (partial reduce add-simp {})
+  traditional, simplified, and Pinyin."
+  (let [add-traditional (partial add-entry :traditional)
+        add-simplified  (partial add-entry :simplified)
+        add-pinyin      (partial add-entry :pinyin)]
+    (juxt (partial reduce add-traditional {})
+          (partial reduce add-simplified {})
           (partial reduce add-pinyin {}))))
 
 ;; TODO: remove entries w/ "surname X" def and add tag to referenced entry
