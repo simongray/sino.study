@@ -40,11 +40,6 @@
   [pinyin]
   (map neutral-as-0 (str/split pinyin #" ")))
 
-;; TODO: use this during comparisons and for storing pinyin-key
-;; relatively common punctuation that should be ignored during comparisons
-(def punctuation
-  #{"·" ","})
-
 ;; CC-CEDICT mistakes and oddities that are ignored during import
 (def cc-cedict-oddities
   #{"xx5" "xx" "ging1"})

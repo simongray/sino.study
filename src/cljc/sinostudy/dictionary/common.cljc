@@ -10,6 +10,8 @@
   [s]
   (-> s
       (str/replace " " "")
+      (str/replace "·" "")                                  ; middle dot
+      (str/replace "," "")
       (str/replace #"\d" "")
       str/lower-case))
 
