@@ -10,8 +10,9 @@
 (defn add-word-links
   [text]
   (let [href    #(str "/word/" %)
-        link-up (fn [word] [:a {:href (href word), :key (href word)} word])]
-    (map link-up text)))
+        ids     (range (count text))
+        link-up (fn [word id] [:a {:href (href word), :key id} word])]
+    (map link-up text ids)))
 
 ;; used both in nav and on dictionary entry pages
 (defn script-changer-link
