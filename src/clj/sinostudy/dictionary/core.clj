@@ -5,6 +5,9 @@
             [sinostudy.dictionary.common :as dict]
             [sinostudy.pinyin.eval :as pe]))
 
+(def look-up-keys
+  [:traditional :simplified :pinyin-key])
+
 (defn entry?
   "Determine if a line is a dictionary entry."
   [line]
@@ -75,21 +78,23 @@
 (defn add-entry
   "Add (or extend) an entry in the dictionary map; key marks the look-up key.
   Pinyin is a special case, as the look-up key is further processed."
-  [key-type dictionary entry]
+  [key-type m entry]
   (let [key (get entry key-type)]
-    (if-let [entries (get dictionary key)]
-      (assoc dictionary key (conj entries entry))
-      (assoc dictionary key #{entry}))))
+    (if-let [entries (get m key)]
+      (assoc m key (conj entries entry))
+      (assoc m key #{entry}))))
 
-(def compile-dictionaries
-  "Reduce into a vector of 3 dictionary maps with different look-up keys:
-  :traditional, :simplified, and :pinyin-key."
-  (let [add-traditional (partial add-entry :traditional)
-        add-simplified  (partial add-entry :simplified)
-        add-pinyin      (partial add-entry :pinyin-key)]
-    (juxt (partial reduce add-traditional {})
-          (partial reduce add-simplified {})
-          (partial reduce add-pinyin {}))))
+(defn compile-dictionary
+  "Create a dictionary map from the entries with keys determined by key-type,
+  this being the field in the entry that must serve as key (e.g. :traditional)."
+  [entries key-type]
+  (reduce (partial add-entry key-type) {} entries))
+
+(defn compile-dictionaries
+  "Create a map of dictionary maps with different look-up key-types."
+  [entries key-types]
+  (let [make-dict #(vector % (compile-dictionary entries %))]
+    (into {} (map make-dict key-types))))
 
 (defn name-entry?
   "Determine is a dictionary entry is a name entry."
@@ -147,15 +152,15 @@
 
 (defn load-dictionaries
   "Load the contents of a CC-CEDICT dictionary file into Clojure maps."
-  [entries]
+  [entries key-types]
   (let [name-entries  (filter name-entry? entries)
         other-entries (filter (complement name-entry?) entries)]
-    (compile-dictionaries other-entries)))
+    (compile-dictionaries other-entries key-types)))
 
 (defn look-up
   "Look up the specified word in each dictionary map and merge the results."
   [word dictionaries]
-  (let [check-dict (fn [n] (get (nth dictionaries n) word))]
+  (let [check-dict (fn [n] (get (nth (vals dictionaries) n) word))]
     (->> (map check-dict (range (count dictionaries)))
          (filter (comp not nil?))
          (apply set/union))))
