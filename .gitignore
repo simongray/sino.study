@@ -4,6 +4,10 @@
 /resources/public/js/compiled
 out
 *.iml
+resources/tatoeba/links.csv
+resources/tatoeba/sentences_detailed.csv
+resources/tatoeba/tags.csv
+resources/tatoeba/users_sentences.csv
 
 # Created by https://www.gitignore.io/api/macos,clojure,intellij,leiningen
 
