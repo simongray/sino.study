@@ -274,11 +274,16 @@ ol li {
 /* marks a special tag in a dictionary entry (in the subheader after pinyin) */
 .tag {
 	font-size: 14pt;
-    padding: 0.2em;
+	font-family: Didot, serif;
+    padding: 0.2em 0.3em;
     border: 1pt solid #AAAAAA;
     border-radius: 0.5ch;
     background-color: white;
     color: #666666;
+}
+
+.pinyin + .tag, .tag + .tag  {
+	margin-left: 0.5ch;
 }
 
 .dictionary-entry h1 {
@@ -356,7 +361,7 @@ a {
 }
 
 a:hover {
-	text-decoration: underline;
+	text-decoration: none;
 	color: #4477DD;
 }
 
@@ -365,13 +370,8 @@ a:hover {
 	border-color: #4477DD;
 }
 
-.hanzi a:hover, .dictionary-entries a:hover {
-	text-decoration: none;
-}
-
 a.current-page, a.current-page:hover {
 	color: #661111;
-	text-decoration: none;
 }
 
 footer a {

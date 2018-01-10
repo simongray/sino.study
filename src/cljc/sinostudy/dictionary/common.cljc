@@ -46,6 +46,10 @@
   (let [sorted-defs (sort (:definition entry))]
     (assoc entry :definition sorted-defs)))
 
+(defn sort-classifiers
+  [classifiers]
+  (sort-by pinyin>case>character classifiers))
+
 (defn digits->diacritics*
   "Convert (only) Pinyin+digit syllables to diacritics."
   [s]

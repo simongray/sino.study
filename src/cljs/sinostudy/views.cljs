@@ -3,7 +3,8 @@
             [clojure.string :as str]
             [sinostudy.site :as site]
             [sinostudy.subs :as subs]
-            [sinostudy.events :as events]))
+            [sinostudy.events :as events]
+            [sinostudy.dictionary.common :as dict]))
 
 ;;;; HELPER FUNCTIONS
 
@@ -11,7 +12,9 @@
   [text]
   (let [href    #(str "/word/" %)
         ids     (range (count text))
-        link-up (fn [word id] [:a {:href (href word), :key id} word])]
+        link-up (fn [word id] [:a {:title (str "look up " word)
+                                   :href (href word)
+                                   :key id} word])]
     (map link-up text ids)))
 
 ;; used both in nav and on dictionary entry pages
@@ -57,23 +60,37 @@
 (defn entry->hiccup
   "Convert a single dictionary entry into hiccup."
   [entry script]
-  (let [simplified  (:simplified entry)
-        traditional (:traditional entry)
-        different?  (not (= simplified traditional))]
+  (let [simplified          (:simplified entry)
+        traditional         (:traditional entry)
+        script-differences? (not (= simplified traditional))
+        classifiers         (:classifiers entry)
+        word (if (= :simplified script) simplified traditional)]
     [:div.dictionary-entry
      [:h1 (if (= :simplified script)
-            [:span.simplified.hanzi (add-word-links simplified)]
-            [:span.traditional.hanzi (add-word-links traditional)])]
+            [:span.hanzi.simplified (add-word-links simplified)]
+            [:spanl.hanzi.traditiona (add-word-links traditional)])]
      [:p.subheader
-      [:span.pinyin (interpose " " (add-word-links (:pinyin entry)))]
-      " "
-      (when different?
-        [:span.tag.hanzi
-         (script-changer-link
-           script
-           (if (= :simplified script)
-             [:span.traditional traditional]
-             [:span.simplified simplified]))])]
+      (interpose " "
+        [[:span.pinyin {:key :pinyin}
+          (interpose " " (add-word-links (:pinyin entry)))]
+         (when script-differences?
+           [:span.tag {:key :script}
+            (if (= :simplified script) "tr.|" "s.|")
+            (script-changer-link
+              script
+              (if (= :simplified script)
+                [:span.hanzi.traditional traditional]
+                [:span.hanzi.simplified simplified]))])
+         (when classifiers
+           [:span.tag {:key :classifiers, :title (str "classifiers for " word)}
+            "cl.|"
+            (interpose ", "
+              (for [classifier (dict/sort-classifiers classifiers)]
+                (if (= :simplified script)
+                  [:span.hanzi.simplified {:key (:simplified classifier)}
+                   (add-word-links (:simplified classifier))]
+                  [:span.hanzi.traditional {:key (:traditional classifier)}
+                   (add-word-links (:traditional classifier))])))])])]
      [:ol
       (for [definition (:definition entry)]
         [:li {:key definition} [:span.definition definition]])]]))
