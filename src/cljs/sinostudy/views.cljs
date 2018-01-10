@@ -41,7 +41,7 @@
 
 (defn entry-li
   "Converts a dictionary entry into a hiccup list item."
-  [word script [entry id]]
+  [word script entry id]
   (let [href (str "/word/" word "/" id)
         definitions (:definition entry)]
     [:li {:key href}
@@ -56,16 +56,23 @@
              (let [definition* (handle-refs definition script)]
                [:span.definition {:key definition} definition*])))])]]))
 
+;; TODO: I'm sure the filtering of variant entries can be more elegant...
 (defn entries->hiccup
   "Convert a list of dictionary entries into hiccup."
   [word entries script]
   [:div
    [:h1.list-header word]
    [:ul.dictionary-entries
-    (let [ids         (range (count entries))
-          entry-li*   (partial entry-li word script)
-          entries+ids (map list entries ids)]
-      (map entry-li* entries+ids))]])
+    (let [variants     (filter dict/variant-entry? entries)
+          non-variants (filter (complement dict/variant-entry?) entries)
+          hanzi        (set (map script non-variants))
+          same-hanzi?  (comp (partial contains? hanzi) script)
+          bad-variants (set (filter same-hanzi? variants))
+          good-entry?  (comp not (partial contains? bad-variants))
+          entries*     (filter good-entry? entries)
+          ids          (range (count entries))
+          to-hiccup    (partial entry-li word script)]
+      (map to-hiccup entries* ids))]])
 
 (defn entry->hiccup
   "Convert a single dictionary entry into hiccup."

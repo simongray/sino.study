@@ -147,8 +147,6 @@
       (recur (merge-entry key-type dict* entry) (rest entries*))
       dict*)))
 
-;; TODO: remove "(!old) variant of X" if the referenced char is identical
-;;       (note: trad and simp may differ!)
 ;; TODO: merge entries that only differ in definitions, trad and simp may differ
 ;; TODO: make list of exceptional entries (e.g. 3P) that should be queryable
 ;; TODO: make the pattern "classifier for X" prominent (CL)
