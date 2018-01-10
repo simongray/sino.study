@@ -15,8 +15,9 @@
 (def reframe-app
   (slurp "./resources/public/index.html"))
 
-(defonce dictionaries
-  (dict/load-dictionaries "./resources/cedict_ts.u8"))
+(defonce dicts
+  (let [entries (dict/load-entries "./resources/cedict_ts.u8")]
+    (dict/load-dicts entries dict/look-up-keys)))
 
 ;; First Access-Control header permits cross-origin requests.
 ;; Second prevents Chrome from stripping Content-Type header.
@@ -39,7 +40,7 @@
   to a base directory (query-type) and content (query-string)."
   [query-type query-string]
   (case query-type
-    "word" (dict/look-up query-string dictionaries)))
+    "word" (dict/look-up query-string dicts)))
 
 (defn query-result
   "Get the Transit-encoded result of a query."
