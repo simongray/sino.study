@@ -3,6 +3,27 @@
             [sinostudy.pinyin.core :as p]
             [sinostudy.pinyin.eval :as pe]))
 
+(def hanzi-ref
+  "A pattern used in CC-CEDICT to embed a hanzi reference, e.g. 樁|桩[zhuang1]."
+  #"[^,:\[a-zA-Z0-9]+\[[^\]]+\]+")
+
+(defn hanzi-ref->map
+  "Transform a hanzi-ref-str into a Clojure map."
+  [hanzi-ref-str]
+  (let [[hanzi-str pinyin-str] (str/split hanzi-ref-str #"\[|\]")
+        hanzi       (str/split hanzi-str #"\|")
+        pinyin      (str/split pinyin-str #" ")
+        traditional (first hanzi)
+        simplified  (if (second hanzi) (second hanzi) traditional)]
+    {:traditional traditional
+     :simplified  simplified
+     :pinyin      pinyin}))
+
+(defn get-refs
+  "Get all of the hanzi reference in s as Clojure maps."
+  [s]
+  (map hanzi-ref->map (re-seq hanzi-ref s)))
+
 ;; using CC-CEDICT Pinyin directly for dictionary look-ups is too strict
 (defn pinyin-key
   "Converts CC-CEDICT Pinyin string into a plain form for use as a map key.

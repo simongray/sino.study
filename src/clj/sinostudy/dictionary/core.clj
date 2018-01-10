@@ -84,6 +84,16 @@
       (assoc m key (conj entries entry))
       (assoc m key #{entry}))))
 
+(defn cl-def?
+  "Determine if a dictionary definition is actually a list of classifiers."
+  [definition]
+  (str/starts-with? definition "CL:"))
+
+(defn cl-def-entry?
+  "Determine if the entry's :definition contains classifiers."
+  [entry]
+  (some cl-def? (:definition entry)))
+
 (defn name-entry?
   "Determine is a dictionary entry is a name entry."
   [entry]
@@ -141,8 +151,6 @@
 ;;       (note: trad and simp may differ!)
 ;; TODO: merge entries that only differ in definitions, trad and simp may differ
 ;; TODO: autolinking of common patterns Trad|Simp[Pin] and Char[Pin]
-;; TODO: remove CL pattern defs and add classifier list to entry instead
-;;       CL:條|条[tiao2],股[gu3],根[gen1]
 ;; TODO: make list of exceptional entries (e.g. 3P) that should be queryable
 ;; TODO: make the pattern "classifier for X" prominent (CL)
 ;; TODO: make the pattern "to X" prominent (V)
@@ -187,11 +195,27 @@
         (assoc dicts* key (merge-entries key (get dicts* key) merges)))
       dicts*)))
 
+(defn isolate-classifiers
+  "Moves the classifiers of an entry from :definition to :classifiers."
+  [entry]
+  (if (cl-def-entry? entry)
+    (let [defs        (:definition entry)
+          cl-defs     (filter cl-def? defs)
+          new-defs    (set/difference defs cl-defs)
+          classifiers (set (flatten (map dict/get-refs cl-defs)))]
+      (if classifiers
+        (-> entry
+            (assoc :definition new-defs)
+            (assoc :classifiers classifiers))
+        entry))
+    entry))
+
 (defn load-dicts
   "Load the contents of a CC-CEDICT dictionary file into Clojure maps."
   [entries key-types]
   (let [name-entries (filter name-entry? entries)]
     (->> entries
+         (map isolate-classifiers)
          (compile-dicts key-types)
          (mod-dicts name-entries))))
 
