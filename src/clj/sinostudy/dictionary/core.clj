@@ -146,6 +146,7 @@
 ;; TODO: make list of exceptional entries (e.g. 3P) that should be queryable
 ;; TODO: make the pattern "classifier for X" prominent (CL)
 ;; TODO: make the pattern "to X" prominent (V)
+;; TODO: do something about weird simplifications like 制 (dual entries in simp)
 
 (defn load-entries
   "Load the contents of a CC-CEDICT dictionary file into Clojure maps."
