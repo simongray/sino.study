@@ -275,6 +275,7 @@ ol li {
 .tag {
 	font-size: 14pt;
 	font-family: Didot, serif;
+	letter-spacing: 0.3ch;
     padding: 0.2em 0.3em;
     border: 1pt solid #AAAAAA;
     border-radius: 0.5ch;
