@@ -5,7 +5,7 @@
 
 (def hanzi-ref
   "A pattern used in CC-CEDICT to embed a hanzi reference, e.g. 樁|桩[zhuang1]."
-  #"[^,:\[a-zA-Z0-9]+\[[^\]]+\]+")
+  #"[^ ,:\[a-zA-Z0-9]+\[[^\]]+\]+")
 
 (defn hanzi-ref->map
   "Transform a hanzi-ref-str into a Clojure map."

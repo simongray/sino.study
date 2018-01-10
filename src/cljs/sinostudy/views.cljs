@@ -30,11 +30,20 @@
       :on-click #(rf/dispatch [::events/change-script alt-script])}
      content]))
 
+(defn handle-refs
+  "Apply function f to all hanzi refs in definition."
+  [definition f]
+  (let [hanzi-refs  (dict/get-refs definition)]
+    (if (empty? hanzi-refs)
+      definition
+      (interleave (str/split definition dict/hanzi-ref)
+                  (map f hanzi-refs)))))
+
 (defn entry-li
   "Converts a dictionary entry into a hiccup list item."
   [word script [entry id]]
   (let [href (str "/word/" word "/" id)
-        defs (:definition entry)]
+        definitions (:definition entry)]
     [:li {:key href}
      [:a {:href href, :key href}
       (interpose " "
@@ -43,8 +52,9 @@
            [:span.traditional.hanzi {:key "hanzi"} (:traditional entry)])
          [:span.pinyin {:key "pinyin"} (str/join " " (:pinyin entry))]
          (interpose "; "
-           (for [definition defs]
-             [:span.definition {:key definition} definition]))])]]))
+           (for [definition definitions]
+             (let [definition* (handle-refs definition script)]
+               [:span.definition {:key definition} definition*])))])]]))
 
 (defn entries->hiccup
   "Convert a list of dictionary entries into hiccup."
@@ -60,11 +70,12 @@
 (defn entry->hiccup
   "Convert a single dictionary entry into hiccup."
   [entry script]
-  (let [simplified          (:simplified entry)
-        traditional         (:traditional entry)
-        script-differences? (not (= simplified traditional))
+  (let [traditional         (:traditional entry)
+        simplified          (:simplified entry)
+        definitions         (:definition entry)
         classifiers         (:classifiers entry)
-        word (if (= :simplified script) simplified traditional)]
+        script-differences? (not (= simplified traditional))
+        word                (if (= :simplified script) simplified traditional)]
     [:div.dictionary-entry
      [:h1 (if (= :simplified script)
             [:span.hanzi.simplified (add-word-links simplified)]
@@ -92,8 +103,10 @@
                   [:span.hanzi.traditional {:key (:traditional classifier)}
                    (add-word-links (:traditional classifier))])))])])]
      [:ol
-      (for [definition (:definition entry)]
-        [:li {:key definition} [:span.definition definition]])]]))
+      (for [definition definitions]
+        (let [link        (comp add-word-links vector script)
+              definition* (handle-refs definition link)]
+          [:li {:key definition} [:span.definition definition*]]))]]))
 
 (defn unknown-word
   [word]
