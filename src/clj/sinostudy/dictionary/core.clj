@@ -84,18 +84,6 @@
       (assoc m key (conj entries entry))
       (assoc m key #{entry}))))
 
-(defn compile-dictionary
-  "Create a dictionary map from the entries with keys determined by key-type,
-  this being the field in the entry that must serve as key (e.g. :traditional)."
-  [entries key-type]
-  (reduce (partial add-entry key-type) {} entries))
-
-(defn compile-dictionaries
-  "Create a map of dictionary maps with different look-up key-types."
-  [entries key-types]
-  (let [make-dict #(vector % (compile-dictionary entries %))]
-    (into {} (map make-dict key-types))))
-
 (defn name-entry?
   "Determine is a dictionary entry is a name entry."
   [entry]
@@ -116,18 +104,33 @@
        (matches-pinyin (:pinyin e1) (:pinyin e2))))
 
 (defn merge-entry
-  "Merges an entry (e.g. a name entry) into matching existing entries."
-  [dictionary key-type entry]
+  "Merge entry (e.g. name entry) into matching existing entries in dictionary.
+  This both merges the definition into other entries and removes the old entry."
+  [key-type dictionary entry]
   (let [key     (get entry key-type)
         entries (get dictionary key)
         matches (filter (partial matches-entry entry) entries)]
     (loop [matches* matches
            entries* entries]
-      (if-let [match (first matches*)]
-        (let [new-def (set/union (:definition match) (:definition entry))
-              new-entry (assoc match :definition new-def)]
-          (recur (rest matches*) (-> entries* (disj match) (conj new-entry))))
-        (assoc dictionary key entries*)))))
+      (let [match (first matches*)]
+        (cond
+          (nil? match) (assoc dictionary key entries*)
+          (= match entry) (recur (rest matches*) (disj entries* match))
+          :else (let [match-def (:definition match)
+                      entry-def (:definition entry)
+                      new-def (set/union match-def entry-def)
+                      new-entry (assoc match :definition new-def)]
+                  (recur (rest matches*) (-> entries*
+                                             (disj match)
+                                             (conj new-entry)))))))))
+
+(defn merge-entries
+  [key-type dictionary entries]
+  (loop [dictionary* dictionary
+         entries*    entries]
+    (if-let [entry (first entries*)]
+      (recur (merge-entry key-type dictionary* entry) (rest entries*))
+      dictionary*)))
 
 ;; TODO: remove entries w/ "surname X" def and add tag to referenced entry
 ;; TODO: merge entries where pinyin is capitalised (e.g. Ming2 with ming2)
@@ -149,6 +152,18 @@
          (filter entry?)
          (map extract-entry)
          (vec))))
+
+(defn compile-dictionary
+  "Create a dictionary map from the entries with keys determined by key-type,
+  this being the field in the entry that must serve as key (e.g. :traditional)."
+  [entries key-type]
+  (reduce (partial add-entry key-type) {} entries))
+
+(defn compile-dictionaries
+  "Create a map of dictionary maps with different look-up key-types."
+  [entries key-types]
+  (let [make-dict #(vector % (compile-dictionary entries %))]
+    (into {} (map make-dict key-types))))
 
 (defn load-dictionaries
   "Load the contents of a CC-CEDICT dictionary file into Clojure maps."
