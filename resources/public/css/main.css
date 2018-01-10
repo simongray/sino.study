@@ -193,8 +193,14 @@ h1 {
 }
 
 /* headers above lists (e.g. search results) should be centered */
-h1.list-header {
+.list-header, .list-subheader {
 	text-align: center;
+}
+
+.list-subheader {
+	color: #AAAAAA;
+	font-size: 10pt;
+	font-style: italic;
 }
 
 p {
