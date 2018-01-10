@@ -24,6 +24,18 @@
   [s]
   (map hanzi-ref->map (re-seq hanzi-ref s)))
 
+(defn variant-def?
+  "Is this definition a reference to a common char/word it is a variant of?"
+  [definition]
+  (str/starts-with? definition "variant of "))
+
+(defn variant-entry?
+  "Is this entry a variant of a more common char/word?"
+  [entry]
+  (let [definitions (:definition entry)]
+    (and (= 1 (count definitions))
+         (variant-def? (first definitions)))))
+
 ;; using CC-CEDICT Pinyin directly for dictionary look-ups is too strict
 (defn pinyin-key
   "Converts CC-CEDICT Pinyin string into a plain form for use as a map key.
