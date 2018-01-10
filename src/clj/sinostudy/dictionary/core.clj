@@ -149,6 +149,8 @@
 ;; TODO: do something about weird simplifications like 制 (dual entries in simp)
 ;;       perhaps simply merge while constructing the list and remove "variant
 ;;       of X" from definitions?
+;; TODO: merge duoyinci, perhaps just conj Pinyin and defs
+;;       e.g. {... :pinyin [[...] [...]], :definition [[...] [...]]}
 
 
 (defn load-entries
