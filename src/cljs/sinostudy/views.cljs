@@ -150,7 +150,7 @@
   (map (fn [[to text]] (navlink from to text)) links))
 
 (def year-string
-  (let [year (site/current-year)]
+  (let [year (.getFullYear (js/Date.))]
     (if (> year 2017)
       (str "2017-" year)
       "2017")))

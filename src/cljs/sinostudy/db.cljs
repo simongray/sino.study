@@ -2,16 +2,12 @@
   (:require [sinostudy.site :as site]))
 
 (def static
-  (let [timestamp (site/current-year)]
-    {"/help"  {:timestamp    timestamp
-               :content-type :hiccup
+    {"/help"  {:content-type :hiccup
                :content      [:div [:h1 "Help"] [:p "This is the Help page."]]}
-     "/blog"  {:timestamp    timestamp
-               :content-type :hiccup
+     "/blog"  {:content-type :hiccup
                :content      [:div [:h1 "Blog"] [:p "This is the Blog page."]]}
-     "/about" {:timestamp    timestamp
-               :content-type :hiccup
-               :content      [:div [:h1 "About"] [:p "This is the About page."]]}}))
+     "/about" {:content-type :hiccup
+               :content      [:div [:h1 "About"] [:p "This is the About page."]]}})
 
 (def default-db
   {:input       ""
