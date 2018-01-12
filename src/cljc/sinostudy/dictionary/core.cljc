@@ -1,6 +1,7 @@
 (ns sinostudy.dictionary.core
   (:require [clojure.string :as str]
             [clojure.set :as set]
+            [sinostudy.rim.core :as rim]
             [sinostudy.pinyin.core :as p]
             [sinostudy.pinyin.eval :as pe]))
 
@@ -57,17 +58,6 @@
   (let [definitions (:definition entry)]
     (some variant-def? definitions)))
 
-(defn match?
-  "Test every predicate function in preds on objects x and y.
-  Returns true (= x and y match) if all function calls return true."
-  [x y & preds]
-  (every? (fn [pred] (pred x y)) preds))
-
-(defn all-matches
-  "Get all entries in xs that match x based on predicate functions in preds."
-  [x xs & preds]
-  (filter (fn [y] (apply match? x y preds)) xs))
-
 (defn contains-defs?
   "Does entry contain the definitions of variant-entry?"
   [variant-entry entry]
@@ -84,11 +74,11 @@
 (defn false-variants
   "Find false variants (usually an artifact of using Simplified Chinese)."
   [script entries]
-  (let [variants         (filter variant-entry? entries)
-        others           (filter (complement variant-entry?) entries)
-        same-hanzi?*     (partial same-hanzi? script)
-        matching-entries #(all-matches % others same-hanzi?* contains-defs?)]
-    (filter (comp not empty? matching-entries) variants)))
+  (let [variants     (filter variant-entry? entries)
+        others       (filter (complement variant-entry?) entries)
+        same-hanzi?* (partial same-hanzi? script)
+        get-matches  #(rim/all-matches % others same-hanzi?* contains-defs?)]
+    (filter (comp not empty? get-matches) variants)))
 
 (defn tag-false-variants
   "Tag false variants in a list of entries when comparing the current script.
