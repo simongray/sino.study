@@ -1,5 +1,6 @@
 (ns sinostudy.pinyin.core
   (:require [clojure.string :as str]
+            [sinostudy.rim.core :as rim]
             [sinostudy.pinyin.patterns :as patterns]
             [sinostudy.pinyin.data :as data]))
 
@@ -118,27 +119,6 @@
      s
      (recur (str/replace s match replacement) xs))))
 
-;; based on code examples from StackOverflow:
-;; https://stackoverflow.com/questions/3262195/compact-clojure-code-for-regular-expression-matches-and-their-position-in-string
-;; https://stackoverflow.com/questions/18735665/how-can-i-get-the-positions-of-regex-matches-in-clojurescript
-(defn re-pos
-  "Like re-seq, but returns a map of indexes to matches, not a seq of matches."
-  [re s]
-  #?(:clj  (loop [out {}
-                  m   (re-matcher re s)]
-             (if (.find m)
-               (recur (assoc out (.start m) (.group m)) m)
-               out))
-     :cljs (let [keep-mods (fn [re]
-                             (let [m? (.-multiline re)
-                                   i? (.-ignoreCase re)]
-                               (str "g" (when m? "m") (when i? "i"))))
-                 re        (js/RegExp. (.-source re) (keep-mods re))]
-             (loop [out {}]
-               (if-let [m (.exec re s)]
-                 (recur (assoc out (.-index m) (first m)))
-                 out)))))
-
 (defn- char->tone
   "Get the tone (0-4) based on a char."
   [char]
@@ -172,7 +152,7 @@
   "Convert a Pinyin string s with tone diacritics into one with tone digits."
   [s]
   (let [s*        (no-diacritics s)
-        syllables (re-pos patterns/pinyin-syllable s*)
+        syllables (rim/re-pos patterns/pinyin-syllable s*)
         original  #(subs s (first %) (+ (first %) (count (second %))))
         diacritic #(re-find #"[^\w]" %)
         tone      (comp char->tone diacritic original)]
