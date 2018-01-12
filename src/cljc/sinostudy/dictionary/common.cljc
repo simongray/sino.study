@@ -33,8 +33,51 @@
   "Is this entry a variant of a more common char/word?"
   [entry]
   (let [definitions (:definition entry)]
-    (and (= 1 (count definitions))
-         (variant-def? (first definitions)))))
+    (some variant-def? definitions)))
+
+(defn match?
+  "Test every predicate function in preds on objects x and y.
+  Returns true (= x and y match) if all function calls return true."
+  [x y & preds]
+  (every? (fn [pred] (pred x y)) preds))
+
+(defn all-matches
+  "Get all entries in xs that match x based on predicate functions in preds."
+  [x xs & preds]
+  (filter (fn [y] (apply match? x y preds)) xs))
+
+(defn contains-defs?
+  "Does entry contain the definitions of variant-entry?"
+  [variant-entry entry]
+  (let [rest-defs (partial filter (complement variant-def?))
+        e1-defs   (rest-defs (:definition variant-entry))
+        e2-defs   (set (:definition entry))]
+    (every? (partial contains? e2-defs) e1-defs)))
+
+(defn same-hanzi?
+  "Does the script (:simplified or :traditional) of entry match variant-entry?"
+  [script variant-entry entry]
+  (= (get variant-entry script) (get entry script)))
+
+(defn false-variants
+  "Find false variants (usually an artifact of using Simplified Chinese)."
+  [script entries]
+  (let [variants         (filter variant-entry? entries)
+        others           (filter (complement variant-entry?) entries)
+        same-hanzi?*     (partial same-hanzi? script)
+        matching-entries #(all-matches % others same-hanzi?* contains-defs?)]
+    (filter (comp not empty? matching-entries) variants)))
+
+(defn tag-false-variants
+  "Tag false variants in a list of entries when comparing the current script.
+  This is most likely to happen when the script is :simplified."
+  [script entries]
+  (let [false-variants (set (false-variants script entries))
+        tag-variant    (fn [entry]
+                         (if (contains? false-variants entry)
+                           (assoc entry :false-variant #{script})
+                           entry))]
+    (map tag-variant entries)))
 
 ;; using CC-CEDICT Pinyin directly for dictionary look-ups is too strict
 (defn pinyin-key

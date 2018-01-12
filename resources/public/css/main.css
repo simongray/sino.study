@@ -277,6 +277,13 @@ ol li {
 	color: #666666;
 }
 
+/* mark variants that only appear in a different script (e.g. traditional) */
+.false-variant, .false-variant .hanzi, .false-variant .pinyin {
+	color: #DDDDDD;
+	border-color: #DDDDDD;
+	text-decoration: line-through;
+}
+
 /* marks a special tag in a dictionary entry (in the subheader after pinyin) */
 .tag {
 	font-size: 14pt;

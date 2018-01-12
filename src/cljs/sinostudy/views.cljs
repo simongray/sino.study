@@ -42,11 +42,16 @@
 (defn entry-li
   "Converts a dictionary entry into a hiccup list item."
   [word script entry]
-  (let [id          (:id entry)
-        href        (str "/word/" word "/" id)
-        definitions (:definition entry)]
-    [:li {:key href}
-     [:a {:href href, :key href}
+  (let [id             (:id entry)
+        href           (str "/word/" word "/" id)
+        definitions    (:definition entry)
+        false-variant? (contains? (:false-variant entry) script)
+        key            (if false-variant? (str "false-" href) href)]
+    [:li {:key   key
+          :class (if false-variant? "false-variant" "")
+          :title (if false-variant? "not a variant in the current script"
+                                    "go to dictionary entry")}
+     [:a {:href href, :key key}
       (interpose " "
         [(if (= :simplified script)
            [:span.simplified.hanzi {:key "hanzi"} (:simplified entry)]
@@ -57,28 +62,19 @@
              (let [definition* (handle-refs definition script)]
                [:span.definition {:key definition} definition*])))])]]))
 
-;; I'm sure the filtering of variant entries can be more elegant...
 (defn entries->hiccup
   "Convert a list of dictionary entries into hiccup."
   [word entries script]
-  (let [ids          (range (count entries))
-        entries*     (map #(assoc %1 :id %2) entries ids)
-        variants     (filter dict/variant-entry? entries*)
-        non-variants (filter (complement dict/variant-entry?) entries*)
-        hanzi        (set (map script non-variants))
-        same-hanzi?  (comp (partial contains? hanzi) script)
-        bad-variants (set (filter same-hanzi? variants))
-        good-entry?  (comp not (partial contains? bad-variants))
-        good-entries (filter good-entry? entries*)
-        to-hiccup    (partial entry-li word script)]
+  (let [ids       (range (count entries))
+        entries*  (->> entries
+                       (map #(assoc %2 :id %1) ids)
+                       (dict/tag-false-variants script))
+        to-hiccup (partial entry-li word script)]
     [:div
      [:h1.list-header word]
-     (let [script-str (if (= :simplified script)
-                        "(Simplified Chinese)"
-                        "(Traditional Chinese)")]
-       [:p.list-subheader (count good-entries) " entries " script-str])
+     [:p.list-subheader (count entries*) " entries found"]
      [:ul.dictionary-entries
-      (map to-hiccup good-entries)]]))
+      (map to-hiccup entries*)]]))
 
 (defn entry->hiccup
   "Convert a single dictionary entry into hiccup."
