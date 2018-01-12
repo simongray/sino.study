@@ -4,6 +4,17 @@
             [sinostudy.pinyin.core :as p]
             [sinostudy.pinyin.eval :as pe]))
 
+;; TODO: merge entries that only differ in definitions, trad and simp may differ
+;; TODO: make list of exceptional entries (e.g. 3P) that should be queryable
+;; TODO: make the pattern "classifier for X" prominent (CL)
+;; TODO: make the pattern "to X" prominent (V)
+;; TODO: do something about weird simplifications like 制 (dual entries in simp)
+;;       perhaps simply merge while constructing the list and remove "variant
+;;       of X" from definitions?
+;; TODO: merge duoyinci, perhaps just conj Pinyin and defs
+;;       e.g. {... :pinyin [[...] [...]], :definition [[...] [...]]}
+;; TODO: tag radicals, e.g. def = "Kangxi radical 206" or just from a list
+
 (def hanzi-ref
   "A pattern used in CC-CEDICT to embed a hanzi reference, e.g. 樁|桩[zhuang1]."
   #"[^ ,:\[a-zA-Z0-9]+\[[^\]]+\]+")
@@ -277,17 +288,6 @@
     (if-let [entry (first entries*)]
       (recur (merge-entry key-type dict* entry) (rest entries*))
       dict*)))
-
-;; TODO: merge entries that only differ in definitions, trad and simp may differ
-;; TODO: make list of exceptional entries (e.g. 3P) that should be queryable
-;; TODO: make the pattern "classifier for X" prominent (CL)
-;; TODO: make the pattern "to X" prominent (V)
-;; TODO: do something about weird simplifications like 制 (dual entries in simp)
-;;       perhaps simply merge while constructing the list and remove "variant
-;;       of X" from definitions?
-;; TODO: merge duoyinci, perhaps just conj Pinyin and defs
-;;       e.g. {... :pinyin [[...] [...]], :definition [[...] [...]]}
-;; TODO: tag radicals, e.g. def = "Kangxi radical 206" or just from a list
 
 (defn compile-dict
   "Create a dictionary map from the entries with keys determined by key-type,
