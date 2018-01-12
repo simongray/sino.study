@@ -1,5 +1,4 @@
-(ns sinostudy.db
-  (:require [sinostudy.site :as site]))
+(ns sinostudy.db)
 
 (def static
     {"/help"  {:content-type :hiccup
