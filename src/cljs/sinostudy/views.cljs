@@ -29,15 +29,6 @@
       :on-click #(rf/dispatch [::events/change-script alt-script])}
      content]))
 
-(defn handle-refs
-  "Apply function f to all hanzi refs in definition."
-  [definition f]
-  (let [hanzi-refs  (dict/get-refs definition)]
-    (if (empty? hanzi-refs)
-      definition
-      (interleave (str/split definition dict/hanzi-ref)
-                  (map f hanzi-refs)))))
-
 (defn entry-li
   "Converts a dictionary entry into a hiccup list item."
   [word script entry]
@@ -58,7 +49,7 @@
          [:span.pinyin {:key "pinyin"} (str/join " " (:pinyin entry))]
          (interpose "; "
            (for [definition definitions]
-             (let [definition* (handle-refs definition script)]
+             (let [definition* (dict/handle-refs definition script)]
                [:span.definition {:key definition} definition*])))])]]))
 
 (defn entries->hiccup
@@ -113,7 +104,7 @@
      [:ol
       (for [definition definitions]
         (let [link        (comp add-word-links vector script)
-              definition* (handle-refs definition link)]
+              definition* (dict/handle-refs definition link)]
           [:li {:key definition} [:span.definition definition*]]))]]))
 
 (defn unknown-word

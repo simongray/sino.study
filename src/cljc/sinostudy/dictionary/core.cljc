@@ -31,10 +31,19 @@
      :simplified  simplified
      :pinyin      pinyin}))
 
-(defn get-refs
+(defn hanzi-refs
   "Get all of the hanzi reference in s as Clojure maps."
   [s]
   (map hanzi-ref->map (re-seq hanzi-ref s)))
+
+(defn handle-refs
+  "Apply function f to all hanzi refs in definition."
+  [definition f]
+  (let [hanzi-refs  (hanzi-refs definition)]
+    (if (empty? hanzi-refs)
+      definition
+      (interleave (str/split definition hanzi-ref)
+                  (map f hanzi-refs)))))
 
 ;; TODO: 唎 in traditional special case
 (defn variant-def?
@@ -321,7 +330,7 @@
     (let [defs        (:definition entry)
           cl-defs     (filter cl-def? defs)
           new-defs    (set/difference defs cl-defs)
-          classifiers (set (flatten (map get-refs cl-defs)))]
+          classifiers (set (flatten (map hanzi-refs cl-defs)))]
       (if classifiers
         (-> entry
             (assoc :definition new-defs)
