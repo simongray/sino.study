@@ -4,6 +4,7 @@
             [compojure.route :as route]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [cognitect.transit :as transit]
+            [sinostudy.dictionary.loader :as loader]
             [sinostudy.dictionary.core :as dict]))
 
 ;; TODO: figure out how to split into dev/production
@@ -12,12 +13,15 @@
 ;; TODO: use coercions for regex check of input
 ;; https://weavejester.github.io/compojure/compojure.coercions.html
 
+(def dictionary-keys
+  [:traditional :simplified :pinyin-key])
+
 (def reframe-app
   (slurp "./resources/public/index.html"))
 
 (defonce dicts
-  (let [entries (dict/load-entries "./resources/cedict_ts.u8")]
-    (dict/load-dicts entries dict/look-up-keys)))
+  (let [entries (loader/load-entries "./resources/cedict_ts.u8")]
+    (dict/load-dicts entries dictionary-keys)))
 
 ;; First Access-Control header permits cross-origin requests.
 ;; Second prevents Chrome from stripping Content-Type header.

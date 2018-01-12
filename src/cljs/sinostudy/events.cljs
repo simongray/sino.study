@@ -5,7 +5,7 @@
             [sinostudy.db :as db]
             [sinostudy.queries :as q]
             [sinostudy.pinyin.core :as pinyin]
-            [sinostudy.dictionary.common :as dict]
+            [sinostudy.dictionary.core :as dict]
             [ajax.core :as ajax]
             [cognitect.transit :as transit]))
 

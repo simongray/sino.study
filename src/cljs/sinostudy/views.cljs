@@ -4,7 +4,7 @@
             [sinostudy.site :as site]
             [sinostudy.subs :as subs]
             [sinostudy.events :as events]
-            [sinostudy.dictionary.common :as dict]))
+            [sinostudy.dictionary.core :as dict]))
 
 ;;;; HELPER FUNCTIONS
 
