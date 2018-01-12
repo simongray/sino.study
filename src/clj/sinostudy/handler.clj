@@ -55,22 +55,15 @@
                     :result result})))
 
 (defroutes app-routes
-  ;; HTML pages all resolve to the ClojureScript app.
-  ;; The internal routing of the app then provides the correct presentation.
-  (GET "/" [] reframe-app)
-  (GET "/help" [] reframe-app)
-  (GET "/blog" [] reframe-app)
-  (GET "/about" [] reframe-app)
-  (GET "/word/:word" [] reframe-app)
-  (GET "/word/:word/:n" [] reframe-app)
-
   ;; ANY rather than GET is necessary to allow cross origin requests during dev.
   (ANY "/query/:query-type/:query-string" [query-type query-string]
     {:status  200
      :headers ajax-headers
      :body    (query-result query-type query-string)})
 
-  (route/not-found "Not Found"))
+  ;; HTML page requests all resolve to the ClojureScript app.
+  ;; The internal routing of the app creates the correct presentation.
+  (route/not-found reframe-app))
 
 (def app
   (wrap-defaults app-routes site-defaults))
