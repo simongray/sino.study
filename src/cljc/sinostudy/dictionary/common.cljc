@@ -24,10 +24,11 @@
   [s]
   (map hanzi-ref->map (re-seq hanzi-ref s)))
 
+;; TODO: 唎 in traditional special case
 (defn variant-def?
   "Is this definition a reference to a common char/word it is a variant of?"
   [definition]
-  (str/starts-with? definition "variant of "))
+  (not (nil? (re-find #"variant of" definition))))
 
 (defn variant-entry?
   "Is this entry a variant of a more common char/word?"
