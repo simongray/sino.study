@@ -156,7 +156,7 @@
 ;;       of X" from definitions?
 ;; TODO: merge duoyinci, perhaps just conj Pinyin and defs
 ;;       e.g. {... :pinyin [[...] [...]], :definition [[...] [...]]}
-
+;; TODO: tag radicals, e.g. def = "Kangxi radical 206" or just from a list
 
 (defn load-entries
   "Load the contents of a CC-CEDICT dictionary file into Clojure maps."
