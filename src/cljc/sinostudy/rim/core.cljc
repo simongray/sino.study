@@ -28,11 +28,11 @@
              (if (.find m)
                (recur (assoc out (.start m) (.group m)) m)
                out))
-     :cljs (let [keep-mods (fn [re]
-                             (let [m? (.-multiline re)
-                                   i? (.-ignoreCase re)]
-                               (str "g" (when m? "m") (when i? "i"))))
-                 re        (js/RegExp. (.-source re) (keep-mods re))]
+     :cljs (let [flags (fn [re]
+                         (let [m? (.-multiline re)
+                               i? (.-ignoreCase re)]
+                           (str "g" (when m? "m") (when i? "i"))))
+                 re    (js/RegExp. (.-source re) (flags re))]
              (loop [out {}]
                (if-let [m (.exec re s)]
                  (recur (assoc out (.-index m) (first m)))
