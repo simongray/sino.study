@@ -113,10 +113,6 @@
   (let [sorted-defs (sort (:definition entry))]
     (assoc entry :definition sorted-defs)))
 
-(defn sort-classifiers
-  [classifiers]
-  (sort-by pinyin>case>character classifiers))
-
 (defn digits->diacritics*
   "Convert (only) Pinyin+digit syllables to diacritics."
   [s]
@@ -229,7 +225,7 @@
   [definition]
   (str/starts-with? definition "CL:"))
 
-(defn cl-def-entry?
+(defn cl-entry?
   "Determine if the entry's :definition contains classifiers."
   [entry]
   (some cl-def? (:definition entry)))
@@ -313,18 +309,18 @@
         (assoc dicts* key (merge-entries key (get dicts* key) merges)))
       dicts*)))
 
-(defn isolate-classifiers
+(defn detach-cls
   "Moves the classifiers of an entry from :definition to :classifiers."
   [entry]
-  (if (cl-def-entry? entry)
-    (let [defs        (:definition entry)
-          cl-defs     (filter cl-def? defs)
-          new-defs    (set/difference defs cl-defs)
-          classifiers (set (flatten (map hanzi-refs cl-defs)))]
-      (if classifiers
+  (if (cl-entry? entry)
+    (let [defs     (:definition entry)
+          cl-defs  (filter cl-def? defs)
+          new-defs (set/difference defs cl-defs)
+          cls      (set (flatten (map hanzi-refs cl-defs)))]
+      (if cls
         (-> entry
             (assoc :definition new-defs)
-            (assoc :classifiers classifiers))
+            (assoc :classifiers cls))
         entry))
     entry))
 
@@ -333,7 +329,7 @@
   [entries key-types]
   (let [name-entries (filter name-entry? entries)]
     (->> entries
-         (map isolate-classifiers)
+         (map detach-cls)
          (compile-dicts key-types)
          (mod-dicts name-entries))))
 

@@ -95,7 +95,8 @@
            [:span.tag {:key :classifiers, :title (str "classifiers for " word)}
             "cl.|"
             (interpose ", "
-              (for [classifier (dict/sort-classifiers classifiers)]
+              ;; TODO: sort - currently unsorted!
+              (for [classifier classifiers]
                 (if (= :simplified script)
                   [:span.hanzi.simplified {:key (:simplified classifier)}
                    (add-word-links (:simplified classifier))]
