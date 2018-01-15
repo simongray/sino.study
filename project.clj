@@ -4,6 +4,11 @@
   :min-lein-version "2.5.3"
   :source-paths ["src/clj" "src/cljc"]
 
+  ;; needed for Java 9 issue with figwheel
+  ;; remove if using Java 8!
+  ;; https://github.com/bhauman/lein-figwheel/issues/612
+  :jvm-opts ["--add-modules" "java.xml.bind"]
+
   :dependencies [[org.clojure/clojure "1.9.0"]
 
                  ;; reagent/re-frame
