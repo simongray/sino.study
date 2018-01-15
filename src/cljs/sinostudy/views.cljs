@@ -49,7 +49,7 @@
          [:span.pinyin {:key "pinyin"} (str/join " " (:pinyin entry))]
          (interpose "; "
            (for [definition definitions]
-             (let [definition* (dict/handle-refs definition script)]
+             (let [definition* (dict/handle-hanzi-refs definition script)]
                [:span.definition {:key definition} definition*])))])]]))
 
 (defn entries->hiccup
@@ -105,7 +105,7 @@
      [:ol
       (for [definition definitions]
         (let [link        (comp add-word-links vector script)
-              definition* (dict/handle-refs definition link)]
+              definition* (dict/handle-hanzi-refs definition link)]
           [:li {:key definition} [:span.definition definition*]]))]]))
 
 (defn unknown-word

@@ -16,7 +16,7 @@
 ;;       e.g. {... :pinyin [[...] [...]], :definition [[...] [...]]}
 ;; TODO: tag radicals, e.g. def = "Kangxi radical 206" or just from a list
 
-(def hanzi-ref
+(def hanzi-ref-pattern
   "A pattern used in CC-CEDICT to embed a hanzi reference, e.g. 樁|桩[zhuang1]."
   #"[^ ,:\[a-zA-Z0-9]+\[[^\]]+\]+")
 
@@ -35,15 +35,15 @@
 (defn hanzi-refs
   "Get all of the hanzi reference in s as Clojure maps."
   [s]
-  (map hanzi-ref->map (re-seq hanzi-ref s)))
+  (map hanzi-ref->map (re-seq hanzi-ref-pattern s)))
 
-(defn handle-refs
+(defn handle-hanzi-refs
   "Apply function f to all hanzi refs in definition."
   [definition f]
   (let [hanzi-refs  (hanzi-refs definition)]
     (if (empty? hanzi-refs)
       definition
-      (interleave (str/split definition hanzi-ref)
+      (interleave (str/split definition hanzi-ref-pattern)
                   (map f hanzi-refs)))))
 
 ;; TODO: 唎 in traditional special case
