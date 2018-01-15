@@ -32,6 +32,8 @@
      content]))
 
 ;; TODO: for single char entries, make top entry link split into components
+;;       replace the char with a table of the components based on the ordering
+;;       CHISE can be used (slow), but perhaps skishore/makemeahanzi is better
 (defn entry-li
   "Converts a dictionary entry into a hiccup list item."
   [word script entry]
