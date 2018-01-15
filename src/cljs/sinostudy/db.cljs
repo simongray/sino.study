@@ -1,20 +1,17 @@
 (ns sinostudy.db
   (:require [sinostudy.pages.defaults :as pd]))
 
-(def static
-  {"/help"  {:content-type :hiccup
-             :content      [:div [:h1 "Help"] [:p "This is the Help page."]]}
-   "/blog"  {:content-type :hiccup
-             :content      [:div [:h1 "Blog"] [:p "This is the Blog page."]]}
-   "/about" {:content-type :hiccup
-             :content      [:div [:h1 "About"] [:p "This is the About page."]]}})
+(def static-pages
+  {"/help"  [:div [:h1 "Help"] [:p "This is the Help page."]]
+   "/blog"  [:div [:h1 "Blog"] [:p "This is the Blog page."]]
+   "/about" [:div [:h1 "About"] [:p "This is the About page."]]})
 
 (def default-db
   {:input       ""
    :script      :simplified
    :pages       {:sentence {}
                  pd/words  {}
-                 pd/static static}
+                 pd/static static-pages}
    :history     '()
    :evaluations '()
    :hints       '()

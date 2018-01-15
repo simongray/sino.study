@@ -129,8 +129,8 @@
   "Render a page for display based on the page-type and content."
   [[page-type page-key] content script]
   (cond
-    (= pd/static page-type) (:content content)
-    (= pd/words page-type) (render-word page-key content script)))
+    (= pd/words page-type) (render-word page-key content script)
+    :else content))
 
 (defn navlink
   [from to text]
