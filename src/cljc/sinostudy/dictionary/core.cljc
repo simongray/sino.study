@@ -138,14 +138,6 @@
        (map add-diacritics)
        (vec)))                                              ; allow fetching by index
 
-
-
-
-
-
-
-
-
 (defn entry?
   "Determine if a line is a dictionary entry."
   [line]
