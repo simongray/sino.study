@@ -8,6 +8,7 @@ resources/tatoeba/links.csv
 resources/tatoeba/sentences_detailed.csv
 resources/tatoeba/tags.csv
 resources/tatoeba/users_sentences.csv
+resources/makemeahanzi/
 
 # Created by https://www.gitignore.io/api/macos,clojure,intellij,leiningen
 
