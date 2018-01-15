@@ -5,6 +5,7 @@
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [cognitect.transit :as transit]
             [sinostudy.pages.defaults :as pd]
+            [sinostudy.dictionary.defaults :as dd]
             [sinostudy.dictionary.loader :as loader]
             [sinostudy.dictionary.core :as dict]))
 
@@ -15,7 +16,7 @@
 ;; https://weavejester.github.io/compojure/compojure.coercions.html
 
 (def dictionary-keys
-  [:traditional :simplified :pinyin-key])
+  [dd/trad dd/simp dd/pinyin-key])
 
 (def reframe-app
   (slurp "./resources/public/index.html"))
