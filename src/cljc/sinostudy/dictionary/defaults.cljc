@@ -1,6 +1,6 @@
 (ns sinostudy.dictionary.defaults)
 
-(def definitions
+(def defs
   :definitions)
 
 (def pinyin
@@ -9,11 +9,11 @@
 (def pinyin-key
   :pinyin-key)
 
-(def simplified
+(def simp
   :simplified)
 
-(def traditional
+(def trad
   :traditional)
 
-(def classifiers
+(def cls
   :classifiers)

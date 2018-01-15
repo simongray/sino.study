@@ -21,11 +21,11 @@
 ;; used both in nav and on dictionary entry pages
 (defn script-changer-link
   [script content]
-  (let [alt-script (if (= dd/simplified script) dd/traditional dd/simplified)]
+  (let [alt-script (if (= dd/simp script) dd/trad dd/simp)]
     [:a
      {:key      alt-script
       :class    "script-changer fake-link"
-      :title    (str "Click to use " (if (= dd/simplified alt-script)
+      :title    (str "Click to use " (if (= dd/simp alt-script)
                                        "simplified characters"
                                        "traditional characters"))
       :on-click #(rf/dispatch [::events/change-script alt-script])}
@@ -36,7 +36,7 @@
   [word script entry]
   (let [id             (:id entry)
         href           (str "/" (name pd/words) "/" word "/" id)
-        definitions    (dd/definitions entry)
+        definitions    (dd/defs entry)
         false-variant? (contains? (:false-variant entry) script)
         key            (if false-variant? (str "false-" href) href)]
     [:li {:key   key
@@ -45,9 +45,9 @@
                                     "go to dictionary entry")}
      [:a {:href href, :key key}
       (interpose " "
-        [(if (= dd/simplified script)
-           [:span.simplified.hanzi {:key "hanzi"} (dd/simplified entry)]
-           [:span.traditional.hanzi {:key "hanzi"} (dd/traditional entry)])
+        [(if (= dd/simp script)
+           [:span.simplified.hanzi {:key "hanzi"} (dd/simp entry)]
+           [:span.traditional.hanzi {:key "hanzi"} (dd/trad entry)])
          [:span.pinyin {:key "pinyin"} (str/join " " (dd/pinyin entry))]
          (interpose "; "
            (for [definition definitions]
@@ -71,14 +71,14 @@
 (defn entry->hiccup
   "Convert a single dictionary entry into hiccup."
   [entry script]
-  (let [traditional         (dd/traditional entry)
-        simplified          (dd/simplified entry)
-        definitions         (dd/definitions entry)
-        classifiers         (dd/classifiers entry)
+  (let [traditional         (dd/trad entry)
+        simplified          (dd/simp entry)
+        definitions         (dd/defs entry)
+        classifiers         (dd/cls entry)
         script-differences? (not (= simplified traditional))
-        word                (if (= dd/simplified script) simplified traditional)]
+        word                (if (= dd/simp script) simplified traditional)]
     [:div.dictionary-entry
-     [:h1 (if (= dd/simplified script)
+     [:h1 (if (= dd/simp script)
             [:span.hanzi.simplified (add-word-links simplified)]
             [:spanl.hanzi.traditiona (add-word-links traditional)])]
      [:p.subheader
@@ -87,23 +87,23 @@
           (interpose " " (add-word-links (dd/pinyin entry)))]
          (when script-differences?
            [:span.tag {:key :script}
-            (if (= dd/simplified script) "tr.|" "s.|")
+            (if (= dd/simp script) "tr.|" "s.|")
             (script-changer-link
               script
-              (if (= dd/simplified script)
+              (if (= dd/simp script)
                 [:span.hanzi.traditional traditional]
                 [:span.hanzi.simplified simplified]))])
          (when classifiers
-           [:span.tag {:key dd/classifiers, :title (str "classifiers for " word)}
+           [:span.tag {:key dd/cls, :title (str "classifiers for " word)}
             "cl.|"
             (interpose ", "
               ;; TODO: sort - currently unsorted!
               (for [classifier classifiers]
-                (if (= dd/simplified script)
-                  [:span.hanzi.simplified {:key (dd/simplified classifier)}
-                   (add-word-links (dd/simplified classifier))]
-                  [:span.hanzi.traditional {:key (dd/traditional classifier)}
-                   (add-word-links (dd/traditional classifier))])))])])]
+                (if (= dd/simp script)
+                  [:span.hanzi.simplified {:key (dd/simp classifier)}
+                   (add-word-links (dd/simp classifier))]
+                  [:span.hanzi.traditional {:key (dd/trad classifier)}
+                   (add-word-links (dd/trad classifier))])))])])]
      [:ol
       (for [definition definitions]
         (let [link        (comp add-word-links vector script)
@@ -210,7 +210,7 @@
 
 (defn script-changer []
   (let [script @(rf/subscribe [::subs/script])
-        text   (if (= dd/simplified script) "Simpl." "Trad.")]
+        text   (if (= dd/simp script) "Simpl." "Trad.")]
     (script-changer-link script text)))
 
 (defn footer []
