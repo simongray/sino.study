@@ -6,6 +6,9 @@
             [sinostudy.pinyin.core :as p]
             [sinostudy.pinyin.eval :as pe]))
 
+;; TODO: dual entries:
+;;       帆 fān Taiwan pr. [fan2]; to gallop; variant of 帆
+;;       帆 fān Taiwan pr. [fan2], except 帆布; sail
 ;; TODO: merge entries that only differ in definitions, trad and simp may differ
 ;; TODO: make list of exceptional entries (e.g. 3P) that should be queryable
 ;; TODO: make the pattern "classifier for X" prominent (CL)
