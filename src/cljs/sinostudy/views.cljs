@@ -3,27 +3,29 @@
             [clojure.string :as str]
             [sinostudy.subs :as subs]
             [sinostudy.events :as events]
+            [sinostudy.pages.defaults :as pd]
+            [sinostudy.dictionary.defaults :as dd]
             [sinostudy.dictionary.core :as dict]))
 
 ;;;; HELPER FUNCTIONS
 
 (defn add-word-links
   [text]
-  (let [href    #(str "/word/" %)
+  (let [href    #(str "/" (name pd/words) "/" %)
         ids     (range (count text))
         link-up (fn [word id] [:a {:title (str "look up " word)
-                                   :href (href word)
-                                   :key id} word])]
+                                   :href  (href word)
+                                   :key   id} word])]
     (map link-up text ids)))
 
 ;; used both in nav and on dictionary entry pages
 (defn script-changer-link
   [script content]
-  (let [alt-script (if (= :simplified script) :traditional :simplified)]
+  (let [alt-script (if (= dd/simplified script) dd/traditional dd/simplified)]
     [:a
      {:key      alt-script
       :class    "script-changer fake-link"
-      :title    (str "Click to use " (if (= :simplified alt-script)
+      :title    (str "Click to use " (if (= dd/simplified alt-script)
                                        "simplified characters"
                                        "traditional characters"))
       :on-click #(rf/dispatch [::events/change-script alt-script])}
@@ -33,8 +35,8 @@
   "Converts a dictionary entry into a hiccup list item."
   [word script entry]
   (let [id             (:id entry)
-        href           (str "/word/" word "/" id)
-        definitions    (:definition entry)
+        href           (str "/" (name pd/words) "/" word "/" id)
+        definitions    (dd/definitions entry)
         false-variant? (contains? (:false-variant entry) script)
         key            (if false-variant? (str "false-" href) href)]
     [:li {:key   key
@@ -43,10 +45,10 @@
                                     "go to dictionary entry")}
      [:a {:href href, :key key}
       (interpose " "
-        [(if (= :simplified script)
-           [:span.simplified.hanzi {:key "hanzi"} (:simplified entry)]
-           [:span.traditional.hanzi {:key "hanzi"} (:traditional entry)])
-         [:span.pinyin {:key "pinyin"} (str/join " " (:pinyin entry))]
+        [(if (= dd/simplified script)
+           [:span.simplified.hanzi {:key "hanzi"} (dd/simplified entry)]
+           [:span.traditional.hanzi {:key "hanzi"} (dd/traditional entry)])
+         [:span.pinyin {:key "pinyin"} (str/join " " (dd/pinyin entry))]
          (interpose "; "
            (for [definition definitions]
              (let [definition* (dict/handle-hanzi-refs definition script)]
@@ -69,39 +71,39 @@
 (defn entry->hiccup
   "Convert a single dictionary entry into hiccup."
   [entry script]
-  (let [traditional         (:traditional entry)
-        simplified          (:simplified entry)
-        definitions         (:definition entry)
-        classifiers         (:classifiers entry)
+  (let [traditional         (dd/traditional entry)
+        simplified          (dd/simplified entry)
+        definitions         (dd/definitions entry)
+        classifiers         (dd/classifiers entry)
         script-differences? (not (= simplified traditional))
-        word                (if (= :simplified script) simplified traditional)]
+        word                (if (= dd/simplified script) simplified traditional)]
     [:div.dictionary-entry
-     [:h1 (if (= :simplified script)
+     [:h1 (if (= dd/simplified script)
             [:span.hanzi.simplified (add-word-links simplified)]
             [:spanl.hanzi.traditiona (add-word-links traditional)])]
      [:p.subheader
       (interpose " "
-        [[:span.pinyin {:key :pinyin}
-          (interpose " " (add-word-links (:pinyin entry)))]
+        [[:span.pinyin {:key dd/pinyin}
+          (interpose " " (add-word-links (dd/pinyin entry)))]
          (when script-differences?
            [:span.tag {:key :script}
-            (if (= :simplified script) "tr.|" "s.|")
+            (if (= dd/simplified script) "tr.|" "s.|")
             (script-changer-link
               script
-              (if (= :simplified script)
+              (if (= dd/simplified script)
                 [:span.hanzi.traditional traditional]
                 [:span.hanzi.simplified simplified]))])
          (when classifiers
-           [:span.tag {:key :classifiers, :title (str "classifiers for " word)}
+           [:span.tag {:key dd/classifiers, :title (str "classifiers for " word)}
             "cl.|"
             (interpose ", "
               ;; TODO: sort - currently unsorted!
               (for [classifier classifiers]
-                (if (= :simplified script)
-                  [:span.hanzi.simplified {:key (:simplified classifier)}
-                   (add-word-links (:simplified classifier))]
-                  [:span.hanzi.traditional {:key (:traditional classifier)}
-                   (add-word-links (:traditional classifier))])))])])]
+                (if (= dd/simplified script)
+                  [:span.hanzi.simplified {:key (dd/simplified classifier)}
+                   (add-word-links (dd/simplified classifier))]
+                  [:span.hanzi.traditional {:key (dd/traditional classifier)}
+                   (add-word-links (dd/traditional classifier))])))])])]
      [:ol
       (for [definition definitions]
         (let [link        (comp add-word-links vector script)
@@ -126,9 +128,9 @@
 (defn render-page
   "Render a page for display based on the page-type and content."
   [[page-type page-key] content script]
-  (case page-type
-    :static (:content content)
-    :word (render-word page-key content script)))
+  (cond
+    (= pd/static page-type) (:content content)
+    (= pd/words page-type) (render-word page-key content script)))
 
 (defn navlink
   [from to text]
@@ -153,7 +155,7 @@
   (let [nav @(rf/subscribe [::subs/nav])]
     [:header
      [:a {:href "/"}
-      [:img#logo {:src "/img/logo_min.svg"
+      [:img#logo {:src   "/img/logo_min.svg"
                   :class (if (= "/" nav)
                            "big-logo"
                            "small-logo")}]]]))
@@ -208,7 +210,7 @@
 
 (defn script-changer []
   (let [script @(rf/subscribe [::subs/script])
-        text   (if (= :simplified script) "Simpl." "Trad.")]
+        text   (if (= dd/simplified script) "Simpl." "Trad.")]
     (script-changer-link script text)))
 
 (defn footer []

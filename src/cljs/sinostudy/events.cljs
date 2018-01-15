@@ -6,6 +6,7 @@
             [sinostudy.queries :as q]
             [sinostudy.pinyin.core :as pinyin]
             [sinostudy.dictionary.core :as dict]
+            [sinostudy.pages.defaults :as pd]
             [ajax.core :as ajax]
             [cognitect.transit :as transit]))
 
@@ -42,9 +43,9 @@
   "Process content coming from the web service before storing locally,
   e.g. presort word lists and the like."
   [page-type content]
-  (case page-type
-    :word (dict/prepare-entries content)
-    content))
+  (cond
+    (= page-type pd/words) (dict/prepare-entries content)
+    :else content))
 
 
 ;;;; CO-EFFECTS
@@ -141,9 +142,9 @@
 (rf/reg-event-db
   ::save-page
   (fn [db [_ {:keys [page result]}]]
-    (let [path (into [:pages] page)
+    (let [path      (into [:pages] page)
           page-type (first page)
-          content (preprocess-content page-type result)]
+          content   (preprocess-content page-type result)]
       (assoc-in db path content))))
 
 ;; dispatched upon a successful retrieval of a query result
@@ -228,12 +229,12 @@
     (let [db        (:db cofx)
           pages     (:pages db)
           page-type (first page)]
-      (case page-type
-        :static {}
-        :word (let [word-page (subvec page 0 2)]            ; remove numbering
-                (if (not (get-in pages word-page))
-                  {:dispatch [::send-query word-page]}
-                  {}))))))
+      (cond
+        (= pd/static page-type) {}
+        (= pd/words page-type) (let [word-page (subvec page 0 2)]
+                                 (if (not (get-in pages word-page))
+                                   {:dispatch [::send-query word-page]}
+                                   {}))))))
 
 ;; Dispatched by clicking links only!
 ;; It's never dispatched directly, as we want to leave a browser history trail.
@@ -260,7 +261,7 @@
   ::test
   [(rf/inject-cofx ::now)]
   (fn [_ _]
-    {:dispatch [::send-query [:word "你好"]]}))
+    {:dispatch [::send-query [pd/words "你好"]]}))
 
 (rf/reg-event-db
   ::clear-input
@@ -272,7 +273,7 @@
   (fn [cofx [_ word]]
     (let [db (:db cofx)]
       {:db          (assoc db :input "")
-       :navigate-to (str "/word/" word)
+       :navigate-to (str "/" (name pd/words) "/" word)
        :dispatch    [::display-hint :default]})))
 
 (rf/reg-event-fx

@@ -4,6 +4,7 @@
             [compojure.route :as route]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [cognitect.transit :as transit]
+            [sinostudy.pages.defaults :as pd]
             [sinostudy.dictionary.loader :as loader]
             [sinostudy.dictionary.core :as dict]))
 
@@ -20,8 +21,8 @@
   (slurp "./resources/public/index.html"))
 
 (defonce dicts
-  (let [entries (loader/load-entries "./resources/cedict_ts.u8")]
-    (dict/load-dicts entries dictionary-keys)))
+         (let [entries (loader/load-entries "./resources/cedict_ts.u8")]
+           (dict/load-dicts entries dictionary-keys)))
 
 ;; First Access-Control header permits cross-origin requests.
 ;; Second prevents Chrome from stripping Content-Type header.
@@ -42,16 +43,16 @@
 (defn execute-query
   "Execute a query from the ClojureScript app. The queries all resolve
   to a base directory (query-type) and content (query-string)."
-  [query-type query-string]
-  (case query-type
-    "word" (dict/look-up query-string dicts)))
+  [page-type query-string]
+  (cond
+    (= pd/words page-type) (dict/look-up query-string dicts)))
 
 (defn query-result
   "Get the Transit-encoded result of a query."
   [query-type query-string]
-  (let [result (execute-query query-type query-string)
-        page-category (keyword query-type)]
-    (transit-write {:page [page-category query-string]
+  (let [page-category (keyword query-type)
+        result        (execute-query page-category query-string)]
+    (transit-write {:page   [page-category query-string]
                     :result result})))
 
 (defroutes app-routes

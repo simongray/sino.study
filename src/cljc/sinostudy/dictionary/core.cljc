@@ -1,6 +1,7 @@
 (ns sinostudy.dictionary.core
   (:require [clojure.string :as str]
             [clojure.set :as set]
+            [sinostudy.dictionary.defaults :as dd]
             [sinostudy.rim.core :as rim]
             [sinostudy.pinyin.core :as p]
             [sinostudy.pinyin.eval :as pe]))
@@ -28,9 +29,9 @@
         pinyin      (str/split pinyin-str #" ")
         traditional (first hanzi)
         simplified  (if (second hanzi) (second hanzi) traditional)]
-    {:traditional traditional
-     :simplified  simplified
-     :pinyin      pinyin}))
+    {dd/traditional traditional
+     dd/simplified  simplified
+     dd/pinyin      pinyin}))
 
 (defn hanzi-refs
   "Get all of the hanzi reference in s as Clojure maps."
@@ -40,7 +41,7 @@
 (defn handle-hanzi-refs
   "Apply function f to all hanzi refs in definition."
   [definition f]
-  (let [hanzi-refs  (hanzi-refs definition)]
+  (let [hanzi-refs (hanzi-refs definition)]
     (if (empty? hanzi-refs)
       definition
       (interleave (str/split definition hanzi-ref-pattern)
@@ -55,15 +56,15 @@
 (defn variant-entry?
   "Is this entry a variant of a more common char/word?"
   [entry]
-  (let [definitions (:definition entry)]
+  (let [definitions (dd/definitions entry)]
     (some variant-def? definitions)))
 
 (defn contains-defs?
   "Does entry contain the definitions of variant-entry?"
   [variant-entry entry]
   (let [rest-defs (partial filter (complement variant-def?))
-        e1-defs   (rest-defs (:definition variant-entry))
-        e2-defs   (set (:definition entry))]
+        e1-defs   (rest-defs (dd/definitions variant-entry))
+        e2-defs   (set (dd/definitions entry))]
     (every? (partial contains? e2-defs) e1-defs)))
 
 (defn same-hanzi?
@@ -80,6 +81,7 @@
         get-matches  #(rim/all-matches % others same-hanzi?* contains-defs?)]
     (filter (comp not empty? get-matches) variants)))
 
+;; TODO: figure out a better solution for variants and false variants
 (defn tag-false-variants
   "Tag false variants in a list of entries when comparing the current script.
   This is most likely to happen when the script is :simplified."
@@ -105,13 +107,13 @@
 
 (def pinyin>case>character
   "Order first by Pinyin, then by case, then by character."
-  (juxt #(str/lower-case (str/join (:pinyin %))) :pinyin :traditional))
+  (juxt #(str/lower-case (str/join (dd/pinyin %))) dd/pinyin dd/traditional))
 
 (defn sort-defs
   "Sort the definitions of a dictionary entry."
   [entry]
-  (let [sorted-defs (sort (:definition entry))]
-    (assoc entry :definition sorted-defs)))
+  (let [sorted-defs (sort (dd/definitions entry))]
+    (assoc entry dd/definitions sorted-defs)))
 
 (defn digits->diacritics*
   "Convert (only) Pinyin+digit syllables to diacritics."
@@ -123,8 +125,8 @@
 (defn add-diacritics
   "Add diacritics to the Pinyin of an entry."
   [entry]
-  (let [pinyin+diacritics (map digits->diacritics* (:pinyin entry))]
-    (assoc entry :pinyin pinyin+diacritics)))
+  (let [pinyin+diacritics (map digits->diacritics* (dd/pinyin entry))]
+    (assoc entry dd/pinyin pinyin+diacritics)))
 
 (defn prepare-entries
   "Sort a list of dictionary entries, including entry definitions.
@@ -204,11 +206,11 @@
       (let [pinyin-key        (pinyin-key pinyin)
             pinyin+diacritics (preprocess pinyin)
             definitions       (split-def definition)]
-        {:traditional trad
-         :simplified  simp
-         :pinyin      pinyin+diacritics
-         :pinyin-key  pinyin-key
-         :definition  definitions}))))
+        {dd/traditional trad
+         dd/simplified  simp
+         dd/pinyin      pinyin+diacritics
+         dd/pinyin-key  pinyin-key
+         dd/definitions definitions}))))
 
 ;; Note: do not remove pinyin-key -- it is not unused, just indirectly used!
 (defn add-entry
@@ -226,14 +228,14 @@
   (str/starts-with? definition "CL:"))
 
 (defn cl-entry?
-  "Determine if the entry's :definition contains classifiers."
+  "Determine if the entry's :definitions contain classifiers."
   [entry]
-  (some cl-def? (:definition entry)))
+  (some cl-def? (dd/definitions entry)))
 
 (defn name-entry?
   "Determine is a dictionary entry is a name entry."
   [entry]
-  (when-let [first-letter (first (first (:pinyin entry)))]
+  (when-let [first-letter (first (first (dd/pinyin entry)))]
     #?(:clj  (Character/isUpperCase ^char first-letter)
        :cljs (not= first-letter (.toLowerCase first-letter)))))
 
@@ -246,9 +248,9 @@
 (defn matches-entry
   "True if everything matches except the definitions and the :pinyin case."
   [e1 e2]
-  (and (= (:simplified e1) (:simplified e2))
-       (= (:traditional e1) (:traditional e2))
-       (matches-pinyin (:pinyin e1) (:pinyin e2))))
+  (and (= (dd/simplified e1) (dd/simplified e2))
+       (= (dd/traditional e1) (dd/traditional e2))
+       (matches-pinyin (dd/pinyin e1) (dd/pinyin e2))))
 
 (defn merge-entry
   "Merge entry (e.g. name entry) into matching existing entries in dict.
@@ -266,10 +268,10 @@
           (cond
             (nil? match) (assoc dict key entries*)
             (= match entry) (recur (rest matches*) (disj entries* match))
-            :else (let [match-def (:definition match)
-                        entry-def (:definition entry)
+            :else (let [match-def (dd/definitions match)
+                        entry-def (dd/definitions entry)
                         new-def   (set/union match-def entry-def)
-                        new-entry (assoc match :definition new-def)]
+                        new-entry (assoc match dd/definitions new-def)]
                     (recur (rest matches*) (-> entries*
                                                (disj match)
                                                (conj new-entry))))))))))
@@ -310,17 +312,17 @@
       dicts*)))
 
 (defn detach-cls
-  "Moves the classifiers of an entry from :definition to :classifiers."
+  "Moves the classifiers of an entry from :definitions to :classifiers."
   [entry]
   (if (cl-entry? entry)
-    (let [defs     (:definition entry)
+    (let [defs     (dd/definitions entry)
           cl-defs  (filter cl-def? defs)
           new-defs (set/difference defs cl-defs)
           cls      (set (flatten (map hanzi-refs cl-defs)))]
       (if cls
         (-> entry
-            (assoc :definition new-defs)
-            (assoc :classifiers cls))
+            (assoc dd/definitions new-defs)
+            (assoc dd/classifiers cls))
         entry))
     entry))
 

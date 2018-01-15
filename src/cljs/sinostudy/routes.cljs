@@ -6,6 +6,7 @@
             [goog.history.EventType :as EventType]
             [re-frame.core :as re-frame]
             [sinostudy.events :as events]
+            [sinostudy.pages.defaults :as pd]
             [accountant.core :as accountant]))
 
 ;; as defined in Day8/re-frame-template
@@ -25,18 +26,18 @@
 
   ;; Combining the root route with the other page routes don't seem to work.
   (defroute "/" []
-    (re-frame/dispatch [::events/change-page [:static "/"]]))
+    (re-frame/dispatch [::events/change-page [pd/static "/"]]))
 
   (defroute "/:page" [page]
-    (re-frame/dispatch [::events/change-page [:static (str "/" page)]]))
+    (re-frame/dispatch [::events/change-page [pd/static (str "/" page)]]))
 
   (defroute
-    "/word/:word" [word]
-    (re-frame/dispatch [::events/change-page [:word word]]))
+    (str "/" (name pd/words) "/:word") [word]
+    (re-frame/dispatch [::events/change-page [pd/words word]]))
 
   (defroute
-    "/word/:word/:n" [word n]
-    (re-frame/dispatch [::events/change-page [:word word (js/parseInt n)]]))
+    (str "/" (name pd/words) "/:word/:n") [word n]
+    (re-frame/dispatch [::events/change-page [pd/words word (js/parseInt n)]]))
 
   (hook-browser-navigation!)
 
