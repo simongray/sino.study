@@ -31,6 +31,7 @@
       :on-click #(rf/dispatch [::events/change-script alt-script])}
      content]))
 
+;; TODO: for single char entries, make top entry link split into components
 (defn entry-li
   "Converts a dictionary entry into a hiccup list item."
   [word script entry]
