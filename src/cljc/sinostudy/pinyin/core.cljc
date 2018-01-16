@@ -155,5 +155,5 @@
         syllables (rim/re-pos patterns/pinyin-syllable s*)
         original  #(subs s (first %) (+ (first %) (count (second %))))
         diacritic #(re-find #"[^\w]" %)
-        tone      (comp char->tone diacritic original)]
+        tone      (comp #(if (= 0 %) nil %) char->tone diacritic original)]
     (diacritics->digits* s (map (juxt first second tone) syllables))))
