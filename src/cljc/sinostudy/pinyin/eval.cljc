@@ -1,6 +1,7 @@
 (ns sinostudy.pinyin.eval
   (:require #?(:clj [clojure.spec.alpha :as spec]
                :cljs [cljs.spec.alpha :as spec])
+              [clojure.string :as str]
               [sinostudy.pinyin.core :as p]
               [sinostudy.pinyin.patterns :as patterns]))
 
@@ -10,10 +11,13 @@
   (re-matches patterns/pinyin-syllable s))
 
 (defn pinyin-block?
-  "Is this a plain block of Pinyin (no digits or diacritics allowed)?"
+  "Is this a plain block of Pinyin (no digits or diacritics allowed)?
+  Also checks string in reverse to prevent false negatives, e.g. hanguo."
   [s]
-  (re-matches patterns/pinyin-block s))
+  (or (re-matches patterns/pinyin-block s)
+      (re-matches patterns/pinyin-rev-block (str/join (reverse s)))))
 
+;; TODO: does this need to be changed similar to pinyin-block?
 (defn pinyin+punct?
   "Is this a sentence containing Pinyin without any tone digits or diacritics?"
   [s]

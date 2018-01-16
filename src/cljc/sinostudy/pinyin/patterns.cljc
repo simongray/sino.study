@@ -7,8 +7,17 @@
 (def rev-syllables
   (reverse (sort data/syllables)))
 
+;; This crazy concoction is used to validate Pinyin such as "hanguo".
+;; If only checking front to back, it's read as "hang" + "uo", i.e. invalid.
+;; By also validating the block in reverse, we get around this issue.
+(def rev-rev-syllables
+  (reverse (map #(str/join (reverse %)) (sort data/syllables))))
+
 (def syllable
   (str "(" (str/join "|" rev-syllables) ")"))
+
+(def rev-syllable
+  (str "(" (str/join "|" rev-rev-syllables) ")"))
 
 (def syllable+digit
   (str "((" (str/join "|" rev-syllables) ")[012345]?)"))
@@ -16,6 +25,11 @@
 (def block
   (let [syllable+ (str syllable "+")
         syllable* (str "('?" syllable ")*")]
+    (str "(" syllable+ syllable* ")")))
+
+(def rev-block
+  (let [syllable+ (str rev-syllable "+")
+        syllable* (str "('?" rev-syllable ")*")]
     (str "(" syllable+ syllable* ")")))
 
 (def block+digit
@@ -30,9 +44,11 @@
 (def pinyin-syllable
   (re-pattern (str "(?i)" syllable)))
 
-;; TODO: cannot recognise hanguo (probably sees "ha" + "nguo")
 (def pinyin-block
   (re-pattern (str "(?i)" block)))
+
+(def pinyin-rev-block
+  (re-pattern (str "(?i)" rev-block)))
 
 (def pinyin+punct
   (re-pattern (str "(?i)" block "(" block "|" punct ")*")))
