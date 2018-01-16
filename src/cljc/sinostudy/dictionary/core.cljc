@@ -4,6 +4,7 @@
             [sinostudy.dictionary.defaults :as dd]
             [sinostudy.rim.core :as rim]
             [sinostudy.pinyin.core :as p]
+            [sinostudy.pinyin.patterns :as pp]
             [sinostudy.pinyin.eval :as pe]))
 
 ;; TODO: dual entries:
@@ -21,14 +22,26 @@
 ;; TODO: tag radicals, e.g. def = "Kangxi radical 206" or just from a list
 
 (def hanzi-ref
-  "A pattern used in CC-CEDICT to embed a hanzi reference, e.g. 樁|桩[zhuang1]."
+  "A pattern used in CC-CEDICT to embed a hanzi reference with Pinyin."
   #"[^ ,:\[a-zA-Z0-9]+\[[^\]]+\]+")
+
+;; CLJS regex seems to have some issues with doing (str pp/hanzi-pattern),
+;; so I've copied over whole implementation.
+(def hanzi
+  "A pattern used in CC-CEDICT to embed a hanzi reference (no Pinyin)."
+  (let [hanzi+ (str "[" (str/join (map str (vals pp/hanzi-unicode))) "]+")]
+    (re-pattern (str hanzi+ "\\|?" hanzi+))))
+
+(defn split-hanzi
+  "Split a hanzi ref delimited as traditional|simplified."
+  [s]
+  (str/split s #"\|"))
 
 (defn hanzi-ref->m
   "Transform the hanzi-ref in s into a Clojure map."
   [s]
   (let [[hanzi-str pinyin-str] (str/split s #"\[|\]")
-        hanzi       (str/split hanzi-str #"\|")
+        hanzi       (split-hanzi hanzi-str)
         pinyin      (str/split pinyin-str #" ")
         traditional (first hanzi)
         simplified  (if (second hanzi) (second hanzi) traditional)]

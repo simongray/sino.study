@@ -6,6 +6,7 @@
             [sinostudy.pages.defaults :as pd]
             [sinostudy.dictionary.defaults :as dd]
             [sinostudy.rim.core :as rim]
+            [sinostudy.pinyin.patterns :as pp]
             [sinostudy.dictionary.core :as dict]))
 
 ;;;; HELPER FUNCTIONS
@@ -112,8 +113,16 @@
                    (add-word-links (dd/trad classifier))])))])])]
      [:ol
       (for [definition definitions]
-        (let [f           (comp add-word-links vector script dict/hanzi-ref->m)
-              definition* (rim/re-handle definition dict/hanzi-ref f)]
+        (let [link        (comp add-word-links vector)
+              hanzi-ref-f (comp link script dict/hanzi-ref->m)
+              index       (fn [script coll] (get coll (cond
+                                                        (= 1 (count coll)) 0
+                                                        (= dd/simp script) 1
+                                                        :else 0)))
+              hanzi-f     (comp link (partial index script) dict/split-hanzi)
+              definition* (-> definition
+                              (rim/re-handle dict/hanzi-ref hanzi-ref-f)
+                              (rim/re-handle dict/hanzi hanzi-f))]
           [:li {:key definition} [:span.definition definition*]]))]]))
 
 (defn unknown-word

@@ -44,7 +44,7 @@
   (re-pattern (str "(?i)" block+digit "(" block+digit "|" punct ")*")))
 
 ;; from http://kourge.net/projects/regexp-unicode-block
-(def hanzi-unicode-blocks
+(def hanzi-unicode
   {"CJK Radicals Supplement"            #"\u2E80-\u2EFF"
    "Kangxi Radicals"                    #"\u2F00-\u2FDF"
    "Ideographic Description Characters" #"\u2FF0-\u2FFF"
@@ -59,4 +59,4 @@
    "CJK Compatibility Forms"            #"\uFE30-\uFE4F"})
 
 (def hanzi-pattern
-  (re-pattern (str "[" (str/join (map str (vals hanzi-unicode-blocks))) "]+")))
+  (re-pattern (str "[" (str/join (map str (vals hanzi-unicode))) "]+")))

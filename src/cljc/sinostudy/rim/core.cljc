@@ -40,12 +40,29 @@
                  (recur (assoc out (.-index m) (first m)))
                  out)))))
 
-(defn re-handle
-  "Return s interleaved with the results of f applied to the matches of re in s.
-  Note: very useful for creating hiccup data out of a string."
+(defn- re-handle*
+  "Helper function for re-handle."
   [s re f]
-  (let [matches (re-seq re s)]
-    (if (empty? matches)
-      s
-      (interleave (str/split s re)
-                  (map f matches)))))
+  (if (string? s)
+    (let [matches (re-seq re s)]
+      (if (empty? matches)
+        s
+        (let [others  (str/split s re)
+              results (map f matches)
+              [c1 c2] (if (str/starts-with? s (first matches))
+                        [results others]
+                        [others results])
+              c3      (if (> (count c1) (count c2))
+                        (subvec (vec c1) (count c2))
+                        (subvec (vec c2) (count c1)))]
+          (concat (vec (interleave c1 c2)) c3))))
+    s))
+
+(defn re-handle
+  "Split s based on re and reinsert the matches of re in s with f applied.
+  If s is sequential, then will apply f to matches inside any strings in s.
+  Note: can be chained -- very useful for creating hiccup data out of a string."
+  [s re f]
+  (if (sequential? s)
+    (map #(if (string? %) (re-handle* % re f) %) s)
+    (re-handle* s re f)))
