@@ -1,5 +1,6 @@
 (ns sinostudy.queries
   (:require [clojure.string :as str]
+            [sinostudy.dictionary.core :as dict]
             [sinostudy.pinyin.core :as p]
             [sinostudy.pinyin.eval :as pe]))
 
@@ -32,18 +33,19 @@
   "Evaluate a command query to get a vector of possible actions."
   [query]
   (case (str/lower-case query)
-    "/clear" [:clear]
-    "/test" [:test]
+    "/clear" [[:clear]]
+    "/test" [[:test]]
     []))
 
 (defn eval-pinyin
   "Evaluate a Pinyin query to get a vector of possible actions."
   [query]
   (cond-> []
-          (pe/pinyin-block? query) (conj :look-up-word)
-          (digits->diacritics? query) (conj :digits->diacritics)
-          (diacritics->digits? query) (conj :diacritics->digits)))
+          (digits->diacritics? query) (conj [:digits->diacritics])
+          (diacritics->digits? query) (conj [:diacritics->digits])))
 
+;; TODO: more intelligent pinyin lookups
+;; TODO: use events directly, i.e. ::events/digits->diacritics?
 (defn eval-query
   "Evaluate a query string to get a vector of possible actions."
   [query]
@@ -51,5 +53,6 @@
   (let [query* (p/umlaut query)]
     (cond
       (command? query) (eval-command query)
-      (word? query) [:look-up-word]
+      (pe/hanzi-block? query) [[:look-up-word query]]
+      (pe/pinyin-block? query) [[:look-up-word (dict/pinyin-key query)]]
       :else (eval-pinyin query*))))

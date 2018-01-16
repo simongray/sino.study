@@ -192,10 +192,10 @@
   (fn [cofx [_ action]]
     (let [db    (:db cofx)
           input (:input db)]
-      {:dispatch (case action
+      {:dispatch (case (first action)
                    :test [::test]
                    :clear [::initialize-db]
-                   :look-up-word [::look-up-word input]
+                   :look-up-word [::look-up-word (second action)]
                    :digits->diacritics [::digits->diacritics input]
                    :diacritics->digits [::diacritics->digits input])})))
 

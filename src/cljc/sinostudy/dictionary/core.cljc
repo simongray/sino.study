@@ -105,6 +105,7 @@
   Spaces and tone digits are removed entirely and the text is made lowercase."
   [s]
   (-> s
+      (str/replace "'" "")
       (str/replace " " "")
       (str/replace "·" "")                                  ; middle dot
       (str/replace "," "")
