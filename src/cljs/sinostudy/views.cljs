@@ -5,6 +5,7 @@
             [sinostudy.events :as events]
             [sinostudy.pages.defaults :as pd]
             [sinostudy.dictionary.defaults :as dd]
+            [sinostudy.rim.core :as rim]
             [sinostudy.dictionary.core :as dict]))
 
 ;;;; HELPER FUNCTIONS
@@ -55,7 +56,8 @@
          [:span.pinyin {:key "pinyin"} (str/join " " (dd/pinyin entry))]
          (interpose "; "
            (for [definition definitions]
-             (let [definition* (dict/handle-hanzi-refs definition script)]
+             (let [f           (comp script dict/hanzi-ref->m)
+                   definition* (rim/re-handle definition dict/hanzi-ref f)]
                [:span.definition {:key definition} definition*])))])]]))
 
 (defn entries->hiccup
@@ -110,8 +112,8 @@
                    (add-word-links (dd/trad classifier))])))])])]
      [:ol
       (for [definition definitions]
-        (let [link        (comp add-word-links vector script)
-              definition* (dict/handle-hanzi-refs definition link)]
+        (let [f           (comp add-word-links vector script dict/hanzi-ref->m)
+              definition* (rim/re-handle definition dict/hanzi-ref f)]
           [:li {:key definition} [:span.definition definition*]]))]]))
 
 (defn unknown-word

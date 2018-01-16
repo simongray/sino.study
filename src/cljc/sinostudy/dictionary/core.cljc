@@ -20,14 +20,14 @@
 ;;       e.g. {... :pinyin [[...] [...]], :definition [[...] [...]]}
 ;; TODO: tag radicals, e.g. def = "Kangxi radical 206" or just from a list
 
-(def hanzi-ref-pattern
+(def hanzi-ref
   "A pattern used in CC-CEDICT to embed a hanzi reference, e.g. 樁|桩[zhuang1]."
   #"[^ ,:\[a-zA-Z0-9]+\[[^\]]+\]+")
 
-(defn hanzi-ref->map
-  "Transform a hanzi-ref-str into a Clojure map."
-  [hanzi-ref-str]
-  (let [[hanzi-str pinyin-str] (str/split hanzi-ref-str #"\[|\]")
+(defn hanzi-ref->m
+  "Transform the hanzi-ref in s into a Clojure map."
+  [s]
+  (let [[hanzi-str pinyin-str] (str/split s #"\[|\]")
         hanzi       (str/split hanzi-str #"\|")
         pinyin      (str/split pinyin-str #" ")
         traditional (first hanzi)
@@ -35,20 +35,6 @@
     {dd/trad   traditional
      dd/simp   simplified
      dd/pinyin pinyin}))
-
-(defn hanzi-refs
-  "Get all of the hanzi reference in s as Clojure maps."
-  [s]
-  (map hanzi-ref->map (re-seq hanzi-ref-pattern s)))
-
-(defn handle-hanzi-refs
-  "Apply function f to all hanzi refs in definition."
-  [definition f]
-  (let [hanzi-refs (hanzi-refs definition)]
-    (if (empty? hanzi-refs)
-      definition
-      (interleave (str/split definition hanzi-ref-pattern)
-                  (map f hanzi-refs)))))
 
 ;; TODO: 唎 in traditional special case
 (defn variant-def?
@@ -312,11 +298,11 @@
   (if (cl-entry? entry)
     (let [defs     (dd/defs entry)
           cl-defs  (filter cl-def? defs)
-          new-defs (set/difference defs cl-defs)
-          cls      (set (flatten (map hanzi-refs cl-defs)))]
+          get-cls  (comp (partial map hanzi-ref->m) (partial re-seq hanzi-ref))
+          cls      (set (flatten (map get-cls cl-defs)))]
       (if cls
         (-> entry
-            (assoc dd/defs new-defs)
+            (assoc dd/defs (set/difference defs cl-defs))
             (assoc dd/cls cls))
         entry))
     entry))

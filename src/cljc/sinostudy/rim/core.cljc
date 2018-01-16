@@ -1,4 +1,6 @@
-(ns sinostudy.rim.core)
+(ns sinostudy.rim.core
+  (:require [clojure.string :as str]))
+
 
 
 ;;;; ABSTRACT FUNCTIONS
@@ -37,3 +39,13 @@
                (if-let [m (.exec re s)]
                  (recur (assoc out (.-index m) (first m)))
                  out)))))
+
+(defn re-handle
+  "Return s interleaved with the results of f applied to the matches of re in s.
+  Note: very useful for creating hiccup data out of a string."
+  [s re f]
+  (let [matches (re-seq re s)]
+    (if (empty? matches)
+      s
+      (interleave (str/split s re)
+                  (map f matches)))))
