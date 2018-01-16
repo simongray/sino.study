@@ -6,6 +6,7 @@
             [sinostudy.pages.defaults :as pd]
             [sinostudy.dictionary.defaults :as dd]
             [sinostudy.rim.core :as rim]
+            [sinostudy.pinyin.core :as p]
             [sinostudy.pinyin.patterns :as pp]
             [sinostudy.dictionary.core :as dict]))
 
@@ -57,8 +58,11 @@
          [:span.pinyin {:key "pinyin"} (str/join " " (dd/pinyin entry))]
          (interpose "; "
            (for [definition definitions]
-             (let [f           (comp script dict/hanzi-ref->m)
-                   definition* (rim/re-handle definition dict/hanzi-ref f)]
+             (let [only-hanzi  (comp script dict/hanzi-ref->m)
+                   definition* (-> definition
+                                   (rim/re-handle dict/hanzi-ref only-hanzi)
+                                   (rim/re-handle dict/pinyin-embed
+                                                  p/digits->diacritics))]
                [:span.definition {:key definition} definition*])))])]]))
 
 (defn entries->hiccup
@@ -115,14 +119,19 @@
       (for [definition definitions]
         (let [link        (comp add-word-links vector)
               hanzi-ref-f (comp link script dict/hanzi-ref->m)
-              index       (fn [script coll] (get coll (cond
-                                                        (= 1 (count coll)) 0
-                                                        (= dd/simp script) 1
-                                                        :else 0)))
+              index       (fn [script coll]
+                            (get coll (cond
+                                        (= 1 (count coll)) 0
+                                        (= dd/simp script) 1
+                                        :else 0)))
               hanzi-f     (comp link (partial index script) dict/split-hanzi)
+              pinyinize   (fn [s] [:span.pinyin {:key "pinyin"} s])
+              no-brackets #(subs % 1 (dec (count %)))
+              pinyin-f    (comp pinyinize link p/digits->diacritics no-brackets)
               definition* (-> definition
                               (rim/re-handle dict/hanzi-ref hanzi-ref-f)
-                              (rim/re-handle dict/hanzi hanzi-f))]
+                              (rim/re-handle dict/hanzi hanzi-f)
+                              (rim/re-handle dict/pinyin-embed pinyin-f))]
           [:li {:key definition} [:span.definition definition*]]))]]))
 
 (defn unknown-word

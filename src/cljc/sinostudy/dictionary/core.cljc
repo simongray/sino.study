@@ -32,6 +32,9 @@
   (let [hanzi+ (str "[" (str/join (map str (vals pp/hanzi-unicode))) "]+")]
     (re-pattern (str hanzi+ "\\|?" hanzi+))))
 
+(def pinyin-embed
+  #"\[[a-zA-Z0-9 ]+\]+")
+
 (defn split-hanzi
   "Split a hanzi ref delimited as traditional|simplified."
   [s]
