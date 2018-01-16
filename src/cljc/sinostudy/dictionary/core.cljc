@@ -14,7 +14,7 @@
 ;; TODO: make list of exceptional entries (e.g. 3P) that should be queryable
 ;; TODO: make the pattern "classifier for X" prominent (CL)
 ;; TODO: make the pattern "to X" prominent (V)
-;; TODO: do something about weird simplifications like 制 (dual entries in simp)
+;; TODO: do something about weird simplifications like 制, 和 (dual entries in simp)
 ;;       perhaps simply merge while constructing the list and remove "variant
 ;;       of X" from definitions?
 ;; TODO: merge duoyinci, perhaps just conj Pinyin and defs
