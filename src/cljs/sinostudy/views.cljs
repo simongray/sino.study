@@ -60,7 +60,7 @@
            (for [definition definitions]
              (let [only-hanzi  (comp script dict/hanzi-ref->m)
                    definition* (-> definition
-                                   (rim/re-handle dict/hanzi-ref only-hanzi)
+                                   (rim/re-handle dict/ref-embed only-hanzi)
                                    (rim/re-handle dict/pinyin-embed
                                                   p/digits->diacritics))]
                [:span.definition {:key definition} definition*])))])]]))
@@ -118,7 +118,7 @@
      [:ol
       (for [definition definitions]
         (let [link        (comp add-word-links vector)
-              hanzi-ref-f (comp link script dict/hanzi-ref->m)
+              ref-f       (comp link script dict/hanzi-ref->m)
               index       (fn [script coll]
                             (get coll (cond
                                         (= 1 (count coll)) 0
@@ -129,8 +129,8 @@
               no-brackets #(subs % 1 (dec (count %)))
               pinyin-f    (comp pinyinize link p/digits->diacritics no-brackets)
               definition* (-> definition
-                              (rim/re-handle dict/hanzi-ref hanzi-ref-f)
-                              (rim/re-handle dict/hanzi hanzi-f)
+                              (rim/re-handle dict/ref-embed ref-f)
+                              (rim/re-handle dict/hanzi-embed hanzi-f)
                               (rim/re-handle dict/pinyin-embed pinyin-f))]
           [:li {:key definition} [:span.definition definition*]]))]]))
 

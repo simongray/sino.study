@@ -21,13 +21,13 @@
 ;;       e.g. {... :pinyin [[...] [...]], :definition [[...] [...]]}
 ;; TODO: tag radicals, e.g. def = "Kangxi radical 206" or just from a list
 
-(def hanzi-ref
+(def ref-embed
   "A pattern used in CC-CEDICT to embed a hanzi reference with Pinyin."
   #"[^ ,:\[a-zA-Z0-9]+\[[^\]]+\]+")
 
 ;; CLJS regex seems to have some issues with doing (str pp/hanzi-pattern),
 ;; so I've copied over whole implementation.
-(def hanzi
+(def hanzi-embed
   "A pattern used in CC-CEDICT to embed a hanzi reference (no Pinyin)."
   (let [hanzi+ (str "[" (str/join (map str (vals pp/hanzi-unicode))) "]+")]
     (re-pattern (str hanzi+ "\\|?" hanzi+))))
@@ -41,7 +41,7 @@
   (str/split s #"\|"))
 
 (defn hanzi-ref->m
-  "Transform the hanzi-ref in s into a Clojure map."
+  "Transform the ref-embed in s into a Clojure map."
   [s]
   (let [[hanzi-str pinyin-str] (str/split s #"\[|\]")
         hanzi       (split-hanzi hanzi-str)
@@ -314,7 +314,7 @@
   (if (cl-entry? entry)
     (let [defs     (dd/defs entry)
           cl-defs  (filter cl-def? defs)
-          get-cls  (comp (partial map hanzi-ref->m) (partial re-seq hanzi-ref))
+          get-cls  (comp (partial map hanzi-ref->m) (partial re-seq ref-embed))
           cls      (set (flatten (map get-cls cl-defs)))]
       (if cls
         (-> entry
