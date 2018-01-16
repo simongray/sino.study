@@ -196,7 +196,8 @@
                    :test [::test]
                    :clear [::initialize-db]
                    :look-up-word [::look-up-word input]
-                   :digits->diacritics [::digits->diacritics input])})))
+                   :digits->diacritics [::digits->diacritics input]
+                   :diacritics->digits [::diacritics->digits input])})))
 
 ;; dispatched by ::on-submit
 (rf/reg-event-fx
@@ -281,5 +282,13 @@
   (fn [cofx [_ input]]
     (let [db        (:db cofx)
           new-input (pinyin/digits->diacritics input)]
+      {:db       (assoc db :input new-input)
+       :dispatch [::display-hint :default]})))
+
+(rf/reg-event-fx
+  ::diacritics->digits
+  (fn [cofx [_ input]]
+    (let [db        (:db cofx)
+          new-input (pinyin/diacritics->digits input)]
       {:db       (assoc db :input new-input)
        :dispatch [::display-hint :default]})))

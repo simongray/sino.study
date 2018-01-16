@@ -14,6 +14,11 @@
   (and (pe/pinyin+digits+punct? query)
        (not (pe/pinyin+punct? query))))
 
+(defn- diacritics->digits?
+  [query]
+  (and (pe/pinyin+diacritics+punct? query)
+       (not (pe/pinyin+punct? query))))
+
 (defn- word?
   [query]
   (or (pe/hanzi-block? query)
@@ -36,7 +41,8 @@
   [query]
   (cond-> []
           (pe/pinyin-block? query) (conj :look-up-word)
-          (digits->diacritics? query) (conj :digits->diacritics)))
+          (digits->diacritics? query) (conj :digits->diacritics)
+          (diacritics->digits? query) (conj :diacritics->digits)))
 
 (defn eval-query
   "Evaluate a query string to get a vector of possible actions."
