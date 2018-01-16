@@ -14,9 +14,9 @@
   (and (pe/pinyin+digits+punct? query)
        (not (pe/pinyin+punct? query))))
 
-(defn- hanzi?
+(defn- word?
   [query]
-  (or (pe/hanzi? query)
+  (or (pe/hanzi-block? query)
       (pe/pinyin-block? query)))
 
 (defn- command?
@@ -45,5 +45,5 @@
   (let [query* (p/umlaut query)]
     (cond
       (command? query) (eval-command query)
-      (hanzi? query) [:look-up-word]
+      (word? query) [:look-up-word]
       :else (eval-pinyin query*))))

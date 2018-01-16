@@ -74,5 +74,5 @@
    "CJK Compatibility Ideographs"       #"\uF900-\uFAFF"
    "CJK Compatibility Forms"            #"\uFE30-\uFE4F"})
 
-(def hanzi-pattern
+(def hanzi-block
   (re-pattern (str "[" (str/join (map str (vals hanzi-unicode))) "]+")))

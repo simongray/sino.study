@@ -45,9 +45,9 @@
   [s]
   (pinyin+punct? (p/no-diacritics s)))
 
-(defn hanzi?
+(defn hanzi-block?
   [s]
-  (re-matches patterns/hanzi-pattern s))
+  (re-matches patterns/hanzi-block s))
 
 (spec/def ::pinyin-syllable pinyin-syllable?)
 
@@ -61,4 +61,4 @@
 
 (spec/def ::pinyin+diacritics+punct pinyin+diacritics+punct?)
 
-(spec/def ::hanzi hanzi?)
+(spec/def ::hanzi-block hanzi-block?)
