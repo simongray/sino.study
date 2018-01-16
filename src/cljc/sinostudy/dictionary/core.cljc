@@ -7,6 +7,7 @@
             [sinostudy.pinyin.patterns :as pp]
             [sinostudy.pinyin.eval :as pe]))
 
+;; TODO: Beijing returns 背景, not list of entries
 ;; TODO: dual entries:
 ;;       帆 fān Taiwan pr. [fan2]; to gallop; variant of 帆
 ;;       帆 fān Taiwan pr. [fan2], except 帆布; sail
