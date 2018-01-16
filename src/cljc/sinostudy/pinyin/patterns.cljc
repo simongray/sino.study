@@ -30,6 +30,7 @@
 (def pinyin-syllable
   (re-pattern (str "(?i)" syllable)))
 
+;; TODO: cannot recognise hanguo (probably sees "ha" + "nguo")
 (def pinyin-block
   (re-pattern (str "(?i)" block)))
 
