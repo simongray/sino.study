@@ -9,6 +9,12 @@
 (def pinyin-key
   :pinyin-key)
 
+(def pinyin+digits-key
+  :pinyin+digits-key)
+
+(def pinyin+diacritics-key
+  :pinyin+diacritics-key)
+
 (def simp
   :simplified)
 

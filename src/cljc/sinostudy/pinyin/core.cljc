@@ -41,23 +41,23 @@
 (defn handle-m
   "Handle the super rare, special case final, m."
   [s]
-  (when (re-matches #"[mM]\d" s)
-    (let [tone (parse-int (str (last s)))
-          skip (if (= \M (first s)) 6 0)]
-      (nth data/m-diacritics (+ tone skip)))))
+  (let [tone (parse-int (str (last s)))
+        skip (if (= \M (first s)) 6 0)]
+    (nth data/m-diacritics (+ tone skip))))
 
 (defn digit->diacritic
   "Convert a Pinyin syllable/final s with an affixed tone digit into one with a
   tone diacritic. When converting more than a single syllable at a time,
   use digits->diacritics instead!"
   [s]
-  (if-let [m (handle-m s)]
-    m
-    (let [tone           (parse-int (str (last s)))
-          s*             (subs s 0 (dec (count s)))
-          char           (nth s (diacritic-index s))
-          char+diacritic (diacritic char tone)]
-      (str/replace s* char char+diacritic))))
+  (cond
+    (or (empty? s) (nil? s)) s
+    (re-matches #"[mM]\d" s) (handle-m s)
+    :else (let [tone           (parse-int (str (last s)))
+                s*             (subs s 0 (dec (count s)))
+                char           (nth s (diacritic-index s))
+                char+diacritic (diacritic char tone)]
+            (str/replace s* char char+diacritic))))
 
 ;; used by diacritic-string to find the bounds of the last Pinyin final
 (defn- last-final
@@ -78,7 +78,7 @@
 (defn- handle-r
   "Handle the common special case final, r."
   [s]
-  (when (contains? #{"r5" "R5" "r0" "R0"} s) (subs s 0 1)))
+  (str/replace s #"\d" ""))
 
 ;; used by digits->diacritics to convert tone digits into diacritics
 (defn- diacritic-string
@@ -86,8 +86,8 @@
   digit with a tone diacritic. The diacritic is placed in the Pinyin final
   immediately before tone digit."
   [s]
-  (if-let [r (handle-r s)]
-    r
+  (if (contains? #{"r5" "R5" "r0" "R0"} (str/trim s))
+    (handle-r s)
     (let [final           (last-final s)
           final+diacritic (digit->diacritic final)
           ;; prefix = preceding neutral tone syllables + the initial

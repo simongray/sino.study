@@ -99,17 +99,14 @@
                            entry))]
     (map tag-variant entries)))
 
-;; using CC-CEDICT Pinyin directly for dictionary look-ups is too strict
 (defn pinyin-key
-  "Converts CC-CEDICT Pinyin string into a plain form for use as a map key.
-  Spaces and tone digits are removed entirely and the text is made lowercase."
+  "Convert a CC-CEDICT Pinyin string into a form for use as a map key."
   [s]
   (-> s
       (str/replace "'" "")
       (str/replace " " "")
       (str/replace "·" "")                                  ; middle dot
       (str/replace "," "")
-      (str/replace #"\d" "")
       str/lower-case))
 
 (def pinyin>case>character
@@ -190,7 +187,6 @@
   (if (contains? cc-cedict-oddities s)
     []
     (-> s
-        u:->umlaut
         join-abbr
         pinyin-seq
         vec)))
@@ -202,14 +198,21 @@
   (let [pattern #"^([^ ]+) ([^ ]+) \[([^]]+)\] /(.+)/"
         [_ trad simp pinyin definition :as entry] (re-matches pattern line)]
     (when entry
-      (let [pinyin-key        (pinyin-key pinyin)
-            pinyin+diacritics (preprocess pinyin)
+      (let [pinyin*           (u:->umlaut pinyin)
+            plain-key         (pinyin-key (str/replace pinyin* #"\d" ""))
+            digits-key        (pinyin-key pinyin*)
+            diacritics-key    (pinyin-key (p/digits->diacritics
+                                            pinyin*
+                                            :v-as-umlaut false))
+            pinyin+diacritics (preprocess pinyin*)
             definitions       (split-def definition)]
-        {dd/trad       trad
-         dd/simp       simp
-         dd/pinyin     pinyin+diacritics
-         dd/pinyin-key pinyin-key
-         dd/defs       definitions}))))
+        {dd/trad                  trad
+         dd/simp                  simp
+         dd/pinyin                pinyin+diacritics
+         dd/pinyin-key            plain-key
+         dd/pinyin+digits-key     digits-key
+         dd/pinyin+diacritics-key diacritics-key
+         dd/defs                  definitions}))))
 
 ;; Note: do not remove pinyin-key -- it is not unused, just indirectly used!
 (defn add-entry
@@ -314,10 +317,10 @@
   "Moves the classifiers of an entry from :definitions to :classifiers."
   [entry]
   (if (cl-entry? entry)
-    (let [defs     (dd/defs entry)
-          cl-defs  (filter cl-def? defs)
-          get-cls  (comp (partial map hanzi-ref->m) (partial re-seq ref-embed))
-          cls      (set (flatten (map get-cls cl-defs)))]
+    (let [defs    (dd/defs entry)
+          cl-defs (filter cl-def? defs)
+          get-cls (comp (partial map hanzi-ref->m) (partial re-seq ref-embed))
+          cls     (set (flatten (map get-cls cl-defs)))]
       (if cls
         (-> entry
             (assoc dd/defs (set/difference defs cl-defs))

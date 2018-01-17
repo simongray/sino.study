@@ -16,7 +16,11 @@
 ;; https://weavejester.github.io/compojure/compojure.coercions.html
 
 (def dictionary-keys
-  [dd/trad dd/simp dd/pinyin-key])
+  [dd/trad
+   dd/simp
+   dd/pinyin-key
+   dd/pinyin+digits-key
+   dd/pinyin+diacritics-key])
 
 (def reframe-app
   (slurp "./resources/public/index.html"))
