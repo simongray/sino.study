@@ -110,6 +110,99 @@ div#aligner {
 	padding: 0 1ch;
 }
 
+form#action-chooser {
+    /* box */
+    padding: 2ch;
+    width: 40ch;
+    border: 1pt solid black;
+	background: linear-gradient(#BB5544, #AB4230);
+    border: 1pt solid #AA4433;
+    border-radius: 2ch;
+    box-shadow: 0 4pt 8pt 0 rgba(0, 0, 0, 0.2), 0 6pt 20pt 0 rgba(0, 0, 0, 0.19);
+
+    /* center horisontally */
+    margin: auto;
+
+    /* center vertically
+      adapted from .main */
+    z-index: 2;
+    position: fixed;
+    top: 50%; /* using 50% looks off somehow...*/
+    left: 50%;
+    transform: translate(-50%, -70%);
+    -webkit-transform: translate(-50%, -70%);
+    -moz-transform: translate(-50%, -70%);
+    -o-transform: translate(-50%, -70%);
+    -ms-transform: translate(-50%, -70%);
+
+    /* expand to fit content
+       https://teamtreehouse.com/community/how-can-i-make-my-divs-grow-wider-according-to-their-content */
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+
+    animation: fade-in 0.5s linear;
+
+    /* hide by default */
+    display: none;
+}
+
+form#action-chooser p#action-header {
+    /* text-related */
+    font-family: "Gill Sans", sans-serif;
+    font-size: 14pt;
+    color: white;
+    text-align: center;
+
+    margin: 0 0 0.5em 0;
+    padding-bottom: 0.5em;
+    border-bottom: 1pt solid #CC6666;
+}
+
+
+form#action-chooser p#action-subheader {
+    /* text-related */
+    font-family: "Gill Sans", sans-serif;
+    font-size: 12pt;
+    color: #FFBBBB;
+
+    margin: 0 0 1em 0;
+}
+
+form#action-chooser ol {
+    margin: 0;
+    padding: 0 0 0 3ch;
+    color: #FFBBBB;
+}
+
+form#action-chooser input {
+    /* remove radio button */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+
+    /* remove last little bit on the left */
+    margin: 0;
+}
+
+form#action-chooser label {
+    color: white;
+    cursor: pointer;
+    font-family: "Gill Sans", sans-serif;
+    font-size: 14pt;
+}
+
+form#action-chooser label:hover {
+    text-decoration: underline;
+}
+
+/* for styling checked radio buttons
+form#action-chooser input:checked + label {
+    color: white;
+}*/
+
 form#study-form {
 	display: flex;
 	margin: 1.4em 0 0 0;

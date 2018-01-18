@@ -247,11 +247,37 @@
      [:p#copyright "© " year-string " Simon Gray ("
       [:a {:href "https://github.com/simongray"} "github"] ")"]]))
 
+;; TODO: make his dynamic and respond to user input
+(defn action-chooser []
+  [:form#action-chooser {:action ""}
+   [:p#action-header "Select an action"]
+   [:p#action-subheader "You can press the numbers on your keypad to choose."]
+   [:ol
+    [:li
+     [:input {:type :radio
+              :name "action"
+              :value "1"
+              :id "1"}]
+     [:label {:for "1"} "Convert to diacritics"]]
+    [:li
+     [:input {:type :radio
+              :name "action"
+              :value "2"
+              :id "2"}]
+     [:label {:for "2"} "Look up the word"]]
+    [:li
+     [:input {:type :radio
+              :name "action"
+              :value "3"
+              :id "3"}]
+     [:label {:for "3"} "Get a sentence analysis"]]]])
+
 (defn main-panel []
   (let [not-home? (not= "/" @(rf/subscribe [::subs/nav]))]
     [:div#bg {:class (if not-home? "with-page" "")}
      [:div {:class (if not-home? "main top" "main")}
       [:div#aligner
        [header]]]
+     [action-chooser]
      [page]
      [footer]]))
