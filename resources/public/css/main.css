@@ -115,9 +115,9 @@ form#action-chooser {
     padding: 2ch;
     width: 40ch;
     border: 1pt solid black;
-	background: linear-gradient(#BB5544, #AB4230);
-    border: 1pt solid #AA4433;
-    border-radius: 2ch;
+	background: linear-gradient(#BBBBBB, #888888);
+    border: 1pt solid #777777;
+    border-radius: 1ch;
     box-shadow: 0 4pt 8pt 0 rgba(0, 0, 0, 0.2), 0 6pt 20pt 0 rgba(0, 0, 0, 0.19);
 
     /* center horisontally */
@@ -141,7 +141,7 @@ form#action-chooser {
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
 
-    animation: fade-in 0.5s linear;
+    animation: fade-in 0.3s linear;
 
     /* hide by default */
     display: none;
@@ -151,28 +151,18 @@ form#action-chooser p#action-header {
     /* text-related */
     font-family: "Gill Sans", sans-serif;
     font-size: 14pt;
-    color: white;
+    color: #555555;
     text-align: center;
 
     margin: 0 0 0.5em 0;
     padding-bottom: 0.5em;
-    border-bottom: 1pt solid #CC6666;
-}
-
-
-form#action-chooser p#action-subheader {
-    /* text-related */
-    font-family: "Gill Sans", sans-serif;
-    font-size: 12pt;
-    color: #FFBBBB;
-
-    margin: 0 0 1em 0;
+    border-bottom: 1pt solid #999999;
 }
 
 form#action-chooser ol {
     margin: 0;
     padding: 0 0 0 3ch;
-    color: #FFBBBB;
+    color: #555555;
 }
 
 form#action-chooser input {

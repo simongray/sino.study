@@ -251,7 +251,6 @@
 (defn action-chooser []
   [:form#action-chooser {:action ""}
    [:p#action-header "Select an action"]
-   [:p#action-subheader "You can press the numbers on your keypad to choose."]
    [:ol
     [:li
      [:input {:type :radio
