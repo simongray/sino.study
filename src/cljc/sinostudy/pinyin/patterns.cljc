@@ -59,20 +59,5 @@
 (def pinyin+digits+punct
   (re-pattern (str "(?i)" block+digit "(" block+digit "|" punct ")*")))
 
-;; from http://kourge.net/projects/regexp-unicode-block
-(def hanzi-unicode
-  {"CJK Radicals Supplement"            #"\u2E80-\u2EFF"
-   "Kangxi Radicals"                    #"\u2F00-\u2FDF"
-   "Ideographic Description Characters" #"\u2FF0-\u2FFF"
-   "CJK Symbols and Punctuation"        #"\u3000-\u303F"
-   "CJK Strokes"                        #"\u31C0-\u31EF"
-   "Enclosed CJK Letters and Months"    #"\u3200-\u32FF"
-   "CJK Compatibility"                  #"\u3300-\u33FF"
-   "CJK Unified Ideographs Extension A" #"\u3400-\u4DBF"
-   "Yijing Hexagram Symbols"            #"\u4DC0-\u4DFF"
-   "CJK Unified Ideographs"             #"\u4E00-\u9FFF"
-   "CJK Compatibility Ideographs"       #"\uF900-\uFAFF"
-   "CJK Compatibility Forms"            #"\uFE30-\uFE4F"})
-
 (def hanzi-block
-  (re-pattern (str "[" (str/join (map str (vals hanzi-unicode))) "]+")))
+  (re-pattern (str "[" (str/join (map str (vals data/hanzi-unicode))) "]+")))

@@ -4,6 +4,7 @@
             [sinostudy.dictionary.defaults :as dd]
             [sinostudy.rim.core :as rim]
             [sinostudy.pinyin.core :as p]
+            [sinostudy.pinyin.data :as pd]
             [sinostudy.pinyin.patterns :as pp]
             [sinostudy.pinyin.eval :as pe]))
 
@@ -30,7 +31,7 @@
 ;; so I've copied over whole implementation.
 (def hanzi-embed
   "A pattern used in CC-CEDICT to embed a hanzi reference (no Pinyin)."
-  (let [hanzi+ (str "[" (str/join (map str (vals pp/hanzi-unicode))) "]+")]
+  (let [hanzi+ (str "[" (str/join (map str (vals pd/hanzi-unicode))) "]+")]
     (re-pattern (str hanzi+ "\\|?" hanzi+))))
 
 (def pinyin-embed
