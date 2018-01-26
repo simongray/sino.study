@@ -58,7 +58,7 @@
          [:span.pinyin {:key "pinyin"} (str/join " " (dd/pinyin entry))]
          (interpose "; "
            (for [definition definitions]
-             (let [only-hanzi  (comp script dict/hanzi-ref->m)
+             (let [only-hanzi  (comp script dict/ref-embed->m)
                    definition* (-> definition
                                    (rim/re-handle dict/ref-embed only-hanzi)
                                    (rim/re-handle dict/pinyin-embed
@@ -118,7 +118,7 @@
      [:ol
       (for [definition definitions]
         (let [link        (comp add-word-links vector)
-              ref-f       (comp link script dict/hanzi-ref->m)
+              ref-f       (comp link script dict/ref-embed->m)
               index       (fn [script coll]
                             (get coll (cond
                                         (= 1 (count coll)) 0

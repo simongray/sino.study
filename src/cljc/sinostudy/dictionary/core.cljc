@@ -37,11 +37,11 @@
   #"\[[a-zA-Z0-9 ]+\]+")
 
 (defn split-hanzi
-  "Split a hanzi ref delimited as traditional|simplified."
+  "Split a hanzi-embed delimited as traditional|simplified."
   [s]
   (str/split s #"\|"))
 
-(defn hanzi-ref->m
+(defn ref-embed->m
   "Transform the ref-embed in s into a Clojure map."
   [s]
   (let [[hanzi-str pinyin-str] (str/split s #"\[|\]")
@@ -79,7 +79,8 @@
   (= (get variant-entry script) (get entry script)))
 
 (defn false-variants
-  "Find false variants (usually an artifact of using Simplified Chinese)."
+  "Find false variants (usually an artifact of using Simplified Chinese).
+  A false variant is a hanzi variation that only exists in the other script."
   [script entries]
   (let [variants     (filter variant-entry? entries)
         others       (filter (complement variant-entry?) entries)
@@ -173,7 +174,7 @@
     s))
 
 (defn pinyin-seq
-  "Transform the CC-CEDICT Pinyin string into a seq of diacritised syllables."
+  "Transform the CC-CEDICT Pinyin string into a seq of syllables+digits."
   [pinyin]
   (map neutral-as-0 (str/split pinyin #" ")))
 
@@ -192,37 +193,30 @@
         vec)))
 
 (defn extract-entry
-  "Extract the constituents of a matching CC-CEDICT dictionary entry.
-  Returns a [pinyin-key {entry}] vector (the pinyin-key is used for look-ups)."
+  "Extract the constituents of a line in a CC-CEDICT dictionary file.
+  Returns a map representation suitable for use as a dictionary entry."
   [line]
   (let [pattern #"^([^ ]+) ([^ ]+) \[([^]]+)\] /(.+)/"
-        [_ trad simp pinyin definition :as entry] (re-matches pattern line)]
+        [_ trad simp pinyin defs :as entry] (re-matches pattern line)]
     (when entry
-      (let [pinyin*           (u:->umlaut pinyin)
-            plain-key         (pinyin-key (str/replace pinyin* #"\d" ""))
-            digits-key        (pinyin-key pinyin*)
-            diacritics-key    (pinyin-key (p/digits->diacritics
-                                            pinyin*
-                                            :v-as-umlaut false))
-            pinyin+diacritics (preprocess pinyin*)
-            definitions       (split-def definition)]
+      (let [pinyin* (u:->umlaut pinyin)]
         {dd/trad                  trad
          dd/simp                  simp
-         dd/pinyin                pinyin+diacritics
-         dd/pinyin-key            plain-key
-         dd/pinyin+digits-key     digits-key
-         dd/pinyin+diacritics-key diacritics-key
-         dd/defs                  definitions}))))
+         dd/pinyin                (preprocess pinyin*)
+         dd/pinyin-key            (pinyin-key (str/replace pinyin* #"\d" ""))
+         dd/pinyin+digits-key     (pinyin-key pinyin*)
+         dd/pinyin+diacritics-key (pinyin-key (p/digits->diacritics
+                                                pinyin*
+                                                :v-as-umlaut false))
+         dd/defs                  (split-def defs)}))))
 
-;; Note: do not remove pinyin-key -- it is not unused, just indirectly used!
 (defn add-entry
-  "Add (or extend) an entry in the dictionary map; key marks the look-up key.
-  Pinyin is a special case, as the look-up key is further processed."
-  [key-type m entry]
+  "Add (or extend) an entry in the dictionary map."
+  [key-type dict entry]
   (let [key (get entry key-type)]
-    (if-let [entries (get m key)]
-      (assoc m key (conj entries entry))
-      (assoc m key #{entry}))))
+    (if-let [entries (get dict key)]
+      (assoc dict key (conj entries entry))
+      (assoc dict key #{entry}))))
 
 (defn cl-def?
   "Determine if a dictionary definition is actually a list of classifiers."
@@ -230,25 +224,25 @@
   (str/starts-with? definition "CL:"))
 
 (defn cl-entry?
-  "Determine if the entry's :definitions contain classifiers."
+  "Determine if the entry's definitions contain classifiers."
   [entry]
   (some cl-def? (dd/defs entry)))
 
 (defn name-entry?
-  "Determine is a dictionary entry is a name entry."
+  "Determine is a dictionary entry is a name entry (e.g. person or place name)."
   [entry]
   (when-let [first-letter (first (first (dd/pinyin entry)))]
     #?(:clj  (Character/isUpperCase ^char first-letter)
        :cljs (not= first-letter (.toLowerCase first-letter)))))
 
 (defn matches-pinyin
-  "True if the :pinyin of both entries is equal, disregarding case."
+  "True if the Pinyin of both entries is equal, disregarding case."
   [p1 p2]
   (let [lower-case= #(= (str/lower-case %1) (str/lower-case %2))]
     (every? true? (map lower-case= p1 p2))))
 
 (defn matches-entry
-  "True if everything matches except the definitions and the :pinyin case."
+  "True if everything matches except the definitions and the Pinyin case."
   [e1 e2]
   (and (= (dd/simp e1) (dd/simp e2))
        (= (dd/trad e1) (dd/trad e2))
@@ -319,7 +313,7 @@
   (if (cl-entry? entry)
     (let [defs    (dd/defs entry)
           cl-defs (filter cl-def? defs)
-          get-cls (comp (partial map hanzi-ref->m) (partial re-seq ref-embed))
+          get-cls (comp (partial map ref-embed->m) (partial re-seq ref-embed))
           cls     (set (flatten (map get-cls cl-defs)))]
       (if cls
         (-> entry
