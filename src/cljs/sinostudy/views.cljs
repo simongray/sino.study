@@ -176,7 +176,7 @@
 ;;;; VIEWS
 
 (defn logo []
-  (let [nav @(rf/subscribe [::subs/nav])]
+  (let [nav @(rf/subscribe [::subs/current-nav])]
     [:header
      [:a {:href "/"}
       [:img#logo {:src   "/img/logo_min.svg"
@@ -185,12 +185,17 @@
                            "small-logo")}]]]))
 
 (defn input-field []
-  (let [input     (rf/subscribe [::subs/input])
-        css-class (rf/subscribe [::subs/input-css-class])]
+  (let [input      @(rf/subscribe [::subs/input])
+        evaluation @(rf/subscribe [::subs/current-evaluation])
+        css-class  (if (and evaluation
+                            (empty? (:actions evaluation))
+                            (not= "" (:query evaluation)))
+                     "default no-actions"
+                     "default")]
     [:input#study-input
      {:type      :text
-      :value     @input
-      :class     @css-class
+      :value     input
+      :class     css-class
       :on-change (fn [e]
                    (rf/dispatch [::events/on-input-change
                                  (-> e .-target .-value)]))}]))
@@ -226,9 +231,11 @@
    [hint]])
 
 (defn page []
-  (let [content @(rf/subscribe [::subs/page-content])
-        page    @(rf/subscribe [::subs/page])
-        script  @(rf/subscribe [::subs/script])]
+  (let [script  @(rf/subscribe [::subs/script])
+        page    @(rf/subscribe [::subs/current-page])
+        pages   @(rf/subscribe [::subs/pages])
+        content (when page
+                  (get-in pages page))]
     (when content
       [:div.pedestal
        [:article {:key (str page)}
@@ -240,7 +247,7 @@
     (script-changer-link script text)))
 
 (defn footer []
-  (let [from  @(rf/subscribe [::subs/nav])
+  (let [from  @(rf/subscribe [::subs/current-nav])
         links [["/" "Home"] ["/help" "Help"] ["/about" "About"]]]
     [:footer
      [:nav (interpose " · "
@@ -274,7 +281,7 @@
      [:label {:for "3"} "Get a sentence analysis"]]]])
 
 (defn main-panel []
-  (let [not-home? (not= "/" @(rf/subscribe [::subs/nav]))]
+  (let [not-home? (not= "/" @(rf/subscribe [::subs/current-nav]))]
     [:div#bg {:class (if not-home? "with-page" "")}
      [:div {:class (if not-home? "main top" "main")}
       [:div#aligner
