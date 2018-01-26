@@ -211,11 +211,13 @@
    [input-button]])
 
 (defn hint []
-  (let [hint-key     (rf/subscribe [::subs/hint-type])
-        hint-content (rf/subscribe [::subs/hint-content])]
+  (let [hints   @(rf/subscribe [::subs/hints])
+        hint    (first hints)
+        key     (count hints)
+        content (get events/hint-contents (:type hint))]
     [:div#study-hint
-     {:key @hint-key}
-     @hint-content]))
+     {:key key}
+     content]))
 
 (defn header []
   [:div
@@ -253,22 +255,22 @@
    [:p#action-header "Select an action"]
    [:ol
     [:li
-     [:input {:type :radio
-              :name "action"
+     [:input {:type  :radio
+              :name  "action"
               :value "1"
-              :id "1"}]
+              :id    "1"}]
      [:label {:for "1"} "Convert to diacritics"]]
     [:li
-     [:input {:type :radio
-              :name "action"
+     [:input {:type  :radio
+              :name  "action"
               :value "2"
-              :id "2"}]
+              :id    "2"}]
      [:label {:for "2"} "Look up the word"]]
     [:li
-     [:input {:type :radio
-              :name "action"
+     [:input {:type  :radio
+              :name  "action"
               :value "3"
-              :id "3"}]
+              :id    "3"}]
      [:label {:for "3"} "Get a sentence analysis"]]]])
 
 (defn main-panel []

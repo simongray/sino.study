@@ -1,10 +1,10 @@
 (ns sinostudy.events
-  (:require [clojure.string :as string]
+  (:require [clojure.string :as str]
             [re-frame.core :as rf]
             [accountant.core :as accountant]
             [sinostudy.db :as db]
-            [sinostudy.queries :as q]
-            [sinostudy.pinyin.core :as pinyin]
+            [sinostudy.pinyin.core :as p]
+            [sinostudy.pinyin.eval :as pe]
             [sinostudy.dictionary.core :as dict]
             [sinostudy.pages.defaults :as pd]
             [ajax.core :as ajax]
@@ -46,6 +46,73 @@
   (cond
     (= page-type pd/words) (dict/prepare-entries content)
     :else content))
+
+(defn press-enter-to [s]
+  [:div "press " [:span.keypress "enter"] " to " s])
+
+;; action-related hints (press-enter-to ...) must match action name!
+(def hint-contents
+  {::query-failure      "error!"
+   ::no-actions         "not sure what to do with that..."
+   ::digits->diacritics (press-enter-to "convert to tone diacritics")
+   ::diacritics->digits (press-enter-to "convert to tone digits")
+   ::look-up-word       (press-enter-to "look up the word")
+   ::choose-action      (press-enter-to "choose an action")})
+
+
+;;;; QUERY EVALUATION
+
+;; cljsjs/xregexp doesn't include the extensions allowing for \p{Script=Han}
+;; will just use this to generate suitable regex used in both clj and cljs:
+;;     http://kourge.net/projects/regexp-unicode-block
+
+;; pinyin sentences with tone digits can converted to diacritics,
+;; but the action shouldn't appear if the sentence contains no tone digits!
+(defn- digits->diacritics?
+  [query]
+  (and (pe/pinyin+digits+punct? query)
+       (not (pe/pinyin+punct? query))))
+
+(defn- diacritics->digits?
+  [query]
+  (and (pe/pinyin+diacritics+punct? query)
+       (not (pe/pinyin+punct? query))))
+
+(defn- word?
+  [query]
+  (or (pe/hanzi-block? query)
+      (pe/pinyin-block? query)))
+
+(defn- command?
+  [query]
+  (str/starts-with? query "/"))
+
+(defn- eval-command
+  "Evaluate a command query to get a vector of possible actions."
+  [query]
+  (case (str/lower-case query)
+    "/clear" [[::initialize-db]]
+    "/test" [[::test]]
+    []))
+
+(defn eval-pinyin
+  "Evaluate a Pinyin query to get a vector of possible actions."
+  [query]
+  (cond-> []
+          (digits->diacritics? query) (conj [::digits->diacritics query])
+          (diacritics->digits? query) (conj [::diacritics->digits query])))
+
+;; TODO: more intelligent pinyin lookups
+(defn eval-query
+  "Evaluate a query string to get a vector of possible actions."
+  [query]
+  ;; some tests need an umlaut'ed query
+  (let [query* (p/umlaut query)]
+    (cond
+      (command? query) (eval-command query)
+      (pe/hanzi-block? query) [[::look-up-word query]]
+      (pe/pinyin-block? query) [[::look-up-word (dict/pinyin-key query)]]
+      :else (eval-pinyin query*))))
 
 
 ;;;; CO-EFFECTS
@@ -109,15 +176,15 @@
     (let [db                (:db cofx)
           latest-evaluation (first (:evaluations db))
           latest-input?     (= input (:input db))
-          query             (string/trim input)
+          query             (str/trim input)
           new-query?        (not= query (:query latest-evaluation))]
       (when (and latest-input? new-query?)
-        (let [actions  (q/eval-query query)
+        (let [actions  (eval-query query)
               ;; hints must match the name of the action!
               new-hint (case (count actions)
-                         0 (if (empty? query) :default :no-actions)
+                         0 (if (empty? query) nil ::no-actions)
                          1 (first actions)
-                         :choose-action)]
+                         ::choose-action)]
           {:dispatch-n (list [::save-evaluation query actions]
                              [::display-hint new-hint])})))))
 
@@ -132,8 +199,8 @@
   (fn [cofx [_ input]]
     (let [db (:db cofx)
           fx {:db (assoc db :input input)}]
-      (if (string/blank? input)
-        (assoc fx :dispatch-n [[::display-hint :default]
+      (if (str/blank? input)
+        (assoc fx :dispatch-n [[::display-hint nil]
                                [::evaluate-input input]])
         (assoc fx :dispatch-later [{:dispatch [::evaluate-input input]
                                     :ms       1000}])))))
@@ -168,7 +235,7 @@
           queries (:queries db)
           now     (:now cofx)]
       {:db       (assoc db :queries (add-query queries :failure result now))
-       :dispatch [::display-hint :query-failure]})))
+       :dispatch [::display-hint ::query-failure]})))
 
 ;; dispatched by ::load-content
 (rf/reg-event-fx
@@ -186,20 +253,7 @@
           request         (assoc default-request :uri uri)]
       {:http-xhrio request})))
 
-;; dispatched by ::on-submit
-(rf/reg-event-fx
-  ::perform-action
-  (fn [cofx [_ action]]
-    (let [db    (:db cofx)
-          input (:input db)]
-      {:dispatch (case (first action)
-                   :test [::test]
-                   :clear [::initialize-db]
-                   :look-up-word [::look-up-word (second action)]
-                   :digits->diacritics [::digits->diacritics input]
-                   :diacritics->digits [::diacritics->digits input])})))
-
-;; dispatched by ::on-submit
+;; dispatched by ::on-submit when there are >1 actions based on query eval
 (rf/reg-event-fx
   ::choose-action
   (fn [_ _]
@@ -212,14 +266,14 @@
   (fn [cofx [_ input]]
     (let [db                (:db cofx)
           latest-evaluation (first (:evaluations db))
-          query             (string/trim input)
+          query             (str/trim input)
           new-query?        (not= query (:query latest-evaluation))
           actions           (if new-query?
-                              (q/eval-query query)
+                              (eval-query query)
                               (:actions latest-evaluation))]
       {:dispatch-n [(case (count actions)
-                      0 [::display-hint :no-actions]
-                      1 [::perform-action (first actions)]
+                      0 [::display-hint ::no-actions]
+                      1 (first actions)
                       [::choose-action actions])
                     (when new-query? [::save-evaluation query actions])]})))
 
@@ -275,20 +329,20 @@
     (let [db (:db cofx)]
       {:db          (assoc db :input "")
        :navigate-to (str "/" (name pd/words) "/" word)
-       :dispatch    [::display-hint :default]})))
+       :dispatch    [::display-hint nil]})))
 
 (rf/reg-event-fx
   ::digits->diacritics
   (fn [cofx [_ input]]
     (let [db        (:db cofx)
-          new-input (pinyin/digits->diacritics input)]
+          new-input (p/digits->diacritics input)]
       {:db       (assoc db :input new-input)
-       :dispatch [::display-hint :default]})))
+       :dispatch [::display-hint nil]})))
 
 (rf/reg-event-fx
   ::diacritics->digits
   (fn [cofx [_ input]]
     (let [db        (:db cofx)
-          new-input (pinyin/diacritics->digits input)]
+          new-input (p/diacritics->digits input)]
       {:db       (assoc db :input new-input)
-       :dispatch [::display-hint :default]})))
+       :dispatch [::display-hint nil]})))

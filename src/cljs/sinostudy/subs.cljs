@@ -1,6 +1,7 @@
 (ns sinostudy.subs
   (:require [re-frame.core :as rf]
-            [sinostudy.db :as db]))
+            [sinostudy.db :as db]
+            [sinostudy.events :as events]))
 
 (rf/reg-sub
   ::input
@@ -66,25 +67,9 @@
       "default")))
 
 (rf/reg-sub
-  ::hint
+  ::hints
   (fn [db]
-    (first (:hints db))))
-
-(rf/reg-sub
-  ::hint-type
-  (fn [_]
-    (rf/subscribe [::hint]))
-  (fn [hint]
-    (if hint
-      (:type hint)
-      :default)))
-
-(rf/reg-sub
-  ::hint-content
-  (fn [_]
-    (rf/subscribe [::hint-type]))
-  (fn [hint-type]
-    (get db/hint-contents hint-type)))
+    (:hints db)))
 
 (rf/reg-sub
   ::queries
