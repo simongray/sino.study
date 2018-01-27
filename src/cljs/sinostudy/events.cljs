@@ -52,12 +52,21 @@
 
 ;; action-related hints (press-enter-to ...) must match action name!
 (def hint-contents
-  {::query-failure      "error!"
+  {::query-failure      "something went wrong..."
    ::no-actions         "not sure what to do with that..."
    ::digits->diacritics (press-enter-to "convert to tone diacritics")
    ::diacritics->digits (press-enter-to "convert to tone digits")
    ::look-up-word       (press-enter-to "look up the word")
    ::choose-action      (press-enter-to "choose an action")})
+
+(defn hint
+  "Get a hint based on the current evaluation.
+  Note that hints match the name of the action!"
+  [query actions]
+  (case (count actions)
+    0 (if (empty? query) nil ::no-actions)
+    1 (first (first actions))
+    ::choose-action))
 
 
 ;;;; QUERY EVALUATION
@@ -180,11 +189,7 @@
           new-query?        (not= query (:query latest-evaluation))]
       (when (and latest-input? new-query?)
         (let [actions  (eval-query query)
-              ;; hints must match the name of the action!
-              new-hint (case (count actions)
-                         0 (if (empty? query) nil ::no-actions)
-                         1 (first actions)
-                         ::choose-action)]
+              new-hint (hint query actions)]
           {:dispatch-n (list [::save-evaluation query actions]
                              [::display-hint new-hint])})))))
 
