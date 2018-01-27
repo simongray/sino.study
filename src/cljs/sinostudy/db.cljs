@@ -8,6 +8,7 @@
 
 (def default-db
   {:input       ""
+   :mode        :normal
    :script      :simplified
    :pages       {pd/words  {}
                  pd/static static-pages}

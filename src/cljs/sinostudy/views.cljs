@@ -189,15 +189,19 @@
 
 (defn input-field []
   (let [input      @(rf/subscribe [::subs/input])
+        mode       @(rf/subscribe [::subs/mode])
         evaluation @(rf/subscribe [::subs/current-evaluation])
-        css-class  (if (and evaluation
-                            (empty? (:actions evaluation))
-                            (not= "" (:query evaluation)))
-                     "default no-actions"
-                     "default")]
+        actions    (:actions evaluation)
+        css-class  (cond
+                     (= :choose-action mode) "default disabled"
+                     (and evaluation
+                          (empty? actions)
+                          (not= "" (:query evaluation))) "default no-actions"
+                     :else "default")]
     [:input#study-input
      {:type         :text
       :autocomplete :off
+      :disabled     (when (= :choose-action mode) true)
       :value        input
       :class        css-class
       :on-change    (fn [e]
@@ -260,29 +264,36 @@
      [:p#copyright "© " year-string " Simon Gray ("
       [:a {:href "https://github.com/simongray"} "github"] ")"]]))
 
+(defn- action-text
+  [action]
+  (case (first action)
+    ::events/look-up-word (str "Look up " (second action))
+    ::events/digits->diacritics "Convert to diacritics"
+    ::events/diacritics->digits "Convert to digits"))
+
+(defn- action-choice
+  [action]
+  [:li {:key action}
+   [:input {:type     :radio
+            :name     "action"
+            :value    action
+            :id       action
+            :on-click (fn [e]
+                        (.preventDefault e)
+                        (rf/dispatch [::events/choose-action action]))}]
+   [:label {:for action} (action-text action)]])
+
 ;; TODO: make his dynamic and respond to user input
 (defn action-chooser []
-  [:form#action-chooser {:action ""}
-   [:p#action-header "Select an action"]
-   [:ol
-    [:li
-     [:input {:type  :radio
-              :name  "action"
-              :value "1"
-              :id    "1"}]
-     [:label {:for "1"} "Convert to diacritics"]]
-    [:li
-     [:input {:type  :radio
-              :name  "action"
-              :value "2"
-              :id    "2"}]
-     [:label {:for "2"} "Look up the word"]]
-    [:li
-     [:input {:type  :radio
-              :name  "action"
-              :value "3"
-              :id    "3"}]
-     [:label {:for "3"} "Get a sentence analysis"]]]])
+  (let [mode       @(rf/subscribe [::subs/mode])
+        evaluation @(rf/subscribe [::subs/current-evaluation])
+        actions    (:actions evaluation)]
+    [:form#action-chooser
+     {:action ""
+      :class  (when (not= :choose-action mode) "hidden")}
+     [:p#action-header "Select an action"]
+     [:ol
+      (map action-choice actions)]]))
 
 (defn main-panel []
   (let [not-home? (not= "/" @(rf/subscribe [::subs/current-nav]))]

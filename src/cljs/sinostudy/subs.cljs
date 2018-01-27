@@ -34,6 +34,11 @@
     (:script db)))
 
 (rf/reg-sub
+  ::mode
+  (fn [db]
+    (:mode db)))
+
+(rf/reg-sub
   ::current-evaluation
   (fn [db]
     (first (:evaluations db))))

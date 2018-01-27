@@ -52,12 +52,12 @@
 
 ;; action-related hints (press-enter-to ...) must match action name!
 (def hint-contents
-  {::query-failure      "something went wrong..."
-   ::no-actions         "not sure what to do with that..."
-   ::digits->diacritics (press-enter-to "convert to tone diacritics")
-   ::diacritics->digits (press-enter-to "convert to tone digits")
-   ::look-up-word       (press-enter-to "look up the word")
-   ::choose-action      (press-enter-to "choose an action")})
+  {::query-failure       "something went wrong..."
+   ::no-actions          "not sure what to do with that..."
+   ::digits->diacritics  (press-enter-to "convert to tone diacritics")
+   ::diacritics->digits  (press-enter-to "convert to tone digits")
+   ::look-up-word        (press-enter-to "look up the word")
+   ::open-action-chooser (press-enter-to "choose an action")})
 
 (defn hint
   "Get a hint based on the current evaluation.
@@ -66,7 +66,7 @@
   (case (count actions)
     0 (if (empty? query) nil ::no-actions)
     1 (first (first actions))
-    ::choose-action))
+    ::open-action-chooser))
 
 
 ;;;; QUERY EVALUATION
@@ -87,10 +87,11 @@
   (and (pe/pinyin+diacritics+punct? query)
        (not (pe/pinyin+punct? query))))
 
-(defn- word?
+(defn- pinyin-block?
   [query]
-  (or (pe/hanzi-block? query)
-      (pe/pinyin-block? query)))
+  (or (pe/pinyin-block? query)
+      (pe/pinyin-block+digits? query)
+      (pe/pinyin-block+diacritics? query)))
 
 (defn- command?
   [query]
@@ -108,6 +109,7 @@
   "Evaluate a Pinyin query to get a vector of possible actions."
   [query]
   (cond-> []
+          (pinyin-block? query) (conj [::look-up-word (dict/pinyin-key query)])
           (digits->diacritics? query) (conj [::digits->diacritics query])
           (diacritics->digits? query) (conj [::diacritics->digits query])))
 
@@ -116,12 +118,10 @@
   "Evaluate a query string to get a vector of possible actions."
   [query]
   ;; some tests need an umlaut'ed query
-  (let [query* (p/umlaut query)]
-    (cond
-      (command? query) (eval-command query)
-      (pe/hanzi-block? query) [[::look-up-word query]]
-      (pe/pinyin-block? query) [[::look-up-word (dict/pinyin-key query)]]
-      :else (eval-pinyin query*))))
+  (cond
+    (command? query) (eval-command query)
+    (pe/hanzi-block? query) [[::look-up-word query]]
+    :else (eval-pinyin (p/umlaut query))))
 
 
 ;;;; CO-EFFECTS
@@ -259,10 +259,18 @@
       {:http-xhrio request})))
 
 ;; dispatched by ::on-submit when there are >1 actions based on query eval
+(rf/reg-event-db
+  ::open-action-chooser
+  (fn [db _]
+    (assoc db :mode :choose-action)))
+
+;; dispatched by user selecting an action in the action-chooser
 (rf/reg-event-fx
   ::choose-action
-  (fn [_ _]
-    {}))                                                    ;; TODO
+  (fn [cofx [_ action]]
+    (let [db (:db cofx)]
+      {:db         (assoc db :mode :normal)
+       :dispatch-n (conj [[::clear-input]] action)})))
 
 ;; dispatched by clicking the study button (= pressing enter)
 ;; forces an evaluation for the latest input if it hasn't been evaluated yet
@@ -279,7 +287,7 @@
       {:dispatch-n [(case (count actions)
                       0 [::display-hint ::no-actions]
                       1 (first actions)
-                      [::choose-action actions])
+                      [::open-action-chooser])
                     (when new-query? [::save-evaluation query actions])]})))
 
 ;; dispatched by ::change-page

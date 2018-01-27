@@ -115,8 +115,8 @@ form#action-chooser {
     padding: 2ch;
     width: 40ch;
     border: 1pt solid black;
-	background: linear-gradient(#BBBBBB, #888888);
-    border: 1pt solid #777777;
+	background: radial-gradient(#BB5544, #AB4230);
+    border: solid 1pt #AA4433;
     border-radius: 1ch;
     box-shadow: 0 4pt 8pt 0 rgba(0, 0, 0, 0.2), 0 6pt 20pt 0 rgba(0, 0, 0, 0.19);
 
@@ -142,8 +142,9 @@ form#action-chooser {
     box-sizing: border-box;
 
     animation: fade-in 0.3s linear;
+}
 
-    /* hide by default */
+.hidden {
     display: none;
 }
 
@@ -151,18 +152,18 @@ form#action-chooser p#action-header {
     /* text-related */
     font-family: "Gill Sans", sans-serif;
     font-size: 14pt;
-    color: #555555;
+    color: #FFBBBB;
     text-align: center;
 
     margin: 0 0 0.5em 0;
     padding-bottom: 0.5em;
-    border-bottom: 1pt solid #999999;
+    border-bottom: 1pt solid #CC6666;
 }
 
 form#action-chooser ol {
     margin: 0;
     padding: 0 0 0 3ch;
-    color: #555555;
+    color: #FFBBBB;
 }
 
 form#action-chooser input {
@@ -229,6 +230,12 @@ input.default {
 /* red colouring of input when evaluation returns 0 actions */
 input.no-actions {
 	background-color: #ffdcc6;
+	transition: all 0.5s;
+}
+
+/* grey colouring of input when action-chooser is active */
+input.disabled {
+	background-color: #DDDDDD;
 	transition: all 0.5s;
 }
 
