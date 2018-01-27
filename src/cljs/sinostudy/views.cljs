@@ -200,7 +200,7 @@
                      :else "default")]
     [:input#study-input
      {:type         :text
-      :autocomplete :off
+      :autocomplete "off"
       :disabled     (when (= :choose-action mode) true)
       :value        input
       :class        css-class
@@ -220,6 +220,7 @@
 
 (defn form []
   [:form#study-form
+   {:autocomplete "off"}
    [input-field]
    [input-button]])
 
