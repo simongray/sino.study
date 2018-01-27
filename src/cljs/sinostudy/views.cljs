@@ -10,6 +10,8 @@
             [sinostudy.pinyin.patterns :as pp]
             [sinostudy.dictionary.core :as dict]))
 
+;; TODO: add bookmark icon for entries and way to get to bookmarks in nav bar
+
 ;;;; HELPER FUNCTIONS
 
 (defn add-word-links
@@ -127,6 +129,7 @@
               hanzi-f     (comp link (partial index script) dict/split-hanzi)
               pinyinize   (fn [s] [:span.pinyin {:key "pinyin"} s])
               no-brackets #(subs % 1 (dec (count %)))
+              ;; TODO: remove spaces from href for proper linking
               pinyin-f    (comp pinyinize link p/digits->diacritics no-brackets)
               definition* (-> definition
                               (rim/re-handle dict/ref-embed ref-f)
