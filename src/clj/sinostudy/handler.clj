@@ -22,7 +22,7 @@
    dd/pinyin+digits-key
    dd/pinyin+diacritics-key])
 
-(def index.html
+(def index
   (slurp "./resources/public/index.html"))
 
 (defonce dicts
@@ -69,7 +69,7 @@
 
   ;; HTML page requests all resolve to the ClojureScript app.
   ;; The internal routing of the app creates the correct presentation.
-  (route/not-found index.html))
+  (route/not-found index))
 
 (def app
   (wrap-defaults app-routes site-defaults))
