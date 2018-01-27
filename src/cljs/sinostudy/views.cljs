@@ -196,12 +196,13 @@
                      "default no-actions"
                      "default")]
     [:input#study-input
-     {:type      :text
-      :value     input
-      :class     css-class
-      :on-change (fn [e]
-                   (rf/dispatch [::events/on-input-change
-                                 (-> e .-target .-value)]))}]))
+     {:type         :text
+      :autocomplete :off
+      :value        input
+      :class        css-class
+      :on-change    (fn [e]
+                      (rf/dispatch [::events/on-input-change
+                                    (-> e .-target .-value)]))}]))
 
 ;; not actually displayed!
 (defn input-button []
