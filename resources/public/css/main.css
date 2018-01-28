@@ -166,6 +166,7 @@ form#action-chooser ol {
     color: #FFBBBB;
 }
 
+/* TODO: don't use radio buttons? */
 form#action-chooser input {
     /* remove radio button */
     -webkit-appearance: none;
@@ -179,7 +180,7 @@ form#action-chooser input {
 }
 
 form#action-chooser label {
-    color: white;
+    color: #FFBBBB;
     cursor: pointer;
     font-family: "Gill Sans", sans-serif;
     font-size: 14pt;
@@ -187,6 +188,10 @@ form#action-chooser label {
 
 form#action-chooser label:hover {
     text-decoration: underline;
+}
+
+form#action-chooser .marked, form#action-chooser .marked * {
+    color: white;
 }
 
 /* for styling checked radio buttons

@@ -132,6 +132,11 @@
     (assoc cofx :now (js/Date.))))
 
 (rf/reg-cofx
+  ::focus
+  (fn [cofx _]
+    (assoc cofx :focus (.-activeElement js/document))))
+
+(rf/reg-cofx
   ::local-storage
   (fn [cofx key]
     (assoc cofx :local-storage (js->clj (.getItem js/localStorage key)))))
@@ -145,6 +150,13 @@
   (fn [path]
     (accountant/navigate! path)))
 
+;; Dispatched by ::close-action-chooser.
+;; This is definitely a less than optimal solution...
+(rf/reg-fx
+  :regain-input-focus
+  (fn [delay]
+    (js/setTimeout #(.focus (.getElementById js/document "study-input"))
+                   delay)))
 
 ;;;; EVENTS
 
@@ -258,17 +270,66 @@
           request         (assoc default-request :uri uri)]
       {:http-xhrio request})))
 
+;; dispatched by the user pressing keys on the keyboard
+(rf/reg-event-fx
+  ::on-key-down
+  [(rf/inject-cofx ::focus)]
+  (fn [cofx [_ key]]
+    (let [db      (:db cofx)
+          focus   (:focus cofx)
+          actions (:actions db)
+          marked  (:marked-action db)]
+      (if actions
+        (let [num   (js/parseInt key)
+              num?  (and (int? num) (< 0 num (inc (count actions))))
+              next  #{"ArrowRight" "ArrowDown"}
+              prev  #{"ArrowLeft" "ArrowUp"}
+              next? (contains? next key)
+              prev? (contains? prev key)]
+          (cond
+            (= "Escape" key) (rf/dispatch
+                               [::choose-action [::close-action-chooser]])
+            (= "Enter" key) (rf/dispatch
+                              [::choose-action (nth actions marked)])
+            num? (let [action (nth actions (dec num))]
+                   (rf/dispatch
+                     [::choose-action action]))
+            next? (let [upper-bound (dec (count actions))]
+                    (rf/dispatch
+                      [::mark-action (if (< marked upper-bound)
+                                       (inc marked)
+                                       0)]))
+            prev? (rf/dispatch
+                    [::mark-action (if (> marked 0)
+                                     (dec marked)
+                                     (dec (count actions)))])))
+        ;; In lieu of the actual submit button capturing "Enter" keypresses.
+        (when (and (= "Enter" key) (= "study-input" (.-id focus)))
+          (rf/dispatch [::submit (:input db)]))))))
+
 ;; dispatched by ::on-submit when there are >1 actions based on query eval
 (rf/reg-event-db
   ::open-action-chooser
   (fn [db _]
-    (assoc db :mode :choose-action)))
+    (let [actions (:actions (first (:evaluations db)))]
+      (-> db
+          (assoc :marked-action 0)
+          (assoc :actions (conj actions [::close-action-chooser]))))))
+
+;; TODO: figure out a better way to regain focus for previously disabled field
+;; dispatched by ::choose-action
+(rf/reg-event-fx
+  ::close-action-chooser
+  (fn [cofx _]
+    (let [db (:db cofx)]
+      {:db (assoc db :actions nil)
+       :regain-input-focus 100})))
 
 ;; dispatched by ::choose-action
 (rf/reg-event-db
-  ::close-action-chooser
-  (fn [db _]
-    (assoc db :mode :normal)))
+  ::mark-action
+  (fn [db [_ n]]
+    (assoc db :marked-action n)))
 
 ;; Dispatched by user selecting an action in the action-chooser.
 ;; ::close-action-chooser (= cancel) is a special action (doesn't clear input).
@@ -277,14 +338,13 @@
   (fn [cofx [_ action]]
     (let [db (:db cofx)]
       (if (= [::close-action-chooser] action)
-        {:dispatch action}
-        {:dispatch-n (conj [[::close-action-chooser] [::clear-input]]
-                           action)}))))
+        {:dispatch [::close-action-chooser]}
+        {:dispatch-n (conj [[::close-action-chooser] action])}))))
 
-;; dispatched by clicking the study button (= pressing enter)
+;; dispatched by pressing enter (defined in ::on-key-down)
 ;; forces an evaluation for the latest input if it hasn't been evaluated yet
 (rf/reg-event-fx
-  ::on-submit
+  ::submit
   (fn [cofx [_ input]]
     (let [db                (:db cofx)
           latest-evaluation (first (:evaluations db))
@@ -293,11 +353,12 @@
           actions           (if new-query?
                               (eval-query query)
                               (:actions latest-evaluation))]
-      {:dispatch-n [(case (count actions)
-                      0 [::display-hint ::no-actions]
-                      1 (first actions)
-                      [::open-action-chooser])
-                    (when new-query? [::save-evaluation query actions])]})))
+      {:dispatch-n
+       [(when new-query? [::save-evaluation query actions])
+        (case (count actions)
+          0 [::display-hint ::no-actions]
+          1 (first actions)
+          [::open-action-chooser])]})))
 
 ;; dispatched by ::change-page
 (rf/reg-event-fx
@@ -349,8 +410,7 @@
   ::look-up-word
   (fn [cofx [_ word]]
     (let [db (:db cofx)]
-      {:db          (assoc db :input "")
-       :navigate-to (str "/" (name pd/words) "/" word)
+      {:navigate-to (str "/" (name pd/words) "/" word)
        :dispatch    [::display-hint nil]})))
 
 (rf/reg-event-fx

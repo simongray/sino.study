@@ -202,29 +202,24 @@
     [:input#study-input
      {:type          :text
       :auto-complete "off"
+      :disabled      (not (nil? actions))
       :value         input
       :class         css-class
-      :on-key-press  (fn [e]
-                       (when actions
-                         (let [key (.-key e)
-                               num (js/parseInt key)]
-                           (when (< 0 num (inc (count actions)))
-                             (rf/dispatch [::events/choose-action
-                                           (nth actions (dec num))])))))
       :on-change     (fn [e]
                        (when (nil? actions)
                          (rf/dispatch [::events/on-input-change
                                        (-> e .-target .-value)])))}]))
 
-;; not actually displayed!
+;; The button is not actually displayed!
+;; It's kept around to prevent "Enter" submitting the input to an unknown href.
+;; If the button isn't there, pressing enter to select an action in the
+;; action-chooser can misfire a submit event. The on-click event in the submit
+;; button captures these submit events and sends straight them to /dev/null.
 (defn input-button []
   (let [input (rf/subscribe [::subs/input])]
     [:button#study-button
      {:type     :submit
-      :on-click (fn [e]
-                  (.preventDefault e)
-                  (rf/dispatch [::events/on-submit @input]))}
-     "go"]))
+      :on-click (fn [e] (.preventDefault e))}]))
 
 (defn form []
   [:form#study-form
@@ -276,14 +271,15 @@
 (defn- action-text
   [action]
   (case (first action)
-    ::events/look-up-word (str "Look up " (second action))
+    ::events/look-up-word (str "Look up word")
     ::events/digits->diacritics "Convert to diacritics"
     ::events/diacritics->digits "Convert to digits"
     ::events/close-action-chooser "Cancel"))
 
 (defn- action-choice
-  [action]
-  [:li {:key action}
+  [marked action]
+  [:li {:key   action
+        :class (when (= marked action) "marked")}
    [:input {:type     :radio
             :name     "action"
             :value    action
@@ -294,13 +290,14 @@
    [:label {:for action} (action-text action)]])
 
 (defn action-chooser []
-  (let [actions @(rf/subscribe [::subs/actions])]
+  (let [actions @(rf/subscribe [::subs/actions])
+        marked  @(rf/subscribe [::subs/marked-action])]
     [:form#action-chooser
      {:action ""
       :class  (when (nil? actions) "hidden")}
      [:p#action-header "Select an action"]
      [:ol
-      (map action-choice actions)]]))
+      (map (partial action-choice (nth actions marked)) actions)]]))
 
 (defn main-panel []
   (let [not-home? (not= "/" @(rf/subscribe [::subs/current-nav]))]

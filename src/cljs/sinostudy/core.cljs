@@ -22,7 +22,10 @@
   ;; so the app needs to orient itself on hard page loads.
   (let [current-page (-> js/window .-location .-pathname)]
     (secretary/dispatch! current-page))
-  (.focus (.getElementById js/document "study-input")))
+  (.focus (.getElementById js/document "study-input"))
+  ;; handle all keypresses through a common event
+  (set! (.-onkeydown js/document)
+        (fn [e] (rf/dispatch [::events/on-key-down (.-key e)]))))
 
 (defn ^:export init []
   (routes/app-routes)

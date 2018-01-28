@@ -7,12 +7,13 @@
    "/about" [:div [:h1 "About"] [:p "This is the About page."]]})
 
 (def default-db
-  {:input       ""
-   :mode        :normal
-   :script      :simplified
-   :pages       {pd/words  {}
-                 pd/static static-pages}
-   :history     '()
-   :evaluations '()
-   :hints       '()
-   :queries     '()})
+  {:input         ""
+   :actions       nil
+   :marked-action 0
+   :script        :simplified
+   :pages         {pd/words  {}
+                   pd/static static-pages}
+   :history       '()
+   :evaluations   '()
+   :hints         '()
+   :queries       '()})

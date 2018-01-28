@@ -39,21 +39,19 @@
     (:mode db)))
 
 (rf/reg-sub
+  ::actions
+  (fn [db]
+    (:actions db)))
+
+(rf/reg-sub
+  ::marked-action
+  (fn [db]
+    (:marked-action db)))
+
+(rf/reg-sub
   ::current-evaluation
   (fn [db]
     (first (:evaluations db))))
-
-;; This subscription is nil unless the action-chooser is open,
-;; in which case it holds the list of actions available.
-;; The appended action (::events/close-action-chooser) is for cancelling.
-(rf/reg-sub
-  ::actions
-  (fn [_]
-    [(rf/subscribe [::mode])
-     (rf/subscribe [::current-evaluation])])
-  (fn [[mode evaluation]]
-    (when (= mode :choose-action)
-      (conj (:actions evaluation) [::events/close-action-chooser]))))
 
 ;; the page is a vector describing the path to the content in (:pages db)
 ;; in the case of a static web page it looks like e.g. [:static "/about"]
