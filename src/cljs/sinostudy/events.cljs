@@ -264,13 +264,22 @@
   (fn [db _]
     (assoc db :mode :choose-action)))
 
-;; dispatched by user selecting an action in the action-chooser
+;; dispatched by ::choose-action
+(rf/reg-event-db
+  ::close-action-chooser
+  (fn [db _]
+    (assoc db :mode :normal)))
+
+;; Dispatched by user selecting an action in the action-chooser.
+;; ::close-action-chooser (= cancel) is a special action (doesn't clear input).
 (rf/reg-event-fx
   ::choose-action
   (fn [cofx [_ action]]
     (let [db (:db cofx)]
-      {:db         (assoc db :mode :normal)
-       :dispatch-n (conj [[::clear-input]] action)})))
+      (if (= [::close-action-chooser] action)
+        {:dispatch action}
+        {:dispatch-n (conj [[::close-action-chooser] [::clear-input]]
+                           action)}))))
 
 ;; dispatched by clicking the study button (= pressing enter)
 ;; forces an evaluation for the latest input if it hasn't been evaluated yet

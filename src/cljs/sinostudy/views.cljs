@@ -187,26 +187,34 @@
                            "big-logo"
                            "small-logo")}]]]))
 
+;; The smart input field.
+;; All key presses are also handled from here.
 (defn input-field []
   (let [input      @(rf/subscribe [::subs/input])
-        mode       @(rf/subscribe [::subs/mode])
+        actions    @(rf/subscribe [::subs/actions])
         evaluation @(rf/subscribe [::subs/current-evaluation])
-        actions    (:actions evaluation)
         css-class  (cond
-                     (= :choose-action mode) "default disabled"
+                     actions "default disabled"
                      (and evaluation
-                          (empty? actions)
+                          (empty? (:actions evaluation))
                           (not= "" (:query evaluation))) "default no-actions"
                      :else "default")]
     [:input#study-input
-     {:type         :text
-      :autocomplete "off"
-      :disabled     (when (= :choose-action mode) true)
-      :value        input
-      :class        css-class
-      :on-change    (fn [e]
-                      (rf/dispatch [::events/on-input-change
-                                    (-> e .-target .-value)]))}]))
+     {:type          :text
+      :auto-complete "off"
+      :value         input
+      :class         css-class
+      :on-key-press  (fn [e]
+                       (when actions
+                         (let [key (.-key e)
+                               num (js/parseInt key)]
+                           (when (< 0 num (inc (count actions)))
+                             (rf/dispatch [::events/choose-action
+                                           (nth actions (dec num))])))))
+      :on-change     (fn [e]
+                       (when (nil? actions)
+                         (rf/dispatch [::events/on-input-change
+                                       (-> e .-target .-value)])))}]))
 
 ;; not actually displayed!
 (defn input-button []
@@ -220,7 +228,7 @@
 
 (defn form []
   [:form#study-form
-   {:autocomplete "off"}
+   {:auto-complete "off"}
    [input-field]
    [input-button]])
 
@@ -270,7 +278,8 @@
   (case (first action)
     ::events/look-up-word (str "Look up " (second action))
     ::events/digits->diacritics "Convert to diacritics"
-    ::events/diacritics->digits "Convert to digits"))
+    ::events/diacritics->digits "Convert to digits"
+    ::events/close-action-chooser "Cancel"))
 
 (defn- action-choice
   [action]
@@ -284,14 +293,11 @@
                         (rf/dispatch [::events/choose-action action]))}]
    [:label {:for action} (action-text action)]])
 
-;; TODO: make his dynamic and respond to user input
 (defn action-chooser []
-  (let [mode       @(rf/subscribe [::subs/mode])
-        evaluation @(rf/subscribe [::subs/current-evaluation])
-        actions    (:actions evaluation)]
+  (let [actions @(rf/subscribe [::subs/actions])]
     [:form#action-chooser
      {:action ""
-      :class  (when (not= :choose-action mode) "hidden")}
+      :class  (when (nil? actions) "hidden")}
      [:p#action-header "Select an action"]
      [:ol
       (map action-choice actions)]]))
