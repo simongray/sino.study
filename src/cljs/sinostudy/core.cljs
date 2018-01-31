@@ -23,15 +23,9 @@
   (let [current-page (-> js/window .-location .-pathname)]
     (secretary/dispatch! current-page))
   (.focus (.getElementById js/document "study-input"))
-  ;; Handle all keypresses through a common event.
-  ;; The .preventDefault is there to prevent scrolling down while the
-  ;; action-chooser is open, but in addition prevents any scrolling at all.
-  ;; This may be a bad thing, but I'm thinking about making the UI completely
-  ;; keyboard-navigable so that up/down arrow can be used to select anything.
+  ;; handle all keypresses through a common event
   (set! (.-onkeydown js/document)
-        (fn [e]
-          (.preventDefault e)
-          (rf/dispatch [::events/on-key-down (.-key e)]))))
+        (fn [e] (rf/dispatch [::events/on-key-down (.-key e)]))))
 
 (defn ^:export init []
   (routes/app-routes)
