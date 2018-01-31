@@ -270,7 +270,8 @@
           request         (assoc default-request :uri uri)]
       {:http-xhrio request})))
 
-;; dispatched by the user pressing keys on the keyboard
+;; Dispatched by the user pressing keys on the keyboard.
+;; Only dispatched when the action-chooser is open.
 (rf/reg-event-fx
   ::on-key-down
   [(rf/inject-cofx ::focus)]
@@ -282,30 +283,32 @@
       (if actions
         (let [num   (js/parseInt key)
               num?  (and (int? num) (< 0 num (inc (count actions))))
+              num?  (and (int? num) (< 0 num (inc (count actions))))
               next  #{"ArrowRight" "ArrowDown"}
               prev  #{"ArrowLeft" "ArrowUp"}
               next? (contains? next key)
               prev? (contains? prev key)]
           (cond
-            (= "Escape" key) (rf/dispatch
-                               [::choose-action [::close-action-chooser]])
-            (= "Enter" key) (rf/dispatch
-                              [::choose-action (nth actions marked)])
-            num? (let [action (nth actions (dec num))]
-                   (rf/dispatch
-                     [::choose-action action]))
-            next? (let [upper-bound (dec (count actions))]
-                    (rf/dispatch
-                      [::mark-action (if (< marked upper-bound)
-                                       (inc marked)
-                                       0)]))
-            prev? (rf/dispatch
-                    [::mark-action (if (> marked 0)
-                                     (dec marked)
-                                     (dec (count actions)))])))
-        ;; In lieu of the actual submit button capturing "Enter" keypresses.
-        (when (and (= "Enter" key) (= "study-input" (.-id focus)))
-          (rf/dispatch [::submit (:input db)]))))))
+            (= "Escape" key)
+            (rf/dispatch [::choose-action [::close-action-chooser]])
+
+            (= "Enter" key)
+            (rf/dispatch [::choose-action (nth actions marked)])
+
+            num?
+            (let [action (nth actions (dec num))]
+              (rf/dispatch [::choose-action action]))
+
+            ;; Starts from beginning when upper bound is crossed.
+            next?
+            (let [upper-bound (dec (count actions))
+                  n (if (< marked upper-bound) (inc marked) 0)]
+              (rf/dispatch [::mark-action n]))
+
+            ;; Goes to last action when lower bound is crossed.
+            prev?
+            (let [n (if (> marked 0) (dec marked) (dec (count actions)))]
+              (rf/dispatch [::mark-action n]))))))))
 
 ;; dispatched by ::on-submit when there are >1 actions based on query eval
 (rf/reg-event-db

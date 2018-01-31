@@ -219,7 +219,8 @@
   (let [input (rf/subscribe [::subs/input])]
     [:button#study-button
      {:type     :submit
-      :on-click (fn [e] (.preventDefault e))}]))
+      :on-click (fn [e] (.preventDefault e)
+                        (rf/dispatch [::events/submit @input]))}]))
 
 (defn form []
   [:form#study-form
