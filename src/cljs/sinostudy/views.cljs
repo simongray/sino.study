@@ -8,6 +8,7 @@
             [sinostudy.rim.core :as rim]
             [sinostudy.pinyin.core :as p]
             [sinostudy.pinyin.patterns :as pp]
+            [sinostudy.dictionary.embed :as embed]
             [sinostudy.dictionary.core :as dict]))
 
 ;; TODO: add bookmark icon for entries and way to get to bookmarks in nav bar
@@ -62,8 +63,8 @@
            (for [definition definitions]
              (let [only-hanzi  (comp script dict/ref-embed->m)
                    definition* (-> definition
-                                   (rim/re-handle dict/ref-embed only-hanzi)
-                                   (rim/re-handle dict/pinyin-embed
+                                   (rim/re-handle embed/ref only-hanzi)
+                                   (rim/re-handle embed/pinyin
                                                   p/digits->diacritics))]
                [:span.definition {:key definition} definition*])))])]]))
 
@@ -132,9 +133,9 @@
               ;; TODO: remove spaces from href for proper linking
               pinyin-f    (comp pinyinize link p/digits->diacritics no-brackets)
               definition* (-> definition
-                              (rim/re-handle dict/ref-embed ref-f)
-                              (rim/re-handle dict/hanzi-embed hanzi-f)
-                              (rim/re-handle dict/pinyin-embed pinyin-f))]
+                              (rim/re-handle embed/ref ref-f)
+                              (rim/re-handle embed/hanzi hanzi-f)
+                              (rim/re-handle embed/pinyin pinyin-f))]
           [:li {:key definition} [:span.definition definition*]]))]]))
 
 (defn unknown-word
@@ -220,7 +221,7 @@
     [:button#study-button
      {:type     :submit
       :on-click (fn [e] (.preventDefault e)
-                        (rf/dispatch [::events/submit @input]))}]))
+                  (rf/dispatch [::events/submit @input]))}]))
 
 (defn form []
   [:form#study-form

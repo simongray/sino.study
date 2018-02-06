@@ -2,6 +2,7 @@
   (:require [clojure.string :as str]
             [clojure.set :as set]
             [sinostudy.dictionary.defaults :as dd]
+            [sinostudy.dictionary.embed :as embed]
             [sinostudy.rim.core :as rim]
             [sinostudy.pinyin.core :as p]
             [sinostudy.pinyin.data :as pd]
@@ -22,20 +23,6 @@
 ;; TODO: merge duoyinci, perhaps just conj Pinyin and defs
 ;;       e.g. {... :pinyin [[...] [...]], :definition [[...] [...]]}
 ;; TODO: tag radicals, e.g. def = "Kangxi radical 206" or just from a list
-
-(def ref-embed
-  "A pattern used in CC-CEDICT to embed a hanzi reference with Pinyin."
-  #"[^ ,:\[a-zA-Z0-9]+\[[^\]]+\]+")
-
-;; CLJS regex seems to have some issues with doing (str pp/hanzi-pattern),
-;; so I've copied over whole implementation.
-(def hanzi-embed
-  "A pattern used in CC-CEDICT to embed a hanzi reference (no Pinyin)."
-  (let [hanzi+ (str "[" (str/join (map str (vals pd/hanzi-unicode))) "]+")]
-    (re-pattern (str hanzi+ "\\|?" hanzi+))))
-
-(def pinyin-embed
-  #"\[[a-zA-Z0-9 ]+\]+")
 
 (defn split-hanzi
   "Split a hanzi-embed delimited as traditional|simplified."
@@ -314,7 +301,7 @@
   (if (cl-entry? entry)
     (let [defs    (dd/defs entry)
           cl-defs (filter cl-def? defs)
-          get-cls (comp (partial map ref-embed->m) (partial re-seq ref-embed))
+          get-cls (comp (partial map ref-embed->m) (partial re-seq embed/ref))
           cls     (set (flatten (map get-cls cl-defs)))]
       (if cls
         (-> entry
