@@ -4,6 +4,7 @@
             [re-frame.db :as db]
             [day8.re-frame.http-fx]
             [secretary.core :as secretary]
+            [sinostudy.subs :as subs]
             [sinostudy.routes :as routes]
             [sinostudy.events :as events]
             [sinostudy.views :as views]
@@ -32,10 +33,8 @@
   ;; Only defers from normal operation in the action-chooser mode.
   ;; This is important, since calling .preventDefault on all key presses
   ;; is a recipe for creating many bugs -- now and down the line, too.
-  ;; Accessing the db directly like this is very dirty, so let me just add:
-  ;; TODO: find a non-dirty way to intercept and dispatch on key presses
   (set! (.-onkeydown js/document)
-        (fn [e] (when (:actions @db/app-db)
+        (fn [e] (when-let [actions @(rf/subscribe [::subs/actions])]
                   (.preventDefault e)
                   (rf/dispatch [::events/on-key-down (.-key e)])))))
 
