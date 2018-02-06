@@ -276,36 +276,36 @@
   ::on-key-down
   [(rf/inject-cofx ::focus)]
   (fn [cofx [_ key]]
-    (let [db      (:db cofx)
-          focus   (:focus cofx)
-          actions (:actions db)
-          marked  (:marked-action db)]
-      (if actions
-        (let [num   (js/parseInt key)
-              num?  (and (int? num) (< 0 num (inc (count actions))))
-              next? (contains? #{"ArrowRight" "ArrowDown"} key)
-              prev? (contains? #{"ArrowLeft" "ArrowUp"} key)]
-          (cond
-            (= "Escape" key)
-            (rf/dispatch [::choose-action [::close-action-chooser]])
+    (let [db         (:db cofx)
+          focus      (:focus cofx)
+          actions    (:actions db)
+          marked     (:marked-action db)
+          next?      (fn [k] (contains? #{"ArrowRight" "ArrowDown"} k))
+          prev?      (fn [k] (contains? #{"ArrowLeft" "ArrowUp"} k))
+          valid-num? (fn [k] (let [num (js/parseInt key)]
+                               (and (int? num)
+                                    (< 0 num (inc (count actions))))))]
+      (cond
+        (= "Escape" key)
+        (rf/dispatch [::choose-action [::close-action-chooser]])
 
-            (= "Enter" key)
-            (rf/dispatch [::choose-action (nth actions marked)])
+        (= "Enter" key)
+        (rf/dispatch [::choose-action (nth actions marked)])
 
-            num?
-            (let [action (nth actions (dec num))]
-              (rf/dispatch [::choose-action action]))
+        (valid-num? key)
+        (let [action (nth actions (dec (js/parseInt key)))]
+          (rf/dispatch [::choose-action action]))
 
-            ;; Starts from beginning when upper bound is crossed.
-            next?
-            (let [upper-bound (dec (count actions))
-                  n (if (< marked upper-bound) (inc marked) 0)]
-              (rf/dispatch [::mark-action n]))
+        ;; Starts from beginning when upper bound is crossed.
+        (next? key)
+        (let [bound (dec (count actions))
+              n     (if (< marked bound) (inc marked) 0)]
+          (rf/dispatch [::mark-action n]))
 
-            ;; Goes to last action when lower bound is crossed.
-            prev?
-            (let [n (if (> marked 0) (dec marked) (dec (count actions)))]
-              (rf/dispatch [::mark-action n]))))))))
+        ;; Goes to last action when lower bound is crossed.
+        (prev? key)
+        (let [n (if (> marked 0) (dec marked) (dec (count actions)))]
+          (rf/dispatch [::mark-action n]))))))
 
 ;; dispatched by ::on-submit when there are >1 actions based on query eval
 (rf/reg-event-db
@@ -322,7 +322,7 @@
   ::close-action-chooser
   (fn [cofx _]
     (let [db (:db cofx)]
-      {:db (assoc db :actions nil)
+      {:db                 (assoc db :actions nil)
        :regain-input-focus 100})))
 
 ;; dispatched by ::choose-action
