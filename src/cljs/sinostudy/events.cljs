@@ -153,10 +153,11 @@
 ;; Dispatched by ::close-action-chooser.
 ;; This is definitely a less than optimal solution...
 (rf/reg-fx
-  :regain-input-focus
-  (fn [delay]
-    (js/setTimeout #(.focus (.getElementById js/document "study-input"))
-                   delay)))
+  :focus
+  (fn [[id delay]]
+    (js/setTimeout
+      #(.focus (.getElementById js/document id))
+      delay)))
 
 ;;;; EVENTS
 
@@ -322,8 +323,8 @@
   ::close-action-chooser
   (fn [cofx _]
     (let [db (:db cofx)]
-      {:db                 (assoc db :actions nil)
-       :regain-input-focus 100})))
+      {:db    (assoc db :actions nil)
+       :focus ["study-input" 100]})))
 
 ;; dispatched by ::choose-action
 (rf/reg-event-db
