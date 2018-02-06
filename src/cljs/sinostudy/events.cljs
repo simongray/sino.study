@@ -283,11 +283,8 @@
       (if actions
         (let [num   (js/parseInt key)
               num?  (and (int? num) (< 0 num (inc (count actions))))
-              num?  (and (int? num) (< 0 num (inc (count actions))))
-              next  #{"ArrowRight" "ArrowDown"}
-              prev  #{"ArrowLeft" "ArrowUp"}
-              next? (contains? next key)
-              prev? (contains? prev key)]
+              next? (contains? #{"ArrowRight" "ArrowDown"} key)
+              prev? (contains? #{"ArrowLeft" "ArrowUp"} key)]
           (cond
             (= "Escape" key)
             (rf/dispatch [::choose-action [::close-action-chooser]])
