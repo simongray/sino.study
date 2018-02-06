@@ -20,21 +20,6 @@
                  :content   content
                  :timestamp timestamp}))
 
-(defn add-hint
-  "Returns a list of hints with the new hint prepended."
-  [hints hint-type timestamp]
-  (conj hints {:id        (count hints)
-               :type      hint-type
-               :timestamp timestamp}))
-
-(defn add-evaluation
-  "Returns a list of query evaluations with the new evaluation prepended."
-  [evaluations query actions timestamp]
-  (conj evaluations {:id        (count evaluations)
-                     :query     query
-                     :actions   actions
-                     :timestamp timestamp}))
-
 ;; all responses from the Compojure backend are Transit-encoded
 (def transit-reader
   (transit/reader :json))
@@ -171,22 +156,28 @@
   ::display-hint
   [(rf/inject-cofx ::now)]
   (fn [cofx [_ hint-type]]
-    (let [db        (:db cofx)
-          hints     (:hints db)
-          now       (:now cofx)
-          new-hints (add-hint hints hint-type now)]
-      {:db (assoc db :hints new-hints)})))
+    (let [db     (:db cofx)
+          hints  (:hints db)
+          now    (:now cofx)
+          hints* (conj hints {:id        (count hints)
+                              :type      hint-type
+                              :timestamp now})]
+      {:db (assoc db :hints hints*)})))
+
 
 ;; dispatched by both ::evaluate-input and ::on-study-button-press
 (rf/reg-event-fx
   ::save-evaluation
   [(rf/inject-cofx ::now)]
   (fn [cofx [_ query actions]]
-    (let [db              (:db cofx)
-          evaluations     (:evaluations db)
-          now             (:now cofx)
-          new-evaluations (add-evaluation evaluations query actions now)]
-      {:db (assoc db :evaluations new-evaluations)})))
+    (let [db           (:db cofx)
+          evaluations  (:evaluations db)
+          now          (:now cofx)
+          evaluations* (conj evaluations {:id        (count evaluations)
+                                          :query     query
+                                          :actions   actions
+                                          :timestamp now})]
+      {:db (assoc db :evaluations evaluations*)})))
 
 ;; dispatched by ::on-input-change
 ;; only evaluates the latest input (no change while still writing)
