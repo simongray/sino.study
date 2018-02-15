@@ -7,11 +7,11 @@
             [sinostudy.dictionary.defaults :as dd]
             [sinostudy.rim.core :as rim]
             [sinostudy.pinyin.core :as p]
-            [sinostudy.pinyin.patterns :as pp]
             [sinostudy.dictionary.embed :as embed]
             [sinostudy.dictionary.core :as dict]))
 
 ;; TODO: add bookmark icon for entries and way to get to bookmarks in nav bar
+;; TODO: hanzi ref not picking up 的 in 底 entry
 
 ;;;; HELPER FUNCTIONS
 
