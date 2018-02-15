@@ -1,13 +1,5 @@
 (ns sinostudy.dictionary.core
-  (:require [clojure.string :as str]
-            [clojure.set :as set]
-            [sinostudy.dictionary.defaults :as dd]
-            [sinostudy.dictionary.embed :as embed]
-            [sinostudy.rim.core :as rim]
-            [sinostudy.pinyin.core :as p]
-            [sinostudy.pinyin.data :as pd]
-            [sinostudy.pinyin.patterns :as pp]
-            [sinostudy.pinyin.eval :as pe]))
+  (:require [clojure.set :as set]))
 
 ;; TODO: Beijing returns 背景, not list of entries
 ;; TODO: dual entries:
@@ -24,300 +16,29 @@
 ;;       e.g. {... :pinyin [[...] [...]], :definition [[...] [...]]}
 ;; TODO: tag radicals, e.g. def = "Kangxi radical 206" or just from a list
 
-(defn split-hanzi
-  "Split a hanzi-embed delimited as traditional|simplified."
-  [s]
-  (str/split s #"\|"))
+(def defs
+  :definitions)
 
-(defn ref-embed->m
-  "Transform the ref-embed in s into a Clojure map."
-  [s]
-  (let [[hanzi-str pinyin-str] (str/split s #"\[|\]")
-        hanzi       (split-hanzi hanzi-str)
-        pinyin      (str/split pinyin-str #" ")
-        traditional (first hanzi)
-        simplified  (if (second hanzi) (second hanzi) traditional)]
-    {dd/trad   traditional
-     dd/simp   simplified
-     dd/pinyin pinyin}))
+(def pinyin
+  :pinyin)
 
-;; TODO: 唎 in traditional special case
-(defn variant-def?
-  "Is this definition a reference to a common char/word it is a variant of?"
-  [definition]
-  (not (nil? (re-find #"variant of" definition))))
+(def pinyin-key
+  :pinyin-key)
 
-(defn variant-entry?
-  "Is this entry a variant of a more common char/word?"
-  [entry]
-  (let [definitions (dd/defs entry)]
-    (some variant-def? definitions)))
+(def pinyin+digits-key
+  :pinyin+digits-key)
 
-(defn contains-defs?
-  "Does entry contain the definitions of variant-entry?"
-  [variant-entry entry]
-  (let [rest-defs (partial filter (complement variant-def?))
-        e1-defs   (rest-defs (dd/defs variant-entry))
-        e2-defs   (set (dd/defs entry))]
-    (every? (partial contains? e2-defs) e1-defs)))
+(def pinyin+diacritics-key
+  :pinyin+diacritics-key)
 
-(defn same-hanzi?
-  "Does the script (:simplified or :traditional) of entry match variant-entry?"
-  [script variant-entry entry]
-  (= (get variant-entry script) (get entry script)))
+(def simp
+  :simplified)
 
-(defn false-variants
-  "Find false variants (usually an artifact of using Simplified Chinese).
-  A false variant is a hanzi variation that only exists in the other script."
-  [script entries]
-  (let [variants     (filter variant-entry? entries)
-        others       (filter (complement variant-entry?) entries)
-        same-hanzi?* (partial same-hanzi? script)
-        get-matches  #(rim/all-matches % others same-hanzi?* contains-defs?)]
-    (filter (comp not empty? get-matches) variants)))
+(def trad
+  :traditional)
 
-;; TODO: figure out a better solution for variants and false variants
-(defn tag-false-variants
-  "Tag false variants in a list of entries when comparing the current script.
-  This is most likely to happen when the script is :simplified."
-  [script entries]
-  (let [false-variants (set (false-variants script entries))
-        tag-variant    (fn [entry]
-                         (if (contains? false-variants entry)
-                           (assoc entry :false-variant #{script})
-                           entry))]
-    (map tag-variant entries)))
-
-(defn pinyin-key
-  "Convert a CC-CEDICT Pinyin string into a form for use as a map key."
-  [s]
-  (-> s
-      (str/replace "'" "")
-      (str/replace " " "")
-      (str/replace "·" "")                                  ; middle dot
-      (str/replace "," "")
-      str/lower-case))
-
-(def pinyin>case>character
-  "Order first by Pinyin, then by case, then by character."
-  (juxt #(str/lower-case (str/join (dd/pinyin %))) dd/pinyin dd/trad))
-
-(defn sort-defs
-  "Sort the definitions of a dictionary entry."
-  [entry]
-  (let [sorted-defs (sort (dd/defs entry))]
-    (assoc entry dd/defs sorted-defs)))
-
-(defn digits->diacritics*
-  "Convert (only) Pinyin+digit syllables to diacritics."
-  [s]
-  (if (pe/pinyin-block+digits? s)
-    (p/digits->diacritics s)
-    s))
-
-(defn add-diacritics
-  "Add diacritics to the Pinyin of an entry."
-  [entry]
-  (let [pinyin+diacritics (map digits->diacritics* (dd/pinyin entry))]
-    (assoc entry dd/pinyin pinyin+diacritics)))
-
-(defn prepare-entries
-  "Sort a list of dictionary entries, including entry definitions.
-  Then convert the tone digits to diacritics."
-  [entries]
-  (->> entries
-       (map sort-defs)
-       (sort-by pinyin>case>character)
-       (map add-diacritics)
-       (vec)))                                              ; allow fetching by index
-
-(defn entry?
-  "Determine if a line is a dictionary entry."
-  [line]
-  (not (str/starts-with? line "#")))
-
-(defn split-def
-  "Split the CC-CEDICT definition string into separate, unique parts."
-  [definition]
-  (set (str/split definition #"/")))
-
-(defn u:->umlaut
-  "Replace the CC-CEDICT substitute u: with the proper Pinyin ü."
-  [pinyin]
-  (str/replace pinyin "u:" "ü"))
-
-(defn join-abbr
-  "Join the uppercase letters in a CC-CEDICT Pinyin string into blocks."
-  [pinyin]
-  (let [abbr-letters  #"([A-Z]( [A-Z])+)( |$)"
-        remove-spaces #(str (str/replace (% 1) " " "") (% 3))]
-    (str/replace pinyin abbr-letters remove-spaces)))
-
-(defn neutral-as-0
-  "Convert the neutral tone digits (represented as 5 in CC-CEDICT) to 0.
-  This ensures that the Pinyin strings are alphabetically sortable."
-  [s]
-  (if (pe/pinyin-block+digits? s)
-    (str/replace s "5" "0")
-    s))
-
-(defn pinyin-seq
-  "Transform the CC-CEDICT Pinyin string into a seq of syllables+digits."
-  [pinyin]
-  (map neutral-as-0 (str/split pinyin #" ")))
-
-;; CC-CEDICT mistakes and oddities that are ignored during import
-(def cc-cedict-oddities
-  #{"xx5" "xx" "ging1"})
-
-(defn preprocess
-  "Apply preprocessing functions to a CC-CEDICT Pinyin string."
-  [s]
-  (if (contains? cc-cedict-oddities s)
-    []
-    (-> s
-        join-abbr
-        pinyin-seq
-        vec)))
-
-(defn extract-entry
-  "Extract the constituents of a line in a CC-CEDICT dictionary file.
-  Returns a map representation suitable for use as a dictionary entry."
-  [line]
-  (let [pattern #"^([^ ]+) ([^ ]+) \[([^]]+)\] /(.+)/"
-        [_ trad simp pinyin defs :as entry] (re-matches pattern line)]
-    (when entry
-      (let [pinyin* (u:->umlaut pinyin)]
-        {dd/trad                  trad
-         dd/simp                  simp
-         dd/pinyin                (preprocess pinyin*)
-         dd/pinyin-key            (pinyin-key (str/replace pinyin* #"\d" ""))
-         dd/pinyin+digits-key     (pinyin-key pinyin*)
-         dd/pinyin+diacritics-key (pinyin-key (p/digits->diacritics
-                                                pinyin*
-                                                :v-as-umlaut false))
-         dd/defs                  (split-def defs)}))))
-
-(defn add-entry
-  "Add (or extend) an entry in the dictionary map."
-  [key-type dict entry]
-  (let [key (get entry key-type)]
-    (if-let [entries (get dict key)]
-      (assoc dict key (conj entries entry))
-      (assoc dict key #{entry}))))
-
-(defn cl-def?
-  "Determine if a dictionary definition is actually a list of classifiers."
-  [definition]
-  (str/starts-with? definition "CL:"))
-
-(defn cl-entry?
-  "Determine if the entry's definitions contain classifiers."
-  [entry]
-  (some cl-def? (dd/defs entry)))
-
-(defn name-entry?
-  "Determine is a dictionary entry is a name entry (e.g. person or place name)."
-  [entry]
-  (when-let [first-letter (first (first (dd/pinyin entry)))]
-    #?(:clj  (Character/isUpperCase ^char first-letter)
-       :cljs (not= first-letter (.toLowerCase first-letter)))))
-
-(defn matches-pinyin
-  "True if the Pinyin of both entries is equal, disregarding case."
-  [p1 p2]
-  (let [lower-case= #(= (str/lower-case %1) (str/lower-case %2))]
-    (every? true? (map lower-case= p1 p2))))
-
-(defn matches-entry
-  "True if everything matches except the definitions and the Pinyin case."
-  [e1 e2]
-  (and (= (dd/simp e1) (dd/simp e2))
-       (= (dd/trad e1) (dd/trad e2))
-       (matches-pinyin (dd/pinyin e1) (dd/pinyin e2))))
-
-(defn merge-entry
-  "Merge entry (e.g. name entry) into matching existing entries in dict.
-  This both merges the definition into other entries and removes the old entry.
-  In case there is only one entry, nothing happens.
-  Returns dict with the entry merged in."
-  [key-type dict entry]
-  (let [key     (get entry key-type)
-        entries (get dict key)]
-    (if (= 1 (count entries))
-      dict
-      (loop [matches* (filter (partial matches-entry entry) entries)
-             entries* entries]
-        (let [match (first matches*)]
-          (cond
-            (nil? match) (assoc dict key entries*)
-            (= match entry) (recur (rest matches*) (disj entries* match))
-            :else (let [match-def (dd/defs match)
-                        entry-def (dd/defs entry)
-                        new-def   (set/union match-def entry-def)
-                        new-entry (assoc match dd/defs new-def)]
-                    (recur (rest matches*) (-> entries*
-                                               (disj match)
-                                               (conj new-entry))))))))))
-
-(defn merge-entries
-  "Merge definitions of entries into matching entries in dict.
-  Returns the modified dict."
-  [key-type dict entries]
-  (loop [dict*    dict
-         entries* entries]
-    (if-let [entry (first entries*)]
-      (recur (merge-entry key-type dict* entry) (rest entries*))
-      dict*)))
-
-(defn compile-dict
-  "Create a dictionary map from the entries with keys determined by key-type,
-  this being the field in the entry that must serve as key (e.g. :traditional)."
-  [key-type entries]
-  (reduce (partial add-entry key-type) {} entries))
-
-(defn compile-dicts
-  "Create a map of dictionary maps with different look-up key-types."
-  [key-types entries]
-  (println "compiling" (count key-types) "dicts from" (count entries) "entries")
-  (let [make-dict (fn [key-type] [key-type (compile-dict key-type entries)])]
-    (into {} (map make-dict key-types))))
-
-(defn mod-dicts
-  "Merge the entries of merges into each dictionary map."
-  [merges dicts]
-  (println "merging" (count merges) "entries into" (count dicts) "dicts")
-  (loop [keys   (keys dicts)
-         dicts* dicts]
-    (if-let [key (first keys)]
-      (recur
-        (rest keys)
-        (assoc dicts* key (merge-entries key (get dicts* key) merges)))
-      dicts*)))
-
-(defn detach-cls
-  "Moves the classifiers of an entry from :definitions to :classifiers."
-  [entry]
-  (if (cl-entry? entry)
-    (let [defs    (dd/defs entry)
-          cl-defs (filter cl-def? defs)
-          get-cls (comp (partial map ref-embed->m) (partial re-seq embed/ref))
-          cls     (set (flatten (map get-cls cl-defs)))]
-      (if cls
-        (-> entry
-            (assoc dd/defs (set/difference defs cl-defs))
-            (assoc dd/cls cls))
-        entry))
-    entry))
-
-(defn load-dicts
-  "Load the contents of a CC-CEDICT dictionary file into Clojure maps."
-  [entries key-types]
-  (let [name-entries (filter name-entry? entries)]
-    (->> entries
-         (map detach-cls)
-         (compile-dicts key-types)
-         (mod-dicts name-entries))))
+(def cls
+  :classifiers)
 
 (defn look-up
   "Look up the specified word in each dictionary map and merge the results."

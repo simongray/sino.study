@@ -4,11 +4,11 @@
             [sinostudy.subs :as subs]
             [sinostudy.events :as events]
             [sinostudy.pages.defaults :as pd]
-            [sinostudy.dictionary.defaults :as dd]
             [sinostudy.rim.core :as rim]
             [sinostudy.pinyin.core :as p]
+            [sinostudy.dictionary.core :as d]
             [sinostudy.dictionary.embed :as embed]
-            [sinostudy.dictionary.core :as dict]))
+            [sinostudy.dictionary.entry :as entry]))
 
 ;; TODO: add bookmark icon for entries and way to get to bookmarks in nav bar
 ;; TODO: hanzi ref not picking up 的 in 底 entry
@@ -27,11 +27,11 @@
 ;; used both in nav and on dictionary entry pages
 (defn script-changer-link
   [script content]
-  (let [alt-script (if (= dd/simp script) dd/trad dd/simp)]
+  (let [alt-script (if (= d/simp script) d/trad d/simp)]
     [:a
      {:key      alt-script
       :class    "script-changer fake-link"
-      :title    (str "Click to use " (if (= dd/simp alt-script)
+      :title    (str "Click to use " (if (= d/simp alt-script)
                                        "simplified characters"
                                        "traditional characters"))
       :on-click #(rf/dispatch [::events/change-script alt-script])}
@@ -46,7 +46,7 @@
   [word script entry]
   (let [id             (:id entry)
         href           (str "/" (name pd/words) "/" word "/" id)
-        definitions    (dd/defs entry)
+        definitions    (d/defs entry)
         false-variant? (contains? (:false-variant entry) script)
         key            (if false-variant? (str "false-" href) href)]
     [:li {:key   key
@@ -55,13 +55,13 @@
                                     "go to dictionary entry")}
      [:a {:href href, :key key}
       (interpose " "
-        [(if (= dd/simp script)
-           [:span.simplified.hanzi {:key "hanzi"} (dd/simp entry)]
-           [:span.traditional.hanzi {:key "hanzi"} (dd/trad entry)])
-         [:span.pinyin {:key "pinyin"} (str/join " " (dd/pinyin entry))]
+        [(if (= d/simp script)
+           [:span.simplified.hanzi {:key "hanzi"} (d/simp entry)]
+           [:span.traditional.hanzi {:key "hanzi"} (d/trad entry)])
+         [:span.pinyin {:key "pinyin"} (str/join " " (d/pinyin entry))]
          (interpose "; "
            (for [definition definitions]
-             (let [only-hanzi  (comp script dict/ref-embed->m)
+             (let [only-hanzi  (comp script embed/ref->m)
                    definition* (-> definition
                                    (rim/re-handle embed/ref only-hanzi)
                                    (rim/re-handle embed/pinyin
@@ -74,7 +74,7 @@
   (let [ids       (range (count entries))
         entries*  (->> entries
                        (map #(assoc %2 :id %1) ids)
-                       (dict/tag-false-variants script))
+                       (entry/tag-false-variants script))
         to-hiccup (partial entry-li word script)]
     [:div
      [:h1.list-header word]
@@ -85,49 +85,50 @@
 (defn entry->hiccup
   "Convert a single dictionary entry into hiccup."
   [entry script]
-  (let [traditional         (dd/trad entry)
-        simplified          (dd/simp entry)
-        definitions         (dd/defs entry)
-        classifiers         (dd/cls entry)
+  (let [traditional         (d/trad entry)
+        simplified          (d/simp entry)
+        definitions         (d/defs entry)
+        classifiers         (d/cls entry)
         script-differences? (not (= simplified traditional))
-        word                (if (= dd/simp script) simplified traditional)]
+        word                (if (= d/simp script) simplified traditional)]
     [:div.dictionary-entry
-     [:h1 (if (= dd/simp script)
+     [:h1 (if (= d/simp script)
             [:span.hanzi.simplified (add-word-links simplified)]
             [:spanl.hanzi.traditiona (add-word-links traditional)])]
      [:p.subheader
       (interpose " "
-        [[:span.pinyin {:key dd/pinyin}
-          (interpose " " (add-word-links (dd/pinyin entry)))]
+        [[:span.pinyin {:key d/pinyin}
+          (interpose " " (add-word-links (d/pinyin entry)))]
          (when script-differences?
            [:span.tag {:key :script}
-            (if (= dd/simp script) "tr.|" "s.|")
+            (if (= d/simp script) "tr.|" "s.|")
             (script-changer-link
               script
-              (if (= dd/simp script)
+              (if (= d/simp script)
                 [:span.hanzi.traditional traditional]
                 [:span.hanzi.simplified simplified]))])
          (when classifiers
-           [:span.tag {:key dd/cls, :title (str "classifiers for " word)}
+           [:span.tag {:key d/cls, :title (str "classifiers for " word)}
             "cl.|"
             (interpose ", "
               ;; TODO: sort - currently unsorted!
               (for [classifier classifiers]
-                (if (= dd/simp script)
-                  [:span.hanzi.simplified {:key (dd/simp classifier)}
-                   (add-word-links (dd/simp classifier))]
-                  [:span.hanzi.traditional {:key (dd/trad classifier)}
-                   (add-word-links (dd/trad classifier))])))])])]
+                (if (= d/simp script)
+                  [:span.hanzi.simplified {:key (d/simp classifier)}
+                   (add-word-links (d/simp classifier))]
+                  [:span.hanzi.traditional {:key (d/trad classifier)}
+                   (add-word-links (d/trad classifier))])))])])]
      [:ol
       (for [definition definitions]
         (let [link        (comp add-word-links vector)
-              ref-f       (comp link script dict/ref-embed->m)
+              ref-f       (comp link script embed/ref->m)
               index       (fn [script coll]
                             (get coll (cond
                                         (= 1 (count coll)) 0
-                                        (= dd/simp script) 1
+                                        (= d/simp script) 1
                                         :else 0)))
-              hanzi-f     (comp link (partial index script) dict/split-hanzi)
+              script*     (partial index script)
+              hanzi-f     (comp link script* #(str/split % #"\|"))
               pinyinize   (fn [s] [:span.pinyin {:key "pinyin"} s])
               no-brackets #(subs % 1 (dec (count %)))
               ;; TODO: remove spaces from href for proper linking
@@ -257,7 +258,7 @@
 
 (defn script-changer []
   (let [script @(rf/subscribe [::subs/script])
-        text   (if (= dd/simp script) "Simpl." "Trad.")]
+        text   (if (= d/simp script) "Simpl." "Trad.")]
     (script-changer-link script text)))
 
 (defn footer []

@@ -5,9 +5,9 @@
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [cognitect.transit :as transit]
             [sinostudy.pages.defaults :as pd]
-            [sinostudy.dictionary.defaults :as dd]
-            [sinostudy.dictionary.loader :as loader]
-            [sinostudy.dictionary.core :as dict]))
+            [sinostudy.dictionary.load :as load]
+            [sinostudy.dictionary.compile :as compile]
+            [sinostudy.dictionary.core :as d]))
 
 ;; TODO: split into dev/production
 ;; https://github.com/JulianBirch/cljs-ajax/blob/master/docs/server.md#cross-origin-requests
@@ -16,18 +16,18 @@
 ;; https://weavejester.github.io/compojure/compojure.coercions.html
 
 (def dictionary-keys
-  [dd/trad
-   dd/simp
-   dd/pinyin-key
-   dd/pinyin+digits-key
-   dd/pinyin+diacritics-key])
+  [d/trad
+   d/simp
+   d/pinyin-key
+   d/pinyin+digits-key
+   d/pinyin+diacritics-key])
 
 (def index
   (slurp "./resources/public/index.html"))
 
 (defonce dicts
-  (let [entries (loader/load-entries "./resources/cedict_ts.u8")]
-    (dict/load-dicts entries dictionary-keys)))
+  (let [entries (load/load-entries "./resources/cedict_ts.u8")]
+    (compile/load-dicts entries dictionary-keys)))
 
 ;; First Access-Control header permits cross-origin requests.
 ;; Second prevents Chrome from stripping Content-Type header.
@@ -50,7 +50,7 @@
   to a page-type (keyword) and a query-string."
   [page-type query-string]
   (cond
-    (= pd/words page-type) (dict/look-up query-string dicts)))
+    (= pd/words page-type) (d/look-up query-string dicts)))
 
 (defn query-result
   "Get the Transit-encoded result of a query."

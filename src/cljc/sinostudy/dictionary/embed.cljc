@@ -1,8 +1,9 @@
 (ns sinostudy.dictionary.embed
   (:require [clojure.string :as str]
-            [sinostudy.pinyin.data :as pd]))
+            [sinostudy.pinyin.data :as pd]
+            [sinostudy.dictionary.core :as d]))
 
-;;;; THIS NAMESPACE CONTAINS REGEX FOR VARIOUS CC-CEDICT EMBEDDINGS
+;;;; CC-CEDICT EMBEDDINGS
 
 (def ref
   "A pattern used in CC-CEDICT to embed a hanzi reference with Pinyin."
@@ -17,3 +18,18 @@
 
 (def pinyin
   #"\[[a-zA-Z0-9 ]+\]+")
+
+
+;;;; EMBEDDING MANIPULATION
+
+(defn ref->m
+  "Transform the embedded ref s into a Clojure map."
+  [s]
+  (let [[hanzi-str pinyin-str] (str/split s #"\[|\]")
+        hanzi       (str/split hanzi-str #"\|")
+        pinyin      (str/split pinyin-str #" ")
+        traditional (first hanzi)
+        simplified  (if (second hanzi) (second hanzi) traditional)]
+    {d/trad   traditional
+     d/simp   simplified
+     d/pinyin pinyin}))

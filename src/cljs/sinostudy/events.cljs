@@ -5,7 +5,7 @@
             [sinostudy.db :as db]
             [sinostudy.pinyin.core :as p]
             [sinostudy.pinyin.eval :as pe]
-            [sinostudy.dictionary.core :as dict]
+            [sinostudy.dictionary.entry :as entry]
             [sinostudy.pages.defaults :as pd]
             [ajax.core :as ajax]
             [cognitect.transit :as transit]))
@@ -29,7 +29,7 @@
   e.g. presort word lists and the like."
   [page-type content]
   (cond
-    (= page-type pd/words) (dict/prepare-entries content)
+    (= page-type pd/words) (entry/prepare-entries content)
     :else content))
 
 (defn press-enter-to [s]
@@ -94,7 +94,7 @@
   "Evaluate a Pinyin query to get a vector of possible actions."
   [query]
   (cond-> []
-          (pinyin-block? query) (conj [::look-up-word (dict/pinyin-key query)])
+          (pinyin-block? query) (conj [::look-up-word (entry/pinyin-key query)])
           (digits->diacritics? query) (conj [::digits->diacritics query])
           (diacritics->digits? query) (conj [::diacritics->digits query])))
 
