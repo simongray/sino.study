@@ -13,7 +13,7 @@
   (if (entry/has-cls? entry)
     (let [defs    (d/defs entry)
           cl-defs (filter entry/cl-def? defs)
-          get-cls (comp (partial map embed/ref->m) (partial re-seq embed/ref))
+          get-cls (comp (partial map embed/refr->m) (partial re-seq embed/refr))
           cls     (set (flatten (map get-cls cl-defs)))]
       (if cls
         (-> entry

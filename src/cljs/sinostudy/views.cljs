@@ -61,11 +61,12 @@
          [:span.pinyin {:key "pinyin"} (str/join " " (d/pinyin entry))]
          (interpose "; "
            (for [definition definitions]
-             (let [only-hanzi  (comp script embed/ref->m)
+             (let [only-hanzi  (comp script embed/refr->m)
                    definition* (-> definition
-                                   (rim/re-handle embed/ref only-hanzi)
-                                   (rim/re-handle embed/pinyin
-                                                  p/digits->diacritics))]
+                                   (rim/re-handle
+                                     embed/refr only-hanzi)
+                                   (rim/re-handle
+                                     embed/pinyin p/digits->diacritics))]
                [:span.definition {:key definition} definition*])))])]]))
 
 (defn entries->hiccup
@@ -121,7 +122,7 @@
      [:ol
       (for [definition definitions]
         (let [link        (comp add-word-links vector)
-              ref-f       (comp link script embed/ref->m)
+              refr-f      (comp link script embed/refr->m)
               index       (fn [script coll]
                             (get coll (cond
                                         (= 1 (count coll)) 0
@@ -134,7 +135,7 @@
               ;; TODO: remove spaces from href for proper linking
               pinyin-f    (comp pinyinize link p/digits->diacritics no-brackets)
               definition* (-> definition
-                              (rim/re-handle embed/ref ref-f)
+                              (rim/re-handle embed/refr refr-f)
                               (rim/re-handle embed/hanzi hanzi-f)
                               (rim/re-handle embed/pinyin pinyin-f))]
           [:li {:key definition} [:span.definition definition*]]))]]))

@@ -5,7 +5,7 @@
 
 ;;;; CC-CEDICT EMBEDDINGS
 
-(def ref
+(def refr
   "A pattern used in CC-CEDICT to embed a hanzi reference with Pinyin."
   #"[^ ,:\[a-zA-Z0-9]+\[[^\]]+\]+")
 
@@ -22,8 +22,8 @@
 
 ;;;; EMBEDDING MANIPULATION
 
-(defn ref->m
-  "Transform the embedded ref s into a Clojure map."
+(defn refr->m
+  "Transform the embedded reference s into a Clojure map."
   [s]
   (let [[hanzi-str pinyin-str] (str/split s #"\[|\]")
         hanzi       (str/split hanzi-str #"\|")
