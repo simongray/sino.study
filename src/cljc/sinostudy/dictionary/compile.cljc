@@ -1,29 +1,7 @@
 (ns sinostudy.dictionary.compile
   (:require [clojure.set :as set]
             [sinostudy.dictionary.entry :as entry]
-            [sinostudy.dictionary.embed :as embed]
             [sinostudy.dictionary.core :as d]))
-
-
-;;;; ENTRY MANIPULATION
-
-(defn detach-cls
-  "Move the classifiers of an entry from :definitions to :classifiers."
-  [entry]
-  (if (entry/has-cls? entry)
-    (let [defs    (d/defs entry)
-          cl-defs (filter entry/cl-def? defs)
-          get-cls (comp (partial map embed/refr->m) (partial re-seq embed/refr))
-          cls     (set (flatten (map get-cls cl-defs)))]
-      (if cls
-        (-> entry
-            (assoc d/defs (set/difference defs cl-defs))
-            (assoc d/cls cls))
-        entry))
-    entry))
-
-
-;;;; DICTIONARY COMPILATION
 
 (defn add-entry
   "Add (or extend) an entry in the dictionary map."
@@ -98,6 +76,6 @@
   [entries key-types]
   (let [name-entries (filter entry/name? entries)]
     (->> entries
-         (map detach-cls)
+         (map entry/detach-cls)
          (compile-dicts key-types)
          (mod-dicts name-entries))))

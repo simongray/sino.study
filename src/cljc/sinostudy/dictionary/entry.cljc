@@ -1,7 +1,9 @@
 (ns sinostudy.dictionary.entry
   (:require [clojure.string :as str]
+            [clojure.set :as set]
             [sinostudy.rim.core :as rim]
             [sinostudy.dictionary.core :as d]
+            [sinostudy.dictionary.embed :as embed]
             [sinostudy.pinyin.eval :as pe]
             [sinostudy.pinyin.core :as p]))
 
@@ -116,7 +118,25 @@
          d/defs                  (split-def defs)}))))
 
 
-;;;; POST-PROCESSING
+;;;; POST-PROCESSING (SERVER-SIDE)
+
+(defn detach-cls
+  "Move the classifiers of an entry from :definitions to :classifiers."
+  [entry]
+  (if (has-cls? entry)
+    (let [defs    (d/defs entry)
+          cl-defs (filter cl-def? defs)
+          get-cls (comp (partial map embed/refr->m) (partial re-seq embed/refr))
+          cls     (set (flatten (map get-cls cl-defs)))]
+      (if cls
+        (-> entry
+            (assoc d/defs (set/difference defs cl-defs))
+            (assoc d/cls cls))
+        entry))
+    entry))
+
+
+;;;; POST-PROCESSING (CLIENT-SIDE)
 
 (defn sort-defs
   "Sort the definitions of a dictionary entry."
