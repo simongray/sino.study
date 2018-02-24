@@ -34,7 +34,7 @@
   ;; This is important, since calling .preventDefault on all key presses
   ;; is a recipe for creating many bugs -- now and down the line, too.
   (set! (.-onkeydown js/document)
-        (fn [e] (when-let [actions @(rf/subscribe [::subs/actions])]
+        (fn [e] (when @(rf/subscribe [::subs/actions])
                   (.preventDefault e)
                   (rf/dispatch [::events/on-key-down (.-key e)])))))
 
