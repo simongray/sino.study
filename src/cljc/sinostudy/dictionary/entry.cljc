@@ -109,7 +109,7 @@
       (let [pinyin* (u:->umlaut pinyin)]
         {d/trad                  trad
          d/simp                  simp
-         d/pinyin                (preprocess pinyin*)
+         d/pinyin                (join-abbr pinyin*)
          d/pinyin-key            (pinyin-key (str/replace pinyin* #"\d" ""))
          d/pinyin+digits-key     (pinyin-key pinyin*)
          d/pinyin+diacritics-key (pinyin-key (p/digits->diacritics

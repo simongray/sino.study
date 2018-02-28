@@ -27,7 +27,7 @@
 
 (defonce dicts
   (let [entries (load/load-entries "./resources/cedict_ts.u8")]
-    (compile/load-dicts entries dictionary-keys)))
+    (compile/create-dicts entries dictionary-keys)))
 
 ;; First Access-Control header permits cross-origin requests.
 ;; Second prevents Chrome from stripping Content-Type header.

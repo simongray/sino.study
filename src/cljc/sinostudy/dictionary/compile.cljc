@@ -1,81 +1,63 @@
 (ns sinostudy.dictionary.compile
   (:require [clojure.set :as set]
-            [sinostudy.dictionary.entry :as entry]
-            [sinostudy.dictionary.core :as d]))
+            [sinostudy.dictionary.entry :as entry]))
 
-(defn add-entry
-  "Add (or extend) an entry in the dictionary map."
-  [key-type dict entry]
-  (let [key (get entry key-type)]
-    (if-let [entries (get dict key)]
-      (assoc dict key (conj entries entry))
-      (assoc dict key #{entry}))))
+(defn set-map-union
+  "Merge two maps whose values are sets."
+  [m1 m2]
+  (let [merge (fn [m [k v]]
+                (assoc m k (set/union (get m k) v)))]
+    (reduce merge m1 m2)))
 
-(defn compile-dict
-  "Create a dictionary map from the entries with keys determined by key-type,
-  this being the field in the entry that must serve as key (e.g. :traditional)."
-  [key-type entries]
-  (reduce (partial add-entry key-type) {} entries))
+(defn update-dict
+  "Update the dictionary m at the specified key k with the entry v.
+  The entry is either inserted as is or merged with the current entry."
+  [m k entry]
+  (if-let [current (get m k)]
+    (let [scripts     (set/union (:scripts current) (:scripts entry))
+          usages      (set-map-union (:usages current) (:usages entry))
+          variations  (set-map-union (:variations current) (:variations entry))
+          classifiers (set/union (:classifiers current) (:classifiers entry))
+          updated     (-> current
+                          (assoc :scripts scripts)
+                          (assoc :usages usages)
+                          (#(if variations
+                              (assoc % :variations variations)
+                              %))
+                          (#(if classifiers
+                              (assoc % :classifiers classifiers)
+                              %)))]
+      (assoc m k updated))
+    (assoc m k entry)))
 
-(defn compile-dicts
-  "Create a map of dictionary maps with different look-up key-types."
-  [key-types entries]
-  ;; TODO: remove println, enable some sort of logging instead
-  (println "compiling" (count key-types) "dicts from" (count entries) "entries")
-  (let [make-dict (fn [key-type] [key-type (compile-dict key-type entries)])]
-    (into {} (map make-dict key-types))))
+(defn make-entry
+  "Make a dictionary entry based on a script and a CC-CEDICT entry map."
+  [script m]
+  (-> {:scripts #{script}
+       :usages  {(:pinyin m) (:definitions m)}}
+      (#(if (not= (:traditional m) (:simplified m))
+          (let [other (if (= script :traditional) :simplified :traditional)]
+            (assoc % :variations {other #{(get m other)}}))
+          %))
+      (#(if-let [classifiers (:classifiers m)]
+          (assoc % :classifiers classifiers)
+          %))))
 
-(defn merge-entry
-  "Merge entry (e.g. name entry) into matching existing entries in dict.
-  This both merges the definition into other entries and removes the old entry.
-  In case there is only one entry, nothing happens.
-  Returns dict with the entry merged in."
-  [key-type dict entry]
-  (let [key     (get entry key-type)
-        entries (get dict key)]
-    (if (= 1 (count entries))
-      dict
-      (loop [matches* (filter (partial entry/matches entry) entries)
-             entries* entries]
-        (let [match (first matches*)]
-          (cond
-            (nil? match) (assoc dict key entries*)
-            (= match entry) (recur (rest matches*) (disj entries* match))
-            :else (let [match-def (d/defs match)
-                        entry-def (d/defs entry)
-                        new-def   (set/union match-def entry-def)
-                        new-entry (assoc match d/defs new-def)]
-                    (recur (rest matches*) (-> entries*
-                                               (disj match)
-                                               (conj new-entry))))))))))
+(defn add-hanzi
+  "Create a hanzi entry in the dictionary from a basic CC-CEDICT entry m."
+  [dict m]
+  (-> dict
+      (update-dict (get m :traditional) (make-entry :traditional m))
+      (update-dict (get m :simplified) (make-entry :simplified m))))
 
-(defn merge-entries
-  "Merge definitions of entries into matching entries in dict.
-  Returns the modified dict."
-  [key-type dict entries]
-  (loop [dict*    dict
-         entries* entries]
-    (if-let [entry (first entries*)]
-      (recur (merge-entry key-type dict* entry) (rest entries*))
-      dict*)))
+(defn make-hanzi-dict
+  [entries]
+  (reduce add-hanzi {} entries))
 
-(defn mod-dicts
-  "Merge the entries of merges into each dictionary map."
-  [merges dicts]
-  (println "merging" (count merges) "entries into" (count dicts) "dicts")
-  (loop [keys   (keys dicts)
-         dicts* dicts]
-    (if-let [key (first keys)]
-      (recur
-        (rest keys)
-        (assoc dicts* key (merge-entries key (get dicts* key) merges)))
-      dicts*)))
-
-(defn load-dicts
+;; TODO: update
+(defn create-dicts
   "Load the contents of a CC-CEDICT dictionary file into Clojure maps."
   [entries key-types]
-  (let [name-entries (filter entry/name? entries)]
-    (->> entries
-         (map entry/detach-cls)
-         (compile-dicts key-types)
-         (mod-dicts name-entries))))
+  (->> entries
+       (map entry/detach-cls)
+       (make-hanzi-dict)))
