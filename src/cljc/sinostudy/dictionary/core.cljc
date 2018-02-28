@@ -40,6 +40,15 @@
 (def cls
   :classifiers)
 
+(def vars
+  :variations)
+
+(def uses
+  :uses)
+
+(def scripts
+  :scripts)
+
 (defn look-up
   "Look up the specified word in each dictionary map and merge the results."
   [word dicts]

@@ -1,54 +1,44 @@
 (ns sinostudy.dictionary.compile
   (:require [clojure.set :as set]
+            [sinostudy.dictionary.core :as d]
             [sinostudy.dictionary.entry :as entry]))
-
-(defn set-map-union
-  "Merge two maps whose values are sets."
-  [m1 m2]
-  (let [merge (fn [m [k v]]
-                (assoc m k (set/union (get m k) v)))]
-    (reduce merge m1 m2)))
 
 (defn update-dict
   "Update the dictionary m at the specified key k with the entry v.
   The entry is either inserted as is or merged with the current entry."
   [m k entry]
   (if-let [current (get m k)]
-    (let [scripts     (set/union (:scripts current) (:scripts entry))
-          usages      (set-map-union (:usages current) (:usages entry))
-          variations  (set-map-union (:variations current) (:variations entry))
-          classifiers (set/union (:classifiers current) (:classifiers entry))
-          updated     (-> current
-                          (assoc :scripts scripts)
-                          (assoc :usages usages)
-                          (#(if variations
-                              (assoc % :variations variations)
-                              %))
-                          (#(if classifiers
-                              (assoc % :classifiers classifiers)
-                              %)))]
-      (assoc m k updated))
+    (let [if-assoc (fn [m k v] (if v (assoc m k v) m))
+          scripts  (set/union (d/scripts current) (d/scripts entry))
+          cls      (set/union (d/cls current) (d/cls entry))
+          uses     (merge-with set/union (d/uses current) (d/uses entry))
+          vars     (merge-with set/union (d/vars current) (d/vars entry))]
+      (assoc m k (-> current
+                     (assoc d/scripts scripts)
+                     (assoc d/uses uses)
+                     (if-assoc d/vars vars)
+                     (if-assoc d/cls cls))))
     (assoc m k entry)))
 
 (defn make-entry
   "Make a dictionary entry based on a script and a CC-CEDICT entry map."
   [script m]
-  (-> {:scripts #{script}
-       :usages  {(:pinyin m) (:definitions m)}}
-      (#(if (not= (:traditional m) (:simplified m))
-          (let [other (if (= script :traditional) :simplified :traditional)]
-            (assoc % :variations {other #{(get m other)}}))
+  (-> {d/scripts #{script}
+       d/uses    {(d/pinyin m) (d/defs m)}}
+      (#(if (not= (d/trad m) (d/simp m))
+          (let [other (if (= script d/trad) d/simp d/trad)]
+            (assoc % d/vars {other #{(get m other)}}))
           %))
-      (#(if-let [classifiers (:classifiers m)]
-          (assoc % :classifiers classifiers)
+      (#(if-let [classifiers (d/cls m)]
+          (assoc % d/cls classifiers)
           %))))
 
 (defn add-hanzi
   "Create a hanzi entry in the dictionary from a basic CC-CEDICT entry m."
   [dict m]
   (-> dict
-      (update-dict (get m :traditional) (make-entry :traditional m))
-      (update-dict (get m :simplified) (make-entry :simplified m))))
+      (update-dict (get m d/trad) (make-entry d/trad m))
+      (update-dict (get m d/simp) (make-entry d/simp m))))
 
 (defn make-hanzi-dict
   [entries]
