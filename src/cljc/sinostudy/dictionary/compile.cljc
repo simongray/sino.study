@@ -3,13 +3,19 @@
             [sinostudy.dictionary.core :as d]
             [sinostudy.dictionary.entry :as entry]))
 
+(defn if-assoc
+  "Assoc value v at key k in map m, but only if v is non-nil."
+  [m k v]
+  (if v
+    (assoc m k v)
+    m))
+
 (defn update-dict
   "Update the dictionary m at the specified key k with the entry v.
   The entry is either inserted as is or merged with the current entry."
   [m k entry]
   (if-let [current (get m k)]
-    (let [if-assoc (fn [m k v] (if v (assoc m k v) m))
-          scripts  (set/union (d/scripts current) (d/scripts entry))
+    (let [scripts  (set/union (d/scripts current) (d/scripts entry))
           cls      (set/union (d/cls current) (d/cls entry))
           uses     (merge-with set/union (d/uses current) (d/uses entry))
           vars     (merge-with set/union (d/vars current) (d/vars entry))]
@@ -29,9 +35,7 @@
           (let [other (if (= script d/trad) d/simp d/trad)]
             (assoc % d/vars {other #{(get m other)}}))
           %))
-      (#(if-let [classifiers (d/cls m)]
-          (assoc % d/cls classifiers)
-          %))))
+      (if-assoc d/cls (d/cls m))))
 
 (defn add-hanzi
   "Create a hanzi entry in the dictionary from a basic CC-CEDICT entry m."
