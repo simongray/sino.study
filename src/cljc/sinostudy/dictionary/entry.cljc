@@ -1,9 +1,7 @@
 (ns sinostudy.dictionary.entry
   (:require [clojure.string :as str]
-            [clojure.set :as set]
             [sinostudy.rim.core :as rim]
             [sinostudy.dictionary.core :as d]
-            [sinostudy.dictionary.embed :as embed]
             [sinostudy.pinyin.eval :as pe]
             [sinostudy.pinyin.core :as p]))
 
@@ -20,16 +18,6 @@
   (when-let [first-letter (first (first (d/pinyin entry)))]
     #?(:clj  (Character/isUpperCase ^char first-letter)
        :cljs (not= first-letter (.toLowerCase first-letter)))))
-
-(defn cl-def?
-  "Determine if a dictionary definition is actually a list of classifiers."
-  [definition]
-  (str/starts-with? definition "CL:"))
-
-(defn has-cls?
-  "Determine if the entry's definitions contain classifiers."
-  [entry]
-  (some cl-def? (d/defs entry)))
 
 (defn matches-pinyin
   "True if the Pinyin of both entries is equal, disregarding case."
@@ -67,23 +55,6 @@
     (str/replace s "5" "0")
     s))
 
-(defn pinyin-seq
-  "Transform the CC-CEDICT Pinyin string into a seq of syllables+digits."
-  [pinyin]
-  (map neutral-as-0 (str/split pinyin #" ")))
-
-(defn preprocess
-  "Apply preprocessing functions to a CC-CEDICT Pinyin string."
-  [s]
-  ;; CC-CEDICT mistakes and oddities that are ignored during import
-  (let [cc-cedict-oddities #{"xx5" "xx" "ging1"}]
-    (if (contains? cc-cedict-oddities s)
-      []
-      (-> s
-          join-abbr
-          pinyin-seq
-          vec))))
-
 (defn pinyin-key
   "Convert a CC-CEDICT Pinyin string into a form for use as a map key."
   [s]
@@ -99,14 +70,14 @@
   [definition]
   (set (str/split definition #"/")))
 
-(defn entry->m
+(defn line->listing
   "Extract the constituents of a line in a CC-CEDICT dictionary file.
   Returns a map representation suitable for use as a dictionary entry."
   [line]
   (let [pattern #"^([^ ]+) ([^ ]+) \[([^]]+)\] /(.+)/"
         [_ trad simp pinyin defs :as entry] (re-matches pattern line)]
     (when entry
-      (let [pinyin* (u:->umlaut pinyin)]
+      (let [pinyin* (u:->umlaut (neutral-as-0 pinyin))]
         {d/trad                  trad
          d/simp                  simp
          d/pinyin                (join-abbr pinyin*)
@@ -116,24 +87,6 @@
                                                pinyin*
                                                :v-as-umlaut false))
          d/defs                  (split-def defs)}))))
-
-
-;;;; POST-PROCESSING (SERVER-SIDE)
-
-(defn detach-cls
-  "Move the classifiers of an entry from :definitions to :classifiers."
-  [entry]
-  (if (has-cls? entry)
-    (let [defs    (d/defs entry)
-          cl-defs (filter cl-def? defs)
-          get-cls (comp (partial map embed/refr->m) (partial re-seq embed/refr))
-          cls     (set (flatten (map get-cls cl-defs)))]
-      (if cls
-        (-> entry
-            (assoc d/defs (set/difference defs cl-defs))
-            (assoc d/cls cls))
-        entry))
-    entry))
 
 
 ;;;; POST-PROCESSING (CLIENT-SIDE)
