@@ -88,22 +88,6 @@
 
 ;;;; UNIFIED HANZI DICT (TRADITIONAL + SIMPLIFIED)
 
-(defn update-dict
-  "Update the dictionary dict at the specified key k with the entry v.
-  The entry is either inserted as is or merged with the old entry."
-  [dict k v]
-  (if-let [old (get dict k)]
-    (let [scripts (set/union (::scripts old) (::scripts v))
-          cls     (set/union (::classifiers old) (::classifiers v))
-          uses    (merge-with set/union (::uses old) (::uses v))
-          vars    (merge-with set/union (::variations old) (::variations v))]
-      (assoc dict k (cond-> old
-                            scripts (assoc ::scripts scripts)
-                            cls (assoc ::classifiers cls)
-                            uses (assoc ::uses uses)
-                            vars (assoc ::variations vars))))
-    (assoc dict k v)))
-
 (defn hanzi-entry
   "Make a hanzi dictionary entry based on a script and a CC-CEDICT listing."
   [script listing]
@@ -120,12 +104,28 @@
             script-diff? (assoc ::variations (make-vars script))
             classifiers (assoc ::classifiers classifiers))))
 
-(defn add-hanzi-entry
-  "Create 1 to 2 entries in the dictionary from a basic CC-CEDICT listing."
+(defn hanzi-add*
+  "Update the hanzi dict at the specified key k with the entry v.
+  The entry is either inserted as is or merged with the old entry."
+  [dict k v]
+  (if-let [old (get dict k)]
+    (let [scripts (set/union (::scripts old) (::scripts v))
+          cls     (set/union (::classifiers old) (::classifiers v))
+          uses    (merge-with set/union (::uses old) (::uses v))
+          vars    (merge-with set/union (::variations old) (::variations v))]
+      (assoc dict k (cond-> old
+                            scripts (assoc ::scripts scripts)
+                            cls (assoc ::classifiers cls)
+                            uses (assoc ::uses uses)
+                            vars (assoc ::variations vars))))
+    (assoc dict k v)))
+
+(defn hanzi-add
+  "Add 1 to 2 entries in the hanzi dictionary from a CC-CEDICT listing."
   [dict listing]
   (-> dict
-      (update-dict (::traditional listing) (hanzi-entry ::traditional listing))
-      (update-dict (::simplified listing) (hanzi-entry ::simplified listing))))
+      (hanzi-add* (::traditional listing) (hanzi-entry ::traditional listing))
+      (hanzi-add* (::simplified listing) (hanzi-entry ::simplified listing))))
 
 
 ;;;;; CREATING DICTS AND LOOKING UP WORDS
@@ -135,7 +135,7 @@
   The listings convert into multiple dictionary entries based on look-up type."
   [listings]
   (let [listings* (map detach-cls listings)]
-    {:hanzi (reduce add-hanzi-entry {} listings*)}))
+    {:hanzi (reduce hanzi-add {} listings*)}))
 
 (defn look-up
   "Look up the specified word in each dictionary map and merge the results."
