@@ -169,22 +169,32 @@
         (recur (generic-add dict* (first ks*) v) (rest ks*))
         dict*))))
 
+;; TODO: could also incorporate word frequency to improve results,
+;;       (probably should be done at the entry level)
+;;       http://corpus.leeds.ac.uk/list.html
 (defn english-relevance
   "Calculate the relevance of entry based on an English word as the search term.
   The relevance is a score from 0 to 1, with 1 being the most relevant."
   [word entry]
-  (let [uses  (apply set/union (vals (::uses entry)))
-        score (fn [use]
-                (cond
-                  (= use word) 1
-                  ;; The final (inc) is a penalty to make sure that #{"x" "y"}
-                  ;; ranks higher than #{"x y"} for search term "x".
-                  (str/includes? use word) (/ 1 (-> use
-                                                    (str/split #" ")
-                                                    (count)
-                                                    (inc)))
-                  :else 0))]
-    (/ (reduce + (map score uses)) (count uses))))
+  (let [uses   (apply set/union (vals (::uses entry)))
+        score  (fn [use]
+                 (cond
+                   (= use word) 1
+                   ;; The final (inc) is a penalty to make sure that #{"x" "y"}
+                   ;; ranks higher than #{"x y"} for search term "x".
+                   (str/includes? use word) (/ 1 (-> use
+                                                     (str/split #" ")
+                                                     (count)
+                                                     (inc)))
+                   :else 0))
+        scores (map score uses)
+        sum    (reduce + scores)
+        zeros  (filter #(= 0 %) scores)]
+    ;; Note: multiple 0.0 scores only count as a single zero!
+    ;; This is done to not unfairly weigh down words with many meanings.
+    (/ sum
+       (- (count uses)
+          (if (seq zeros) (dec (count zeros)) 0)))))
 
 (defn sort-by-english-relevance
   "Sort a list of entries based on their relevance to an english word."
