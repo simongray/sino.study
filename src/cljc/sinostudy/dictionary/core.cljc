@@ -177,7 +177,12 @@
         score (fn [use]
                 (cond
                   (= use word) 1
-                  (str/includes? use word) (/ 1 (count (str/split use #" ")))
+                  ;; The final (inc) is a penalty to make sure that #{"x" "y"}
+                  ;; ranks higher than #{"x y"} for search term "x".
+                  (str/includes? use word) (/ 1 (-> use
+                                                    (str/split #" ")
+                                                    (count)
+                                                    (inc)))
                   :else 0))]
     (/ (reduce + (map score uses)) (count uses))))
 
