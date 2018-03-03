@@ -169,6 +169,26 @@
         (recur (generic-add dict* (first ks*) v) (rest ks*))
         dict*))))
 
+(defn english-relevance
+  "Calculate the relevance of entry based on an English word as the search term.
+  The relevance is a score from 0 to 1, with 1 being the most relevant."
+  [word entry]
+  (let [uses  (apply set/union (vals (::uses entry)))
+        score (fn [use]
+                (cond
+                  (= use word) 1
+                  (str/includes? use word) (/ 1 (count (str/split use #" ")))
+                  :else 0))]
+    (/ (reduce + (map score uses)) (count uses))))
+
+(defn sort-by-english-relevance
+  "Sort a list of entries based on their relevance to an english word."
+  [word entries]
+  (->> entries
+       (map #(vector (english-relevance word %) %))
+       (sort-by first)
+       (map second)
+       (reverse)))
 
 ;;;;; CREATING DICTS AND LOOKING UP WORDS
 
