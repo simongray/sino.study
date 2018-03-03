@@ -199,12 +199,10 @@
 (defn sort-by-english-relevance
   "Sort a list of entries based on their relevance to an english word."
   [word entries]
-  (->> entries
-       (map #(vector (english-relevance word %) %))
-       (sort-by first)
-       (map second)
-       (reverse)))
-
+  ;; Memoized to reduce re-calculation of relevance scores
+  ;; (sort-by expects a keyfn as that argument, i.e. O(0) is expected)
+  (let [relevance (memoize (partial english-relevance word))]
+    (sort-by relevance > entries)))
 
 ;;;;; CREATING DICTS AND LOOKING UP WORDS
 
