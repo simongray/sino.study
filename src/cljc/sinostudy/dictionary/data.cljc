@@ -1,9 +1,10 @@
 (ns sinostudy.dictionary.data)
 
+;; TODO: find better list of stopwords
 (def stopwords
   #{"a" "about" "above" "across" "after" "afterwards" "again" "against"
     "all" "almost" "alone" "along" "already" "also" "although" "always" "am"
-    "among" "amongst" "amoungst" "amount"  "an" "and" "another" "any" "anyhow"
+    "among" "amongst" "amount"  "an" "and" "another" "any" "anyhow"
     "anyone" "anything" "anyway" "anywhere" "are" "around" "as"  "at" "back"
     "be" "became" "because" "become" "becomes" "becoming" "been" "before"
     "beforehand" "behind" "being" "below" "beside" "besides" "between"
@@ -29,7 +30,7 @@
     "sometime" "sometimes" "somewhere" "still" "such" "system" "take" "ten"
     "than" "that" "the" "their" "them" "themselves" "then" "thence" "there"
     "thereafter" "thereby" "therefore" "therein" "thereupon" "these" "they"
-    "thickv" "thin" "third" "this" "those" "though" "three" "through"
+    "thick" "thin" "third" "this" "those" "though" "three" "through"
     "throughout" "thru" "thus" "to" "together" "too" "top" "toward" "towards"
     "twelve" "twenty" "two" "un" "under" "until" "up" "upon" "us" "very" "via"
     "was" "we" "well" "were" "what" "whatever" "when" "whence" "whenever"

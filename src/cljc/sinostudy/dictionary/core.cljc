@@ -145,6 +145,7 @@
 
 ;;;; ENGLISH DICT
 
+;; TODO: deal with special cases like "n't" (perhaps lemmatise all words?)
 (defn english-keys
   "Find English dictionary keys based on a CC-CEDICT listing.
   Stop-words are removed entirely, unless they make up a full definition."
