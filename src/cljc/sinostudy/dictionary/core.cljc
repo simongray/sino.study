@@ -98,7 +98,8 @@
                                      ::simplified ::traditional)]
                          {other #{(get listing other)}}))
         classifiers  (::classifiers listing)
-        base-entry   {::scripts #{script}
+        base-entry   {::word (get listing script)
+                      ::scripts #{script}
                       ::uses    {(::pinyin listing) (::definitions listing)}}]
     (cond-> base-entry
             script-diff? (assoc ::variations (make-vars script))
@@ -152,13 +153,15 @@
   The listings convert into multiple dictionary entries based on look-up type."
   [listings]
   (let [listings* (map detach-cls listings)]
-    {:hanzi (reduce hanzi-add {} listings*)
-     :pinyin (reduce pinyin-add {} listings*)}))
+    {::hanzi  (reduce hanzi-add {} listings*)
+     ::pinyin (reduce pinyin-add {} listings*)}))
 
 (defn look-up
-  "Look up the specified word in each dictionary map and merge the results."
+  "Look up the specified word in each dictionary and merge the results."
   [dicts word]
-  (let [check-dict (fn [n] (get (nth (vals dicts) n) word))]
-    (->> (map check-dict (range (count dicts)))
-         (filter (comp not nil?))
-         (apply set/union))))
+  (let [look-up* (fn [dict word] (get (get dicts dict) word))
+        hanzi    (look-up* ::hanzi word)
+        pinyin   (look-up* ::pinyin word)]
+    (cond-> #{}
+            hanzi (conj hanzi)
+            pinyin (set/union (map (partial look-up* ::hanzi) pinyin)))))
