@@ -189,16 +189,16 @@
 (defn look-up
   "Look up the specified word in each dictionary and merge the results."
   [dicts word]
-  (let [look-up*   (fn [dict word] (get (get dicts dict) word))
-        get-entry  (fn [word] (look-up* ::hanzi word))
-        hanzi      (get-entry word)
-        english    (look-up* ::english word)
-        pinyin     (look-up* ::pinyin word)
-        digits     (look-up* ::pinyin+digits word)
-        diacritics (look-up* ::pinyin+diacritics word)]
-    (cond-> #{}
-            hanzi (conj hanzi)
-            english (set/union (set (map get-entry english)))
-            pinyin (set/union (set (map get-entry pinyin)))
-            digits (set/union (set (map get-entry digits)))
-            diacritics (set/union (set (map get-entry diacritics))))))
+  (let [look-up*    (fn [dict word] (get (get dicts dict) word))
+        get-entries (fn [words] (set (map #(look-up* ::hanzi %) words)))
+        hanzi       (look-up* ::hanzi word)
+        pinyin      (look-up* ::pinyin word)
+        digits      (look-up* ::pinyin+digits word)
+        diacritics  (look-up* ::pinyin+diacritics word)
+        english     (look-up* ::english word)]
+    (cond-> {}
+            hanzi (assoc ::hanzi #{hanzi})
+            pinyin (assoc ::pinyin (get-entries pinyin))
+            digits (assoc ::pinyin+digits (get-entries digits))
+            diacritics (assoc ::pinyin+diacritics (get-entries diacritics))
+            english (assoc ::english (get-entries english)))))
