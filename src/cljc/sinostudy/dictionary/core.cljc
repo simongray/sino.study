@@ -1,6 +1,7 @@
 (ns sinostudy.dictionary.core
   (:require [clojure.set :as set]
             [clojure.string :as str]
+            [sinostudy.dictionary.data :as data]
             [sinostudy.dictionary.embed :as embed]))
 
 ;; TODO: make list of exceptional entries (e.g. 3P) that should be queryable
@@ -121,19 +122,51 @@
 
 ;;;; PINYIN DICT
 
+;; used by both pinyin-add and english-add
+(defn generic-add
+  "Add an entry to a dictionary; clashes are merged into a set."
+  [dict k v]
+  (if-let [old (get dict k)]
+    (assoc dict k (set/union old v))
+    (assoc dict k v)))
+
 (defn pinyin-entry
-  "Make a hanzi dictionary entry based on a script and a CC-CEDICT listing."
+  "Make a pinyin dictionary entry based on a CC-CEDICT listing."
   [listing]
   (conj #{(::traditional listing)} (::simplified listing)))
 
 (defn pinyin-add
-  "Make a hanzi dictionary entry based on a script and a CC-CEDICT listing."
+  "Add an entry to a pinyin dictionary from a CC-CEDICT listing."
   [key-type dict listing]
   (let [k (get listing key-type)
         v (pinyin-entry listing)]
-    (if-let [old (get dict k)]
-      (assoc dict k (set/union old v))
-      (assoc dict k v))))
+    (generic-add dict k v)))
+
+
+;;;; ENGLISH DICT
+
+(defn english-keys
+  "Find English dictionary keys based on a CC-CEDICT listing.
+  Stop-words are removed entirely, unless they make up a full definition."
+  [listing]
+  (let [stopwords* (set/difference data/stopwords (::definitions listing))]
+    (set/difference (->> (::definitions listing)
+                         (map ^String str/lower-case)
+                         (map #(str/split % #"[^a-z-]+"))
+                         (flatten)
+                         (set))
+                    stopwords*)))
+
+(defn english-add
+  "Add an entry to the pinyin dictionary from a CC-CEDICT listing."
+  [dict listing]
+  (let [ks (english-keys listing)
+        v  (conj #{(::traditional listing)} (::simplified listing))]
+    (loop [dict* dict
+           ks*   ks]
+      (if (seq ks*)
+        (recur (generic-add dict* (first ks*) v) (rest ks*))
+        dict*))))
 
 
 ;;;;; CREATING DICTS AND LOOKING UP WORDS
@@ -147,6 +180,7 @@
         pinyin+digits-key-add     (partial pinyin-add ::pinyin+digits-key)
         pinyin+diacritics-key-add (partial pinyin-add ::pinyin+diacritics-key)]
     {::hanzi             (reduce hanzi-add {} listings*)
+     ::english           (reduce english-add {} listings*)
      ::pinyin            (reduce pinyin-key-add {} listings*)
      ::pinyin+digits     (reduce pinyin+digits-key-add {} listings*)
      ::pinyin+diacritics (reduce pinyin+diacritics-key-add {} listings*)}))
@@ -157,11 +191,13 @@
   (let [look-up*   (fn [dict word] (get (get dicts dict) word))
         get-entry  (fn [word] (look-up* ::hanzi word))
         hanzi      (get-entry word)
+        english    (look-up* ::english word)
         pinyin     (look-up* ::pinyin word)
         digits     (look-up* ::pinyin+digits word)
         diacritics (look-up* ::pinyin+diacritics word)]
     (cond-> #{}
             hanzi (conj hanzi)
+            english (set/union (set (map get-entry english)))
             pinyin (set/union (set (map get-entry pinyin)))
             digits (set/union (set (map get-entry digits)))
             diacritics (set/union (set (map get-entry diacritics))))))
