@@ -98,7 +98,7 @@
                                      ::simplified ::traditional)]
                          {other #{(get listing other)}}))
         classifiers  (::classifiers listing)
-        base-entry   {::word (get listing script)
+        base-entry   {::word    (get listing script)
                       ::scripts #{script}
                       ::uses    {(::pinyin listing) (::definitions listing)}}]
     (cond-> base-entry
@@ -138,8 +138,8 @@
 
 (defn pinyin-add
   "Make a hanzi dictionary entry based on a script and a CC-CEDICT listing."
-  [dict listing]
-  (let [k (::pinyin-key listing)
+  [key-type dict listing]
+  (let [k (get listing key-type)
         v (pinyin-entry listing)]
     (if-let [old (get dict k)]
       (assoc dict k (set/union old v))
@@ -152,16 +152,26 @@
   "Load the contents of a CC-CEDICT dictionary file into Clojure maps.
   The listings convert into multiple dictionary entries based on look-up type."
   [listings]
-  (let [listings* (map detach-cls listings)]
-    {::hanzi  (reduce hanzi-add {} listings*)
-     ::pinyin (reduce pinyin-add {} listings*)}))
+  (let [listings*                 (map detach-cls listings)
+        pinyin-key-add            (partial pinyin-add ::pinyin-key)
+        pinyin+digits-key-add     (partial pinyin-add ::pinyin+digits-key)
+        pinyin+diacritics-key-add (partial pinyin-add ::pinyin+diacritics-key)]
+    {::hanzi             (reduce hanzi-add {} listings*)
+     ::pinyin            (reduce pinyin-key-add {} listings*)
+     ::pinyin+digits     (reduce pinyin+digits-key-add {} listings*)
+     ::pinyin+diacritics (reduce pinyin+diacritics-key-add {} listings*)}))
 
 (defn look-up
   "Look up the specified word in each dictionary and merge the results."
   [dicts word]
-  (let [look-up* (fn [dict word] (get (get dicts dict) word))
-        hanzi    (look-up* ::hanzi word)
-        pinyin   (look-up* ::pinyin word)]
+  (let [look-up*   (fn [dict word] (get (get dicts dict) word))
+        get-entry  (fn [word] (look-up* ::hanzi word))
+        hanzi      (get-entry word)
+        pinyin     (look-up* ::pinyin word)
+        digits     (look-up* ::pinyin+digits word)
+        diacritics (look-up* ::pinyin+diacritics word)]
     (cond-> #{}
             hanzi (conj hanzi)
-            pinyin (set/union (map (partial look-up* ::hanzi) pinyin)))))
+            pinyin (set/union (set (map get-entry pinyin)))
+            digits (set/union (set (map get-entry digits)))
+            diacritics (set/union (set (map get-entry diacritics))))))
