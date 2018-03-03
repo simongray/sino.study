@@ -128,6 +128,23 @@
       (hanzi-add* (::simplified listing) (hanzi-entry ::simplified listing))))
 
 
+;;;; PINYIN DICT
+
+(defn pinyin-entry
+  "Make a hanzi dictionary entry based on a script and a CC-CEDICT listing."
+  [listing]
+  (conj #{(::traditional listing)} (::simplified listing)))
+
+(defn pinyin-add
+  "Make a hanzi dictionary entry based on a script and a CC-CEDICT listing."
+  [dict listing]
+  (let [k (::pinyin-key listing)
+        v (pinyin-entry listing)]
+    (if-let [old (get dict k)]
+      (assoc dict k (set/union old v))
+      (assoc dict k v))))
+
+
 ;;;;; CREATING DICTS AND LOOKING UP WORDS
 
 (defn create-dicts
@@ -135,7 +152,8 @@
   The listings convert into multiple dictionary entries based on look-up type."
   [listings]
   (let [listings* (map detach-cls listings)]
-    {:hanzi (reduce hanzi-add {} listings*)}))
+    {:hanzi (reduce hanzi-add {} listings*)
+     :pinyin (reduce pinyin-add {} listings*)}))
 
 (defn look-up
   "Look up the specified word in each dictionary map and merge the results."
