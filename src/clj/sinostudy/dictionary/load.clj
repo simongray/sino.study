@@ -4,8 +4,8 @@
 
 (defn listings
   "Load the listings of a CC-CEDICT dictionary file into Clojure maps."
-  [file-path]
-  (with-open [reader (io/reader file-path)]
+  [file]
+  (with-open [reader (io/reader file)]
     (->> (line-seq reader)
          (filter entry/entry?)
          (map entry/line->listing)

@@ -3,6 +3,7 @@
   :url "http://sino.study"
   :min-lein-version "2.5.3"
   :source-paths ["src/clj" "src/cljc"]
+  :resource-paths ["resources"]
 
   ;; needed for Java 9 issue with figwheel
   ;; remove if using Java 8!

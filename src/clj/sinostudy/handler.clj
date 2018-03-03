@@ -1,6 +1,7 @@
 (ns sinostudy.handler
   (:import (java.io ByteArrayOutputStream))
-  (:require [compojure.core :refer :all]
+  (:require [clojure.java.io :as io]
+            [compojure.core :refer :all]
             [compojure.route :as route]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [cognitect.transit :as transit]
@@ -15,10 +16,10 @@
 ;; https://weavejester.github.io/compojure/compojure.coercions.html
 
 (def index
-  (slurp "./resources/public/index.html"))
+  (slurp (io/resource "public/index.html")))
 
 (defonce dicts
-  (let [listings (load/listings "./resources/cedict_ts.u8")]
+  (let [listings (load/listings (io/resource "cedict_ts.u8"))]
     (d/create-dicts listings)))
 
 ;; First Access-Control header permits cross-origin requests.
