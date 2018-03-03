@@ -205,7 +205,7 @@
     (sort-by relevance > entries)))
 
 
-;;;;; CREATING DICTS AND LOOKING UP WORDS
+;;;; CREATING DICTS AND LOOKING UP WORDS
 
 (defn create-dicts
   "Load the contents of a CC-CEDICT dictionary file into Clojure maps.
