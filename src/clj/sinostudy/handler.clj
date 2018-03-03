@@ -43,7 +43,7 @@
   to a page-type (keyword) and a query-string."
   [page-type query-string]
   (cond
-    (= pd/words page-type) (d/look-up query-string dicts)))
+    (= pd/words page-type) (d/look-up dicts query-string)))
 
 (defn query-result
   "Get the Transit-encoded result of a query."

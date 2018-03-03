@@ -139,7 +139,7 @@
 
 (defn look-up
   "Look up the specified word in each dictionary map and merge the results."
-  [word dicts]
+  [dicts word]
   (let [check-dict (fn [n] (get (nth (vals dicts) n) word))]
     (->> (map check-dict (range (count dicts)))
          (filter (comp not nil?))
