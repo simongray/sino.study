@@ -2,7 +2,7 @@
   (:require [clojure.java.io :as io]
             [sinostudy.dictionary.entry :as entry]))
 
-(defn listings
+(defn load-cedict
   "Load the listings of a CC-CEDICT dictionary file into Clojure maps."
   [file]
   (with-open [reader (io/reader file)]

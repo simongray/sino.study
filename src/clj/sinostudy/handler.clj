@@ -19,7 +19,7 @@
   (slurp (io/resource "public/index.html")))
 
 (defonce dicts
-  (let [listings (load/listings (io/resource "cedict_ts.u8"))]
+  (let [listings (load/load-cedict (io/resource "cedict_ts.u8"))]
     (d/create-dicts listings)))
 
 ;; First Access-Control header permits cross-origin requests.
