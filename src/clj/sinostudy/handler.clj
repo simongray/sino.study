@@ -19,8 +19,12 @@
   (slurp (io/resource "public/index.html")))
 
 (defonce dicts
-  (let [listings (load/load-cedict (io/resource "cedict_ts.u8"))]
-    (d/create-dicts listings)))
+  (let [listings  (load/load-cedict
+                    (io/resource "cedict_ts.u8"))
+        freq-dict (load/load-freq-dict
+                    (io/resource "frequency/internet-zh.num.txt")
+                    (io/resource "frequency/giga-zh.num.txt"))]
+    (d/create-dicts listings freq-dict)))
 
 ;; First Access-Control header permits cross-origin requests.
 ;; Second prevents Chrome from stripping Content-Type header.

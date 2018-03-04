@@ -23,27 +23,30 @@
   Returns a map representation suitable for use as a dictionary entry."
   [line]
   (let [re #"^([^ ]+) ([^ ]+) ([^ ]+)"
-        [_ n freq word :as entry] (re-matches re line)]
+        [_ _ freq word :as entry] (re-matches re line)]
     (when entry
-      (let []
-        {::d/rank      (Integer/parseInt n)
-         ::d/frequency (Double/parseDouble freq)
-         ::d/word      word}))))
+      {:frequency (Double/parseDouble freq)
+       :word      word})))
 
 (defn normalise
   "Normalise the frequency of a freq-listing."
   [max-freq freq-listing]
-  (assoc freq-listing ::d/frequency (/ (::d/frequency freq-listing)
-                                       max-freq)))
+  (assoc freq-listing :frequency (/ (:frequency freq-listing)
+                                    max-freq)))
 
-(defn load-frequency
+(defn load-freq-dict
   "Load the listings of a frequency file into Clojure maps."
   ([file]
    (with-open [reader (io/reader file)]
      (let [raw-listings (->> (line-seq reader)
                              (filter #(re-find #"^\d+ " %))
-                             (map line->freq-listing))
-           max-freq (::d/frequency (first raw-listings))]
+                             (map line->freq-listing)
+                             (filter (comp not nil?)))
+           max-freq     (:frequency (first raw-listings))]
        (->> raw-listings
             (map (partial normalise max-freq))
-            (vec))))))
+            (reduce #(assoc %1 (:word %2) (:frequency %2)) {})))))
+  ([file & files]
+   (let [m (load-freq-dict file)
+         ms (map load-freq-dict files)]
+     (reduce (partial merge-with #(/ (+ %1 %2) 2)) m ms))))

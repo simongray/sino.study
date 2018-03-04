@@ -89,12 +89,14 @@
                                      ::simplified ::traditional)]
                          {other #{(get listing other)}}))
         classifiers  (::classifiers listing)
+        frequency    (::frequency listing)
         base-entry   {::word    (get listing script)
                       ::scripts #{script}
                       ::uses    {(::pinyin listing) (::definitions listing)}}]
     (cond-> base-entry
             script-diff? (assoc ::variations (make-vars script))
-            classifiers (assoc ::classifiers classifiers))))
+            classifiers (assoc ::classifiers classifiers)
+            frequency (assoc ::frequency frequency))))
 
 (defn hanzi-add*
   "Update the hanzi dict at the specified key k with the entry v.
@@ -104,12 +106,14 @@
     (let [scripts (set/union (::scripts old) (::scripts v))
           cls     (set/union (::classifiers old) (::classifiers v))
           uses    (merge-with set/union (::uses old) (::uses v))
-          vars    (merge-with set/union (::variations old) (::variations v))]
+          vars    (merge-with set/union (::variations old) (::variations v))
+          freq    (::frequency v)]
       (assoc dict k (cond-> old
                             scripts (assoc ::scripts scripts)
                             cls (assoc ::classifiers cls)
                             uses (assoc ::uses uses)
-                            vars (assoc ::variations vars))))
+                            vars (assoc ::variations vars)
+                            freq (assoc ::frequency freq))))
     (assoc dict k v)))
 
 (defn hanzi-add
@@ -205,13 +209,28 @@
     (sort-by relevance > entries)))
 
 
+;;;; FREQUENCY DICTIONARY
+
+(defn add-freq
+  "Add word frequency (not char frequency) to a listing."
+  [freq-dict listing]
+  (let [trad-freq (get freq-dict (::traditional listing) 0)
+        simp-freq (get freq-dict (::simplified listing) 0)
+        frequency (max trad-freq simp-freq)]
+    (if (> frequency 0)
+      (assoc listing ::frequency frequency)
+      listing)))
+
 ;;;; CREATING DICTS AND LOOKING UP WORDS
 
 (defn create-dicts
   "Load the contents of a CC-CEDICT dictionary file into Clojure maps.
-  The listings convert into multiple dictionary entries based on look-up type."
-  [listings]
-  (let [listings*                 (map detach-cls listings)
+  The listings convert into multiple dictionary entries based on look-up type.
+  A freq-dict is used to add the word frequency to each entry if available."
+  [listings freq-dict]
+  (let [listings*                 (->> listings
+                                       (map detach-cls)
+                                       (map (partial add-freq freq-dict)))
         pinyin-key-add            (partial pinyin-add ::pinyin-key)
         pinyin+digits-key-add     (partial pinyin-add ::pinyin+digits-key)
         pinyin+diacritics-key-add (partial pinyin-add ::pinyin+diacritics-key)]
