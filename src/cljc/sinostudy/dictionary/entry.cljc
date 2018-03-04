@@ -7,11 +7,6 @@
 
 ;;;; MATCHING
 
-(defn entry?
-  "Determine if a line is a dictionary entry."
-  [line]
-  (not (str/starts-with? line "#")))
-
 (defn name?
   "Determine is a dictionary entry is a name entry (e.g. person or place name)."
   [entry]
