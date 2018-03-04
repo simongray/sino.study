@@ -264,6 +264,7 @@
 
 ;;;; CREATING DICTS AND LOOKING UP WORDS
 
+;; TODO: also add listings only found in makemeahanzi (e.g. 忄)
 (defn create-dicts
   "Load the contents of a CC-CEDICT dictionary file into Clojure maps.
   The listings convert into multiple dictionary entries based on look-up type.
