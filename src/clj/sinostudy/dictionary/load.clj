@@ -1,8 +1,9 @@
 (ns sinostudy.dictionary.load
   (:require [clojure.java.io :as io]
+            [clojure.string :as str]
+            [clj-json.core :as json]
             [sinostudy.dictionary.core :as d]
-            [sinostudy.dictionary.entry :as entry]
-            [clojure.string :as str]))
+            [sinostudy.dictionary.entry :as entry]))
 
 ;;;; CC-CEDICT
 
@@ -35,7 +36,7 @@
                                     max-freq)))
 
 (defn load-freq-dict
-  "Load the listings of a frequency file into Clojure maps."
+  "Load the listings of 1 or more frequency files into a Clojure map."
   ([file]
    (with-open [reader (io/reader file)]
      (let [raw-listings (->> (line-seq reader)
@@ -50,3 +51,14 @@
    (let [m (load-freq-dict file)
          ms (map load-freq-dict files)]
      (reduce (partial merge-with #(/ (+ %1 %2) 2)) m ms))))
+
+
+;;;; CHARACTER COMPOSITION, ETYMOLOGY, ETC.
+
+(defn load-makemeahanzi
+  "Load the listings of a makemeahanzi file into a Clojure map."
+  [file]
+  (with-open [reader (io/reader file)]
+    (let [raw-listings (->> (line-seq reader)
+                            (map json/parse-string))]
+      (reduce #(assoc %1 (get %2 "character") %2) {} raw-listings))))

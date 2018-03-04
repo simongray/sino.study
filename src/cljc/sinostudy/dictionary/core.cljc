@@ -1,6 +1,7 @@
 (ns sinostudy.dictionary.core
   (:require [clojure.set :as set]
             [clojure.string :as str]
+            [clojure.walk :as walk]
             [sinostudy.dictionary.data :as data]
             [sinostudy.dictionary.embed :as embed]))
 
@@ -8,6 +9,7 @@
 ;; TODO: make the pattern "classifier for X" prominent (CL)
 ;; TODO: make the pattern "to X" prominent (V)
 ;; TODO: tag radicals, e.g. def = "Kangxi radical 206" or just from a list
+;;       -- can just use: #(= (:word %) (:radical %))
 
 (def defs
   ::definitions)
@@ -82,21 +84,27 @@
 (defn hanzi-entry
   "Make a hanzi dictionary entry based on a script and a CC-CEDICT listing."
   [script listing]
-  (let [script-diff? (not= (::traditional listing) (::simplified listing))
-        make-vars    (fn [script]
-                       (let [other (case script
-                                     ::traditional ::simplified
-                                     ::simplified ::traditional)]
-                         {other #{(get listing other)}}))
-        classifiers  (::classifiers listing)
-        frequency    (::frequency listing)
-        base-entry   {::word    (get listing script)
-                      ::scripts #{script}
-                      ::uses    {(::pinyin listing) (::definitions listing)}}]
+  (let [script-diff?  (not= (::traditional listing) (::simplified listing))
+        make-vars     (fn [script]
+                        (let [other (case script
+                                      ::traditional ::simplified
+                                      ::simplified ::traditional)]
+                          {other #{(get listing other)}}))
+        classifiers   (::classifiers listing)
+        frequency     (::frequency listing)
+        decomposition (get-in listing (conj [::info script] ::decomposition))
+        etymology     (get-in listing (conj [::info script] ::etymology))
+        radical       (get-in listing (conj [::info script] ::radical))
+        base-entry    {::word    (get listing script)
+                       ::scripts #{script}
+                       ::uses    {(::pinyin listing) (::definitions listing)}}]
     (cond-> base-entry
             script-diff? (assoc ::variations (make-vars script))
             classifiers (assoc ::classifiers classifiers)
-            frequency (assoc ::frequency frequency))))
+            frequency (assoc ::frequency frequency)
+            decomposition (assoc ::decomposition decomposition)
+            etymology (assoc ::etymology etymology)
+            radical (assoc ::radical radical))))
 
 (defn hanzi-add*
   "Update the hanzi dict at the specified key k with the entry v.
@@ -107,13 +115,19 @@
           cls     (set/union (::classifiers old) (::classifiers v))
           uses    (merge-with set/union (::uses old) (::uses v))
           vars    (merge-with set/union (::variations old) (::variations v))
-          freq    (::frequency v)]
+          freq    (::frequency v)
+          decomp  (::decomposition v)
+          etym    (::etymology v)
+          radical (::radical v)]
       (assoc dict k (cond-> old
                             scripts (assoc ::scripts scripts)
                             cls (assoc ::classifiers cls)
                             uses (assoc ::uses uses)
                             vars (assoc ::variations vars)
-                            freq (assoc ::frequency freq))))
+                            freq (assoc ::frequency freq)
+                            decomp (assoc ::decomposition decomp)
+                            etym (assoc ::etymology etym)
+                            radical (assoc ::radical radical))))
     (assoc dict k v)))
 
 (defn hanzi-add
@@ -222,16 +236,43 @@
       listing)))
 
 
+;;;; CHARACTER ETYMOLOGY, DECOMPOSITION, ETC.
+
+(defn add-info*
+  [script makemeahanzi listing]
+  (if-let [info (get makemeahanzi (get listing script))]
+    (let [decomposition (get info "decomposition")
+          ;; TODO: is a tagged literal the proper way to prepend the ns?
+          etymology     (tagged-literal
+                          'sinostudy.dictionary.core
+                          (walk/keywordize-keys (get info "etymology")))
+          radical       (get info "radical")
+          assoc*        (fn [coll k v]
+                          (assoc-in coll (conj [::info script] k) v))]
+      (cond-> listing
+              decomposition (assoc* ::decomposition decomposition)
+              etymology (assoc* ::etymology etymology)
+              radical (assoc* ::radical radical)))
+    listing))
+
+(defn add-info
+  [makemeahanzi listing]
+  (->> listing
+       (add-info* ::traditional makemeahanzi)
+       (add-info* ::simplified makemeahanzi)))
+
+
 ;;;; CREATING DICTS AND LOOKING UP WORDS
 
 (defn create-dicts
   "Load the contents of a CC-CEDICT dictionary file into Clojure maps.
   The listings convert into multiple dictionary entries based on look-up type.
   A freq-dict is used to add the word frequency to each entry if available."
-  [listings freq-dict]
+  [listings freq-dict makemeahanzi]
   (let [listings*                 (->> listings
                                        (map detach-cls)
-                                       (map (partial add-freq freq-dict)))
+                                       (map (partial add-freq freq-dict))
+                                       (map (partial add-info makemeahanzi)))
         pinyin-key-add            (partial pinyin-add ::pinyin-key)
         pinyin+digits-key-add     (partial pinyin-add ::pinyin+digits-key)
         pinyin+diacritics-key-add (partial pinyin-add ::pinyin+diacritics-key)]
