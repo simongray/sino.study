@@ -221,6 +221,7 @@
       (assoc listing ::frequency frequency)
       listing)))
 
+
 ;;;; CREATING DICTS AND LOOKING UP WORDS
 
 (defn create-dicts
