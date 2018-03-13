@@ -178,6 +178,7 @@
                           (map #(str/split % #"[^a-z-]+"))
                           (flatten)
                           (filter (comp not str/blank?))
+
                           (set))
         verblikes    (->> definitions
                           (filter #(str/starts-with? % "to "))
@@ -246,9 +247,11 @@
   (if-let [info (get makemeahanzi (get listing script))]
     (let [decomposition (get info "decomposition")
           ;; TODO: is a tagged literal the proper way to prepend the ns?
-          etymology     (tagged-literal
-                          'sinostudy.dictionary.core
-                          (walk/keywordize-keys (get info "etymology")))
+          etymology     (if-let [raw (get info "etymology")]
+                          (->> raw
+                               (walk/keywordize-keys)
+                               (tagged-literal 'sinostudy.dictionary.core))
+                          nil)
           radical       (get info "radical")
           assoc*        (fn [coll k v]
                           (assoc-in coll (conj [::info script] k) v))]
