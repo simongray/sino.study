@@ -218,15 +218,6 @@
     ;; This is done to not unfairly weigh down words with many meanings.
     (+ max-score freq)))
 
-(defn sort-by-english-relevance
-  "Sort a list of entries based on their relevance to an english word."
-  [word entries]
-  ;; Memoized to reduce re-calculation of relevance scores
-  ;; (sort-by expects a keyfn as that argument, i.e. O(0) is expected).
-  (let [relevance (memoize (partial english-relevance word))]
-    (sort-by relevance > entries)))
-
-
 ;;;; FREQUENCY DICTIONARY
 
 (defn add-freq
@@ -299,9 +290,37 @@
         digits      (look-up* ::pinyin+digits word)
         diacritics  (look-up* ::pinyin+diacritics word)
         english     (look-up* ::english word)]
-    (cond-> {}
+    (cond-> {::word word}
             hanzi (assoc ::hanzi #{hanzi})
             pinyin (assoc ::pinyin (get-entries pinyin))
             digits (assoc ::pinyin+digits (get-entries digits))
             diacritics (assoc ::pinyin+diacritics (get-entries diacritics))
             english (assoc ::english (get-entries english)))))
+
+(defn- safe-comparator
+  "Create a comparator for  sorting that will not lose items by accident.
+  When fn1 cannot establish an ordering between two elements, fn2 steps in.
+  Based on example at: https://clojuredocs.org/clojure.core/sorted-set-by"
+  [fn1 fn2]
+  (fn [x y]
+    (let [comparison (compare (fn1 x) (fn1 y))]
+      (if (not= comparison 0)
+        comparison
+        (compare (fn2 x) (fn2 y))))))
+
+(defn sort-result
+  "Sort the result of a dictionary look-up.
+  English results are sorted according to english-relevance."
+  [result]
+  (let [relevance  (memoize (partial english-relevance (::word result)))
+        relevance* (comp - (safe-comparator relevance ::word))
+        sorted     (fn [f coll] (apply sorted-set-by f coll))
+        pinyin     (::pinyin result)
+        digits     (::pinyin+digits result)
+        diacritics (::pinyin+diacritics result)
+        english    (::english result)]
+    (cond-> result
+            ;pinyin (assoc ::pinyin (sorted > pinyin))
+            ;digits (assoc ::pinyin+digits (sorted > digits))
+            ;diacritics (assoc ::pinyin+diacritics (sorted > diacritics))
+            english (assoc ::english (sorted relevance* english)))))
