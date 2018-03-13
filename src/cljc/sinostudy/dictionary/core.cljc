@@ -171,19 +171,21 @@
   "Find English dictionary keys based on a CC-CEDICT listing.
   Stop-words are removed entirely, unless they make up a full definition."
   [listing]
-  (let [stopwords*   (set/difference data/stopwords (::definitions listing))
-        single-words (->> (::definitions listing)
+  (let [definitions  (::definitions listing)
+        stopwords*   (set/difference data/stopwords definitions)
+        single-words (->> definitions
                           (map ^String str/lower-case)
                           (map #(str/split % #"[^a-z-]+"))
                           (flatten)
+                          (filter (comp not str/blank?))
                           (set))
-        verblikes    (->> (::definitions listing)
+        verblikes    (->> definitions
                           (filter #(str/starts-with? % "to "))
-                          (map #(subs % 3)))]
-    (set/difference (set/union (::definitions listing)
-                               single-words
-                               verblikes)
-                    stopwords*)))
+                          (map #(subs % 3)))
+        keys         (set/union definitions
+                                single-words
+                                verblikes)]
+    (set/difference keys stopwords*)))
 
 (defn english-add
   "Add an entry to the pinyin dictionary from a CC-CEDICT listing."
