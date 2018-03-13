@@ -100,7 +100,7 @@
   behind any Pinyin final in the block. Postfixing 0 or 5 (or nothing) will
   result in no diacritic being added, i.e. marking a neutral tone. Furthermore,
   any occurrence of V is treated as and implicitly converted into a Ü."
-  [s & {:keys [v-as-umlaut] :or {v-as-umlaut true}}]
+  [s & {:keys [v-as-umlaut] :or {v-as-umlaut false}}]
   (if (not (string? s))
     s
     (let [s*                (if v-as-umlaut (umlaut s) s)

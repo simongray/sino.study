@@ -46,9 +46,7 @@
          ::d/pinyin                (join-abbr pinyin*)
          ::d/pinyin-key            (d/pinyin-key (str/replace pinyin* #"\d" ""))
          ::d/pinyin+digits-key     (d/pinyin-key pinyin*)
-         ::d/pinyin+diacritics-key (d/pinyin-key (p/digits->diacritics
-                                                   pinyin*
-                                                   :v-as-umlaut false))
+         ::d/pinyin+diacritics-key (d/pinyin-key (p/digits->diacritics pinyin*))
          ::d/definitions           (split-def defs)}))))
 
 (defn load-cedict
