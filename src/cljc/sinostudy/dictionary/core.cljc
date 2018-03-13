@@ -179,7 +179,7 @@
                           (flatten)
                           (set))
         verblikes    (->> (::definitions listing)
-                          (filter #(str/starts-with? %"to "))
+                          (filter #(str/starts-with? % "to "))
                           (map #(subs % 3)))]
     (set/difference (set/union (::definitions listing)
                                single-words
