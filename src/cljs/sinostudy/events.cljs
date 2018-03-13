@@ -5,6 +5,7 @@
             [sinostudy.db :as db]
             [sinostudy.pinyin.core :as p]
             [sinostudy.pinyin.eval :as pe]
+            [sinostudy.dictionary.core :as d]
             [sinostudy.dictionary.entry :as entry]
             [sinostudy.pages.defaults :as pd]
             [ajax.core :as ajax]
@@ -94,7 +95,7 @@
   "Evaluate a Pinyin query to get a vector of possible actions."
   [query]
   (cond-> []
-          (pinyin-block? query) (conj [::look-up-word (entry/pinyin-key query)])
+          (pinyin-block? query) (conj [::look-up-word (d/pinyin-key query)])
           (digits->diacritics? query) (conj [::digits->diacritics query])
           (diacritics->digits? query) (conj [::diacritics->digits query])))
 

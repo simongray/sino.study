@@ -17,15 +17,6 @@
 (def pinyin
   ::pinyin)
 
-(def pinyin-key
-  ::pinyin-key)
-
-(def pinyin+digits-key
-  ::pinyin+digits-key)
-
-(def pinyin+diacritics-key
-  ::pinyin+diacritics-key)
-
 (def simp
   ::simplified)
 
@@ -34,6 +25,19 @@
 
 (def cls
   ::classifiers)
+
+
+;;;; GENERAL STUFF
+
+(defn pinyin-key
+  "Convert a CC-CEDICT Pinyin string into a form for use as a map key."
+  [s]
+  (-> s
+      (str/replace "'" "")
+      (str/replace " " "")
+      (str/replace "·" "")                                  ; middle dot
+      (str/replace "," "")
+      str/lower-case))
 
 
 ;;;; EMBEDDING MANIPULATION

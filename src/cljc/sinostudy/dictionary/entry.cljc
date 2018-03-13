@@ -27,63 +27,6 @@
        (= (d/trad e1) (d/trad e2))
        (matches-pinyin (d/pinyin e1) (d/pinyin e2))))
 
-
-;;;; PRE-PROCESSING
-
-(defn u:->umlaut
-  "Replace the CC-CEDICT substitute u: with the proper Pinyin ü."
-  [pinyin]
-  (str/replace pinyin "u:" "ü"))
-
-(defn join-abbr
-  "Join the uppercase letters in a CC-CEDICT Pinyin string into blocks."
-  [pinyin]
-  (let [abbr-letters  #"([A-Z]( [A-Z])+)( |$)"
-        remove-spaces #(str (str/replace (% 1) " " "") (% 3))]
-    (str/replace pinyin abbr-letters remove-spaces)))
-
-(defn neutral-as-0
-  "Convert the neutral tone digits (represented as 5 in CC-CEDICT) to 0.
-  This ensures that the Pinyin strings are alphabetically sortable."
-  [s]
-  (if (pe/pinyin-block+digits? s)
-    (str/replace s "5" "0")
-    s))
-
-(defn pinyin-key
-  "Convert a CC-CEDICT Pinyin string into a form for use as a map key."
-  [s]
-  (-> s
-      (str/replace "'" "")
-      (str/replace " " "")
-      (str/replace "·" "")                                  ; middle dot
-      (str/replace "," "")
-      str/lower-case))
-
-(defn split-def
-  "Split the CC-CEDICT definition string into separate, unique parts."
-  [definition]
-  (set (str/split definition #"/")))
-
-(defn line->listing
-  "Extract the constituents of a line in a CC-CEDICT dictionary file.
-  Returns a map representation suitable for use as a dictionary entry."
-  [line]
-  (let [pattern #"^([^ ]+) ([^ ]+) \[([^]]+)\] /(.+)/"
-        [_ trad simp pinyin defs :as entry] (re-matches pattern line)]
-    (when entry
-      (let [pinyin* (u:->umlaut (neutral-as-0 pinyin))]
-        {d/trad                  trad
-         d/simp                  simp
-         d/pinyin                (join-abbr pinyin*)
-         d/pinyin-key            (pinyin-key (str/replace pinyin* #"\d" ""))
-         d/pinyin+digits-key     (pinyin-key pinyin*)
-         d/pinyin+diacritics-key (pinyin-key (p/digits->diacritics
-                                               pinyin*
-                                               :v-as-umlaut false))
-         d/defs                  (split-def defs)}))))
-
-
 ;;;; POST-PROCESSING (CLIENT-SIDE)
 
 (defn sort-defs
