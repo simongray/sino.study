@@ -172,12 +172,18 @@
   "Find English dictionary keys based on a CC-CEDICT listing.
   Stop-words are removed entirely, unless they make up a full definition."
   [listing]
-  (let [stopwords* (set/difference data/stopwords (::definitions listing))]
-    (set/difference (->> (::definitions listing)
-                         (map ^String str/lower-case)
-                         (map #(str/split % #"[^a-z-]+"))
-                         (flatten)
-                         (set))
+  (let [stopwords*   (set/difference data/stopwords (::definitions listing))
+        single-words (->> (::definitions listing)
+                          (map ^String str/lower-case)
+                          (map #(str/split % #"[^a-z-]+"))
+                          (flatten)
+                          (set))
+        verblikes    (->> (::definitions listing)
+                          (filter #(str/starts-with? %"to "))
+                          (map #(subs % 3)))]
+    (set/difference (set/union (::definitions listing)
+                               single-words
+                               verblikes)
                     stopwords*)))
 
 (defn english-add
