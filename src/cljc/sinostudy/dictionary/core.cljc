@@ -96,9 +96,9 @@
                           {other #{(get listing other)}}))
         classifiers   (::classifiers listing)
         frequency     (::frequency listing)
-        decomposition (get-in listing (conj [::info script] ::decomposition))
-        etymology     (get-in listing (conj [::info script] ::etymology))
-        radical       (get-in listing (conj [::info script] ::radical))
+        decomposition (get-in listing [::info script ::decomposition])
+        etymology     (get-in listing [::info script ::etymology])
+        radical       (get-in listing [::info script ::radical])
         base-entry    {::word    (get listing script)
                        ::scripts #{script}
                        ::uses    {(::pinyin listing) (::definitions listing)}}]
@@ -155,7 +155,7 @@
 (defn pinyin-entry
   "Make a pinyin dictionary entry based on a CC-CEDICT listing."
   [listing]
-  (conj #{(::traditional listing)} (::simplified listing)))
+  (hash-set (::traditional listing) (::simplified listing)))
 
 (defn pinyin-add
   "Add an entry to a pinyin dictionary from a CC-CEDICT listing."
@@ -192,7 +192,7 @@
   "Add an entry to the pinyin dictionary from a CC-CEDICT listing."
   [dict listing]
   (let [ks (english-keys listing)
-        v  (conj #{(::traditional listing)} (::simplified listing))]
+        v  (hash-set (::traditional listing) (::simplified listing))]
     (loop [dict* dict
            ks*   ks]
       (if (seq ks*)
@@ -245,7 +245,7 @@
                           nil)
           radical       (get info "radical")
           assoc*        (fn [coll k v]
-                          (assoc-in coll (conj [::info script] k) v))]
+                          (assoc-in coll [::info script k] v))]
       (cond-> listing
               decomposition (assoc* ::decomposition decomposition)
               etymology (assoc* ::etymology etymology)
