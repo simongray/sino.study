@@ -14,9 +14,13 @@ facilitated by [Transit](https://github.com/cognitect/transit-format).
 The functionality is built around my own wrapper library for Stanford CoreNLP,
 [Computerese](https://github.com/simongray/Computerese).
 
-## Development
+# Development
 
-### Run re-frame application
+## Testing things out in the REPL
+The REPL should start in the user ns with various relevant namespaces required.
+The user ns also includes relevant functions for development.
+
+## Run re-frame application
 ```
 lein clean
 lein figwheel dev
@@ -30,13 +34,7 @@ If there are any issues getting the app to show up (e.g. blank page),
 then try clearing the browser cache. Note that some functionality will require
 the backend to be running too, e.g. dictionary results.
 
-## Compiling a frontend production build
-To compile ClojureScript to JavaScript:
 
-```
-lein clean
-lein cljsbuild once min
-```
 ## Run Compojure application
 To start a web server for the application, run:
 
@@ -44,3 +42,12 @@ To start a web server for the application, run:
 lein ring server
 ````
 Wait a bit, then browse to [http://localhost:3000](http://localhost:3000).
+
+
+## Compiling a frontend production build
+To compile ClojureScript to JavaScript:
+
+```
+lein clean
+lein cljsbuild once min
+```
