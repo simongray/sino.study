@@ -43,7 +43,10 @@
                                   [ring/ring-mock "0.3.0"]]
 
                              ;; reagent/re-frame
-                   :plugins [[lein-figwheel "0.5.13"]]}}
+                   :plugins [[lein-figwheel "0.5.13"]]
+                   :source-paths ["dev/src/clj"]
+                   :repl-options {:init-ns user
+                                  :init (println "Started dev REPL in user")}}}
 
   ;; compojure
   :ring {:handler sinostudy.handler/app}
