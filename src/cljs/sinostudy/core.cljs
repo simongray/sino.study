@@ -1,7 +1,6 @@
 (ns sinostudy.core
   (:require [reagent.core :as reagent]
             [re-frame.core :as rf]
-            [re-frame.db :as db]
             [day8.re-frame.http-fx]
             [secretary.core :as secretary]
             [sinostudy.subs :as subs]
