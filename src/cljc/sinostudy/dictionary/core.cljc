@@ -233,15 +233,18 @@
 
 ;;;; CHARACTER ETYMOLOGY, DECOMPOSITION, ETC.
 
+(defn ks->ns-keywords
+  "Convert the top-level keys in a map to namespaced keywords."
+  [ns m]
+  (let [ns-k+v (fn [[k v]] [(keyword (str ns) (str k)) v])]
+    (into {} (map ns-k+v m))))
+
 (defn add-info*
   [script makemeahanzi listing]
   (if-let [info (get makemeahanzi (get listing script))]
     (let [decomposition (get info "decomposition")
-          ;; TODO: is a tagged literal the proper way to prepend the ns?
           etymology     (if-let [raw (get info "etymology")]
-                          (->> raw
-                               (walk/keywordize-keys)
-                               (tagged-literal 'sinostudy.dictionary.core))
+                          (ks->ns-keywords 'sinostudy.dictionary.core raw)
                           nil)
           radical       (get info "radical")
           assoc*        (fn [coll k v]
