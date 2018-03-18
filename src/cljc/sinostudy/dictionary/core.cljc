@@ -284,21 +284,25 @@
      ::pinyin+diacritics (reduce pinyin+diacritics-key-add {} listings*)}))
 
 (defn look-up
-  "Look up the specified word in each dictionary and merge the results."
-  [dicts word]
-  (let [look-up*    (fn [dict word] (get (get dicts dict) word))
-        get-entries (fn [words] (set (map #(look-up* ::hanzi %) words)))
-        hanzi       (look-up* ::hanzi word)
-        pinyin      (look-up* ::pinyin word)
-        digits      (look-up* ::pinyin+digits word)
-        diacritics  (look-up* ::pinyin+diacritics word)
-        english     (look-up* ::english word)]
-    (cond-> {::word word}
-            hanzi (assoc ::hanzi #{hanzi})
-            pinyin (assoc ::pinyin (get-entries pinyin))
-            digits (assoc ::pinyin+digits (get-entries digits))
-            diacritics (assoc ::pinyin+diacritics (get-entries diacritics))
-            english (assoc ::english (get-entries english)))))
+  "Look up the specified word in each dictionary and merge the results.
+  Limit (optional) is a set of accepted result types."
+  ([dicts word limit]
+   (let [look-up*    (fn [dict word] (-> dicts (get dict) (get word)))
+         limited     (fn [dict] (if limit (get limit dict) dict))
+         get-entries (fn [words] (set (map #(look-up* ::hanzi %) words)))
+         hanzi       (look-up* (limited ::hanzi) word)
+         pinyin      (look-up* (limited ::pinyin) word)
+         digits      (look-up* (limited ::pinyin+digits) word)
+         diacritics  (look-up* (limited ::pinyin+diacritics) word)
+         english     (look-up* (limited ::english) word)]
+     (cond-> {::word word}
+             hanzi (assoc ::hanzi #{hanzi})
+             pinyin (assoc ::pinyin (get-entries pinyin))
+             digits (assoc ::pinyin+digits (get-entries digits))
+             diacritics (assoc ::pinyin+diacritics (get-entries diacritics))
+             english (assoc ::english (get-entries english)))))
+  ([dicts word]
+   (look-up dicts word nil)))
 
 (defn- safe-comparator
   "Create a comparator for  sorting that will not lose items by accident.

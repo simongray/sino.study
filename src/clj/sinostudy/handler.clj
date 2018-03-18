@@ -1,6 +1,7 @@
 (ns sinostudy.handler
   (:import (java.io ByteArrayOutputStream))
   (:require [clojure.java.io :as io]
+            [clojure.string :as str]
             [compojure.core :refer :all]
             [compojure.route :as route]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
@@ -44,27 +45,35 @@
     (.reset baos)
     ret))
 
-(defn execute-query
-  "Execute a query from the ClojureScript app. The queries all resolve
-  to a page-type (keyword) and a query-string."
-  [page-type query-string]
-  (cond
-    (= pd/words page-type) (d/look-up dicts query-string)))
+(defn ns-keywords
+  "Convert a string separated by a delimiter into namespaced keywords."
+  [re ns s]
+  (if (string? s)
+    (->> (str/split s re)
+         (map (partial keyword (str ns)))
+         (set))
+    s))
 
-(defn query-result
+(defn execute-query
+  "Execute a query from the ClojureScript app.
+  The queries all resolve to a type, a query, and optional parameters."
+  [type query {:keys [limit]}]
+  (let [ns-keywords* (partial ns-keywords #"," 'sinostudy.dictionary.core)]
+    (cond
+      (= pd/words type) (d/look-up dicts query (ns-keywords* limit)))))
+
+(defn transit-result
   "Get the Transit-encoded result of a query."
-  [query-type query-string]
-  (let [page-type (keyword query-type)
-        result    (execute-query page-type query-string)]
-    (transit-write {:page   [page-type query-string]
-                    :result result})))
+  [type query opts]
+  (transit-write {:page   [type query]
+                  :result (execute-query type query opts)}))
 
 (defroutes app-routes
   ;; ANY rather than GET is necessary to allow cross origin requests during dev.
-  (ANY "/query/:query-type/:query-string" [query-type query-string]
+  (ANY "/query/:type/:query" [type query & opts]
     {:status  200
      :headers ajax-headers
-     :body    (query-result query-type query-string)})
+     :body    (transit-result (keyword type) query opts)})
 
   ;; HTML page requests all resolve to the ClojureScript app.
   ;; The internal routing of the app creates the correct presentation.
