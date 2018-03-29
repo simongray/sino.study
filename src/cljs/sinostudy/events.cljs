@@ -1,12 +1,12 @@
 (ns sinostudy.events
   (:require [clojure.string :as str]
+            [clojure.set :as set]
             [re-frame.core :as rf]
             [accountant.core :as accountant]
             [sinostudy.db :as db]
             [sinostudy.pinyin.core :as p]
             [sinostudy.pinyin.eval :as pe]
             [sinostudy.dictionary.core :as d]
-            [sinostudy.dictionary.entry :as entry]
             [sinostudy.pages.defaults :as pd]
             [ajax.core :as ajax]
             [cognitect.transit :as transit]))
@@ -30,7 +30,8 @@
   e.g. presort word lists and the like."
   [page-type content]
   (cond
-    (= page-type pd/words) (entry/prepare-entries content)
+    ;; TODO: figure out what/if preprocessing is needed
+    ;(= page-type pd/words) (entry/prepare-entries content)
     :else content))
 
 (defn press-enter-to [s]
@@ -54,6 +55,21 @@
     1 (first (first actions))
     ::open-action-chooser))
 
+(defn save-dict-entries
+  "Save the entries of a dictionary result into the db."
+  [db content]
+  (let [path    [:pages :words]
+        entries (->> content
+                     (filter #(-> % first (not= ::d/word)))
+                     (map second)
+                     (apply set/union))]
+    (loop [db*      db
+           entries* entries]
+      (if (empty? entries*)
+        db*
+        (let [entry (first entries*)
+              path* (conj path (::d/word entry))]
+          (recur (assoc-in db* path* entry) (rest entries*)))))))
 
 ;;;; QUERY EVALUATION
 
@@ -222,7 +238,13 @@
     (let [path      (into [:pages] page)
           page-type (first page)
           content   (preprocess-content page-type result)]
-      (assoc-in db path content))))
+      (cond
+        ;; Store result directly and then store individual entries.
+        ;; TODO: reduce overwrites for hanzi result?
+        (= page-type :words) (-> db
+                                 (assoc-in path content)
+                                 (save-dict-entries content))
+        :else db))))
 
 ;; dispatched upon a successful retrieval of a query result
 (rf/reg-event-fx
