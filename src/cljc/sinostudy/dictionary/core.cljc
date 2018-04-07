@@ -1,7 +1,6 @@
 (ns sinostudy.dictionary.core
   (:require [clojure.set :as set]
             [clojure.string :as str]
-            [clojure.walk :as walk]
             [sinostudy.dictionary.data :as data]
             [sinostudy.dictionary.embed :as embed]))
 
