@@ -17,7 +17,7 @@
 
 (defn add-word-links
   [text]
-  (let [href    #(str "/" (name pd/words) "/" %)
+  (let [href    #(str "/" (name pd/terms) "/" %)
         ids     (range (count text))
         link-up (fn [word id] [:a {:title (str "look up " word)
                                    :href  (href word)
@@ -45,7 +45,7 @@
   "Converts a dictionary entry into a hiccup list item."
   [word script entry]
   (let [id             (:id entry)
-        href           (str "/" (name pd/words) "/" word "/" id)
+        href           (str "/" (name pd/terms) "/" word "/" id)
         definitions    (d/defs entry)
         false-variant? (contains? (:false-variant entry) script)
         key            (if false-variant? (str "false-" href) href)]
@@ -159,7 +159,7 @@
   "Render a page for display based on the page-type and content."
   [[page-type page-key] content script]
   (cond
-    (= pd/words page-type) (render-word page-key content script)
+    (= pd/terms page-type) (render-word page-key content script)
     :else content))
 
 (defn navlink
@@ -275,7 +275,7 @@
 (defn- action-text
   [action]
   (case (first action)
-    ::events/look-up-word (str "Look up word")
+    ::events/look-up (str "Look up word")
     ::events/digits->diacritics "Convert to diacritics"
     ::events/diacritics->digits "Convert to digits"
     ::events/close-action-chooser "Cancel"))

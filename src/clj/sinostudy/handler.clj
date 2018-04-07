@@ -60,7 +60,7 @@
   [type query {:keys [limit]}]
   (let [ns-keywords* (partial ns-keywords #"," 'sinostudy.dictionary.core)]
     (cond
-      (= pd/words type) (d/look-up dicts query (ns-keywords* limit)))))
+      (= pd/terms type) (d/look-up dicts query (ns-keywords* limit)))))
 
 (defn transit-result
   "Get the Transit-encoded result of a query."

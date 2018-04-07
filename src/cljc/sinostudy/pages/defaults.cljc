@@ -3,5 +3,5 @@
 (def static
   :static)
 
-(def words
-  :words)
+(def terms
+  :terms)

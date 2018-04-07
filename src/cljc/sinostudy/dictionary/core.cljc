@@ -98,7 +98,7 @@
         decomposition (get-in listing [::info script ::decomposition])
         etymology     (get-in listing [::info script ::etymology])
         radical       (get-in listing [::info script ::radical])
-        base-entry    {::word    (get listing script)
+        base-entry    {::term    (get listing script)
                        ::scripts #{script}
                        ::uses    {(::pinyin listing) (::definitions listing)}}]
     (cond-> base-entry
@@ -204,11 +204,11 @@
   Relevance is able to exceed 1 slightly, as word frequency is also added to the
   score, allowing for more accurate sorting (it is a number from 0 to 1 that
   tends towards 0). This is what puts e.g. 句子 ahead of 语句 for 'sentence'."
-  [word entry]
+  [term entry]
   (let [uses      (apply set/union (vals (::uses entry)))
         score     (fn [use]
-                    (if (str/includes? use word)
-                      (/ (count word) (count use))
+                    (if (str/includes? use term)
+                      (/ (count term) (count use))
                       0))
         scores    (map score uses)
         max-score (apply max scores)
@@ -283,18 +283,18 @@
      ::pinyin+diacritics (reduce pinyin+diacritics-key-add {} listings*)}))
 
 (defn look-up
-  "Look up the specified word in each dictionary and merge the results.
+  "Look up the specified term in each dictionary and merge the results.
   Limit (optional) is a set of accepted result types."
-  ([dicts word limit]
+  ([dicts term limit]
    (let [look-up*    (fn [dict word] (-> dicts (get dict) (get word)))
          limited     (fn [dict] (if limit (get limit dict) dict))
          get-entries (fn [words] (set (map #(look-up* ::hanzi %) words)))
-         hanzi       (look-up* (limited ::hanzi) word)
-         pinyin      (look-up* (limited ::pinyin) word)
-         digits      (look-up* (limited ::pinyin+digits) word)
-         diacritics  (look-up* (limited ::pinyin+diacritics) word)
-         english     (look-up* (limited ::english) word)]
-     (cond-> {::word word}
+         hanzi       (look-up* (limited ::hanzi) term)
+         pinyin      (look-up* (limited ::pinyin) term)
+         digits      (look-up* (limited ::pinyin+digits) term)
+         diacritics  (look-up* (limited ::pinyin+diacritics) term)
+         english     (look-up* (limited ::english) term)]
+     (cond-> {::term term}
              hanzi (assoc ::hanzi #{hanzi})
              pinyin (assoc ::pinyin (get-entries pinyin))
              digits (assoc ::pinyin+digits (get-entries digits))
@@ -318,8 +318,8 @@
   "Sort the result of a dictionary look-up.
   English results are sorted according to english-relevance."
   [result]
-  (let [relevance  (memoize (partial english-relevance (::word result)))
-        relevance* (comp - (safe-comparator relevance ::word))
+  (let [relevance  (memoize (partial english-relevance (::term result)))
+        relevance* (comp - (safe-comparator relevance ::term))
         sorted     (fn [f coll] (apply sorted-set-by f coll))
         pinyin     (::pinyin result)
         digits     (::pinyin+digits result)

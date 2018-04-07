@@ -43,7 +43,7 @@
    ::no-actions          "not sure what to do with that..."
    ::digits->diacritics  (press-enter-to "convert to tone diacritics")
    ::diacritics->digits  (press-enter-to "convert to tone digits")
-   ::look-up-word        (press-enter-to "look up the word")
+   ::look-up             (press-enter-to "look up the word")
    ::open-action-chooser (press-enter-to "choose an action")})
 
 (defn hint
@@ -58,9 +58,9 @@
 (defn save-dict-entries
   "Save the entries of a dictionary result into the db."
   [db content]
-  (let [path    [:pages :words]
+  (let [path    [:pages :terms]
         entries (->> content
-                     (filter #(-> % first (not= ::d/word)))
+                     (filter #(-> % first (not= ::d/term)))
                      (map second)
                      (apply set/union))]
     (loop [db*      db
@@ -68,7 +68,7 @@
       (if (empty? entries*)
         db*
         (let [entry (first entries*)
-              path* (conj path (::d/word entry))]
+              path* (conj path (::d/term entry))]
           (recur (assoc-in db* path* entry) (rest entries*)))))))
 
 ;;;; QUERY EVALUATION
@@ -111,7 +111,7 @@
   "Evaluate a Pinyin query to get a vector of possible actions."
   [query]
   (cond-> []
-          (pinyin-block? query) (conj [::look-up-word (d/pinyin-key query)])
+          (pinyin-block? query) (conj [::look-up (d/pinyin-key query)])
           (digits->diacritics? query) (conj [::digits->diacritics query])
           (diacritics->digits? query) (conj [::diacritics->digits query])))
 
@@ -122,7 +122,7 @@
   ;; some tests need an umlaut'ed query
   (cond
     (command? query) (eval-command query)
-    (pe/hanzi-block? query) [[::look-up-word query]]
+    (pe/hanzi-block? query) [[::look-up query]]
     :else (eval-pinyin (p/umlaut query))))
 
 
@@ -241,7 +241,7 @@
       (cond
         ;; Store result directly and then store individual entries.
         ;; TODO: reduce overwrites for hanzi result?
-        (= page-type :words) (-> db
+        (= page-type :terms) (-> db
                                  (assoc-in path content)
                                  (save-dict-entries content))
         :else db))))
@@ -382,7 +382,7 @@
           page-type (first page)]
       (cond
         (= pd/static page-type) {}
-        (= pd/words page-type) (let [word-page (subvec page 0 2)]
+        (= pd/terms page-type) (let [word-page (subvec page 0 2)]
                                  (if (not (get-in pages word-page))
                                    {:dispatch [::send-query word-page]}
                                    {}))))))
@@ -413,7 +413,7 @@
   ::test
   [(rf/inject-cofx ::now)]
   (fn [_ _]
-    {:dispatch [::send-query [pd/words "你好"]]}))
+    {:dispatch [::send-query [pd/terms "你好"]]}))
 
 (rf/reg-event-db
   ::clear-input
@@ -421,11 +421,10 @@
     (assoc db :input "")))
 
 (rf/reg-event-fx
-  ::look-up-word
-  (fn [cofx [_ word]]
-    (let [db (:db cofx)]
-      {:navigate-to (str "/" (name pd/words) "/" word)
-       :dispatch    [::display-hint nil]})))
+  ::look-up
+  (fn [_ [_ term]]
+    {:navigate-to (str "/" (name pd/terms) "/" term)
+     :dispatch    [::display-hint nil]}))
 
 (rf/reg-event-fx
   ::digits->diacritics

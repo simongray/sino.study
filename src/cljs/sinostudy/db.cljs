@@ -11,7 +11,7 @@
    :actions       nil
    :marked-action 0
    :script        :simplified
-   :pages         {pd/words  {}
+   :pages         {pd/terms  {}
                    pd/static static-pages}
    :history       '()
    :evaluations   '()

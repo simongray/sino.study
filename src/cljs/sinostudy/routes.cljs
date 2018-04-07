@@ -32,12 +32,12 @@
     (re-frame/dispatch [::events/change-page [pd/static (str "/" page)]]))
 
   (defroute
-    (str "/" (name pd/words) "/:word") [word]
-    (re-frame/dispatch [::events/change-page [pd/words word]]))
+    (str "/" (name pd/terms) "/:word") [word]
+    (re-frame/dispatch [::events/change-page [pd/terms word]]))
 
   (defroute
-    (str "/" (name pd/words) "/:word/:n") [word n]
-    (re-frame/dispatch [::events/change-page [pd/words word (js/parseInt n)]]))
+    (str "/" (name pd/terms) "/:word/:n") [word n]
+    (re-frame/dispatch [::events/change-page [pd/terms word (js/parseInt n)]]))
 
   (hook-browser-navigation!)
 
