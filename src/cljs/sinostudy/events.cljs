@@ -289,15 +289,13 @@
 ;; Only dispatched when the action-chooser is open.
 (rf/reg-event-fx
   ::on-key-down
-  [(rf/inject-cofx ::focus)]
   (fn [cofx [_ key]]
     (let [db         (:db cofx)
-          focus      (:focus cofx)
           actions    (:actions db)
           marked     (:marked-action db)
           next?      (fn [k] (contains? #{"ArrowRight" "ArrowDown"} k))
           prev?      (fn [k] (contains? #{"ArrowLeft" "ArrowUp"} k))
-          valid-num? (fn [k] (let [num (js/parseInt key)]
+          valid-num? (fn [k] (let [num (js/parseInt k)]
                                (and (int? num)
                                     (< 0 num (inc (count actions))))))]
       (cond
