@@ -404,6 +404,7 @@ ol li {
 	font-family: Didot, serif;
 	letter-spacing: 0.3ch;
     padding: 0.2em 1ch;
+    margin-right: 0.5ch;
     border: 1pt solid #AAAAAA;
     border-radius: 0.5ch;
     background-color: white;
@@ -422,10 +423,6 @@ ol li {
     color: #ead7cf;
 }
 
-.pinyin + .tag, .tag + .tag  {
-	margin-left: 0.5ch;
-}
-
 .dictionary-entry h1 {
 	font-size: 52pt;
 }
@@ -436,6 +433,7 @@ ol li {
 
 .dictionary-entry .subheader {
 	font-size: 18pt;
+	line-height: 1.5;
 }
 
 .hanzi {
