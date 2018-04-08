@@ -10,13 +10,6 @@
             [sinostudy.dictionary.embed :as embed]
             [sinostudy.pages.defaults :as pd]))
 
-(defn hanzi-link
-  "Link the text, but only link if the text is Hanzi."
-  [text]
-  (if (pe/hanzi-block? text)
-    (vc/link-term text)
-    text))
-
 (defn term-title
   "The title of the term with links to characters -OR- decomposition
   into components if the term is a character."
@@ -30,7 +23,7 @@
       (cond
         (= attribute "decomposition")
         [:span.hanzi {:title (str "Character decomposition")}
-         (map hanzi-link decomposition*)]
+         (map vc/hanzi-link decomposition*)]
 
         decomposition*
         [:span.hanzi

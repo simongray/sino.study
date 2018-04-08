@@ -1,5 +1,6 @@
 (ns sinostudy.views.common
-  (:require [sinostudy.pages.defaults :as pd]))
+  (:require [sinostudy.pages.defaults :as pd]
+            [sinostudy.pinyin.eval :as pe]))
 
 (defn link-term
   "Add links to dictionary look-ups for each term in text.
@@ -11,3 +12,10 @@
                                 :href  (str "/" (name pd/terms) "/" term)
                                 :key   id} term])]
     (map link text ids)))
+
+(defn hanzi-link
+  "Link the text, but only link if the text is Hanzi."
+  [text]
+  (if (pe/hanzi-block? text)
+    (link-term text)
+    text))
