@@ -7,7 +7,8 @@
             [sinostudy.subs :as subs]
             [sinostudy.events :as events]
             [sinostudy.rim.core :as rim]
-            [sinostudy.dictionary.embed :as embed]))
+            [sinostudy.dictionary.embed :as embed]
+            [sinostudy.pages.defaults :as pd]))
 
 (defn hanzi-link
   "Link the text, but only link if the text is Hanzi."
@@ -19,30 +20,26 @@
 (defn term-title
   "Render the title of the term with links to characters -OR- decomposition
   into components if the term is a character."
-  [term decomposition]
-  (let [decomposed     @(rf/subscribe [::subs/decomposed])
-        decomposition* (when (not= decomposition "？") decomposition)]
+  [term decomposed? decomposition]
+  (let [decomposition* (when (not= decomposition "？") decomposition)]
     (if (> (count term) 1)
       [:span.hanzi (vc/link-term term)]
       (cond
-        (and decomposed
-             (= decomposed decomposition*))
-        [:span.hanzi {:key   ::d/term
-                      :title (str "Character decomposition")}
-         (map hanzi-link decomposition)]
+        decomposed?
+        [:span.hanzi {:title (str "Character decomposition")}
+         (map hanzi-link decomposition*)]
 
         decomposition*
         [:span.hanzi
          {:key   ::d/term
           :title (str "Click to decompose")}
-         [:a.fake-link
-          {:on-click #(rf/dispatch [::events/decompose-char decomposition*])}
+         [:a
+          {:href (str "/" (name pd/terms) "/" term "/decomposition")}
           term]]
 
         :else
         [:span.hanzi
-         {:key   ::d/term
-          :title term}
+         {:title term}
          term]))))
 
 ;;; TODO: need to be able link hint text in 你 (ideographic)
@@ -97,7 +94,7 @@
                         (map vector)
                         (map vc/link-term)
                         (map (fn [variation]
-                               [:span.hanzi variation]))))])
+                               [:span.hanzi {:key variation} variation]))))])
 
 (defn classifiers-tag
   "Render a tag with the classifiers of an entry in a given script."
@@ -126,37 +123,39 @@
 (defn usage-list
   "Render a list of definitions for each Pinyin variation of an entry."
   [script uses]
-  (for [[pinyin definitions] uses]
-    [:div
-     [:h2.pinyin (->> (str/split pinyin #" ")
-                      (map p/digits->diacritics)
-                      (map vector)
-                      (map vc/link-term)
-                      (interpose " "))]
-     [:ol
-      (for [definition definitions]
-        ;; TODO: make less daunting
-        (let [link        (comp vc/link-term vector)
-              refr-f      (comp link script d/refr->m)
-              index       (fn [script coll]
-                            (get coll (cond
-                                        (= 1 (count coll)) 0
-                                        (= d/simp script) 1
-                                        :else 0)))
-              script*     (partial index script)
-              hanzi-f     (comp link script* #(str/split % #"\|"))
-              pinyinize   (fn [s] [:span.pinyin {:key "pinyin"} s])
-              no-brackets #(subs % 1 (dec (count %)))
-              ;; TODO: remove spaces from href for proper linking
-              pinyin-f    (comp pinyinize link p/digits->diacritics no-brackets)
-              definition* (-> definition
-                              (rim/re-handle embed/refr refr-f)
-                              (rim/re-handle embed/hanzi hanzi-f)
-                              (rim/re-handle embed/pinyin pinyin-f))]
-          [:li {:key definition}
-           [:span.definition definition*]]))]]))
+  [:div
+   (for [[pinyin definitions] uses]
+     [:div {:key pinyin}
+      [:h2.pinyin
+       (->> (str/split pinyin #" ")
+            (map p/digits->diacritics)
+            (map vector)
+            (map vc/link-term)
+            (interpose " "))]
+      [:ol
+       (for [definition definitions]
+         ;; TODO: make less daunting
+         (let [link        (comp vc/link-term vector)
+               refr-f      (comp link script d/refr->m)
+               index       (fn [script coll]
+                             (get coll (cond
+                                         (= 1 (count coll)) 0
+                                         (= d/simp script) 1
+                                         :else 0)))
+               script*     (partial index script)
+               hanzi-f     (comp link script* #(str/split % #"\|"))
+               pinyinize   (fn [s] [:span.pinyin {:key "pinyin"} s])
+               no-brackets #(subs % 1 (dec (count %)))
+               ;; TODO: remove spaces from href for proper linking
+               pinyin-f    (comp pinyinize link p/digits->diacritics no-brackets)
+               definition* (-> definition
+                               (rim/re-handle embed/refr refr-f)
+                               (rim/re-handle embed/hanzi hanzi-f)
+                               (rim/re-handle embed/pinyin pinyin-f))]
+           [:li {:key definition}
+            [:span.definition definition*]]))]])])
 
-(defn render-entry
+(defn entry
   "Render a dictionary entry for a specific term using the given script."
   [{term          ::d/term
     scripts       ::d/scripts
@@ -167,10 +166,11 @@
     radical       ::d/radical
     decomposition ::d/decomposition
     etymology     ::d/etymology}
-   script]
+   script
+   decomposed?]
   [:div.dictionary-entry
    [:h1
-    (term-title term decomposition)
+    (term-title term decomposed? decomposition)
     (etymology-blurb etymology)]
    [:p.subheader
     (interpose " "
@@ -186,7 +186,7 @@
                  (radical-tag term radical))]))]
    (usage-list script uses)])
 
-(defn render-search-result
+(defn search-result
   [search-result script]
   [:p "list result"])
 
@@ -196,10 +196,10 @@
   [:h1 "Unknown term"
    [:p "There are no dictionary entries for the term \"" term "\"."]])
 
-(defn render-dictionary-page
+(defn dictionary-page
   "Render a dictionary page (entry or search result list)."
-  [content script]
+  [content script decomposed?]
   (cond
-    (::d/uses content) (render-entry content script)
-    (> (count (keys content)) 1) (render-search-result content script)
+    (::d/uses content) (entry content script decomposed?)
+    (> (count (keys content)) 1) (search-result content script)
     :else (unknown-term (::d/term content))))

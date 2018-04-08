@@ -12,7 +12,6 @@
    :actions       nil
    :marked-action 0
    :script        ::d/simplified
-   :decomposed    nil
    :pages         {pd/terms  {}
                    pd/static static-pages}
    :history       '()

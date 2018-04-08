@@ -386,9 +386,9 @@
           page-type (first page)]
       (cond
         (= pd/static page-type) {}
-        (= pd/terms page-type) (let [word-page (subvec page 0 2)]
-                                 (if (not (get-in pages word-page))
-                                   {:dispatch [::send-query word-page]}
+        (= pd/terms page-type) (let [dict-page (subvec page 0 2)]
+                                 (if (not (get-in pages dict-page))
+                                   {:dispatch [::send-query dict-page]}
                                    {}))))))
 
 ;; Dispatched by clicking links only!
