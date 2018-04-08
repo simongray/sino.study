@@ -1,11 +1,13 @@
 (ns sinostudy.views.dictionary
-  (:require [re-frame.core :as rf]
+  (:require [clojure.string :as str]
+            [re-frame.core :as rf]
             [sinostudy.dictionary.core :as d]
             [sinostudy.pinyin.core :as p]
             [sinostudy.views.common :as vc]
             [sinostudy.subs :as subs]
             [sinostudy.events :as events]
-            [clojure.string :as str]))
+            [sinostudy.rim.core :as rim]
+            [sinostudy.dictionary.embed :as embed]))
 
 (defn hanzi-link
   "Link the text, but only link if the text is Hanzi."
@@ -123,7 +125,7 @@
 
 (defn usage-list
   "Render a list of definitions for each Pinyin variation of an entry."
-  [uses]
+  [script uses]
   (for [[pinyin definitions] uses]
     [:div
      [:h2.pinyin (->> (str/split pinyin #" ")
@@ -133,25 +135,26 @@
                       (interpose " "))]
      [:ol
       (for [definition definitions]
-        ;(let [link        (comp add-word-links vector)
-        ;      refr-f      (comp link script d/refr->m)
-        ;      index       (fn [script coll]
-        ;                    (get coll (cond
-        ;                                (= 1 (count coll)) 0
-        ;                                (= d/simp script) 1
-        ;                                :else 0)))
-        ;      script*     (partial index script)
-        ;      hanzi-f     (comp link script* #(str/split % #"\|"))
-        ;      pinyinize   (fn [s] [:span.pinyin {:key "pinyin"} s])
-        ;      no-brackets #(subs % 1 (dec (count %)))
-        ;      ;; TODO: remove spaces from href for proper linking
-        ;      pinyin-f    (comp pinyinize link p/digits->diacritics no-brackets)
-        ;      definition* (-> definition
-        ;                      (rim/re-handle embed/refr refr-f)
-        ;                      (rim/re-handle embed/hanzi hanzi-f)
-        ;                      (rim/re-handle embed/pinyin pinyin-f))]
-        [:li {:key definition}
-         [:span.definition definition]])]]))
+        ;; TODO: make less daunting
+        (let [link        (comp vc/link-term vector)
+              refr-f      (comp link script d/refr->m)
+              index       (fn [script coll]
+                            (get coll (cond
+                                        (= 1 (count coll)) 0
+                                        (= d/simp script) 1
+                                        :else 0)))
+              script*     (partial index script)
+              hanzi-f     (comp link script* #(str/split % #"\|"))
+              pinyinize   (fn [s] [:span.pinyin {:key "pinyin"} s])
+              no-brackets #(subs % 1 (dec (count %)))
+              ;; TODO: remove spaces from href for proper linking
+              pinyin-f    (comp pinyinize link p/digits->diacritics no-brackets)
+              definition* (-> definition
+                              (rim/re-handle embed/refr refr-f)
+                              (rim/re-handle embed/hanzi hanzi-f)
+                              (rim/re-handle embed/pinyin pinyin-f))]
+          [:li {:key definition}
+           [:span.definition definition*]]))]]))
 
 (defn render-entry
   "Render a dictionary entry for a specific term using the given script."
@@ -181,7 +184,7 @@
                  (classifiers-tag script classifiers))
                (when radical
                  (radical-tag term radical))]))]
-   (usage-list uses)])
+   (usage-list script uses)])
 
 (defn render-search-result
   [search-result script]
