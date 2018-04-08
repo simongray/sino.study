@@ -229,6 +229,14 @@
       (assoc listing ::frequency frequency)
       listing)))
 
+;;; TODO: find proper thresholds for labels
+(defn frequency-label
+  "Get human-readable label for a given word frequency."
+  [frequency]
+  (cond
+    (> frequency 0.01) :high
+    (> 0.01 frequency 0.001) :medium
+    (> 0.001 frequency) :low))
 
 ;;;; CHARACTER ETYMOLOGY, DECOMPOSITION, ETC.
 

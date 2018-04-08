@@ -1,8 +1,9 @@
-(ns sinostudy.views
+(ns sinostudy.views.core
   (:require [re-frame.core :as rf]
             [clojure.string :as str]
             [sinostudy.subs :as subs]
             [sinostudy.events :as events]
+            [sinostudy.views.dictionary :as vd]
             [sinostudy.pages.defaults :as pd]
             [sinostudy.rim.core :as rim]
             [sinostudy.pinyin.core :as p]
@@ -157,9 +158,9 @@
 
 (defn render-page
   "Render a page for display based on the page-type and content."
-  [[page-type page-key] content script]
+  [[page-type _] content script]
   (cond
-    (= pd/terms page-type) (render-word page-key content script)
+    (= pd/terms page-type) (vd/render-dictionary-page content script)
     :else content))
 
 (defn navlink

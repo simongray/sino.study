@@ -34,6 +34,11 @@
     (:script db)))
 
 (rf/reg-sub
+  ::decomposed
+  (fn [db]
+    (:decomposed db)))
+
+(rf/reg-sub
   ::mode
   (fn [db]
     (:mode db)))

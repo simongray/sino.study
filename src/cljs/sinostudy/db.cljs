@@ -1,5 +1,6 @@
 (ns sinostudy.db
-  (:require [sinostudy.pages.defaults :as pd]))
+  (:require [sinostudy.pages.defaults :as pd]
+            [sinostudy.dictionary.core :as d]))
 
 (def static-pages
   {"/help"  [:div [:h1 "Help"] [:p "This is the Help page."]]
@@ -10,7 +11,8 @@
   {:input         ""
    :actions       nil
    :marked-action 0
-   :script        :simplified
+   :script        ::d/simplified
+   :decomposed    nil
    :pages         {pd/terms  {}
                    pd/static static-pages}
    :history       '()

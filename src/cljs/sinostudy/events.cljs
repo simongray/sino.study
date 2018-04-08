@@ -348,11 +348,15 @@
 ;; ::close-action-chooser (= cancel) is a special action (doesn't clear input).
 (rf/reg-event-fx
   ::choose-action
-  (fn [cofx [_ action]]
-    (let [db (:db cofx)]
-      (if (= [::close-action-chooser] action)
-        {:dispatch [::close-action-chooser]}
-        {:dispatch-n (conj [[::close-action-chooser] action])}))))
+  (fn [_ [_ action]]
+    (if (= [::close-action-chooser] action)
+      {:dispatch [::close-action-chooser]}
+      {:dispatch-n (conj [[::close-action-chooser] action])})))
+
+(rf/reg-event-db
+  ::decompose-char
+  (fn [db [_ decomposition]]
+    (assoc db :decomposed decomposition)))
 
 ;; dispatched by pressing enter (defined in ::on-key-down)
 ;; forces an evaluation for the latest input if it hasn't been evaluated yet

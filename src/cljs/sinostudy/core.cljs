@@ -6,7 +6,7 @@
             [sinostudy.subs :as subs]
             [sinostudy.routes :as routes]
             [sinostudy.events :as events]
-            [sinostudy.views :as views]
+            [sinostudy.views.core :as views]
             [sinostudy.config :as config]))
 
 (defn dev-setup []

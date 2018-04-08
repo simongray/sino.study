@@ -273,18 +273,37 @@ span.keypress {
     color: #666666;
 }
 
-p, h1 {
+p, h1, h2 {
 	color: #555555;
 	margin: 0;
 	letter-spacing: 0.2ch;
 }
 
 
-h1 {
+h1, h2 {
 	font-family: Didot, serif;
 	font-weight: 600;
 	font-size: 24pt;
 	margin: 0 0 0.2em 0;
+}
+
+h1 .etymology {
+    margin-left: 2.5ch;
+    font-size: 12pt;
+    font-family: "Gill Sans", sans-serif;
+    font-weight: 200;
+    color: #BBBBBB;
+    letter-spacing: 0.4ch;
+    vertical-align: middle;
+}
+
+.etymology .hanzi {
+    color: #777777;
+}
+
+h2 {
+    font-weight: 400;
+    font-size: 20pt;
 }
 
 /* headers above lists (e.g. search results) should be centered */
@@ -389,6 +408,23 @@ ol li {
     border-radius: 0.5ch;
     background-color: white;
     color: #666666;
+}
+
+.frequency-high, .frequency-medium, .frequency-low {
+    font-size: 12pt;
+    margin-left: 0.3ch;
+}
+
+.frequency-high {
+    color: red;
+}
+
+.frequency-medium {
+    color: orange;
+}
+
+.frequency-low {
+    color: lightgrey;
 }
 
 .pinyin + .tag, .tag + .tag  {

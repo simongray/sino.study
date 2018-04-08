@@ -129,11 +129,15 @@
     "zhuai" "zhuan" "zhuang" "zhui" "zhun" "zhuo" "zi" "zong" "zou" "zu" "zuan"
     "zui" "zun" "zuo"})
 
+(def decomposition-symbols
+  "Unicode range for the so-called 'Ideographic Description Characters'.
+  They are used for decomposition of Hanzi."
+  #"\u2FF0-\u2FFF")
+
 ;; from http://kourge.net/projects/regexp-unicode-block
 (def hanzi-unicode
   {"CJK Radicals Supplement"            #"\u2E80-\u2EFF"
    "Kangxi Radicals"                    #"\u2F00-\u2FDF"
-   "Ideographic Description Characters" #"\u2FF0-\u2FFF"
    "CJK Symbols and Punctuation"        #"\u3000-\u303F"
    "CJK Strokes"                        #"\u31C0-\u31EF"
    "Enclosed CJK Letters and Months"    #"\u3200-\u32FF"
