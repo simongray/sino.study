@@ -50,22 +50,23 @@
     hint     ::d/hint
     semantic ::d/semantic
     phonetic ::d/phonetic}]
-  (cond
-    (and (or (= type "pictographic")
-             (= type "ideographic"))
-         hint)
-    [:span.etymology
-     {:title (str "Type: " type)}
-     "\"" hint "\""]
+  [:div.dictionary-header-bubble
+   (cond
+     (and (or (= type "pictographic")
+              (= type "ideographic"))
+          hint)
+     [:div.etymology
+      {:title (str "Type: " type)}
+      hint]
 
-    (and (= type "pictophonetic")
-         semantic
-         phonetic)
-    [:span.etymology
-     {:title (str "Type: " type)}
-     [:span.hanzi (vc/link-term semantic)]
-     " (" hint ") + "
-     [:span.hanzi (vc/link-term phonetic)]]))
+     (and (= type "pictophonetic")
+          semantic
+          phonetic)
+     [:div.etymology
+      {:title (str "Type: " type)}
+      [:span.hanzi (vc/link-term semantic)]
+      " (" hint ") + "
+      [:span.hanzi (vc/link-term phonetic)]])])
 
 (defn frequency-tag
   "Render a tag with a frequency label based on a word frequency."
@@ -170,8 +171,9 @@
     etymology     ::d/etymology}
    script]
   [:div.dictionary-entry
-   [:h1
-    (term-title term decomposition)
+   [:div.dictionary-header
+    [:h1
+     (term-title term decomposition)]
     (etymology-blurb etymology)]
    [:p.subheader
     (interpose " "

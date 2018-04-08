@@ -279,22 +279,33 @@ p, h1, h2 {
 	letter-spacing: 0.2ch;
 }
 
+.dictionary-header {
+    display: flex;
+    flex-direction: row;
+}
 
 h1, h2 {
 	font-family: Didot, serif;
 	font-weight: 600;
 	font-size: 24pt;
-	margin: 0 0 0.2em 0;
 }
 
-h1 .etymology {
-    margin-left: 2.5ch;
-    font-size: 12pt;
+.dictionary-header-bubble {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+}
+
+.etymology {
+    border-radius: 1ch;
+    padding: 1em;
+    margin: auto;
+    font-size: 10pt;
+    font-style: italic;
     font-family: "Gill Sans", sans-serif;
-    font-weight: 200;
+    font-weight: 100;
     color: #BBBBBB;
-    letter-spacing: 0.4ch;
-    vertical-align: middle;
+    letter-spacing: 0.5ch;
 }
 
 .etymology .hanzi {
@@ -400,7 +411,7 @@ ol li {
 
 /* marks a special tag in a dictionary entry (in the subheader after pinyin) */
 .tag {
-	font-size: 12pt;
+	font-size: 14pt;
 	font-family: Didot, serif;
 	letter-spacing: 0.3ch;
     padding: 0.2em 1ch;
