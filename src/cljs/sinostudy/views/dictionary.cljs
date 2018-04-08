@@ -123,6 +123,7 @@
      "rad.|"
      [:span.hanzi (vc/link-term (vector radical))]]))
 
+;;; TODO: 只 has multiple identical definitions
 (defn usage-list
   "Render a list of definitions for each Pinyin variation of an entry."
   [script uses]
