@@ -112,14 +112,16 @@
 (defn radical-tag
   "Renders a tag with the radical of a Hanzi."
   [term radical]
-  [:span.tag {:key   ::d/radical
-              :title (if (= term radical)
-                       (str "The character is itself a radical")
-                       (str "Radical"))}
-   "rad.|"
-   [:span.hanzi (if (= term radical)
-                  radical
-                  (vc/link-term (vector radical)))]])
+  (if (= term radical)
+    [:span.tag
+     {:key ::d/radical
+      :title "The character is a radical"}
+     "radical"]
+    [:span.tag
+     {:key ::d/radical
+      :title (str "Radical")}
+     "rad.|"
+     [:span.hanzi (vc/link-term (vector radical))]]))
 
 (defn usage-list
   "Render a list of definitions for each Pinyin variation of an entry."
