@@ -410,21 +410,16 @@ ol li {
     color: #666666;
 }
 
-.frequency-high, .frequency-medium, .frequency-low {
-    font-size: 12pt;
-    margin-left: 0.3ch;
-}
-
 .frequency-high {
-    color: red;
+    color: #7bce34;
 }
 
 .frequency-medium {
-    color: orange;
+    color: #ffcc2f;
 }
 
 .frequency-low {
-    color: lightgrey;
+    color: #ead7cf;
 }
 
 .pinyin + .tag, .tag + .tag  {

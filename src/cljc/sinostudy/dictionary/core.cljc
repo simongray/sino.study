@@ -236,7 +236,7 @@
   (cond
     (> frequency 0.01) :high
     (> 0.01 frequency 0.001) :medium
-    (> 0.001 frequency) :low))
+    :else :low))
 
 ;;;; CHARACTER ETYMOLOGY, DECOMPOSITION, ETC.
 

@@ -73,11 +73,10 @@
   [:span.tag
    {:key   ::d/frequency
     :title "Word frequency"}
-   "fr.|"
    (case (d/frequency-label frequency)
-     :high [:span.frequency-high "high"]
-     :medium [:span.frequency-medium "medium"]
-     :low [:span.frequency-low "low"])])
+     :high [:span.frequency-high "frequent"]
+     :medium [:span.frequency-medium "average"]
+     :low [:span.frequency-low "infrequent"])])
 
 (defn variations-tag
   "Render a tag with the variations of an entry in a given script."
@@ -114,11 +113,11 @@
   [term radical]
   (if (= term radical)
     [:span.tag
-     {:key ::d/radical
+     {:key   ::d/radical
       :title "The character is a radical"}
      "radical"]
     [:span.tag
-     {:key ::d/radical
+     {:key   ::d/radical
       :title (str "Radical")}
      "rad.|"
      [:span.hanzi (vc/link-term (vector radical))]]))
@@ -176,8 +175,7 @@
     (etymology-blurb etymology)]
    [:p.subheader
     (interpose " "
-      (concat [(when frequency
-                 (frequency-tag frequency))
+      (concat [(frequency-tag frequency)
                (when (::d/traditional variations)
                  (variations-tag ::d/traditional variations))
                (when (::d/simplified variations)
