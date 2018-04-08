@@ -400,7 +400,7 @@ ol li {
 
 /* marks a special tag in a dictionary entry (in the subheader after pinyin) */
 .tag {
-	font-size: 14pt;
+	font-size: 12pt;
 	font-family: Didot, serif;
 	letter-spacing: 0.3ch;
     padding: 0.2em 1ch;
