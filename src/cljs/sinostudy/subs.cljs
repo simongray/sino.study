@@ -63,6 +63,13 @@
         (subvec page 0 2)))))
 
 (rf/reg-sub
+  ::current-category
+  (fn [_]
+    (rf/subscribe [::current-page]))
+  (fn [page]
+    (first page)))
+
+(rf/reg-sub
   ::current-attribute
   (fn [_]
     (rf/subscribe [::history]))
@@ -70,6 +77,15 @@
     (let [[page _] (first history)]
       (when (> (count page) 2)
         (get page 2)))))
+
+(rf/reg-sub
+  ::content
+  (fn [_]
+    [(rf/subscribe [::pages])
+     (rf/subscribe [::current-page])])
+  (fn [[pages page]]
+    (when page
+      (get-in pages page))))
 
 ;; the currently active link in the nav section
 ;; used to determine which top-level link to disable

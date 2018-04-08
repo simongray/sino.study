@@ -156,13 +156,6 @@
       (entries->hiccup word content script))
     (entry->hiccup content script)))
 
-(defn render-page
-  "Render a page for display based on the page-type and content."
-  [[page-type _] content script]
-  (cond
-    (= pd/terms page-type) (vd/dictionary-page content script)
-    :else content))
-
 (defn navlink
   [from to text]
   (let [key (str from "->" to)]
@@ -247,16 +240,17 @@
    [form]
    [hint]])
 
-(defn page []
-  (let [script  @(rf/subscribe [::subs/script])
-        page    @(rf/subscribe [::subs/current-page])
-        pages   @(rf/subscribe [::subs/pages])
-        content (when page
-                  (get-in pages page))]
+(defn content-pane
+  "The main content pane of the site."
+  []
+  (let [category @(rf/subscribe [::subs/current-category])
+        content  @(rf/subscribe [::subs/content])]
     (when content
       [:div.pedestal
-       [:article {:key (str page)}
-        (render-page page content script)]])))
+       [:article
+        (cond
+          (= pd/terms category) [vd/dictionary-page]
+          :else content)]])))
 
 (defn script-changer []
   (let [script @(rf/subscribe [::subs/script])
@@ -311,5 +305,5 @@
       [:div#aligner
        [header]]]
      [action-chooser]
-     [page]
+     [content-pane]
      [footer]]))
