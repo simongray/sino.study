@@ -20,12 +20,13 @@
 (defn term-title
   "Render the title of the term with links to characters -OR- decomposition
   into components if the term is a character."
-  [term decomposed? decomposition]
-  (let [decomposition* (when (not= decomposition "？") decomposition)]
+  [term decomposition]
+  (let [attribute      @(rf/subscribe [::subs/current-attribute])
+        decomposition* (when (not= decomposition "？") decomposition)]
     (if (> (count term) 1)
       [:span.hanzi (vc/link-term term)]
       (cond
-        decomposed?
+        (= attribute "decomposition")
         [:span.hanzi {:title (str "Character decomposition")}
          (map hanzi-link decomposition*)]
 
@@ -166,11 +167,10 @@
     radical       ::d/radical
     decomposition ::d/decomposition
     etymology     ::d/etymology}
-   script
-   decomposed?]
+   script]
   [:div.dictionary-entry
    [:h1
-    (term-title term decomposed? decomposition)
+    (term-title term decomposition)
     (etymology-blurb etymology)]
    [:p.subheader
     (interpose " "
@@ -198,8 +198,8 @@
 
 (defn dictionary-page
   "Render a dictionary page (entry or search result list)."
-  [content script decomposed?]
+  [content script]
   (cond
-    (::d/uses content) (entry content script decomposed?)
+    (::d/uses content) (entry content script)
     (> (count (keys content)) 1) (search-result content script)
     :else (unknown-term (::d/term content))))

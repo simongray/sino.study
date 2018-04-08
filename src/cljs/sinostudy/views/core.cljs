@@ -158,9 +158,9 @@
 
 (defn render-page
   "Render a page for display based on the page-type and content."
-  [[page-type _ decomposed?] content script]
+  [[page-type _] content script]
   (cond
-    (= pd/terms page-type) (vd/dictionary-page content script decomposed?)
+    (= pd/terms page-type) (vd/dictionary-page content script)
     :else content))
 
 (defn navlink
@@ -252,7 +252,7 @@
         page    @(rf/subscribe [::subs/current-page])
         pages   @(rf/subscribe [::subs/pages])
         content (when page
-                  (get-in pages (subvec page 0 2)))]
+                  (get-in pages page))]
     (when content
       [:div.pedestal
        [:article {:key (str page)}

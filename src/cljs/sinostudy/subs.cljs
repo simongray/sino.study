@@ -53,17 +53,23 @@
   (fn [db]
     (first (:evaluations db))))
 
-;; the page is a vector describing the path to the content in (:pages db)
-;; in the case of a static web page it looks like e.g. [:static "/about"]
-;; for words it might look [:words "你好"] or [:words "de" 3],
-;; in which case the 3 will look up the word at index 3 in the list of entries
 (rf/reg-sub
   ::current-page
   (fn [_]
     (rf/subscribe [::history]))
   (fn [history]
     (let [[page _] (first history)]
-      page)))
+      (when (> (count page) 1)
+        (subvec page 0 2)))))
+
+(rf/reg-sub
+  ::current-attribute
+  (fn [_]
+    (rf/subscribe [::history]))
+  (fn [history]
+    (let [[page _] (first history)]
+      (when (> (count page) 2)
+        (get page 2)))))
 
 ;; the currently active link in the nav section
 ;; used to determine which top-level link to disable
