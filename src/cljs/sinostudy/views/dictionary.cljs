@@ -3,6 +3,7 @@
             [re-frame.core :as rf]
             [sinostudy.dictionary.core :as d]
             [sinostudy.pinyin.core :as p]
+            [sinostudy.pinyin.eval :as pe]
             [sinostudy.views.common :as vc]
             [sinostudy.subs :as subs]
             [sinostudy.rim.core :as rim]
@@ -12,7 +13,7 @@
 (defn hanzi-link
   "Link the text, but only link if the text is Hanzi."
   [text]
-  (if (sinostudy.pinyin.eval/hanzi-block? text)
+  (if (pe/hanzi-block? text)
     (vc/link-term text)
     text))
 
