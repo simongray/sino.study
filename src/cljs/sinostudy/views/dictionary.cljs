@@ -187,9 +187,16 @@
   [search-result script]
   [:p "list result"])
 
+(defn unknown-term
+  "Render a dictionary entry for a term that does not exist."
+  [term]
+  [:h1 "Unknown term"
+   [:p "There are no dictionary entries for the term \"" term "\"."]])
+
 (defn render-dictionary-page
   "Render a dictionary page (entry or search result list)."
   [content script]
-  (if (::d/uses content)
-    (render-entry content script)
-    (render-search-result content script)))
+  (cond
+    (::d/uses content) (render-entry content script)
+    (> (count (keys content)) 1) (render-search-result content script)
+    :else (unknown-term (::d/term content))))
