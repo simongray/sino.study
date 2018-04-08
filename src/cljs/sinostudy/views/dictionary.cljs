@@ -178,15 +178,15 @@
     (etymology-blurb etymology)]
    [:p.subheader
     (interpose " "
-      (concat [(frequency-tag frequency)
-               (when (::d/traditional variations)
-                 (variations-tag ::d/traditional variations))
-               (when (::d/simplified variations)
-                 (variations-tag ::d/simplified variations))
-               (when classifiers
-                 (classifiers-tag script classifiers))
-               (when radical
-                 (radical-tag term radical))]))]
+      [(frequency-tag frequency)
+       (when (::d/traditional variations)
+         (variations-tag ::d/traditional variations))
+       (when (::d/simplified variations)
+         (variations-tag ::d/simplified variations))
+       (when classifiers
+         (classifiers-tag script classifiers))
+       (when radical
+         (radical-tag term radical))])]
    (usage-list script uses)])
 
 (defn search-result
