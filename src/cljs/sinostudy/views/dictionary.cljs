@@ -210,7 +210,7 @@
    [:p "There are no dictionary entries for the term \"" term "\"."]])
 
 (defn dictionary-page
-  "Dictionary page (dictionary entry, search results, or unknown term)."
+  "A dictionary page can be 1 of 3 types: entry, search result, or unknown."
   []
   (let [content @(rf/subscribe [::subs/content])]
     (cond
