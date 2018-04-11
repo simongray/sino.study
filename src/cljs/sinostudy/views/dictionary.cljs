@@ -42,7 +42,8 @@
 (defn etymology-blurb
   "Etymology information about a specific character."
   []
-  (let [{etymology ::d/etymology} @(rf/subscribe [::subs/content])]
+  (let [script @(rf/subscribe [::subs/script])
+        {etymology ::d/etymology} @(rf/subscribe [::subs/content])]
     (when etymology
       (let [{type     ::d/type
              hint     ::d/hint
@@ -55,7 +56,7 @@
                 hint)
            [:div.etymology
             {:title (str "Type: " type)}
-            hint]
+            (vc/link-references script hint)]
 
            (and (= type "pictophonetic")
                 semantic
@@ -76,14 +77,15 @@
 (defn frequency-tag
   "A tag with a frequency label based on a word frequency."
   []
-  (let [{frequency ::d/frequency} @(rf/subscribe [::subs/content])]
+  (let [{frequency ::d/frequency} @(rf/subscribe [::subs/content])
+        label (d/frequency-label frequency)]
     [:span.tag
      {:key   ::d/frequency
       :title "Word frequency"}
-     (case (d/frequency-label frequency)
-       :high [:span.frequency-high "frequent"]
-       :medium [:span.frequency-medium "average"]
-       :low [:span.frequency-low "infrequent"])]))
+     (cond
+       (= label :high) [:span.frequency-high "frequent"]
+       (= label :medium) [:span.frequency-medium "average"]
+       (= label :low) [:span.frequency-low "infrequent"])]))
 
 (defn variations-tag
   "Tag with the variations of an entry in a given script."
@@ -169,26 +171,8 @@
               (interpose " "))]
         [:ol
          (for [definition definitions]
-           ;; TODO: make less daunting
-           (let [link        (comp vc/link-term vector)
-                 refr-f      (comp link script d/refr->m)
-                 index       (fn [script coll]
-                               (get coll (cond
-                                           (= 1 (count coll)) 0
-                                           (= d/simp script) 1
-                                           :else 0)))
-                 script*     (partial index script)
-                 hanzi-f     (comp link script* #(str/split % #"\|"))
-                 pinyinize   (fn [s] [:span.pinyin {:key "pinyin"} s])
-                 no-brackets #(subs % 1 (dec (count %)))
-                 ;; TODO: remove spaces from href for proper linking
-                 pinyin-f    (comp pinyinize link p/digits->diacritics no-brackets)
-                 definition* (-> definition
-                                 (rim/re-handle embed/refr refr-f)
-                                 (rim/re-handle embed/hanzi hanzi-f)
-                                 (rim/re-handle embed/pinyin pinyin-f))]
-             [:li {:key definition}
-              [:span.definition definition*]]))]])]))
+           [:li {:key definition}
+            [:span.definition (vc/link-references script definition)]])]])]))
 
 (defn entry
   "Dictionary entry for a specific term."
