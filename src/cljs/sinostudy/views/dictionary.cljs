@@ -38,7 +38,6 @@
          {:title term}
          term]))))
 
-;;; TODO: need to be able link hint text in 你 (ideographic)
 (defn etymology-blurb
   "Etymology information about a specific character."
   []
