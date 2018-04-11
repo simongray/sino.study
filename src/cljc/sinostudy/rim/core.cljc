@@ -41,22 +41,25 @@
                  out)))))
 
 (defn- re-handle*
-  "Helper function for re-handle."
+  "Helper function for re-handle. Only takes strings."
   [s re f]
-  (if (string? s)
-    (let [matches (re-seq re s)]
-      (if (empty? matches)
-        s
-        (let [others  (str/split s re)
-              results (map f matches)
-              [c1 c2] (if (str/starts-with? s (first matches))
-                        [results others]
-                        [others results])
-              c3      (if (> (count c1) (count c2))
-                        (subvec (vec c1) (count c2))
-                        (subvec (vec c2) (count c1)))]
-          (concat (vec (interleave c1 c2)) c3))))
-    s))
+  (let [matches (re-seq re s)]
+    (if (empty? matches)
+      s
+      (let [others  (str/split s re)
+            ;; Dealing with weird behaviour present in Java/JS implementations
+            ;; causing empty strings as the first split result.
+            others* (if (= "" (first others))
+                      (rest others)
+                      others)
+            results (map f matches)
+            [c1 c2] (if (str/starts-with? s (first matches))
+                      [results others*]
+                      [others* results])
+            c3      (if (> (count c1) (count c2))
+                      (subvec (vec c1) (count c2))
+                      (subvec (vec c2) (count c1)))]
+        (concat (vec (interleave c1 c2)) c3)))))
 
 (defn re-handle
   "Split s based on re and reinsert the matches of re in s with f applied.
