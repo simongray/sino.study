@@ -8,13 +8,14 @@
    "/about" [:div [:h1 "About"] [:p "This is the About page."]]})
 
 (def default-db
-  {:input         ""
-   :actions       nil
-   :marked-action 0
-   :script        ::d/simplified
-   :pages         {pd/terms  {}
-                   pd/static static-pages}
-   :history       '()
-   :evaluations   '()
-   :hints         '()
-   :queries       '()})
+  {:input          ""
+   :actions        nil
+   :marked-action  0
+   :script         ::d/simplified
+   :result-filters {}
+   :pages          {pd/terms  {}
+                    pd/static static-pages}
+   :history        '()
+   :evaluations    '()
+   :hints          '()
+   :queries        '()})

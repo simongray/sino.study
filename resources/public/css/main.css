@@ -369,9 +369,20 @@ hr {
     border: 0;
 }
 
-/* currently just applies to the word definitions */
-ol li {
-	margin: 0.5em;
+.search-result h1 {
+	margin: 0 0 0.5em 0;
+}
+
+.search-result form {
+    margin-bottom: 1em;
+    font-size: 12pt;
+    letter-spacing: 0.3ch;
+    padding: 0.5em 1ch;
+    margin-right: 0.5ch;
+    border: 1pt solid #FFAAAA;
+    border-radius: 0.5ch;
+    background-color: #FFCCCC;
+    color: #994444;
 }
 
 .dictionary-entry, .dictionary-entries {
@@ -385,22 +396,36 @@ ol li {
 }
 
 .dictionary-entries li {
-    margin-bottom: 0.5em;
-    padding: 0.5em 0;
+    margin-bottom: 0.8em;
 
     /* make sure text stays on a single line */
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+    /*white-space: nowrap;
+    /*overflow: hidden;*/
+    text-overflow: ellipsis;
 }
 
 .dictionary-entries .hanzi {
+    display: inline-block;
 	font-size: 20pt;
 	padding: 0.2em;
 	border: 1pt solid #AAAAAA;
 	border-radius: 0.5ch;
 	background-color: white;
 	color: #666666;
+}
+
+.dictionary-entries ul {
+    font-size: 16pt;
+    vertical-align: top;
+    display: inline-block;
+    list-style-type: none;
+	padding: 0;
+	margin: 0.3em 0 0 0;
+}
+
+.dictionary-entries ul li {
+    padding: 0;
+    margin: 0 0 0.5em 0;
 }
 
 /* mark variants that only appear in a different script (e.g. traditional) */

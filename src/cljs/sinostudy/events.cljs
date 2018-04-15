@@ -410,6 +410,11 @@
   (fn [db [_ script]]
     (assoc db :script script)))
 
+;; Dispatched by filter radio buttons in dictionary search result.
+(rf/reg-event-db
+  ::set-result-filter
+  (fn [db [_ term type]]
+    (assoc-in db [:result-filters term] type)))
 
 ;;;; ACTIONS (= events triggered by submitting input)
 

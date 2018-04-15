@@ -1,7 +1,6 @@
 (ns sinostudy.subs
   (:require [re-frame.core :as rf]
-            [sinostudy.db :as db]
-            [sinostudy.events :as events]))
+            [sinostudy.dictionary.core :as d]))
 
 (rf/reg-sub
   ::input
@@ -86,6 +85,34 @@
   (fn [[pages page]]
     (when page
       (get-in pages page))))
+
+(rf/reg-sub
+  ::result-filters
+  (fn [db]
+    (:result-filters db)))
+
+(rf/reg-sub
+  ::current-result-types
+  (fn [_]
+    (rf/subscribe [::content]))
+  (fn [content]
+    (->> (keys content)
+         (filter (partial not= ::d/term))
+         (sort))))
+
+(rf/reg-sub
+  ::current-result-filter
+  (fn [_]
+    [(rf/subscribe [::content])
+     (rf/subscribe [::result-filters])
+     (rf/subscribe [::current-result-types])])
+  (fn [[{search-term ::d/term
+         :as         content}
+        result-filter
+        current-result-types]]
+    (or (get result-filter search-term)
+        (apply max-key (comp count (partial get content))
+               current-result-types))))
 
 ;; the currently active link in the nav section
 ;; used to determine which top-level link to disable

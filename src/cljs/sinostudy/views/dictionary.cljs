@@ -3,11 +3,9 @@
             [re-frame.core :as rf]
             [sinostudy.dictionary.core :as d]
             [sinostudy.pinyin.core :as p]
-            [sinostudy.pinyin.eval :as pe]
             [sinostudy.views.common :as vc]
             [sinostudy.subs :as subs]
-            [sinostudy.rim.core :as rim]
-            [sinostudy.dictionary.embed :as embed]
+            [sinostudy.events :as events]
             [sinostudy.pages.defaults :as pd]))
 
 (defn term-title
@@ -181,16 +179,114 @@
    [tags]
    [usage-list]])
 
+(defn search-result-header
+  "The header for a dictionary search result."
+  []
+  (let [{search-term ::d/term} @(rf/subscribe [::subs/content])]
+    [:h1.list-header "\"" search-term "\""]))
+
+(defn search-result-filter
+  "Filter for what type of dictionary search result should be shown."
+  []
+  (let [{search-term ::d/term} @(rf/subscribe [::subs/content])
+        current-filter @(rf/subscribe [::subs/current-result-filter])
+        result-types   @(rf/subscribe [::subs/current-result-types])]
+    [:form
+     (->> (for [result-type result-types]
+            [:label {:key result-type}
+             [:input {:type      "radio"
+                      :name      "result-filter"
+                      :value     result-type
+                      :checked   (= current-filter result-type)
+                      :on-change (fn [_]
+                                   (rf/dispatch [::events/set-result-filter
+                                                 search-term
+                                                 result-type]))}]
+             (str/capitalize (name result-type))])
+          (interpose " "))]))
+
+(defn- relevant
+  "Limit definitions to relevant definitions in English based on search-term."
+  [result-type search-term definitions]
+  (if (= result-type ::d/english)
+    (let [find-term (partial re-find (re-pattern (str "(?i)" search-term)))]
+      (filter find-term definitions))
+    definitions))
+
+(defn- result-entry-uses
+  "Listed uses of a search result entry."
+  [result-type search-term uses]
+  (for [[pronunciation definitions] uses]
+    (let [definitions* (relevant result-type search-term definitions)]
+      (when (not (empty? definitions*))
+        [:li
+         {:key pronunciation}
+         [:span.pinyin
+          {:key pronunciation}
+          (p/digits->diacritics pronunciation)]
+         " "
+         [:span.definition
+          (str/join "; " definitions*)]]))))
+
+(defn- result-entry
+  "Entry in a results-list."
+  [type
+   search-term
+   {entry-term ::d/term
+    uses       ::d/uses}]
+  (when-let [entry-uses (result-entry-uses type search-term uses)]
+    [:li {:key entry-term}
+     [:a
+      {:href (str "/" (name ::d/terms) "/" entry-term)}
+      [:span.hanzi entry-term]
+      " "
+      [:ul
+       entry-uses]]]))
+
+(defn- in-script
+  "For filtering entries by script."
+  [entry]
+  (let [script @(rf/subscribe [::subs/script])]
+    (contains? (::d/scripts entry) script)))
+
+(defn english-search-result
+  "Search result matching English words."
+  []
+  (let [{results     ::d/english
+         search-term ::d/term} @(rf/subscribe [::subs/content])
+        result-filter @(rf/subscribe [::subs/current-result-filter])]
+    (when (and (= result-filter ::d/english) results)
+      [:ul.dictionary-entries
+       (doall (for [entry (filter in-script results)]
+                (result-entry ::d/english search-term entry)))])))
+
+(defn pinyin-search-result
+  "Search result matching Pinyin."
+  []
+  (let [{results     ::d/pinyin
+         search-term ::d/term} @(rf/subscribe [::subs/content])
+        result-filter @(rf/subscribe [::subs/current-result-filter])]
+    (when (and (= result-filter ::d/pinyin) results)
+      [:ul.dictionary-entries
+       (doall (for [entry (filter in-script results)]
+                (result-entry ::d/pinyin search-term entry)))])))
+
 (defn search-result
   "Dictionary search result."
   []
-  [:p "list result"])
+  [:div.search-result
+   [search-result-header]
+   [search-result-filter]
+   [english-search-result]
+   [pinyin-search-result]])
 
 (defn unknown-term
   "Dictionary entry for a term that does not exist."
-  [term]
-  [:h1 "Unknown term"
-   [:p "There are no dictionary entries for the term \"" term "\"."]])
+  []
+  (let [{search-term ::d/term} @(rf/subscribe [::subs/content])]
+    [:div.search-result
+     [:h1.list-header "\"" search-term "\""]
+     [:p "There are no dictionary entries available for this term."]]))
 
 (defn dictionary-page
   "A dictionary page can be 1 of 3 types: entry, search result, or unknown."
@@ -199,4 +295,4 @@
     (cond
       (::d/uses content) [entry]
       (> (count (keys content)) 1) [search-result]
-      :else (unknown-term (::d/term content)))))
+      :else [unknown-term])))
