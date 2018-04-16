@@ -337,4 +337,8 @@
             ;pinyin (assoc ::pinyin (sorted > pinyin))
             ;digits (assoc ::pinyin+digits (sorted > digits))
             ;diacritics (assoc ::pinyin+diacritics (sorted > diacritics))
+            ;; TODO: sort Pinyin properly too
+            pinyin (assoc ::pinyin pinyin)
+            digits (assoc ::pinyin+digits digits)
+            diacritics (assoc ::pinyin+diacritics diacritics)
             english (assoc ::english (sorted relevance* english)))))

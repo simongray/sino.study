@@ -30,8 +30,7 @@
   e.g. presort word lists and the like."
   [page-type content]
   (cond
-    ;; TODO: figure out what/if preprocessing is needed
-    ;(= page-type pd/words) (entry/prepare-entries content)
+    (= page-type pd/terms) (d/sort-result content)
     :else content))
 
 (defn press-enter-to [s]
@@ -56,7 +55,8 @@
     ::open-action-chooser))
 
 (defn save-dict-entries
-  "Save the entries of a dictionary result into the db."
+  "Save the individual entries of a dictionary search result into the db.
+  Note: this is a separate step from saving the search result itself!"
   [db content]
   (let [path    [:pages :terms]
         entries (->> content
