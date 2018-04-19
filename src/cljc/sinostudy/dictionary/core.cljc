@@ -196,6 +196,9 @@
         (recur (generic-add dict* (first ks*) v) (rest ks*))
         dict*))))
 
+;;; TODO: Prefer multi-character words slightly over one-character words:
+;;;       multi character words should have a tiny added bump to relevance.
+;;;       This is a heuristic to ensure that e.g. 胜利 is preferred to 胜.
 (defn english-relevance
   "Calculate the relevance of entry based on an English word as the search term.
   The relevance is a score from 0 to ~1, higher being more relevant.
