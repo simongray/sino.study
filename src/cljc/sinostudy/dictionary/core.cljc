@@ -169,15 +169,13 @@
 (defn english-keys
   "Find English dictionary keys based on a CC-CEDICT listing.
   Stop-words are removed entirely, unless they make up a full definition."
-  [listing]
-  (let [definitions  (::definitions listing)
-        stopwords*   (set/difference data/stopwords definitions)
+  [definitions]
+  (let [stopwords*   (set/difference data/stopwords definitions)
         single-words (->> definitions
                           (map ^String str/lower-case)
                           (map #(str/split % #"[^a-z-]+"))
                           (flatten)
                           (filter (comp not str/blank?))
-
                           (set))
         verblikes    (->> definitions
                           (filter #(str/starts-with? % "to "))
@@ -190,7 +188,7 @@
 (defn english-add
   "Add an entry to the pinyin dictionary from a CC-CEDICT listing."
   [dict listing]
-  (let [ks (english-keys listing)
+  (let [ks (english-keys (::definitions listing))
         v  (hash-set (::traditional listing) (::simplified listing))]
     (loop [dict* dict
            ks*   ks]
@@ -311,6 +309,9 @@
   ([dicts word]
    (look-up dicts word nil)))
 
+
+;;;; POST-PROCESSING DICTIONARY LOOK-UP RESULTS
+
 (defn- safe-comparator
   "Create a comparator for  sorting that will not lose items by accident.
   When fn1 cannot establish an ordering between two elements, fn2 steps in.
@@ -322,9 +323,45 @@
         comparison
         (compare (fn2 x) (fn2 y))))))
 
+(defn containing-term
+  "Only keep definitions that contain the given term."
+  [term definitions]
+  (let [term-re        (re-pattern (str "(?i)" term))
+        contains-term? (fn [definition]
+                         (->> (str/split definition #"[^a-zA-Z-]+")
+                              (filter (partial re-find term-re))
+                              (seq)))]
+    (filter contains-term? definitions)))
+
+(defn filter-defs
+  "Remove definitions from entries if they do not contain the given term."
+  [term entries]
+  (let [relevant-defs (fn [[pinyin definitions]]
+                        [pinyin (containing-term term definitions)])
+        non-empty     (comp seq second)]
+    (for [entry entries]
+      (assoc entry ::uses (->> (::uses entry)
+                               (map relevant-defs)
+                               (filter non-empty)
+                               (into {}))))))
+
+(defn reduce-result
+  "Reduce the content of a dictionary look-up result.
+  This removes irrelevant data from the result relative to the search term,
+  e.g. removes definitions that do not match the search term."
+  [result]
+  (let [term       (::term result)
+        pinyin     (::pinyin result)
+        digits     (::pinyin+digits result)
+        diacritics (::pinyin+diacritics result)
+        english    (::english result)]
+    (cond-> result
+            english (assoc ::english (filter-defs term english)))))
+
 (defn sort-result
-  "Sort the result of a dictionary look-up.
-  English results are sorted according to english-relevance."
+  "Sort the content of a dictionary look-up result.
+  This sorts the result relative to the search term,
+  e.g English word results are sorted according to relevance."
   [result]
   (let [relevance  (memoize (partial english-relevance (::term result)))
         relevance* (comp - (safe-comparator relevance ::term))

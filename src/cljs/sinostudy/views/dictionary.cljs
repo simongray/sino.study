@@ -215,18 +215,17 @@
 
 (defn- result-entry-uses
   "Listed uses of a search result entry."
-  [result-type search-term uses]
+  [uses]
   (for [[pronunciation definitions] uses]
-    (let [definitions* (relevant result-type search-term definitions)]
-      (when (not (empty? definitions*))
-        [:li
-         {:key pronunciation}
-         [:span.pinyin
-          {:key pronunciation}
-          (p/digits->diacritics pronunciation)]
-         " "
-         [:span.definition
-          (str/join "; " definitions*)]]))))
+    (when (not (empty? definitions))
+      [:li
+       {:key pronunciation}
+       [:span.pinyin
+        {:key pronunciation}
+        (p/digits->diacritics pronunciation)]
+       " "
+       [:span.definition
+        (str/join "; " definitions)]])))
 
 (defn- result-entry
   "Entry in a results-list."
@@ -234,7 +233,7 @@
    search-term
    {entry-term ::d/term
     uses       ::d/uses}]
-  (when-let [entry-uses (result-entry-uses type search-term uses)]
+  (when-let [entry-uses (result-entry-uses uses)]
     [:li {:key entry-term}
      [:a
       {:href (str "/" (name ::d/terms) "/" entry-term)}

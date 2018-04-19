@@ -25,13 +25,13 @@
 (def transit-reader
   (transit/reader :json))
 
-(defn preprocess-content
-  "Process content coming from the web service before storing locally,
+(defn dictionary-preprocess
+  "Process result coming from the web service before storing locally,
   e.g. presort word lists and the like."
-  [page-type content]
-  (cond
-    (= page-type pd/terms) (d/sort-result content)
-    :else content))
+  [result]
+  (-> result
+      (d/reduce-result)
+      (d/sort-result)))
 
 (defn press-enter-to [s]
   [:div "press " [:span.keypress "enter"] " to " s])
@@ -236,14 +236,13 @@
   ::save-page
   (fn [db [_ {:keys [page result]}]]
     (let [path      (into [:pages] page)
-          page-type (first page)
-          content   (preprocess-content page-type result)]
+          page-type (first page)]
       (cond
         ;; Store result directly and then store individual entries.
         ;; TODO: reduce overwrites for hanzi result?
         (= page-type :terms) (-> db
-                                 (assoc-in path content)
-                                 (save-dict-entries content))
+                                 (assoc-in path (dictionary-preprocess result))
+                                 (save-dict-entries result))
         :else db))))
 
 ;; dispatched upon a successful retrieval of a query result
