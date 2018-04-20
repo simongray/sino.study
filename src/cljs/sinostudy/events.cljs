@@ -73,10 +73,6 @@
 
 ;;;; QUERY EVALUATION
 
-;; cljsjs/xregexp doesn't include the extensions allowing for \p{Script=Han}
-;; will just use this to generate suitable regex used in both clj and cljs:
-;;     http://kourge.net/projects/regexp-unicode-block
-
 ;; pinyin sentences with tone digits can converted to diacritics,
 ;; but the action shouldn't appear if the sentence contains no tone digits!
 (defn- digits->diacritics?
