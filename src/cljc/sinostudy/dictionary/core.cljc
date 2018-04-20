@@ -7,24 +7,6 @@
 ;; TODO: make list of exceptional entries (e.g. 3P) that should be queryable
 ;; TODO: make the pattern "classifier for X" prominent (CL)
 ;; TODO: make the pattern "to X" prominent (V)
-;; TODO: tag radicals, e.g. def = "Kangxi radical 206" or just from a list
-;;       -- can just use: #(= (:word %) (:radical %))
-
-(def defs
-  ::definitions)
-
-(def pinyin
-  ::pinyin)
-
-(def simp
-  ::simplified)
-
-(def trad
-  ::traditional)
-
-(def cls
-  ::classifiers)
-
 
 ;;;; GENERAL STUFF
 
