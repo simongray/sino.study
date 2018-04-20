@@ -1,5 +1,5 @@
 (ns sinostudy.views.common
-  (:require [sinostudy.pages.defaults :as pd]
+  (:require [sinostudy.pages.core :as pages]
             [sinostudy.pinyin.eval :as pe]
             [clojure.string :as str]
             [sinostudy.rim.core :as rim]
@@ -15,7 +15,7 @@
   (let [ids  (range (count text))
         link (fn [term id] [:a
                             {:title (str "look up " term)
-                             :href  (str "/" (name pd/terms) "/" term)
+                             :href  (str "/" (name ::pages/terms) "/" term)
                              :key   (str term "-" id)}
                             term])]
     (map link text ids)))

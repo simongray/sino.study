@@ -3,7 +3,7 @@
             [sinostudy.subs :as subs]
             [sinostudy.events :as events]
             [sinostudy.views.dictionary :as vd]
-            [sinostudy.pages.defaults :as pd]
+            [sinostudy.pages.core :as pages]
             [sinostudy.dictionary.core :as d]))
 
 ;; TODO: add bookmark icon for entries and way to get to bookmarks in nav bar
@@ -118,7 +118,7 @@
       [:div.pedestal
        [:article
         (cond
-          (= pd/terms category) [vd/dictionary-page]
+          (= ::pages/terms category) [vd/dictionary-page]
           :else content)]])))
 
 (defn script-changer []

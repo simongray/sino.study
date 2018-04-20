@@ -6,7 +6,7 @@
             [compojure.route :as route]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [cognitect.transit :as transit]
-            [sinostudy.pages.defaults :as pd]
+            [sinostudy.pages.core :as pages]
             [sinostudy.dictionary.load :as load]
             [sinostudy.dictionary.core :as d]))
 
@@ -60,7 +60,7 @@
   [type query {:keys [limit]}]
   (let [ns-keywords* (partial ns-keywords #"," 'sinostudy.dictionary.core)]
     (cond
-      (= pd/terms type) (d/look-up dicts query (ns-keywords* limit)))))
+      (= ::pages/terms type) (d/look-up dicts query (ns-keywords* limit)))))
 
 (defn transit-result
   "Get the Transit-encoded result of a query."
@@ -73,7 +73,9 @@
   (ANY "/query/:type/:query" [type query & opts]
     {:status  200
      :headers ajax-headers
-     :body    (transit-result (keyword type) query opts)})
+     :body    (transit-result (keyword (str 'sinostudy.pages.core) type)
+                              query
+                              opts)})
 
   ;; HTML page requests all resolve to the ClojureScript app.
   ;; The internal routing of the app creates the correct presentation.

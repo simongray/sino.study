@@ -1,5 +1,6 @@
 (ns sinostudy.subs
   (:require [re-frame.core :as rf]
+            [sinostudy.pages.core :as pages]
             [sinostudy.dictionary.core :as d]))
 
 (rf/reg-sub
@@ -121,4 +122,4 @@
   (fn [_]
     (rf/subscribe [::current-page]))
   (fn [[page-type key]]
-    (when (= page-type :static) key)))
+    (when (= page-type ::pages/static) key)))

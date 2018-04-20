@@ -7,7 +7,7 @@
             [sinostudy.pinyin.core :as p]
             [sinostudy.pinyin.eval :as pe]
             [sinostudy.dictionary.core :as d]
-            [sinostudy.pages.defaults :as pd]
+            [sinostudy.pages.core :as pages]
             [ajax.core :as ajax]
             [cognitect.transit :as transit]))
 
@@ -58,7 +58,7 @@
   "Save the individual entries of a dictionary search result into the db.
   Note: this is a separate step from saving the search result itself!"
   [db content]
-  (let [path    [:pages :terms]
+  (let [path    [:pages ::pages/terms]
         entries (->> content
                      (filter #(-> % first (not= ::d/term)))
                      (map second)
@@ -240,9 +240,11 @@
       (cond
         ;; Store result directly and then store individual entries.
         ;; TODO: reduce overwrites for hanzi result?
-        (= page-type :terms) (-> db
-                                 (assoc-in path (dictionary-preprocess result))
-                                 (save-dict-entries result))
+        (= page-type ::pages/terms)
+        (-> db
+            (assoc-in path (dictionary-preprocess result))
+            (save-dict-entries result))
+
         :else db))))
 
 ;; dispatched upon a successful retrieval of a query result
@@ -384,11 +386,11 @@
           pages     (:pages db)
           page-type (first page)]
       (cond
-        (= pd/static page-type) {}
-        (= pd/terms page-type) (let [dict-page (subvec page 0 2)]
-                                 (if (not (get-in pages dict-page))
-                                   {:dispatch [::send-query dict-page]}
-                                   {}))))))
+        (= ::pages/static page-type) {}
+        (= ::pages/terms page-type) (let [dict-page (subvec page 0 2)]
+                                      (if (not (get-in pages dict-page))
+                                        {:dispatch [::send-query dict-page]}
+                                        {}))))))
 
 ;; Dispatched by clicking links only!
 ;; It's never dispatched directly, as we want to leave a browser history trail.
@@ -421,7 +423,7 @@
   ::test
   [(rf/inject-cofx ::now)]
   (fn [_ _]
-    {:dispatch [::send-query [pd/terms "你好"]]}))
+    {:dispatch [::send-query [::pages/terms "你好"]]}))
 
 (rf/reg-event-db
   ::clear-input
@@ -431,7 +433,7 @@
 (rf/reg-event-fx
   ::look-up
   (fn [_ [_ term]]
-    {:navigate-to (str "/" (name pd/terms) "/" term)
+    {:navigate-to (str "/" (name ::pages/terms) "/" term)
      :dispatch    [::display-hint nil]}))
 
 (rf/reg-event-fx

@@ -6,7 +6,7 @@
             [sinostudy.views.common :as vc]
             [sinostudy.subs :as subs]
             [sinostudy.events :as events]
-            [sinostudy.pages.defaults :as pd]))
+            [sinostudy.pages.core :as pages]))
 
 (defn term-title
   "The title of the term with links to characters -OR- decomposition
@@ -28,7 +28,7 @@
          {:key   ::d/term
           :title (str "Click to decompose")}
          [:a
-          {:href (str "/" (name pd/terms) "/" term "/decomposition")}
+          {:href (str "/" (name ::pages/terms) "/" term "/decomposition")}
           term]]
 
         :else

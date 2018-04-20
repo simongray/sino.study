@@ -1,5 +1,5 @@
 (ns sinostudy.db
-  (:require [sinostudy.pages.defaults :as pd]
+  (:require [sinostudy.pages.core :as pages]
             [sinostudy.dictionary.core :as d]))
 
 (def static-pages
@@ -13,8 +13,8 @@
    :marked-action  0
    :script         ::d/simplified
    :result-filters {}
-   :pages          {pd/terms  {}
-                    pd/static static-pages}
+   :pages          {::pages/terms  {}
+                    ::pages/static static-pages}
    :history        '()
    :evaluations    '()
    :hints          '()
