@@ -100,7 +100,6 @@
   [query]
   (case (str/lower-case query)
     "/clear" [[::initialize-db]]
-    "/test" [[::test]]
     []))
 
 (defn eval-pinyin
@@ -414,17 +413,6 @@
     (assoc-in db [:result-filters term] type)))
 
 ;;;; ACTIONS (= events triggered by submitting input)
-
-(rf/reg-event-fx
-  ::test
-  [(rf/inject-cofx ::now)]
-  (fn [_ _]
-    {:dispatch [::send-query [::pages/terms "你好"]]}))
-
-(rf/reg-event-db
-  ::clear-input
-  (fn [db _]
-    (assoc db :input "")))
 
 (rf/reg-event-fx
   ::look-up
