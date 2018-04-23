@@ -219,7 +219,7 @@
        [:span.definition
         (str/join "; " definitions)]])))
 
-(defn- result-entry
+(defn- search-result-entry
   "Entry in a results-list."
   [{entry-term ::d/term
     uses       ::d/uses}]
@@ -239,14 +239,14 @@
     (contains? (::d/scripts entry) script)))
 
 (defn search-result-entries
-  "Search result matching Pinyin."
+  "List of search result entries."
   []
   (let [content       @(rf/subscribe [::subs/content])
         result-filter @(rf/subscribe [::subs/current-result-filter])]
     (when-let [entries (get content result-filter)]
       [:ul.dictionary-entries
        (doall (for [entry (filter in-script entries)]
-                (result-entry entry)))])))
+                (search-result-entry entry)))])))
 
 (defn search-result
   "Dictionary search result."
