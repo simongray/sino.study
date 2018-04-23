@@ -139,7 +139,7 @@
 (defn- action-text
   [action]
   (case (first action)
-    ::events/look-up (str "Look up word")
+    ::events/look-up (str "Look up " (second action))
     ::events/digits->diacritics "Convert to diacritics"
     ::events/diacritics->digits "Convert to digits"
     ::events/close-action-chooser "Cancel"))

@@ -102,24 +102,26 @@
     "/clear" [[::initialize-db]]
     []))
 
-(defn eval-pinyin
-  "Evaluate a Pinyin query to get a vector of possible actions."
+(defn- eval-term
+  "Evaluate a word/Pinyin query to get a vector of possible actions."
   [query]
-  (cond-> []
-          (pinyin-block? query) (conj [::look-up (d/pinyin-key query)])
-          (digits->diacritics? query) (conj [::digits->diacritics query])
-          (diacritics->digits? query) (conj [::diacritics->digits query])))
+  (let [query* (p/umlaut query)]
+    ;; The reason why the starting point isn't [[::look-up query]] is so that
+    ;; any umlaut-conversions will always appear before the unconverted term.
+    (cond-> []
+            (and (pinyin-block? query*)
+                 (not= query query*)) (conj [::look-up (d/pinyin-key query*)])
+            true (conj [::look-up query])
+            (digits->diacritics? query*) (conj [::digits->diacritics query*])
+            (diacritics->digits? query*) (conj [::diacritics->digits query*]))))
 
-;; TODO: more intelligent pinyin lookups
 (defn eval-query
   "Evaluate a query string to get a vector of possible actions."
   [query]
-  ;; some tests need an umlaut'ed query
   (cond
     (command? query) (eval-command query)
     (pe/hanzi-block? query) [[::look-up query]]
-    :else (eval-pinyin (p/umlaut query))))
-
+    (re-find #"^\w" query) (eval-term query)))
 
 ;;;; CO-EFFECTS
 
