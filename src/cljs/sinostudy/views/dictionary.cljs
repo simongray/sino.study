@@ -205,14 +205,6 @@
              (str/capitalize (name result-type))])
           (interpose " "))]))
 
-(defn- relevant
-  "Limit definitions to relevant definitions in English based on search-term."
-  [result-type search-term definitions]
-  (if (= result-type ::d/english)
-    (let [find-term (partial re-find (re-pattern (str "(?i)" search-term)))]
-      (filter find-term definitions))
-    definitions))
-
 (defn- result-entry-uses
   "Listed uses of a search result entry."
   [uses]
@@ -229,9 +221,7 @@
 
 (defn- result-entry
   "Entry in a results-list."
-  [type
-   search-term
-   {entry-term ::d/term
+  [{entry-term ::d/term
     uses       ::d/uses}]
   (when-let [entry-uses (result-entry-uses uses)]
     [:li {:key entry-term}
@@ -251,24 +241,22 @@
 (defn english-search-result
   "Search result matching English words."
   []
-  (let [{results     ::d/english
-         search-term ::d/term} @(rf/subscribe [::subs/content])
+  (let [{results     ::d/english} @(rf/subscribe [::subs/content])
         result-filter @(rf/subscribe [::subs/current-result-filter])]
     (when (and (= result-filter ::d/english) results)
       [:ul.dictionary-entries
        (doall (for [entry (filter in-script results)]
-                (result-entry ::d/english search-term entry)))])))
+                (result-entry entry)))])))
 
 (defn pinyin-search-result
   "Search result matching Pinyin."
   []
-  (let [{results     ::d/pinyin
-         search-term ::d/term} @(rf/subscribe [::subs/content])
+  (let [{results     ::d/pinyin} @(rf/subscribe [::subs/content])
         result-filter @(rf/subscribe [::subs/current-result-filter])]
     (when (and (= result-filter ::d/pinyin) results)
       [:ul.dictionary-entries
        (doall (for [entry (filter in-script results)]
-                (result-entry ::d/pinyin search-term entry)))])))
+                (result-entry entry)))])))
 
 (defn search-result
   "Dictionary search result."
