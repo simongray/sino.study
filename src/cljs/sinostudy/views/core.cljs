@@ -10,21 +10,6 @@
 
 ;;;; HELPER FUNCTIONS
 
-;; used both in nav and on dictionary entry pages
-(defn script-changer-link
-  [script content]
-  (let [alt-script (if (= ::d/simplified script)
-                     ::d/traditional
-                     ::d/simplified)]
-    [:a
-     {:key      alt-script
-      :class    "script-changer fake-link"
-      :title    (str "Click to use " (if (= ::d/simplified alt-script)
-                                       "simplified characters"
-                                       "traditional characters"))
-      :on-click #(rf/dispatch [::events/change-script alt-script])}
-     content]))
-
 (defn navlink
   [from to text]
   (let [key (str from "->" to)]
@@ -122,9 +107,22 @@
           :else content)]])))
 
 (defn script-changer []
-  (let [script @(rf/subscribe [::subs/script])
-        text   (if (= ::d/simplified script) "Simpl." "Trad.")]
-    (script-changer-link script text)))
+  (let [script     @(rf/subscribe [::subs/script])
+        text       (if (= ::d/simplified script)
+                     "Simpl."
+                     "Trad.")
+        alt-script (if (= ::d/simplified script)
+                     ::d/traditional
+                     ::d/simplified)
+        title      (str "Click to use " (if (= ::d/simplified alt-script)
+                                          "simplified characters"
+                                          "traditional characters"))]
+    [:a
+     {:key      alt-script
+      :class    "script-changer fake-link"
+      :title    title
+      :on-click #(rf/dispatch [::events/change-script alt-script])}
+     text]))
 
 (defn footer []
   (let [from  @(rf/subscribe [::subs/current-nav])
