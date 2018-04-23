@@ -137,9 +137,9 @@
       [:a {:href "https://github.com/simongray"} "github"] ")"]]))
 
 (defn- action-text
-  [action]
-  (case (first action)
-    ::events/look-up (str "Look up " (second action))
+  [[action query]]
+  (case action
+    ::events/look-up (str "Look up " query)
     ::events/digits->diacritics "Convert to diacritics"
     ::events/diacritics->digits "Convert to digits"
     ::events/close-action-chooser "Cancel"))
