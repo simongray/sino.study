@@ -238,24 +238,14 @@
   (let [script @(rf/subscribe [::subs/script])]
     (contains? (::d/scripts entry) script)))
 
-(defn english-search-result
-  "Search result matching English words."
-  []
-  (let [{results     ::d/english} @(rf/subscribe [::subs/content])
-        result-filter @(rf/subscribe [::subs/current-result-filter])]
-    (when (and (= result-filter ::d/english) results)
-      [:ul.dictionary-entries
-       (doall (for [entry (filter in-script results)]
-                (result-entry entry)))])))
-
-(defn pinyin-search-result
+(defn search-result-entries
   "Search result matching Pinyin."
   []
-  (let [{results     ::d/pinyin} @(rf/subscribe [::subs/content])
+  (let [content       @(rf/subscribe [::subs/content])
         result-filter @(rf/subscribe [::subs/current-result-filter])]
-    (when (and (= result-filter ::d/pinyin) results)
+    (when-let [entries (get content result-filter)]
       [:ul.dictionary-entries
-       (doall (for [entry (filter in-script results)]
+       (doall (for [entry (filter in-script entries)]
                 (result-entry entry)))])))
 
 (defn search-result
@@ -264,8 +254,7 @@
   [:div.search-result
    [search-result-header]
    [search-result-filter]
-   [english-search-result]
-   [pinyin-search-result]])
+   [search-result-entries]])
 
 (defn unknown-term
   "Dictionary entry for a term that does not exist."
