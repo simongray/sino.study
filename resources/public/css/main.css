@@ -399,9 +399,9 @@ hr {
     margin-bottom: 0.8em;
 
     /* make sure text stays on a single line */
-    /*white-space: nowrap;
-    /*overflow: hidden;*/
-    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* not working? */
 }
 
 .dictionary-entries .hanzi {
