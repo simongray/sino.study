@@ -59,12 +59,13 @@ img#logo {
 }
 
 .big-logo {
-	max-height: 6.5em;
+	max-height: 7em;
 	transition: all 0.3s;
+	margin-bottom: 0.5em;
 }
 
 .small-logo {
-	max-height: 4.5em;
+	max-height: 4em;
 	margin: 0.8em auto 0 auto;
 	transition: all 0.3s;
 }
@@ -201,7 +202,7 @@ form#action-chooser input:checked + label {
 
 form#study-form {
 	display: flex;
-	margin: 1.4em 0 0 0;
+	margin: 1em 0 0 0;
 }
 
 input#study-input {
@@ -252,7 +253,7 @@ div#study-hint {
     font-size: 9pt;
     font-weight: lighter;
     color: #999999;
-    margin: 0.3em 0 1em 0;
+    margin: 0.4em 0;
     padding: 0.5ch;
     letter-spacing: 0.6ch;
 
@@ -339,7 +340,7 @@ p {
 .pedestal {
 	/* positioning */
     position: relative;
-    top: 13em; /* pos relative to header varies a bit on different browsers */
+    top: 11em; /* pos relative to header varies a bit on different browsers */
     margin: auto;
     padding: 0 1ch;
 
