@@ -14,3 +14,12 @@
         makemeahanzi (load/load-makemeahanzi
                        (io/resource "makemeahanzi/dictionary.txt"))]
     (d/create-dict listings freq-dict makemeahanzi)))
+
+(defn look-up*
+  "A version of look-up that performs both the backend and frontend processing.
+  Useful for testing what the search results on the frontend look like."
+  [dict term]
+  (->> term
+       (d/look-up dict)
+       (d/reduce-result)
+       (d/sort-result)))
