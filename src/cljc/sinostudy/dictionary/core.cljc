@@ -230,6 +230,7 @@
     (into {} (map ns-k+v m))))
 
 (defn add-info*
+  "Helper function for add-info."
   [script makemeahanzi listing]
   (if-let [info (get makemeahanzi (get listing script))]
     (let [decomposition (get info "decomposition")
@@ -246,6 +247,7 @@
     listing))
 
 (defn add-info
+  "Add info from makemeahanzi to a CC-CEDICT listing."
   [makemeahanzi listing]
   (->> listing
        (add-info* ::traditional makemeahanzi)
@@ -254,24 +256,34 @@
 
 ;;;; CREATING DICTS AND LOOKING UP WORDS
 
+(defn make-report
+  "Create some some rudimentary statistics about the given dict."
+  [dict]
+  {:entry-count             (count (keys (::hanzi dict)))
+   :english-count           (count (keys (::english dict)))
+   :pinyin-count            (count (keys (::pinyin dict)))
+   :pinyin+digits-count     (count (keys (::pinyin+digits dict)))
+   :pinyin+diacritics-count (count (keys (::pinyin+diacritics dict)))})
+
 ;; TODO: also add listings only found in makemeahanzi (e.g. 忄)
 (defn create-dict
   "Load the contents of a CC-CEDICT dictionary file into Clojure maps.
   The listings convert into multiple dictionary entries based on look-up type.
   A freq-dict is used to add the word frequency to each entry if available."
   [listings freq-dict makemeahanzi]
-  (let [listings*                 (->> listings
-                                       (map detach-cls)
-                                       (map (partial add-freq freq-dict))
-                                       (map (partial add-info makemeahanzi)))
-        pinyin-key-add            (partial add-pinyin ::pinyin-key)
-        pinyin+digits-key-add     (partial add-pinyin ::pinyin+digits-key)
-        pinyin+diacritics-key-add (partial add-pinyin ::pinyin+diacritics-key)]
-    {::hanzi             (reduce add-hanzi {} listings*)
-     ::english           (reduce add-english {} listings*)
-     ::pinyin            (reduce pinyin-key-add {} listings*)
-     ::pinyin+digits     (reduce pinyin+digits-key-add {} listings*)
-     ::pinyin+diacritics (reduce pinyin+diacritics-key-add {} listings*)}))
+  (let [listings*          (->> listings
+                                (map detach-cls)
+                                (map (partial add-freq freq-dict))
+                                (map (partial add-info makemeahanzi)))
+        add-pinyin-key     (partial add-pinyin ::pinyin-key)
+        add-digits-key     (partial add-pinyin ::pinyin+digits-key)
+        add-diacritics-key (partial add-pinyin ::pinyin+diacritics-key)]
+    (->> {::hanzi             (reduce add-hanzi {} listings*)
+          ::english           (reduce add-english {} listings*)
+          ::pinyin            (reduce add-pinyin-key {} listings*)
+          ::pinyin+digits     (reduce add-digits-key {} listings*)
+          ::pinyin+diacritics (reduce add-diacritics-key {} listings*)}
+         (#(assoc %1 ::report (make-report %1))))))
 
 (defn look-up
   "Look up the specified term in each dictionary type.
