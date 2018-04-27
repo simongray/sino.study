@@ -91,7 +91,7 @@
             etymology (assoc ::etymology etymology)
             radical (assoc ::radical radical))))
 
-(defn hanzi-add*
+(defn add-hanzi*
   "Update the hanzi dict at the specified key k with the entry v.
   The entry is either inserted as is or merged with the old entry."
   [dict k v]
@@ -115,18 +115,18 @@
                             radical (assoc ::radical radical))))
     (assoc dict k v)))
 
-(defn hanzi-add
+(defn add-hanzi
   "Add 1 to 2 entries in the hanzi dictionary from a CC-CEDICT listing."
   [dict listing]
   (-> dict
-      (hanzi-add* (::traditional listing) (hanzi-entry ::traditional listing))
-      (hanzi-add* (::simplified listing) (hanzi-entry ::simplified listing))))
+      (add-hanzi* (::traditional listing) (hanzi-entry ::traditional listing))
+      (add-hanzi* (::simplified listing) (hanzi-entry ::simplified listing))))
 
 
 ;;;; PINYIN DICT
 
 ;; used by both pinyin-add and english-add
-(defn generic-add
+(defn add
   "Add an entry to a dictionary; clashes are merged into a set."
   [dict k v]
   (if-let [old (get dict k)]
@@ -138,12 +138,12 @@
   [listing]
   (hash-set (::traditional listing) (::simplified listing)))
 
-(defn pinyin-add
+(defn add-pinyin
   "Add an entry to a pinyin dictionary from a CC-CEDICT listing."
   [key-type dict listing]
   (let [k (get listing key-type)
         v (pinyin-entry listing)]
-    (generic-add dict k v)))
+    (add dict k v)))
 
 
 ;;;; ENGLISH DICT
@@ -167,7 +167,7 @@
                                 verblikes)]
     (set/difference keys stopwords*)))
 
-(defn english-add
+(defn add-english
   "Add an entry to the pinyin dictionary from a CC-CEDICT listing."
   [dict listing]
   (let [ks (english-keys (::definitions listing))
@@ -175,7 +175,7 @@
     (loop [dict* dict
            ks*   ks]
       (if (seq ks*)
-        (recur (generic-add dict* (first ks*) v) (rest ks*))
+        (recur (add dict* (first ks*) v) (rest ks*))
         dict*))))
 
 ;;; TODO: Prefer multi-character words slightly over one-character words:
@@ -264,11 +264,11 @@
                                        (map detach-cls)
                                        (map (partial add-freq freq-dict))
                                        (map (partial add-info makemeahanzi)))
-        pinyin-key-add            (partial pinyin-add ::pinyin-key)
-        pinyin+digits-key-add     (partial pinyin-add ::pinyin+digits-key)
-        pinyin+diacritics-key-add (partial pinyin-add ::pinyin+diacritics-key)]
-    {::hanzi             (reduce hanzi-add {} listings*)
-     ::english           (reduce english-add {} listings*)
+        pinyin-key-add            (partial add-pinyin ::pinyin-key)
+        pinyin+digits-key-add     (partial add-pinyin ::pinyin+digits-key)
+        pinyin+diacritics-key-add (partial add-pinyin ::pinyin+diacritics-key)]
+    {::hanzi             (reduce add-hanzi {} listings*)
+     ::english           (reduce add-english {} listings*)
      ::pinyin            (reduce pinyin-key-add {} listings*)
      ::pinyin+digits     (reduce pinyin+digits-key-add {} listings*)
      ::pinyin+diacritics (reduce pinyin+diacritics-key-add {} listings*)}))
