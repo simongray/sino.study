@@ -19,7 +19,7 @@
 (def index
   (slurp (io/resource "public/index.html")))
 
-(defonce dicts
+(defonce dict
   (let [listings     (load/load-cedict
                        (io/resource "cedict_ts.u8"))
         freq-dict    (load/load-freq-dict
@@ -27,7 +27,7 @@
                        (io/resource "frequency/giga-zh.num.txt"))
         makemeahanzi (load/load-makemeahanzi
                        (io/resource "makemeahanzi/dictionary.txt"))]
-    (d/create-dicts listings freq-dict makemeahanzi)))
+    (d/create-dict listings freq-dict makemeahanzi)))
 
 ;; First Access-Control header permits cross-origin requests.
 ;; Second prevents Chrome from stripping Content-Type header.
@@ -60,7 +60,7 @@
   [type query {:keys [limit]}]
   (let [ns-keywords* (partial ns-keywords #"," 'sinostudy.dictionary.core)]
     (cond
-      (= ::pages/terms type) (d/look-up dicts query (ns-keywords* limit)))))
+      (= ::pages/terms type) (d/look-up dict query (ns-keywords* limit)))))
 
 (defn transit-result
   "Get the Transit-encoded result of a query."

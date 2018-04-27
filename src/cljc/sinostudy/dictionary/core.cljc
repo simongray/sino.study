@@ -255,7 +255,7 @@
 ;;;; CREATING DICTS AND LOOKING UP WORDS
 
 ;; TODO: also add listings only found in makemeahanzi (e.g. 忄)
-(defn create-dicts
+(defn create-dict
   "Load the contents of a CC-CEDICT dictionary file into Clojure maps.
   The listings convert into multiple dictionary entries based on look-up type.
   A freq-dict is used to add the word frequency to each entry if available."
@@ -274,11 +274,11 @@
      ::pinyin+diacritics (reduce pinyin+diacritics-key-add {} listings*)}))
 
 (defn look-up
-  "Look up the specified term in each dictionary and merge the results.
+  "Look up the specified term in each dictionary type.
   Limit (optional) is a set of accepted result types."
-  ([dicts term limit]
-   (let [look-up*    (fn [dict word] (-> dicts (get dict) (get word)))
-         limited     (fn [dict] (if limit (get limit dict) dict))
+  ([dict term limit]
+   (let [look-up*    (fn [dict-type word] (-> dict (get dict-type) (get word)))
+         limited     (fn [dict-type] (if limit (get limit dict-type) dict-type))
          get-entries (fn [words] (set (map #(look-up* ::hanzi %) words)))
          hanzi       (look-up* (limited ::hanzi) term)
          pinyin      (look-up* (limited ::pinyin) term)
@@ -291,8 +291,8 @@
              digits (assoc ::pinyin+digits (get-entries digits))
              diacritics (assoc ::pinyin+diacritics (get-entries diacritics))
              english (assoc ::english (get-entries english)))))
-  ([dicts word]
-   (look-up dicts word nil)))
+  ([dict word]
+   (look-up dict word nil)))
 
 
 ;;;; POST-PROCESSING DICTIONARY LOOK-UP RESULTS
