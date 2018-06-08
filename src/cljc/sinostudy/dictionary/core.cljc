@@ -289,15 +289,21 @@
 
 (defn look-up
   "Look up the specified term in each dictionary type.
+  For Pinyin search results, both the raw search term and the pinyin-key version
+  are looked up (results merged), e.g. 'ding zuo' also gets 'dingzuo'.
   Limit (optional) is a set of accepted result types."
   ([dict term limit]
-   (let [look-up*    (fn [dict-type word] (-> dict (get dict-type) (get word)))
+   (let [term*       (pinyin-key term)                      ; unspaced
+         look-up*    (fn [dict-type word] (-> dict (get dict-type) (get word)))
          limited     (fn [dict-type] (if limit (get limit dict-type) dict-type))
          get-entries (fn [words] (set (map #(look-up* ::hanzi %) words)))
          hanzi       (look-up* (limited ::hanzi) term)
-         pinyin      (look-up* (limited ::pinyin) term)
-         digits      (look-up* (limited ::pinyin+digits) term)
-         diacritics  (look-up* (limited ::pinyin+diacritics) term)
+         pinyin      (set/union (look-up* (limited ::pinyin) term)
+                                (look-up* (limited ::pinyin) term*))
+         digits      (set/union (look-up* (limited ::pinyin+digits) term)
+                                (look-up* (limited ::pinyin+digits) term*))
+         diacritics  (set/union (look-up* (limited ::pinyin+diacritics) term)
+                                (look-up* (limited ::pinyin+diacritics) term*))
          english     (look-up* (limited ::english) term)]
      (cond-> {::term term}
              hanzi (assoc ::hanzi #{hanzi})
@@ -349,8 +355,8 @@
   "Remove uses from entries if the Pinyin does not match the given term.
   Used to filter results by a Pinyin search term."
   [term entries]
-  (let [use-matches-term? (comp (fn [s] (= s term))
-                                (fn [s] (str/replace s #" " ""))
+  (let [use-matches-term? (comp (fn [s] (= s (pinyin-key term)))
+                                pinyin-key
                                 p/no-digits
                                 first)]
     (for [entry entries]
