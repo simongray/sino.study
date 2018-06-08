@@ -353,14 +353,18 @@
 
 (defn filter-uses
   "Remove uses from entries if the Pinyin does not match the given term.
-  Used to filter results by a Pinyin search term."
-  [term entries]
-  (let [use-matches-term? (comp (fn [s] (= s (pinyin-key term)))
-                                pinyin-key
-                                p/no-digits
-                                first)]
-    (for [entry entries]
-      (assoc entry ::uses (filter use-matches-term? (::uses entry))))))
+  Used to filter results by a Pinyin search term.
+  An optional normalisation function f can be supplied to convert the uses
+  (normally in pinyin+digits format) to a Pinyin format matching the term."
+  ([term entries f]
+   (let [use-matches-term? (comp (fn [s] (= s (pinyin-key term)))
+                                 pinyin-key
+                                 (if f f identity)
+                                 first)]
+     (for [entry entries]
+       (assoc entry ::uses (filter use-matches-term? (::uses entry))))))
+  ([term entries]
+   (filter-uses term entries nil)))
 
 (defn reduce-result
   "Reduce the content of a dictionary look-up result.
@@ -373,8 +377,22 @@
         diacritics (::pinyin+diacritics result)
         english    (::english result)]
     (cond-> result
-            pinyin (assoc ::pinyin (filter-uses term pinyin))
-            english (assoc ::english (filter-defs term english)))))
+
+            pinyin
+            (assoc ::pinyin
+                   (filter-uses term pinyin p/no-digits))
+
+            digits
+            (assoc ::pinyin+digits
+                   (filter-uses term digits))
+
+            diacritics
+            (assoc ::pinyin+diacritics
+                   (filter-uses term diacritics p/digits->diacritics))
+
+            english
+            (assoc ::english
+                   (filter-defs term english)))))
 
 (defn sort-result
   "Sort the content of a dictionary look-up result.
