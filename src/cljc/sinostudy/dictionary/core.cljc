@@ -2,7 +2,6 @@
   (:require [clojure.set :as set]
             [clojure.string :as str]
             [sinostudy.pinyin.core :as p]
-            [sinostudy.pinyin.eval :as pe]
             [sinostudy.dictionary.data :as data]
             [sinostudy.dictionary.embed :as embed]))
 
