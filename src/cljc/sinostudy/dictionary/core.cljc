@@ -1,6 +1,8 @@
 (ns sinostudy.dictionary.core
   (:require [clojure.set :as set]
             [clojure.string :as str]
+            [sinostudy.pinyin.core :as p]
+            [sinostudy.pinyin.eval :as pe]
             [sinostudy.dictionary.data :as data]
             [sinostudy.dictionary.embed :as embed]))
 
@@ -320,7 +322,7 @@
         comparison
         (compare (fn2 x) (fn2 y))))))
 
-(defn containing-term
+(defn defs-containing-term
   "Only keep definitions that contain the given term."
   [term definitions]
   (let [term-re        (re-pattern (str "(?i)" term))
@@ -331,16 +333,28 @@
     (filter contains-term? definitions)))
 
 (defn filter-defs
-  "Remove definitions from entries if they do not contain the given term."
+  "Remove definitions from entries if they do not contain the given term.
+  Used to filter results by an English search term."
   [term entries]
   (let [relevant-defs (fn [[pinyin definitions]]
-                        [pinyin (containing-term term definitions)])
+                        [pinyin (defs-containing-term term definitions)])
         non-empty     (comp seq second)]
     (for [entry entries]
       (assoc entry ::uses (->> (::uses entry)
                                (map relevant-defs)
                                (filter non-empty)
                                (into {}))))))
+
+(defn filter-uses
+  "Remove uses from entries if the Pinyin does not match the given term.
+  Used to filter results by a Pinyin search term."
+  [term entries]
+  (let [use-matches-term? (comp (fn [s] (= s term))
+                                (fn [s] (str/replace s #" " ""))
+                                p/no-digits
+                                first)]
+    (for [entry entries]
+      (assoc entry ::uses (filter use-matches-term? (::uses entry))))))
 
 (defn reduce-result
   "Reduce the content of a dictionary look-up result.
@@ -353,6 +367,7 @@
         diacritics (::pinyin+diacritics result)
         english    (::english result)]
     (cond-> result
+            pinyin (assoc ::pinyin (filter-uses term pinyin))
             english (assoc ::english (filter-defs term english)))))
 
 (defn sort-result

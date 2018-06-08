@@ -119,6 +119,11 @@
      s
      (recur (str/replace s match replacement) xs))))
 
+(defn no-digits
+  "Remove digits from the input string."
+  [s]
+  (str/replace s #"[0-9]" ""))
+
 (defn- char->tone
   "Get the tone (0-4) based on a char."
   [char]
