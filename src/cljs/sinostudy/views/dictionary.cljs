@@ -208,16 +208,17 @@
 (defn- result-entry-uses
   "Listed uses of a search result entry."
   [uses]
-  (for [[pronunciation definitions] uses]
-    (when (not (empty? definitions))
-      [:li
-       {:key pronunciation}
-       [:span.pinyin
-        {:key pronunciation}
-        (p/digits->diacritics pronunciation)]
-       " "
-       [:span.definition
-        (str/join "; " definitions)]])))
+  (let [->diacritics (comp str/join vc/embedded-digits->diacritics)]
+    (for [[pronunciation definitions] uses]
+      (when (not (empty? definitions))
+        [:li
+         {:key pronunciation}
+         [:span.pinyin
+          {:key pronunciation}
+          (p/digits->diacritics pronunciation)]
+         " "
+         [:span.definition
+          (str/join "; " (map ->diacritics definitions))]]))))
 
 (defn- search-result-entry
   "Entry in a results-list."

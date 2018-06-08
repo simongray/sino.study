@@ -79,3 +79,7 @@
   (let [non-ref #"[^\s]+\[[^\]]+\]|[^,.;'\"`´+?&()#%\s]+"
         link*   (partial link-reference script)]
     (rim/re-handle s non-ref link*)))
+
+(defn embedded-digits->diacritics
+  [s]
+  (rim/re-handle s #"\[[^\]]+\]" p/digits->diacritics))
