@@ -4,12 +4,19 @@
             [re-frame.core :as rf]
             [accountant.core :as accountant]
             [sinostudy.db :as db]
+            [sinostudy.config :as config]
             [sinostudy.pinyin.core :as p]
             [sinostudy.pinyin.eval :as pe]
             [sinostudy.dictionary.core :as d]
             [sinostudy.pages.core :as pages]
             [ajax.core :as ajax]
             [cognitect.transit :as transit]))
+
+;; Backend URI differs in dev and production.
+(def query-uri
+  (if config/debug?
+    "http://localhost:3000/query/"
+    "http://localhost:8080/query/"))
 
 ;;;; HELPER FUNCTIONS
 
@@ -276,10 +283,9 @@
                            :response-format (ajax/text-response-format)
                            :on-success      [::on-query-success]
                            :on-failure      [::on-query-failure]}
-          base-uri        "http://localhost:3000/query/"
           query-type      (name (first query))
           query-string    (second query)
-          uri             (str base-uri query-type "/" query-string)
+          uri             (str query-uri query-type "/" query-string)
           request         (assoc default-request :uri uri)]
       {:http-xhrio request})))
 
