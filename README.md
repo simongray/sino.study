@@ -46,7 +46,7 @@ the development backend service to be running too.
 Note: this is a necessary step for production releases!
 
 To compile ClojureScript to JavaScript:
-
+eve
 ```
 lein clean
 lein cljsbuild once min
@@ -78,4 +78,16 @@ Once the REPL has loaded the user ns, evaluate the following:
 
 This will start a production server using html-kit
 (the returned function is used to stop the server again from the REPL).
+Wait a bit, then browse to [http://localhost:8080](http://localhost:8080).
+
+
+### Compiling an uberjar for rapid deployment
+This will create a standalone JAR file including the entire compiled app
+(note: target JAR filename subject to change).
+
+````
+lein uberjar
+java -jar target/sinostudy-0.1.0-SNAPSHOT-standalone.jar
+````
+
 Wait a bit, then browse to [http://localhost:8080](http://localhost:8080).

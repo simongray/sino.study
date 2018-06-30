@@ -34,20 +34,23 @@
             ;; compojure
             [lein-ring "0.9.7"]]
 
-                                 ;; reagent/re-frame
-  :profiles {:dev {:dependencies [[binaryage/devtools "0.9.10"]
-                                  [re-frisk "0.5.4"]
-                                  [day8.re-frame/trace "0.1.22"] ; Ctrl+h to toggle
+                                      ;; reagent/re-frame
+  :profiles {:dev     {:dependencies [[binaryage/devtools "0.9.10"]
+                                      [re-frisk "0.5.4"]
+                                      [day8.re-frame/trace "0.1.22"] ; Ctrl+h to toggle
 
-                                  ;; compojure
-                                  [javax.servlet/servlet-api "2.5"]
-                                  [ring/ring-mock "0.3.2"]]
+                                      ;; compojure
+                                      [javax.servlet/servlet-api "2.5"]
+                                      [ring/ring-mock "0.3.2"]]
 
-                             ;; reagent/re-frame
-                   :plugins [[lein-figwheel "0.5.13"]]
-                   :source-paths ["dev/src/clj"]
-                   :repl-options {:init-ns user
-                                  :init (println "Started dev REPL in user")}}}
+                       :plugins      [[lein-figwheel "0.5.13"]]
+                       :source-paths ["dev/src/clj"]
+                       :repl-options {:init-ns user
+                                      :init    (println "Started dev REPL in user")}}
+
+             :uberjar {:main       sinostudy.server
+                       :aot        [sinostudy.server]
+                       :prep-tasks ["compile" ["cljsbuild" "once" "min"]]}}
 
   ;; compojure
   :ring {:handler sinostudy.handler/app}
