@@ -23,6 +23,7 @@
 
                  ;; compojure
                  [compojure "1.5.1"]
+                 [http-kit "2.3.0"]
                  [ring/ring-defaults "0.2.1"]
                  [com.cognitect/transit-clj "0.8.300"]
                  [clj-json "0.5.3"]]
