@@ -64,7 +64,9 @@
                                        :asset-path           "js/compiled/out"
                                        :source-map-timestamp true
                                        :closure-defines      {"re_frame.trace.trace_enabled_QMARK_" true}
-                                       :preloads             [devtools.preload re-frisk.preload day8.re-frame.trace.preload]
+                                       :preloads             [devtools.preload
+                                                              re-frisk.preload
+                                                              day8.re-frame.trace.preload]
                                        :external-config      {:devtools/config {:features-to-install :all}}}}
 
                        {:id           "min"
