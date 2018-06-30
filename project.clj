@@ -13,19 +13,19 @@
   :dependencies [[org.clojure/clojure "1.9.0"]
 
                  ;; reagent/re-frame
-                 [org.clojure/clojurescript "1.9.946"]
-                 [reagent "0.7.0"]
-                 [re-frame "0.10.2"]
-                 [day8.re-frame/http-fx "0.1.4"]
+                 [org.clojure/clojurescript "1.10.339"]
+                 [reagent "0.8.1"]
+                 [re-frame "0.10.5"]
+                 [day8.re-frame/http-fx "0.1.6"]
                  [secretary "1.2.3"]
-                 [venantius/accountant "0.2.3"]
-                 [com.cognitect/transit-cljs "0.8.243"]
+                 [venantius/accountant "0.2.4"]
+                 [com.cognitect/transit-cljs "0.8.256"]
 
                  ;; compojure
-                 [compojure "1.5.1"]
+                 [compojure "1.6.1"]
                  [http-kit "2.3.0"]
-                 [ring/ring-defaults "0.2.1"]
-                 [com.cognitect/transit-clj "0.8.300"]
+                 [ring/ring-defaults "0.3.2"]
+                 [com.cognitect/transit-clj "0.8.309"]
                  [clj-json "0.5.3"]]
 
             ;; reagent/re-frame
@@ -35,13 +35,13 @@
             [lein-ring "0.9.7"]]
 
                                  ;; reagent/re-frame
-  :profiles {:dev {:dependencies [[binaryage/devtools "0.9.4"]
-                                  [re-frisk "0.5.2"]
-                                  [day8.re-frame/trace "0.1.13"] ; Ctrl+h to toggle
+  :profiles {:dev {:dependencies [[binaryage/devtools "0.9.10"]
+                                  [re-frisk "0.5.4"]
+                                  [day8.re-frame/trace "0.1.22"] ; Ctrl+h to toggle
 
                                   ;; compojure
                                   [javax.servlet/servlet-api "2.5"]
-                                  [ring/ring-mock "0.3.0"]]
+                                  [ring/ring-mock "0.3.2"]]
 
                              ;; reagent/re-frame
                    :plugins [[lein-figwheel "0.5.13"]]
