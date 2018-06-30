@@ -8,11 +8,14 @@ The frontend uses [Reagent](https://github.com/reagent-project/reagent)
 and [re-frame](https://github.com/Day8/re-frame).
 Furthermore, it makes use of [secretary](https://github.com/gf3/secretary) 
 and [Accountant](https://github.com/venantius/accountant) for frontend routing.
-The backend is a [Compojure](https://github.com/weavejester/compojure) service.
+The backend is a [Compojure](https://github.com/weavejester/compojure) service
+that is served by [http-kit](https://github.com/http-kit/http-kit).
 Communication between the backend web service and the frontend app is
 facilitated by [Transit](https://github.com/cognitect/transit-format).
 The functionality is built around my own wrapper library for Stanford CoreNLP,
-[Computerese](https://github.com/simongray/Computerese).
+[Computerese](https://github.com/simongray/Computerese), as well as numerous
+open-source datasets, most notably [CC-CEDICT](https://cc-cedict.org/) and
+[makemeahanzi](https://github.com/skishore/makemeahanzi).
 
 # Development
 
@@ -20,23 +23,39 @@ The functionality is built around my own wrapper library for Stanford CoreNLP,
 The REPL should start in the user ns with various relevant namespaces required.
 The user ns also includes relevant functions for development.
 
-## Run re-frame application
+
+## Compiling the frontend
+
+### Run live-reloading frontend app
+Note: this is only used during development.
 ```
 lein clean
 lein figwheel dev
 ```
 
-Figwheel will automatically push cljs changes to the browser.
+Figwheel will automatically push CLJS changes to the browser.
 
 Wait a bit, then browse to [http://localhost:3449](http://localhost:3449).
 
 If there are any issues getting the app to show up (e.g. blank page), 
-then try clearing the browser cache. Note that some functionality will require
-the backend to be running too, e.g. dictionary results.
+then try clearing the browser cache. Note that most functionality will require
+the development backend service to be running too.
 
 
-## Run Compojure application
-To start a web server for the application, run:
+### Compiling a frontend production build
+Note: this is a necessary step for production releases!
+
+To compile ClojureScript to JavaScript:
+
+```
+lein clean
+lein cljsbuild once min
+```
+
+## Run backend Compojure web service
+
+### Development server
+To start a development web server for the application, run:
 
 ````
 lein ring server
@@ -44,10 +63,19 @@ lein ring server
 Wait a bit, then browse to [http://localhost:3000](http://localhost:3000).
 
 
-## Compiling a frontend production build
-To compile ClojureScript to JavaScript:
+### Production server
+To start a production web server for the application, run:
 
-```
-lein clean
-lein cljsbuild once min
-```
+````
+lein repl
+````
+
+Once the REPL has loaded the user ns, evaluate the following:
+
+````
+(def stop-server (start-server))
+````
+
+This will start a production server using html-kit
+(the returned function is used to stop the server again from the REPL).
+Wait a bit, then browse to [http://localhost:8080](http://localhost:8080).
