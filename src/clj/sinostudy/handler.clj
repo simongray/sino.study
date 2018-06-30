@@ -81,5 +81,15 @@
   ;; The internal routing of the app creates the correct presentation.
   (route/not-found index))
 
+;; Allows web resources in the JAR (such as CSS and JS) to be fetched.
+;; This is especially important in production, i.e. using html-kit.
+;; Otherwise, the paths referencing them in index.html will return nothing.
+(defroutes resources-routes
+  (route/resources "/" {:root "public"}))
+
+(def all-routes
+  (routes resources-routes
+          app-routes))
+
 (def app
-  (wrap-defaults app-routes site-defaults))
+  (wrap-defaults all-routes site-defaults))
