@@ -81,13 +81,42 @@ This will start a production server using html-kit
 Wait a bit, then browse to [http://localhost:8080](http://localhost:8080).
 
 
+## Deployment
+
 ### Compiling an uberjar for rapid deployment
 This will create a standalone JAR file including the entire compiled app
 (note: target JAR filename subject to change).
 
 ````
 lein uberjar
+````
+
+To test that the uberjar was packaged correctly, run:
+
+````
 java -jar target/sinostudy-0.1.0-SNAPSHOT-standalone.jar
 ````
 
 Wait a bit, then browse to [http://localhost:8080](http://localhost:8080).
+
+
+### Building a docker image
+
+To build an image from the Dockerfile, run:
+
+```` 
+docker build -t simongray/sino.study .
+````
+
+Note: this requires the uberjar built during the previous step.
+
+The image can be run locally as a Docker container using:
+
+```` 
+docker run -p 8080:8080 simongray/sino.study
+````
+
+Wait more than usual, then visit [http://localhost:8080](http://localhost:8080).
+
+Use ````docker ps```` to list running containers and their assigned names.
+Stop the container again by running ````docker stop <name>````.
