@@ -120,7 +120,7 @@ Note: this requires the uberjar built during the previous step.
 The image can be run as a Docker container using:
 
 ```` 
-docker run -p 80:8080 simongray/sino.study
+docker run -v /root/Code/sinostudy-data:/root/Code/sinostudy-data -p 80:8080 simongray/sino.study
 ````
 
 Wait (more than usual), then visit [http://localhost:80](http://localhost:80).
