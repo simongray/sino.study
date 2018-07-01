@@ -19,6 +19,11 @@ open-source datasets, most notably [CC-CEDICT](https://cc-cedict.org/) and
 
 # Development
 
+## Prerequisites
+Running the sino.study app requires the sinostudy-data git repository to be 
+located at ~/Code/sinostudy-data. Make sure that directory exists and pull from:
+[sino.study-data](https://github.com/simongray/sino.study-data).
+
 ## Testing things out in the REPL
 The REPL should start in the user ns with various relevant namespaces required.
 The user ns also includes relevant functions for development.

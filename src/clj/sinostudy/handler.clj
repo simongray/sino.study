@@ -19,14 +19,22 @@
 (def index
   (slurp (io/resource "public/index.html")))
 
+(defn in-home
+  "Expands to the current user's home directory + s."
+  [s]
+  (str (System/getProperty "user.home") "/" s))
+
+;; Note: dict compilation requires the sinostudy-data git repo to be located in:
+;; ~/Code/sinostudy-data
 (defonce dict
-  (let [listings     (load/load-cedict
-                       (io/resource "cedict_ts.u8"))
+  (let [data         #(in-home (str "Code/sinostudy-data/" %))
+        listings     (load/load-cedict
+                       (data "cedict_ts.u8"))
         freq-dict    (load/load-freq-dict
-                       (io/resource "frequency/internet-zh.num.txt")
-                       (io/resource "frequency/giga-zh.num.txt"))
+                       (data "frequency/internet-zh.num.txt")
+                       (data "frequency/giga-zh.num.txt"))
         makemeahanzi (load/load-makemeahanzi
-                       (io/resource "makemeahanzi/dictionary.txt"))]
+                       (data "makemeahanzi/dictionary.txt"))]
     (d/create-dict listings freq-dict makemeahanzi)))
 
 ;; First Access-Control header permits cross-origin requests.
