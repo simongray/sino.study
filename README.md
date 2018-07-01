@@ -48,10 +48,10 @@ the development backend service to be running too.
 
 
 ### Compiling a frontend production build
-Note: this is a necessary step for production releases!
+Note: this is done automatically when building an uberjar.
 
 To compile ClojureScript to JavaScript:
-eve
+
 ```
 lein clean
 lein cljsbuild once min
