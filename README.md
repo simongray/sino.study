@@ -1,6 +1,6 @@
 ![sino·study](./resources/public/img/logo_min.svg)
 
-This is the repository for [sino·study](https://sino.study), 
+This is the repository for [sino·study](http://sino.study), 
 a web app designed to assist students of the Chinese language in various ways.
 
 It is a single-page application written in Clojure and ClojureScript.
