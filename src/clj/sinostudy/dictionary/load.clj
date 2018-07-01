@@ -53,7 +53,7 @@
   "Load the listings of a CC-CEDICT dictionary file into Clojure maps."
   [file]
   (with-open [reader (io/reader file)]
-    (->> (line-seq reader)
+    (->> (doall (line-seq reader))
          (filter #(not (str/starts-with? % "#")))
          (map line->listing)
          (vec))))
@@ -81,7 +81,7 @@
   "Load the listings of 1 or more frequency files into a Clojure map."
   ([file]
    (with-open [reader (io/reader file)]
-     (let [raw-listings (->> (line-seq reader)
+     (let [raw-listings (->> (doall (line-seq reader))
                              (filter #(re-find #"^\d+ " %))
                              (map line->freq-listing)
                              (filter (comp not nil?)))
@@ -101,6 +101,6 @@
   "Load the listings of a makemeahanzi file into a Clojure map."
   [file]
   (with-open [reader (io/reader file)]
-    (let [raw-listings (->> (line-seq reader)
+    (let [raw-listings (->> (doall (line-seq reader))
                             (map json/parse-string))]
       (reduce #(assoc %1 (get %2 "character") %2) {} raw-listings))))
