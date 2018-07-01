@@ -103,6 +103,8 @@ java -jar target/sinostudy-0.1.0-SNAPSHOT-standalone.jar
 ````
 
 Wait a bit, then browse to [http://localhost:8080](http://localhost:8080).
+Note that the packaged production version expects to be running in production,
+so queries are all sent to sino.study/query.
 
 
 ### Building a docker image
@@ -115,13 +117,13 @@ docker build -t simongray/sino.study .
 
 Note: this requires the uberjar built during the previous step.
 
-The image can be run locally as a Docker container using:
+The image can be run as a Docker container using:
 
 ```` 
-docker run -p 8080:8080 simongray/sino.study
+docker run -p 80:8080 simongray/sino.study
 ````
 
-Wait more than usual, then visit [http://localhost:8080](http://localhost:8080).
+Wait (more than usual), then visit [http://localhost:80](http://localhost:80).
 
 Use ````docker ps```` to list running containers and their assigned names.
 Stop the container again by running ````docker stop <name>````.

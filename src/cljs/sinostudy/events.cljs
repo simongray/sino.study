@@ -16,7 +16,7 @@
 (def query-uri
   (if config/debug?
     "http://localhost:3000/query/"
-    "http://localhost:8080/query/"))
+    "http://sino.study/query/"))
 
 ;;;; HELPER FUNCTIONS
 
