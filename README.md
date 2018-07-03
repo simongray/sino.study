@@ -69,7 +69,11 @@ the development backend service to be running too.
 
 
 ## Deploying to production
-Currently, there are two steps to build a production Docker image.
+Currently, there are three steps to deploying a production Docker image:
+
+1. compiling an uberjar
+2. building the docker image
+3. running a container from the image in production
 
 ### Compiling an uberjar for rapid deployment
 This will create a standalone JAR file including the entire compiled app
