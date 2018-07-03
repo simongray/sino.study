@@ -29,8 +29,8 @@ located at ~/Code/sinostudy-data. Make sure that directory exists and pull from:
 
 * The REPL starts out in the `user` ns with various other namespaces required.
 The user ns also includes relevant custom functions for development.
-Changes to data structures and most other backend development should mainly 
-happen in the REPL.
+Changes to e.g. dictionary data structures and most other backend development 
+is best tested in the REPL.
 
 
 ## Developing with live re-loading
