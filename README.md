@@ -51,14 +51,17 @@ the live-reloading frontend app.
 
 
 ### Run live-reloading frontend app
+To start figwheel - a live-reloading process for the frontend - run:
+
 ```
 lein clean
 lein figwheel dev
 ```
 
-Figwheel will automatically push CLJS changes to the browser.
-
 Wait a bit, then browse to [http://localhost:3449](http://localhost:3449).
+
+Figwheel will automatically push CLJS changes to the browser, 
+while preserving the application state. A hard page reload will reset the state.
 
 If there are any issues getting the app to show up (e.g. blank page), 
 then try clearing the browser cache. Note that most functionality will require
