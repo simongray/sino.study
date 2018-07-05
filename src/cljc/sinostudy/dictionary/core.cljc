@@ -331,10 +331,16 @@
   "Only keep definitions that contain the given term."
   [term definitions]
   (let [term-re        (re-pattern (str "(?i)" term))
-        contains-term? (fn [definition]
-                         (->> (str/split definition #"[^a-zA-Z-]+")
-                              (filter (partial re-find term-re))
-                              (seq)))]
+        ;; Either of the 4 conditions can be true for the displaced term
+        ;; to have been a proper selection of words and spaces.
+        ;; If none of the conditions apply,
+        ;; then the displaced term was found partially inside one or more words.
+         contains-term? (fn [definition]
+                         (let [definition* (str/replace definition term-re "_")]
+                           (or (= definition* "_")
+                               (str/starts-with? definition* "_ ")
+                               (str/ends-with? definition* " _")
+                               (re-find #" _ " definition*))))]
     (filter contains-term? definitions)))
 
 (defn filter-defs
