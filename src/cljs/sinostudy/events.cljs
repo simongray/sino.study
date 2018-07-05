@@ -49,7 +49,7 @@
    ::no-actions          "not sure what to do with that..."
    ::digits->diacritics  (press-enter-to "convert to tone diacritics")
    ::diacritics->digits  (press-enter-to "convert to tone digits")
-   ::look-up             (press-enter-to "look up the word")
+   ::look-up             (press-enter-to "look up the term")
    ::open-action-chooser (press-enter-to "choose an action")})
 
 (defn hint
