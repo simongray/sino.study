@@ -562,6 +562,11 @@ footer .script-changer {
     /* nav links shouldn't jump around when changing script */
     display: inline-block;
     min-width: 7ch;
+
+    /* TODO: possible fix for #14 (translation pop-up on Chrome mobile
+             will need further testing */
+    user-drag: none;
+    user-select: none;
 }
 
 footer a:hover {
