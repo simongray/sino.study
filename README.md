@@ -83,6 +83,8 @@ This will create a standalone JAR file including the entire compiled app
 lein uberjar
 ````
 
+The uberjar is a self-contained backend+frontend, although it does expect
+the sino.study-datafiles repo to be present at the correct path!
 To test that the uberjar was packaged correctly, run:
 
 ````
@@ -90,8 +92,6 @@ java -jar target/sinostudy-0.1.0-SNAPSHOT-standalone.jar
 ````
 
 Wait a bit, then browse to [http://localhost:8080](http://localhost:8080).
-Note that the packaged production version expects to be running in production,
-so queries are all sent to sino.study/query.
 
 
 ### Building and deploying docker image
@@ -160,4 +160,4 @@ This will start a production server using html-kit
 Wait a bit, then browse to [http://localhost:8080](http://localhost:8080).
 
 Be aware that the frontend application will need to be modified to get data
-from the local service (it accesses sino.study by default).
+from the local html-kit service (it accesses localhost:3000 by default).

@@ -12,11 +12,15 @@
             [ajax.core :as ajax]
             [cognitect.transit :as transit]))
 
-;; Backend URI differs in dev and production.
+;; During development, frontend and backend are served on different ports,
+;; but in production the backend is served on the same host and port.
 (def query-uri
   (if config/debug?
     "http://localhost:3000/query/"
-    "http://sino.study/query/"))
+    (let [hostname js/window.location.hostname
+          port     js/window.location.port]
+      (str "http://" hostname ":" port "/query/"))))
+
 
 ;;;; HELPER FUNCTIONS
 
