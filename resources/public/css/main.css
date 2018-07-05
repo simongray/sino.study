@@ -520,6 +520,22 @@ nav {
     margin-bottom: 0.8em;
 }
 
+footer .script-changer {
+    padding: 0.2em 0.5em;
+    border: 1pt solid #CC6666;
+    border-radius: 0.5ch;
+    color: #FFBBBB;
+
+    /* nav links shouldn't jump around when changing script */
+    display: inline-block;
+    min-width: 7ch;
+
+    /* TODO: possible fix for #14 (translation pop-up on Chrome mobile
+             will need further testing */
+    user-drag: none;
+    user-select: none;
+}
+
 p#copyright {
 	color: #DD8888;
 	font-size: 8pt;
@@ -551,22 +567,6 @@ a:hover {
 
 footer a {
 	color: white;
-}
-
-footer .script-changer {
-    padding: 0.2em 0.5em;
-    border: 1pt solid #CC6666;
-    border-radius: 0.5ch;
-    color: #FFBBBB;
-
-    /* nav links shouldn't jump around when changing script */
-    display: inline-block;
-    min-width: 7ch;
-
-    /* TODO: possible fix for #14 (translation pop-up on Chrome mobile
-             will need further testing */
-    user-drag: none;
-    user-select: none;
 }
 
 footer a:hover {
