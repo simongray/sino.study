@@ -526,7 +526,7 @@ p#copyright {
 }
 
 
-/* links */
+/* LINKS IN GENERAL */
 a {
 	color: inherit;
 	text-decoration: none;
@@ -546,9 +546,8 @@ a:hover {
 	border-color: #4477DD;
 }
 
-a.current-page, a.current-page:hover {
-	color: #661111;
-}
+
+/* FOOTER / NAV LINKS */
 
 footer a {
 	color: white;
@@ -568,6 +567,11 @@ footer .script-changer {
 footer a:hover {
 	color: white;
 	text-decoration: underline;
+}
+
+footer a.current-page, footer a.current-page:hover {
+	color: #661111;
+	text-decoration: none;
 }
 
 footer .script-changer:hover {
