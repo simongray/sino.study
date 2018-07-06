@@ -149,6 +149,14 @@
 
 ;;;; ENGLISH DICT
 
+(defn remove-embedded
+  "Removes embedded CC-CEDICT information from string s."
+  [s]
+  (-> s
+      (str/replace embed/refr "")
+      (str/replace embed/hanzi "")
+      (str/replace embed/pinyin "")))
+
 (defn english-keys
   "Find English dictionary keys based on a CC-CEDICT listing.
   Stop-words are removed entirely, unless they make up a full definition."
@@ -156,6 +164,7 @@
   (let [stopwords*   (set/difference data/stopwords definitions)
         single-words (->> definitions
                           (map ^String str/lower-case)
+                          (map remove-embedded)
                           (map #(str/split % #"[^a-z-]+"))
                           (flatten)
                           (filter (comp not str/blank?))
@@ -330,17 +339,9 @@
 (defn defs-containing-term
   "Only keep definitions that contain the given term."
   [term definitions]
-  (let [term-re        (re-pattern (str "(?i)" term))
-        ;; Either of the 4 conditions can be true for the displaced term
-        ;; to have been a proper selection of words and spaces.
-        ;; If none of the conditions apply,
-        ;; then the displaced term was found partially inside one or more words.
-         contains-term? (fn [definition]
-                         (let [definition* (str/replace definition term-re "_")]
-                           (or (= definition* "_")
-                               (str/starts-with? definition* "_ ")
-                               (str/ends-with? definition* " _")
-                               (re-find #" _ " definition*))))]
+  (let [term-re        (re-pattern (str "(?i)(^| |\\()" term "($| |\\))"))
+        contains-term? (fn [definition]
+                         (re-find term-re (remove-embedded definition)))]
     (filter contains-term? definitions)))
 
 (defn filter-defs
