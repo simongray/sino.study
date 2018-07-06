@@ -1,5 +1,7 @@
 (ns sinostudy.views.core
   (:require [re-frame.core :as rf]
+            [clojure.string :as str]
+            [version :as v]
             [sinostudy.subs :as subs]
             [sinostudy.events :as events]
             [sinostudy.views.dictionary :as vd]
@@ -124,6 +126,16 @@
       :on-click #(rf/dispatch [::events/change-script alt-script])}
      text]))
 
+;; Project version number based on git tag + commit SHA
+;; Links to the current commit on github if committed.
+;; More info: https://github.com/roomkey/lein-v
+(def github-link
+  (if (str/ends-with? v/version "-DIRTY")
+    v/version
+    [:a {:href (str "https://github.com/simongray/sino.study/commit/"
+                    v/raw-version)}
+     v/version]))
+
 (defn footer []
   (let [from  @(rf/subscribe [::subs/current-nav])
         links [["/" "Home"] ["/help" "Help"] ["/about" "About"]]]
@@ -131,8 +143,7 @@
      [:nav (interpose " · "
              (conj (vec (navify from links))
                    [script-changer {:key "script-changer"}]))]
-     [:p#copyright "© " year-string " Simon Gray ("
-      [:a {:href "https://github.com/simongray"} "github"] ")"]]))
+     [:p#copyright "© " year-string " Simon Gray (" github-link ")"]]))
 
 (defn- action-text
   [[action query]]

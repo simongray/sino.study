@@ -42,13 +42,16 @@
                                       [ring/ring-mock "0.3.2"]]
 
                        :plugins      [[lein-figwheel "0.5.13"]]
+                       :prep-tasks   [["v" "cache" "src/cljc" "cljc"]]
                        :source-paths ["dev/src/clj"]
                        :repl-options {:init-ns user
                                       :init    (println "Started dev REPL in user")}}
 
              :uberjar {:main       sinostudy.server
                        :aot        [sinostudy.server]
-                       :prep-tasks ["compile" ["cljsbuild" "once" "min"]]}}
+                       :prep-tasks [["v" "cache" "src/cljc" "cljc"]
+                                    "compile"
+                                    ["cljsbuild" "once" "min"]]}}
 
   ;; compojure
   :ring {:handler sinostudy.handler/app}
