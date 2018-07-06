@@ -1,4 +1,4 @@
-(defproject sinostudy "0.1.0-SNAPSHOT"
+(defproject sinostudy :lein-v
   :description "The sino.study project."
   :url "http://sino.study"
   :min-lein-version "2.5.3"
@@ -28,10 +28,8 @@
                  [com.cognitect/transit-clj "0.8.309"]
                  [clj-json "0.5.3"]]
 
-            ;; reagent/re-frame
-  :plugins [[lein-cljsbuild "1.1.5"]
-
-            ;; compojure
+  :plugins [[com.roomkey/lein-v "6.3.0"]
+            [lein-cljsbuild "1.1.5"]
             [lein-ring "0.9.7"]]
 
                                       ;; reagent/re-frame
