@@ -101,10 +101,12 @@ Wait a bit, then browse to [http://localhost:8080](http://localhost:8080).
 To build an image from the Dockerfile, run:
 
 ```` 
-docker build -t simongray/sino.study .
+docker build -t simongray/sino.study:latest -t simongray/sino.study:${version} --build-arg JARPATH=${jarpath} --build-arg JARFILE=${jarfile} .
+
 ````
 
-Note: this requires the uberjar built during the previous step.
+Note: this requires the uberjar built during the previous step as well as the
+correct name and path of the jarfile.
 
 It can then be pushed and pulled from the docker store by running e.g.
 
