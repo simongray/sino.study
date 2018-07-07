@@ -17,7 +17,7 @@ if [[ $(lein v show) =~ $re ]]; then
     lein uberjar
 
     echo "building docker image"
-    docker build -t simongray/sino.study:latest -t simongray/sino.study:${version} --build-arg jarpath=${jarpath} --build-arg jarfile=${jarfile} .
+    docker build -t simongray/sino.study:latest -t simongray/sino.study:${version} --build-arg JARPATH=${jarpath} --build-arg JARFILE=${jarfile} .
 
     echo "pushing docker image"
     docker push simongray/sino.study

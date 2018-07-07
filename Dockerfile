@@ -1,8 +1,9 @@
 FROM openjdk:10
-ARG jarpath
-ARG jarfile
+ARG JARPATH
+ARG JARFILE
+ENV JARFILE "$JARFILE"
 MAINTAINER Simon Gray <simongray@gmail.com>
-ADD $jarpath /usr/src/myapp/
+ADD "$JARPATH" /usr/src/myapp/
 WORKDIR /usr/src/myapp
 EXPOSE 8080
-CMD java -XX:+PrintFlagsFinal -jar $jarfile
+CMD java -XX:+PrintFlagsFinal -jar "$JARFILE"

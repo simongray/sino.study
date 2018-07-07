@@ -113,10 +113,14 @@ docker push simongray/sino.study
 docker pull simongray/sino.study
 ````
 
-The image can be run as a Docker container on the production system using:
+The image can be run as a Docker container using:
 
 ```` 
-docker run -v /root/Code/sinostudy-data:/root/Code/sinostudy-data -p 80:8080 simongray/sino.study
+# in production
+docker run -v /root/Code/sinostudy-data:/root/Code/sinostudy-data -p 80:8080 simongray/sino.study:latest
+
+# testing locally
+docker run -v /Users/simongray/Code/sinostudy-data:/root/Code/sinostudy-data -p 80:8080 simongray/sino.study:latest
 ````
 
 (this will tunnel the exposed 8080 port of the docker container
