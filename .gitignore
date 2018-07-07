@@ -127,3 +127,4 @@ Temporary Items
 
 .idea/codeStyleSettings.xml
 cedict_ts.u8
+src/cljc/version.cljc
