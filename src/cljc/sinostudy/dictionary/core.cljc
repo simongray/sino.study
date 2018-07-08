@@ -159,20 +159,24 @@
 
 (defn english-keys
   "Find English dictionary keys based on a CC-CEDICT listing.
-  Stop-words are removed entirely, unless they make up a full definition."
+  Stop-words are removed entirely, unless they make up a full definition
+  or if they are part of a verblike, e.g. 'to have' or 'to laugh'."
   [definitions]
-  (let [stopwords*   (set/difference data/stopwords definitions)
-        single-words (->> definitions
-                          (map ^String str/lower-case)
+  (let [definitions* (set (map ^String str/lower-case definitions))
+        single-words (->> definitions*
                           (map remove-embedded)
                           (map #(str/split % #"[^a-z-]+"))
                           (flatten)
                           (filter (comp not str/blank?))
                           (set))
-        verblikes    (->> definitions
+        verblikes    (->> definitions*
                           (filter #(str/starts-with? % "to "))
-                          (map #(subs % 3)))
-        keys         (set/union definitions
+                          (map #(subs % 3))
+                          (set))
+        stopwords*   (-> data/stopwords
+                         (set/difference definitions*)
+                         (set/difference verblikes))
+        keys         (set/union definitions*
                                 single-words
                                 verblikes)]
     (set/difference keys stopwords*)))
@@ -334,7 +338,7 @@
                                 (look-up* (limited ::pinyin+digits) term*))
          diacritics  (set/union (look-up* (limited ::pinyin+diacritics) term)
                                 (look-up* (limited ::pinyin+diacritics) term*))
-         english     (look-up* (limited ::english) term)]
+         english     (look-up* (limited ::english) (str/lower-case term))]
      (cond-> {::term term}
              hanzi (assoc ::hanzi #{hanzi})
              pinyin (assoc ::pinyin (get-entries pinyin))
