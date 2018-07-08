@@ -1,6 +1,5 @@
 (ns sinostudy.dictionary.data)
 
-;; TODO: find better list of stopwords
 (def stopwords
   #{"a" "about" "above" "across" "after" "afterwards" "again" "against"
     "all" "almost" "alone" "along" "already" "also" "although" "always" "am"
@@ -39,6 +38,5 @@
     "why" "will" "with" "within" "without" "would" "yet" "you" "your" "yours"
     "yourself" "yourselves"
 
-    ;; Special cases
-    ;; https://github.com/simongray/sino.study/issues/18
-    "variant"})
+    ;; Special cases (common throughout CC-CEDICT definitions)
+    "variant" "loanword"})
