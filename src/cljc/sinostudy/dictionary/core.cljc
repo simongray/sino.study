@@ -164,6 +164,7 @@
 (defn english-keys
   "Find English dictionary keys based on a CC-CEDICT listing.
   Words inside explanatory parentheses are not considered.
+  Numbers (unless they make up part of a word) are not considered.
   Stop-words are removed entirely, unless they make up a full definition
   or if they are part of a verblike, e.g. 'to have' or 'to laugh'."
   [definitions]
@@ -174,9 +175,10 @@
                           (set))
         single-words (->> definitions*
                           (map remove-embedded)
-                          (map #(str/split % #"[^a-z-]+"))
+                          (map #(str/split % #"[^a-z0-9-]+"))
                           (flatten)
                           (filter (comp not str/blank?))
+                          (filter (comp not (partial re-find #"^[0-9]+$")))
                           (set))
         verblikes    (->> definitions*
                           (filter #(str/starts-with? % "to "))

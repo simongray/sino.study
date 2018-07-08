@@ -41,6 +41,18 @@
     ;; Special cases (common throughout CC-CEDICT definitions)
     "variant" "loanword" "cf" "lit" "tw" "pr" "abbr" "taiwan" "radical" "kangxi"
 
+    ;; Numbers are excluded
+    "1"
+    "2"
+    "3"
+    "4"
+    "5"
+    "6"
+    "7"
+    "8"
+    "9"
+    "0"
+
     ;; The entire English alphabet is excluded ("a" and "i" found above)
     ;"a"
     "b"
