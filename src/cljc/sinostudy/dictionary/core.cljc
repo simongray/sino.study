@@ -169,6 +169,7 @@
   [definitions]
   (let [definitions* (->> definitions
                           (map #(str/replace %1 expl ""))
+                          (map str/trim)
                           (map ^String str/lower-case)
                           (set))
         single-words (->> definitions*

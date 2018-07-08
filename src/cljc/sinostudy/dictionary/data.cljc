@@ -15,7 +15,7 @@
     "fire" "first" "five" "for" "former" "formerly" "forty" "found" "four"
     "from" "front" "full" "further" "get" "give" "go" "had" "has" "hasnt" "have"
     "he" "hence" "her" "here" "hereafter" "hereby" "herein" "hereupon" "hers"
-    "herself" "him" "himself" "his" "how" "however" "hundred" "ie" "if" "in"
+    "herself" "him" "himself" "his" "how" "however" "hundred" "i" "ie" "if" "in"
     "inc" "indeed" "interest" "into" "is" "it" "its" "itself" "keep" "last"
     "latter" "latterly" "least" "less" "ltd" "made" "many" "may" "me"
     "meanwhile" "might" "mill" "mine" "more" "moreover" "most" "mostly" "move"
@@ -39,4 +39,32 @@
     "yourself" "yourselves"
 
     ;; Special cases (common throughout CC-CEDICT definitions)
-    "variant" "loanword"})
+    "variant" "loanword" "cf" "tw" "pr" "abbr" "taiwan" "radical" "kangxi"
+
+    ;; The entire English alphabet is excluded ("a" and "i" found above)
+    ;"a"
+    "b"
+    "c"
+    "d"
+    "e"
+    "f"
+    "g"
+    "h"
+    ;"i"
+    "j"
+    "k"
+    "l"
+    "m"
+    "n"
+    "o"
+    "p"
+    "q"
+    "r"
+    "s"
+    "t"
+    "u"
+    "v"
+    "w"
+    "x"
+    "y"
+    "z"})
