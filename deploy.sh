@@ -7,21 +7,24 @@
 
 re="version: ([^,]+)"
 
-if [[ $(lein v show) =~ $re ]]; then
-    echo "REMEMBER: stop the figwheel process before running this script!"
-    version=${BASH_REMATCH[1]}
-    echo "version: ${version}";
-
-    jarfile="sinostudy-${version}-standalone.jar"
-    jarpath="target/sinostudy-${version}-standalone.jar"
-    echo "building uberjar: ${jarfile}"
-    lein uberjar
-
-    echo "building docker image"
-    docker build -t simongray/sino.study:latest -t simongray/sino.study:${version} --build-arg JARPATH=${jarpath} --build-arg JARFILE=${jarfile} .
-
-    echo "pushing docker image"
-    docker push simongray/sino.study
+if [[ $(curl localhost:3449 -s) != "" ]]; then
+    echo "ERROR: stop the figwheel process before running this script!";
 else
-    echo "error: could not determine current version"
+    if [[ $(lein v show) =~ $re ]]; then
+        version=${BASH_REMATCH[1]}
+        echo "version: ${version}";
+
+        jarfile="sinostudy-${version}-standalone.jar"
+        jarpath="target/sinostudy-${version}-standalone.jar"
+        echo "building uberjar: ${jarfile}"
+        lein uberjar
+
+        echo "building docker image"
+        docker build -t simongray/sino.study:latest -t simongray/sino.study:${version} --build-arg JARPATH=${jarpath} --build-arg JARFILE=${jarfile} .
+
+        echo "pushing docker image"
+        docker push simongray/sino.study
+    else
+        echo "ERROR: could not determine current version"
+    fi
 fi
