@@ -175,7 +175,7 @@
                           (set))
         single-words (->> definitions*
                           (map remove-embedded)
-                          (map #(str/split % #"[^a-z0-9-]+"))
+                          (map #(str/split % #"[^a-z0-9-']+"))
                           (flatten)
                           (filter (comp not str/blank?))
                           (filter (comp not (partial re-find #"^[0-9]+$")))
