@@ -197,12 +197,15 @@
   as well as a few heuristics.
 
   Current heuristics:
-    * explanatory parentheses are normalised to the same length: _"
+    * ratio where explanatory parentheses are normalised to the same length: _
+    * ratio with prefixed 'to ' removed (common marker of verblikes)"
   [term use]
-  (let [expl #"\([^)]+\)$"]
+  (let [expl #"\([^)]+\)$"
+        to   #"^to "]
     (if (str/includes? use term)
-      (let [normalised-expl "_"
-            use-without-expl (str/replace use expl normalised-expl)]
+      (let [normalised-expl  "_"
+            use-without-expl (str/replace use expl normalised-expl)
+            use-without-to   (str/replace use to "")]
         (max
           ;; Basic ratio comparison
           (/ (count term) (count use))
@@ -210,7 +213,12 @@
           ;; Ratio comparison with explanatory parentheses normalised
           (when (and (str/includes? use-without-expl term)
                      (not= use-without-expl normalised-expl))
-            (/ (count term) (count use-without-expl)))))
+            (/ (count term) (count use-without-expl)))
+
+          ;; Ratio comparison with prefixed "to " removed
+          (when (and (str/includes? use-without-to term)
+                     (not= use-without-to ""))
+            (/ (count term) (count use-without-to)))))
       0)))
 
 ;;; TODO: Prefer multi-character words slightly over one-character words:
