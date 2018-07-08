@@ -157,12 +157,20 @@
       (str/replace embed/hanzi "")
       (str/replace embed/pinyin "")))
 
+;; Explanatory parentheses, i.e. description following a definition.
+(def expl
+  #"\([^)]+\)$")
+
 (defn english-keys
   "Find English dictionary keys based on a CC-CEDICT listing.
+  Words inside explanatory parentheses are not considered.
   Stop-words are removed entirely, unless they make up a full definition
   or if they are part of a verblike, e.g. 'to have' or 'to laugh'."
   [definitions]
-  (let [definitions* (set (map ^String str/lower-case definitions))
+  (let [definitions* (->> definitions
+                          (map #(str/replace %1 expl ""))
+                          (map ^String str/lower-case)
+                          (set))
         single-words (->> definitions*
                           (map remove-embedded)
                           (map #(str/split % #"[^a-z-]+"))
@@ -200,8 +208,7 @@
     * ratio where explanatory parentheses are normalised to the same length: _
     * ratio with prefixed 'to ' removed (common marker of verblikes)"
   [term use]
-  (let [expl #"\([^)]+\)$"
-        to   #"^to "]
+  (let [to   #"^to "]
     (if (str/includes? use term)
       (let [normalised-expl  "_"
             use-without-expl (str/replace use expl normalised-expl)
