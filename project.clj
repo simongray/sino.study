@@ -49,7 +49,8 @@
 
              :uberjar {:main       sinostudy.server
                        :aot        [sinostudy.server]
-                       :prep-tasks [["v" "cache" "src/cljc" "cljc"]
+                       :prep-tasks ["clean"
+                                    ["v" "cache" "src/cljc" "cljc"]
                                     "compile"
                                     ["cljsbuild" "once" "min"]]}}
 
