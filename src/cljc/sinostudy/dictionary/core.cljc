@@ -157,9 +157,9 @@
       (str/replace embed/hanzi "")
       (str/replace embed/pinyin "")))
 
-;; Explanatory parentheses, i.e. description following a definition.
+;; Explanatory parentheses, i.e. description preceding/following a definition.
 (def expl
-  #"\([^)]+\)$")
+  #"^\([^)]+\)|\([^)]+\)$")
 
 (defn english-keys
   "Find English dictionary keys based on a CC-CEDICT listing.
