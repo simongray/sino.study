@@ -530,8 +530,7 @@ footer .script-changer {
     display: inline-block;
     min-width: 7ch;
 
-    /* TODO: possible fix for #14 (translation pop-up on Chrome mobile
-             will need further testing */
+    /* fix for #14 (translation pop-up on Chrome mobile) */
     user-drag: none;
     user-select: none;
 }

@@ -151,7 +151,6 @@
                    [classifiers-tag]
                    [radical-tag]])])
 
-;;; TODO: 只 has multiple identical definitions
 (defn usage-list
   "List of definitions for each Pinyin variation of an entry."
   []

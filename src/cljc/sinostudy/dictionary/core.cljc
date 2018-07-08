@@ -5,10 +5,6 @@
             [sinostudy.dictionary.data :as data]
             [sinostudy.dictionary.embed :as embed]))
 
-;; TODO: make list of exceptional entries (e.g. 3P) that should be queryable
-;; TODO: make the pattern "classifier for X" prominent (CL)
-;; TODO: make the pattern "to X" prominent (V)
-
 ;;;; GENERAL STUFF
 
 (defn pinyin-key

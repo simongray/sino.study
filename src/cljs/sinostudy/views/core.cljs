@@ -8,8 +8,6 @@
             [sinostudy.pages.core :as pages]
             [sinostudy.dictionary.core :as d]))
 
-;; TODO: add bookmark icon for entries and way to get to bookmarks in nav bar
-
 ;;;; HELPER FUNCTIONS
 
 (defn navlink
