@@ -188,21 +188,43 @@
         (recur (add dict* (first ks*) v) (rest ks*))
         dict*))))
 
+(defn- english-relevance-score
+  "Calculates a basic relevance score based on the basic rule of term:use ratio
+  as well as a few heuristics.
+
+  Current heuristics:
+    * explanatory parentheses are normalised to the same length: _"
+  [term use]
+  (let [expl #"\([^)]+\)$"]
+    (if (str/includes? use term)
+      (let [normalised-expl "_"
+            use-without-expl (str/replace use expl normalised-expl)]
+        (max
+          ;; Basic ratio comparison
+          (/ (count term) (count use))
+
+          ;; Ratio comparison with explanatory parentheses normalised
+          (when (and (str/includes? use-without-expl term)
+                     (not= use-without-expl normalised-expl))
+            (/ (count term) (count use-without-expl)))))
+      0)))
+
 ;;; TODO: Prefer multi-character words slightly over one-character words:
 ;;;       multi character words should have a tiny added bump to relevance.
 ;;;       This is a heuristic to ensure that e.g. 胜利 is preferred to 胜.
 (defn english-relevance
   "Calculate the relevance of entry based on an English word as the search term.
+  Relevance comparisons are done on an entirely case-insensitive basis.
   The relevance is a score from 0 to ~1, higher being more relevant.
   Relevance is able to exceed 1 slightly, as word frequency is also added to the
   score, allowing for more accurate sorting (it is a number from 0 to 1 that
   tends towards 0). This is what puts e.g. 句子 ahead of 语句 for 'sentence'."
   [term entry]
-  (let [uses      (apply set/union (vals (::uses entry)))
-        score     (fn [use]
-                    (if (str/includes? use term)
-                      (/ (count term) (count use))
-                      0))
+  (let [term*     (str/lower-case term)
+        uses      (->> (vals (::uses entry))
+                       (apply set/union)
+                       (map str/lower-case))
+        score     (partial english-relevance-score term*)
         scores    (map score uses)
         max-score (apply max scores)
         freq      (get entry ::frequency 0)]
