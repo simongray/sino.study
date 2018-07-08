@@ -378,7 +378,7 @@
 (defn defs-containing-term
   "Only keep definitions that contain the given term."
   [term definitions]
-  (let [term-re        (re-pattern (str "(?i)(^|[ (])" term "($|[ ,;.)])"))
+  (let [term-re        (re-pattern (str "(?i)(^|[ (\"])" term "($|[ ,;.)\"])"))
         contains-term? (fn [definition]
                          (re-find term-re (remove-embedded definition)))]
     (filter contains-term? definitions)))
