@@ -39,7 +39,7 @@
     "yourself" "yourselves"
 
     ;; Special cases (common throughout CC-CEDICT definitions)
-    "variant" "loanword" "cf" "tw" "pr" "abbr" "taiwan" "radical" "kangxi"
+    "variant" "loanword" "cf" "lit" "tw" "pr" "abbr" "taiwan" "radical" "kangxi"
 
     ;; The entire English alphabet is excluded ("a" and "i" found above)
     ;"a"
