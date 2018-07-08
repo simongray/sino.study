@@ -192,58 +192,81 @@
                                 verblikes)]
     (set/difference keys stopwords*)))
 
+;; Used on the backend for limiting results.
+;; (Indirectly) used on the frontend when sorting results.
+(defn- english-relevance-score
+  "Calculates a basic relevance score based on the basic rule of term:use ratio
+  as well as a few heuristics. All comparisons are done in lower case.
+
+  Current heuristics:
+    * ratio where explanatory parentheses are normalised to the same length: _
+    * ratio with prefixed 'to ' removed (common marker of verblikes)"
+  [term use]
+  (let [to    #"^to "
+        term* (str/lower-case term)
+        use*  (str/lower-case use)]
+    (if (str/includes? use* term*)
+      (let [normalised-expl  "_"
+            use-without-expl (str/replace use* expl normalised-expl)
+            use-without-to   (str/replace use* to "")]
+        (max
+          ;; Basic ratio comparison
+          (/ (count term*) (count use*))
+
+          ;; Ratio comparison with explanatory parentheses normalised
+          (if (and (str/includes? use-without-expl term*)
+                   (not= use-without-expl normalised-expl))
+            (/ (count term*) (count use-without-expl))
+            0)
+
+          ;; Ratio comparison with prefixed "to " removed
+          (if (and (str/includes? use-without-to term*)
+                   (not= use-without-to ""))
+            (/ (count term*) (count use-without-to))
+            0)))
+      0)))
+
+;; Decides which entries to include for English search results.
+;; Really just an arbitrary value, but 0.33 seems to be an fair cutoff!
+(def relevance-cutoff
+  0.33)
+
+(defn- above-cutoff?
+  "Are any of the definitions above a the relevance cutoff for english-key?"
+  [definitions english-key]
+  (let [english-relevance-score* (partial english-relevance-score english-key)
+        scores                   (map english-relevance-score* definitions)]
+    (if (not (empty? scores))
+      (> (apply max scores)
+         relevance-cutoff))))
+
 (defn add-english
-  "Add an entry to the pinyin dictionary from a CC-CEDICT listing."
+  "Add an entry to the English dictionary from a CC-CEDICT listing.
+  Keys (= single English words) are only added if they're above a certain
+  relevance cutoff in order to limit the results list."
   [dict listing]
-  (let [ks (english-keys (::definitions listing))
-        v  (hash-set (::traditional listing) (::simplified listing))]
+  (let [definitions (::definitions listing)
+        ks          (->> (english-keys definitions)
+                         (filter (partial above-cutoff? definitions)))
+        v           (hash-set (::traditional listing) (::simplified listing))]
     (loop [dict* dict
            ks*   ks]
       (if (seq ks*)
         (recur (add dict* (first ks*) v) (rest ks*))
         dict*))))
 
-(defn- english-relevance-score
-  "Calculates a basic relevance score based on the basic rule of term:use ratio
-  as well as a few heuristics.
-
-  Current heuristics:
-    * ratio where explanatory parentheses are normalised to the same length: _
-    * ratio with prefixed 'to ' removed (common marker of verblikes)"
-  [term use]
-  (let [to   #"^to "]
-    (if (str/includes? use term)
-      (let [normalised-expl  "_"
-            use-without-expl (str/replace use expl normalised-expl)
-            use-without-to   (str/replace use to "")]
-        (max
-          ;; Basic ratio comparison
-          (/ (count term) (count use))
-
-          ;; Ratio comparison with explanatory parentheses normalised
-          (when (and (str/includes? use-without-expl term)
-                     (not= use-without-expl normalised-expl))
-            (/ (count term) (count use-without-expl)))
-
-          ;; Ratio comparison with prefixed "to " removed
-          (when (and (str/includes? use-without-to term)
-                     (not= use-without-to ""))
-            (/ (count term) (count use-without-to)))))
-      0)))
-
+;; Used on the frontend for sorting results.
+;; Note that this - in addition to basic relevance - also considers frequency.
 (defn english-relevance
   "Calculate the relevance of entry based on an English word as the search term.
-  Relevance comparisons are done on an entirely case-insensitive basis.
   The relevance is a score from 0 to ~1, higher being more relevant.
   Relevance is able to exceed 1 slightly, as word frequency is also added to the
   score, allowing for more accurate sorting (it is a number from 0 to 1 that
   tends towards 0). This is what puts e.g. 句子 ahead of 语句 for 'sentence'."
   [term entry]
-  (let [term*     (str/lower-case term)
-        uses      (->> (vals (::uses entry))
-                       (apply set/union)
-                       (map str/lower-case))
-        score     (partial english-relevance-score term*)
+  (let [uses      (->> (vals (::uses entry))
+                       (apply set/union))
+        score     (partial english-relevance-score term)
         scores    (map score uses)
         max-score (apply max scores)
         freq      (get entry ::frequency 0)]
