@@ -40,6 +40,7 @@
 
     ;; Special cases (common throughout CC-CEDICT definitions)
     "variant" "loanword" "cf" "lit" "tw" "pr" "abbr" "taiwan" "radical" "kangxi"
+    "arch" "archaic"
 
     ;; Numbers are excluded
     "1"
