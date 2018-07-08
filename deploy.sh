@@ -8,6 +8,7 @@
 re="version: ([^,]+)"
 
 if [[ $(lein v show) =~ $re ]]; then
+    echo "REMEMBER: stop the figwheel process before running this script!"
     version=${BASH_REMATCH[1]}
     echo "version: ${version}";
 
