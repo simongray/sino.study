@@ -221,9 +221,6 @@
             (/ (count term) (count use-without-to)))))
       0)))
 
-;;; TODO: Prefer multi-character words slightly over one-character words:
-;;;       multi character words should have a tiny added bump to relevance.
-;;;       This is a heuristic to ensure that e.g. 胜利 is preferred to 胜.
 (defn english-relevance
   "Calculate the relevance of entry based on an English word as the search term.
   Relevance comparisons are done on an entirely case-insensitive basis.
