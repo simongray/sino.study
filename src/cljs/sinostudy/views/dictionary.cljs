@@ -151,11 +151,26 @@
                    [classifiers-tag]
                    [radical-tag]])])
 
+;; In certain cases, entries may include these "fake" definitions.
+;; They're removed on the frontend since the variant may well be valid in
+;; .e.g. traditional Chinese, but not in simplified Chinese (see: 喂).
+(defn no-fake-variants
+  "Removes definitions of the pattern 'variant of _' if the term is identical."
+  [script term definitions]
+  (if (= (count term) 1)
+    (let [variant-re (re-pattern (if (= script ::d/traditional)
+                                   (str "variant of " term)
+                                   (str "variant of " term
+                                        "\\[|variant of .\\|" term)))]
+      (filter (comp not (partial re-find variant-re)) definitions))
+    definitions))
+
 (defn usage-list
   "List of definitions for each Pinyin variation of an entry."
   []
   (let [script @(rf/subscribe [::subs/script])
-        {uses ::d/uses} @(rf/subscribe [::subs/content])]
+        {term ::d/term
+         uses ::d/uses} @(rf/subscribe [::subs/content])]
     [:div
      (for [[pinyin definitions] uses]
        [:div {:key pinyin}
@@ -166,7 +181,7 @@
               (map vc/link-term)
               (interpose " "))]
         [:ol
-         (for [definition definitions]
+         (for [definition (no-fake-variants script term definitions)]
            [:li {:key definition}
             [:span.definition (vc/link-references script definition)]])]])]))
 
@@ -206,28 +221,30 @@
 
 (defn- result-entry-uses
   "Listed uses of a search result entry."
-  [uses]
+  [script term uses]
   (let [->diacritics (comp str/join vc/embedded-digits->diacritics)]
     (for [[pronunciation definitions] uses]
       (when (not (empty? definitions))
-        [:li
-         {:key pronunciation}
-         [:span.pinyin
-          {:key pronunciation}
-          (p/digits->diacritics pronunciation)]
-         " "
-         [:span.definition
-          (str/join "; " (map ->diacritics definitions))]]))))
+        (let [definitions* (no-fake-variants script term definitions)]
+          [:li
+           {:key pronunciation}
+           [:span.pinyin
+            {:key pronunciation}
+            (p/digits->diacritics pronunciation)]
+           " "
+           [:span.definition
+            (str/join "; " (map ->diacritics definitions*))]])))))
 
 (defn- search-result-entry
   "Entry in a results-list."
-  [{entry-term ::d/term
-    uses       ::d/uses}]
-  (when-let [entry-uses (result-entry-uses uses)]
-    [:li {:key entry-term}
+  [script
+   {term ::d/term
+    uses ::d/uses}]
+  (when-let [entry-uses (result-entry-uses script term uses)]
+    [:li {:key term}
      [:a
-      {:href (str "/" (name ::d/terms) "/" entry-term)}
-      [:span.hanzi entry-term]
+      {:href (str "/" (name ::d/terms) "/" term)}
+      [:span.hanzi term]
       " "
       [:ul
        entry-uses]]]))
@@ -241,12 +258,13 @@
 (defn search-result-entries
   "List of search result entries."
   []
-  (let [content       @(rf/subscribe [::subs/content])
+  (let [script        @(rf/subscribe [::subs/script])
+        content       @(rf/subscribe [::subs/content])
         result-filter @(rf/subscribe [::subs/current-result-filter])]
     (when-let [entries (get content result-filter)]
       [:ul.dictionary-entries
        (doall (for [entry (filter in-script entries)]
-                (search-result-entry entry)))])))
+                (search-result-entry script entry)))])))
 
 (defn search-result
   "Dictionary search result."
