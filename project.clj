@@ -34,7 +34,6 @@
 
                                       ;; reagent/re-frame
   :profiles {:dev     {:dependencies [[binaryage/devtools "0.9.10"]
-                                      [re-frisk "0.5.4"]
                                       [day8.re-frame/re-frame-10x "0.3.3-react16"] ; Ctrl+h to toggle
 
                                       ;; compojure
@@ -71,7 +70,6 @@
                                        :optimizations        :none
                                        :closure-defines      {"re_frame.trace.trace_enabled_QMARK_" true}
                                        :preloads             [devtools.preload
-                                                              re-frisk.preload
                                                               day8.re-frame-10x.preload]
                                        :external-config      {:devtools/config {:features-to-install :all}}}}
 
