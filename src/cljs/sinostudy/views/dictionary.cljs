@@ -207,19 +207,20 @@
   (let [{search-term ::d/term} @(rf/subscribe [::subs/content])
         current-filter @(rf/subscribe [::subs/current-result-filter])
         result-types   @(rf/subscribe [::subs/current-result-types])]
-    [:form
-     (->> (for [result-type result-types]
-            [:label {:key result-type}
-             [:input {:type      "radio"
-                      :name      "result-filter"
-                      :value     result-type
-                      :checked   (= current-filter result-type)
-                      :on-change (fn [_]
-                                   (rf/dispatch [::events/set-result-filter
-                                                 search-term
-                                                 result-type]))}]
-             (str/capitalize (name result-type))])
-          (interpose " "))]))
+    (when (> (count result-types) 1)
+      [:form
+       (->> (for [result-type result-types]
+              [:label {:key result-type}
+               [:input {:type      "radio"
+                        :name      "result-filter"
+                        :value     result-type
+                        :checked   (= current-filter result-type)
+                        :on-change (fn [_]
+                                     (rf/dispatch [::events/set-result-filter
+                                                   search-term
+                                                   result-type]))}]
+               (str/capitalize (name result-type))])
+            (interpose " "))])))
 
 (defn- result-entry-uses
   "Listed uses of a search result entry."
