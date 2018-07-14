@@ -142,6 +142,11 @@
     (assoc cofx :now (js/Date.))))
 
 (rf/reg-cofx
+  ::scroll
+  (fn [cofx _]
+    (assoc cofx :scroll [js/window.scrollX js/window.scrollY])))
+
+(rf/reg-cofx
   ::focus
   (fn [cofx _]
     (assoc cofx :focus (.-activeElement js/document))))
@@ -169,12 +174,31 @@
       #(.focus (.getElementById js/document id))
       delay)))
 
+;; Dispatched by ::use-scroll-state.
+(rf/reg-fx
+  :scroll-to
+  (fn [[x y]]
+    (.scrollTo js/window x y)))
+
 ;;;; EVENTS
 
 (rf/reg-event-db
   ::initialize-db
   (fn [_ _]
     db/default-db))
+
+(rf/reg-event-db
+  ::reset-scroll-state
+  (fn [db [_ page]]
+    (assoc-in db [:scroll page] [0 0])))
+
+;; Set the scroll-state for the current page and reset the saved state to [0 0].
+;; This event is dispatched by the content-page component on updates.
+(rf/reg-event-fx
+  ::use-scroll-state
+  (fn [_ [_ page scroll-state]]
+    {:dispatch  [::reset-scroll-state page]
+     :scroll-to scroll-state}))
 
 ;; display hints below the input field
 (rf/reg-event-fx
@@ -404,13 +428,19 @@
 ;; Link-clicking is facilitated by frontend routing (secretary + Accountant).
 (rf/reg-event-fx
   ::change-page
-  [(rf/inject-cofx ::now)]
-  (fn [cofx [_ page]]
-    (let [db        (:db cofx)
-          history   (:history db)
-          timestamp (:now cofx)]
-      {:db       (assoc db :history (conj history [page timestamp]))
-       :dispatch [::load-content page]})))
+  [(rf/inject-cofx ::now)
+   (rf/inject-cofx ::scroll)]
+  (fn [cofx [_ new-page]]
+    (let [db             (:db cofx)
+          history        (:history db)
+          current-page   (when (not (empty? history))
+                           (-> history first first))
+          timestamp      (:now cofx)
+          current-scroll (:scroll cofx)]
+      {:db       (-> db
+                     (assoc :history (conj history [new-page timestamp]))
+                     (assoc-in [:scroll current-page] current-scroll))
+       :dispatch [::load-content new-page]})))
 
 ;; Dispatched by on-click handlers in various places.
 (rf/reg-event-db

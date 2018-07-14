@@ -1,5 +1,6 @@
 (ns sinostudy.views.core
   (:require [re-frame.core :as rf]
+            [reagent.core :as reagent]
             [clojure.string :as str]
             [version :as v]
             [sinostudy.subs :as subs]
@@ -97,14 +98,30 @@
 (defn content-pane
   "The main content pane of the site."
   []
-  (let [category @(rf/subscribe [::subs/current-category])
-        content  @(rf/subscribe [::subs/content])]
-    (when content
-      [:div.pedestal
-       [:article
-        (cond
-          (= ::pages/terms category) [vd/dictionary-page]
-          :else content)]])))
+  (reagent/create-class
+    {:display-name
+     "content-pane"
+
+     :reagent-render
+     (fn []
+       (let [category @(rf/subscribe [::subs/current-category])
+             content  @(rf/subscribe [::subs/content])]
+         (when content
+           [:div.pedestal
+            [:article
+             (cond
+               (= ::pages/terms category) [vd/dictionary-page]
+               :else content)]])))
+
+     :component-did-update
+     (fn [_ _]
+       (let [current-page @(rf/subscribe [::subs/current-page])
+             scroll-state @(rf/subscribe [::subs/scroll-state])]
+         (when scroll-state
+
+           (rf/dispatch [::events/use-scroll-state
+                         current-page
+                         scroll-state]))))}))
 
 (defn script-changer []
   (let [script     @(rf/subscribe [::subs/script])

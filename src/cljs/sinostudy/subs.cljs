@@ -48,6 +48,12 @@
   (fn [db]
     (:marked-action db)))
 
+;; Saved scroll states for each visited page.
+(rf/reg-sub
+  ::scroll
+  (fn [db]
+    (:scroll db)))
+
 (rf/reg-sub
   ::current-evaluation
   (fn [db]
@@ -61,6 +67,16 @@
     (let [[page _] (first history)]
       (when (> (count page) 1)
         (subvec page 0 2)))))
+
+;; The current scroll state. Used to properly recall past scroll states
+;; when navigating using e.g. the back button.
+(rf/reg-sub
+  ::scroll-state
+  (fn [_]
+    [(rf/subscribe [::current-page])
+     (rf/subscribe [::scroll])])
+  (fn [[page scroll]]
+    (get scroll page)))
 
 (rf/reg-sub
   ::current-category
