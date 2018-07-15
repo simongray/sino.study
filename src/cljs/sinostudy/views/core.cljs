@@ -1,7 +1,6 @@
 (ns sinostudy.views.core
   (:require [re-frame.core :as rf]
             [reagent.core :as reagent]
-            [clojure.string :as str]
             [version :as v]
             [sinostudy.subs :as subs]
             [sinostudy.events :as events]
