@@ -1,23 +1,33 @@
 (ns sinostudy.views.common
   (:require [sinostudy.pages.core :as pages]
+            [sinostudy.events :as events]
             [sinostudy.pinyin.eval :as pe]
-            [clojure.string :as str]
             [sinostudy.rim.core :as rim]
             [sinostudy.dictionary.core :as d]
             [sinostudy.dictionary.embed :as embed]
-            [sinostudy.pinyin.core :as p]))
+            [sinostudy.pinyin.core :as p]
+            [clojure.string :as str]
+            [re-frame.core :as rf]))
 
+;; The on-click handler that dispatches an event to reset the scroll state
+;; is a necessity, given that it is currently not possible to distinguish
+;; between back/forward button navigation events and clicking links.
+;; Obviously, clicking a link should never result in a restored scroll state.
+;; Similarly, some queries (e.g. look-ups) also manually reset the scroll state.
 (defn link-term
   "Add links to dictionary look-ups for each term in text.
   If text is a string, then each character is linked.
   If text is a collection (e.g. hiccup), then each collection item is linked."
   [text]
   (let [ids  (range (count text))
-        link (fn [term id] [:a
-                            {:title (str "look up " term)
-                             :href  (str "/" (name ::pages/terms) "/" term)
-                             :key   (str term "-" id)}
-                            term])]
+        link (fn [term id]
+               [:a
+                {:title (str "look up " term)
+                 :on-click #(rf/dispatch [::events/reset-scroll-state
+                                          [::pages/terms term]])
+                 :href  (str "/" (name ::pages/terms) "/" term)
+                 :key   (str term "-" id)}
+                term])]
     (map link text ids)))
 
 (defn hanzi-link

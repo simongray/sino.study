@@ -456,11 +456,18 @@
 
 ;;;; ACTIONS (= events triggered by submitting input)
 
+;; NOTE: actions that navigate to a new page should call ::reset-scroll-state
+;; in order to avoid (the default) restoration of the scroll state.
+;; It is currently not possible to distinguish between back/forward buttons
+;; and other forms of navigation, so this manual invocation is necessary.
+;; This is also the case for links on the site.
+
 (rf/reg-event-fx
   ::look-up
   (fn [_ [_ term]]
     {:navigate-to (str "/" (name ::pages/terms) "/" term)
-     :dispatch    [::display-hint nil]}))
+     :dispatch-n  [[::display-hint nil]
+                   [::reset-scroll-state [::pages/terms term]]]}))
 
 (rf/reg-event-fx
   ::digits->diacritics

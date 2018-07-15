@@ -15,8 +15,15 @@
   [from to text]
   (let [key (str from "->" to)]
     (if (= from to)
-      [:a.current-page {:key key} text]
-      [:a {:href to :key key} text])))
+      [:a.current-page
+       {:key key}
+       text]
+      [:a
+       {:on-click #(rf/dispatch [::events/reset-scroll-state
+                                 [::pages/static to]])
+        :href to
+        :key key}
+       text])))
 
 (defn navify [from links]
   (map (fn [[to text]] (navlink from to text)) links))
@@ -113,12 +120,14 @@
                (= ::pages/terms category) [vd/dictionary-page]
                :else content)]])))
 
+     ;; Ensures that scroll state is restored when pushing back/forward button.
+     ;; Sadly, this behaviour is global for all updates, so links/buttons/etc.
+     ;; must manually dispatch ::events/reset-scroll-state to avoid this!
      :component-did-update
      (fn [_ _]
        (let [current-page @(rf/subscribe [::subs/current-page])
              scroll-state @(rf/subscribe [::subs/scroll-state])]
          (when scroll-state
-
            (rf/dispatch [::events/use-scroll-state
                          current-page
                          scroll-state]))))}))
