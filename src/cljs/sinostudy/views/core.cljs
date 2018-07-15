@@ -125,12 +125,9 @@
      ;; must manually dispatch ::events/reset-scroll-state to avoid this!
      :component-did-update
      (fn [_ _]
-       (let [current-page @(rf/subscribe [::subs/current-page])
-             scroll-state @(rf/subscribe [::subs/scroll-state])]
+       (let [scroll-state @(rf/subscribe [::subs/scroll-state])]
          (when scroll-state
-           (rf/dispatch [::events/use-scroll-state
-                         current-page
-                         scroll-state]))))}))
+           (rf/dispatch [::events/use-scroll-state scroll-state]))))}))
 
 (defn script-changer []
   (let [script     @(rf/subscribe [::subs/script])
@@ -151,14 +148,9 @@
      text]))
 
 ;; Project version number based on git tag + commit SHA
-;; Links to the current commit on github if committed.
 ;; More info: https://github.com/roomkey/lein-v
 (def github-link
-  (if (str/ends-with? v/version "-DIRTY")
-    v/version
-    [:a {:href (str "https://github.com/simongray/sino.study/commit/"
-                    v/raw-version)}
-     v/version]))
+  [:a {:href "https://github.com/simongray/sino.study"} (str "v" v/version)])
 
 (defn footer []
   (let [from  @(rf/subscribe [::subs/current-nav])

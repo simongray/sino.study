@@ -196,9 +196,8 @@
 ;; This event is dispatched by the content-page component on updates.
 (rf/reg-event-fx
   ::use-scroll-state
-  (fn [_ [_ page scroll-state]]
-    {:dispatch  [::reset-scroll-state page]
-     :scroll-to scroll-state}))
+  (fn [_ [_ scroll-state]]
+    {:scroll-to scroll-state}))
 
 ;; display hints below the input field
 (rf/reg-event-fx
