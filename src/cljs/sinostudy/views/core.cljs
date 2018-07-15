@@ -184,12 +184,12 @@
 (defn action-chooser []
   (let [actions @(rf/subscribe [::subs/actions])
         marked  @(rf/subscribe [::subs/marked-action])]
-    [:form#action-chooser
-     {:action ""
-      :class  (when (nil? actions) "hidden")}
-     [:p#action-header "Select an action"]
-     [:ol
-      (map (partial action-choice (nth actions marked)) actions)]]))
+    (when actions
+      [:form#action-chooser
+       {:action ""}
+       [:p#action-header "Select an action"]
+       [:ol
+        (map (partial action-choice (nth actions marked)) actions)]])))
 
 (defn main-panel []
   (let [not-home? (not= "/" @(rf/subscribe [::subs/current-nav]))]
