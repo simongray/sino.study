@@ -42,7 +42,7 @@ while accessing the data from the service through a live-reloading frontend app.
 To start a development web server for the application, run:
 
 ````
-lein ring server
+lein ring server-headless
 ````
 Wait a bit, then browse to [http://localhost:3000](http://localhost:3000).
 
