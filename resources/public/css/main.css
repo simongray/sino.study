@@ -394,15 +394,15 @@ hr {
 	list-style-type: none;
 	padding: 0;
 	margin: 0;
+
+    /* TODO: need new html that makes text-overflow: ellipsis possible */
+    /* make sure text stays on a single line */
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .dictionary-entries li {
     margin-bottom: 0.8em;
-
-    /* make sure text stays on a single line */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis; /* not working? */
 }
 
 .dictionary-entries .hanzi {
