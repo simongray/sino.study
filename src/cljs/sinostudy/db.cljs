@@ -16,7 +16,7 @@
    :pages          {::pages/terms  {}
                     ::pages/static static-pages}
    :history        '()
-   :scroll         {}
+   :scroll-states  {}
    :evaluations    '()
    :hints          '()
    :queries        '()})

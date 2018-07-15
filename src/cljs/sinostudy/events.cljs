@@ -142,9 +142,9 @@
     (assoc cofx :now (js/Date.))))
 
 (rf/reg-cofx
-  ::scroll
+  ::scroll-state
   (fn [cofx _]
-    (assoc cofx :scroll [js/window.scrollX js/window.scrollY])))
+    (assoc cofx :scroll-state [js/window.scrollX js/window.scrollY])))
 
 (rf/reg-cofx
   ::focus
@@ -168,7 +168,7 @@
 ;; Dispatched by ::close-action-chooser.
 ;; This is definitely a less than optimal solution...
 (rf/reg-fx
-  :focus
+  :set-focus
   (fn [[id delay]]
     (js/setTimeout
       #(.focus (.getElementById js/document id))
@@ -188,16 +188,22 @@
     db/default-db))
 
 (rf/reg-event-db
+  ::save-scroll-state
+  (fn [db [_ page scroll-state]]
+    (assoc-in db [:scroll-states page] scroll-state)))
+
+(rf/reg-event-fx
   ::reset-scroll-state
-  (fn [db [_ page]]
-    (assoc-in db [:scroll page] [0 0])))
+  (fn [_ [_ page]]
+    {:dispatch [::save-scroll-state page [0 0]]}))
 
 ;; Set the scroll-state for the current page and reset the saved state to [0 0].
 ;; This event is dispatched by the content-page component on updates.
 (rf/reg-event-fx
-  ::use-scroll-state
-  (fn [_ [_ scroll-state]]
-    {:scroll-to scroll-state}))
+  ::load-scroll-state
+  (fn [cofx [_ page]]
+    (let [scroll-state (get-in cofx [:db :scroll-states page] [0 0])]
+      {:scroll-to scroll-state})))
 
 ;; display hints below the input field
 (rf/reg-event-fx
@@ -366,8 +372,8 @@
   ::close-action-chooser
   (fn [cofx _]
     (let [db (:db cofx)]
-      {:db    (assoc db :actions nil)
-       :focus ["study-input" 100]})))
+      {:db        (assoc db :actions nil)
+       :set-focus ["study-input" 100]})))
 
 ;; dispatched by ::choose-action
 (rf/reg-event-db
@@ -428,18 +434,17 @@
 (rf/reg-event-fx
   ::change-page
   [(rf/inject-cofx ::now)
-   (rf/inject-cofx ::scroll)]
+   (rf/inject-cofx ::scroll-state)]
   (fn [cofx [_ new-page]]
-    (let [db             (:db cofx)
-          history        (:history db)
-          current-page   (when (not (empty? history))
-                           (-> history first first))
-          timestamp      (:now cofx)
-          current-scroll (:scroll cofx)]
-      {:db       (-> db
-                     (assoc :history (conj history [new-page timestamp]))
-                     (assoc-in [:scroll current-page] current-scroll))
-       :dispatch [::load-content new-page]})))
+    (let [db           (:db cofx)
+          history      (:history db)
+          current-page (when (not (empty? history))
+                         (-> history first first))
+          timestamp    (:now cofx)
+          scroll-state (:scroll-state cofx)]
+      {:db         (assoc db :history (conj history [new-page timestamp]))
+       :dispatch-n [[::save-scroll-state current-page scroll-state]
+                    [::load-content new-page]]})))
 
 ;; Dispatched by on-click handlers in various places.
 (rf/reg-event-db

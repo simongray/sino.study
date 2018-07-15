@@ -125,9 +125,8 @@
      ;; must manually dispatch ::events/reset-scroll-state to avoid this!
      :component-did-update
      (fn [_ _]
-       (let [scroll-state @(rf/subscribe [::subs/scroll-state])]
-         (when scroll-state
-           (rf/dispatch [::events/use-scroll-state scroll-state]))))}))
+       (let [page @(rf/subscribe [::subs/current-page])]
+         (rf/dispatch [::events/load-scroll-state page])))}))
 
 (defn script-changer []
   (let [script     @(rf/subscribe [::subs/script])
