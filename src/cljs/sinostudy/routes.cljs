@@ -7,6 +7,12 @@
             [sinostudy.pages.core :as pages]
             [accountant.core :as accountant]))
 
+;; Since scroll restoration differs in implementation between e.g. Firefox
+;; and Chrome -- and neither implementations are good enough -- the safest
+;; choice is to carefully disable scroll restoration (default: "automatic").
+(when (exists? js/window.history.scrollRestoration)
+  (set! js/window.history.scrollRestoration "manual"))
+
 (defn app-routes []
   ;; this prefixes routes with a hash for compability with older browsers
   ;; however, it might not be necessary if I don't need to support IE 9
