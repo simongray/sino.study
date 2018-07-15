@@ -14,6 +14,9 @@ else
         version=${BASH_REMATCH[1]}
         echo "version: ${version}";
 
+        echo "removing old build artifacts"
+        lein clean
+
         jarfile="sinostudy-${version}-standalone.jar"
         jarpath="target/sinostudy-${version}-standalone.jar"
         echo "building uberjar: ${jarfile}"
