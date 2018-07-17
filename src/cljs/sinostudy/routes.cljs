@@ -2,7 +2,7 @@
   (:require-macros [secretary.core :refer [defroute]])
   (:import goog.History)
   (:require [secretary.core :as secretary]
-            [re-frame.core :as re-frame]
+            [re-frame.core :as rf]
             [sinostudy.events :as events]
             [sinostudy.pages.core :as pages]
             [accountant.core :as accountant]))
@@ -21,18 +21,18 @@
 
   ;; Combining the root route with the other page routes don't seem to work.
   (defroute "/" []
-    (re-frame/dispatch [::events/change-page [::pages/static "/"]]))
+    (rf/dispatch [::events/change-page [::pages/static "/"]]))
 
   (defroute "/:page" [page]
-    (re-frame/dispatch [::events/change-page [::pages/static (str "/" page)]]))
+    (rf/dispatch [::events/change-page [::pages/static (str "/" page)]]))
 
   (defroute
     (str "/" (name :pages/terms) "/:term") [term]
-    (re-frame/dispatch [::events/change-page [::pages/terms term]]))
+    (rf/dispatch [::events/change-page [::pages/terms term]]))
 
   (defroute
     (str "/" (name ::pages/terms) "/:term/:attribute") [term attribute]
-    (re-frame/dispatch [::events/change-page [::pages/terms term attribute]]))
+    (rf/dispatch [::events/change-page [::pages/terms term attribute]]))
 
   ;; following instructions at https://github.com/venantius/accountant
   (accountant/configure-navigation!
