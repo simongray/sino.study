@@ -55,7 +55,8 @@
                 hint)
            [:div.etymology
             {:title (str "Type: " type)}
-            (vc/link-references script hint)]
+            (let [link (comp vc/link-term vector)]
+              (vc/handle-refs script link hint))]
 
            (and (= type "pictophonetic")
                 semantic
@@ -185,7 +186,9 @@
         [:ol
          (for [definition (no-fake-variants script term definitions)]
            [:li {:key definition}
-            [:span.definition (vc/link-references script definition)]])]])]))
+            [:span.definition
+             (let [link (comp vc/link-term vector)]
+               (vc/handle-refs script link definition))]])]])]))
 
 (defn entry
   "Dictionary entry for a specific term."
@@ -225,18 +228,18 @@
 (defn- result-entry-uses
   "Listed uses of a search result entry."
   [script term uses]
-  (let [->diacritics (comp str/join vc/embedded-digits->diacritics)]
-    (for [[pronunciation definitions] uses]
-      (when (not (empty? definitions))
-        (let [definitions* (no-fake-variants script term definitions)]
-          [:li
-           {:key pronunciation}
-           [:span.pinyin
-            {:key pronunciation}
-            (p/digits->diacritics pronunciation)]
-           " "
-           [:span.definition
-            (str/join "; " (map ->diacritics definitions*))]])))))
+  (for [[pronunciation definitions] uses]
+    (when (not (empty? definitions))
+      (let [handle-refs* (partial vc/handle-refs script identity)
+            definitions* (no-fake-variants script term definitions)]
+        [:li
+         {:key pronunciation}
+         [:span.pinyin
+          {:key pronunciation}
+          (p/digits->diacritics pronunciation)]
+         " "
+         [:span.definition
+          (interpose "; " (map handle-refs* definitions*))]]))))
 
 (defn- search-result-entry
   "Entry in a results-list."

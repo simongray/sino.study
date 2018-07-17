@@ -50,11 +50,11 @@
      ::d/simplified  simplified
      ::d/pinyin      pinyin}))
 
-(defn- link-reference
-  "Link s if s is a reference. Helper function for `link-references."
-  [script s]
-  (let [link       (comp link-term vector)
-        use-script (fn [coll]
+(defn- handle-ref
+  "Handle s with f in the given script if s is a reference.
+  Helper function for `link-references."
+  [script f s]
+  (let [use-script (fn [coll]
                      (get coll (cond
                                  (= (count coll) 1) 0
                                  (= script ::d/simplified) 1
@@ -62,33 +62,33 @@
     (cond
       (re-matches embed/refr s) (let [m      (refr->m s)
                                       pinyin (->> (::d/pinyin m)
-                                                  (map link)
+                                                  (map f)
                                                   (interpose " "))]
                                   [:span
-                                   [:span.hanzi (link (script m))]
+                                   [:span.hanzi (f (script m))]
                                    [:span.pinyin pinyin]])
 
-      (re-matches embed/hanzi s) [:span.hanzi (link (-> s
-                                                        (str/split #"\|")
-                                                        use-script))]
+      (re-matches embed/hanzi s) [:span.hanzi (f (-> s
+                                                     (str/split #"\|")
+                                                     use-script))]
 
-      (pe/hanzi-block? s) [:span.hanzi (link s)]
+      (pe/hanzi-block? s) [:span.hanzi (f s)]
 
       ;; TODO: do this properly when I find an example
-      (re-matches embed/pinyin s) [:span.pinyin (link s)]
+      (re-matches embed/pinyin s) [:span.pinyin (f s)]
 
       ;; TODO: don't link numbers? i.e. 118 in "Kangxi radical 118"
-      :else (link s))))
+      :else (f s))))
 
-(defn link-references
+(defn handle-refs
   "Add hyperlink and style any references to dictionary entries in s.
   Script is the preferred script, i.e. traditional or simplified."
-  [script s]
+  [script f s]
   ;; The part before the | matches the full embedded refs while the latter
   ;; part matches all non-space/non-punctuation items, e.g. words, hanzi.
-  (let [non-ref #"[^\s]+\[[^\]]+\]|[^,.;'\"`´+?&()#%\s]+"
-        link*   (partial link-reference script)]
-    (rim/re-handle s non-ref link*)))
+  (let [non-ref     #"[^\s]+\[[^\]]+\]|[^,.;'\"`´+?&()#%\s]+"
+        handle-ref* (partial handle-ref script f)]
+    (rim/re-handle s non-ref handle-ref*)))
 
 (defn embedded-digits->diacritics
   [s]

@@ -405,7 +405,7 @@ hr {
     margin-bottom: 0.8em;
 }
 
-.dictionary-entries .hanzi {
+.dictionary-entries a > .hanzi {
     display: inline-block;
 	font-size: 20pt;
 	padding: 0.2em;
@@ -413,6 +413,14 @@ hr {
 	border-radius: 0.5ch;
 	background-color: white;
 	color: #666666;
+}
+
+.dictionary-entries span.pinyin {
+    color: #999999;
+}
+
+.dictionary-entries span.pinyin:first-child {
+    color: #DD8888;
 }
 
 .dictionary-entries ul {
@@ -556,7 +564,8 @@ a:hover {
 	color: #4477DD;
 }
 
-.hanzi a:hover, .pinyin a:hover, .dictionary-entries a:hover, a:hover .hanzi, a:hover .pinyin {
+/* TODO: clean up this mess... */
+.hanzi a:hover, .pinyin a:hover, .dictionary-entries a:hover, a:hover .hanzi, a:hover .pinyin, .dictionary-entries li:hover span.pinyin, .dictionary-entries li:hover span.pinyin:first-child  {
 	color: #4477DD;
 	border-color: #4477DD;
 }
