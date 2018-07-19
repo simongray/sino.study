@@ -40,6 +40,8 @@ a {
 }
 
 
+
+
 /* === CORE PAGE ELEMENTS === */
 
 /*  A transparent, virtual background element that fills the screen.
@@ -126,33 +128,28 @@ header form {
 /* Formerly known as the #study-input */
 header form > input {
 	animation: fade-in 1s ease;
-    transition: all 0.5s;
+    transition: all 5.0s;
 
-	/* positioning */
-	flex: 1;
-
-	/* text-related */
 	font-size: 14pt;
 
-	/* box */
 	padding: 0.5ch;
 	border: 1pt solid #999999;
 	border-radius: 0.5ch;
 	background-color: white;
+
+	/* Take up full width */
+    flex: 1;
 }
 
-/*
-    TODO: currently not available, remove entirely?
-    red colouring of input when evaluation returns 0 actions */
+/*  TODO: currently not available, remove entirely?
+    Red colouring of input when evaluation returns 0 actions. */
 header form > input.no-actions {
 	background-color: #ffdcc6;
-	transition: all 0.5s;
 }
 
 /* Grey colouring of input when action-chooser is active */
 header form > input.disabled {
 	background-color: #DDDDDD;
-	transition: all 0.5s;
 }
 
 /* Formerly known as the #study-button */
@@ -179,13 +176,20 @@ header p {
 	/* make sure text stays on a single line */
 	white-space: nowrap;
 	overflow: hidden;
+
+	/* TODO: fix? Doesn't work */
 	text-overflow: ellipsis;
 
-	/* make sure the hint keeps its height when empty */
-	height: 1.2em; /* 1em is having problems displaying span.keypress */
+	/*  Make sure the hint keeps its height when empty
+	    (1em is having problems displaying span.keypress). */
+	height: 1.2em;
 }
 
-/* The Action Chooser is a pop-in dialog. */
+
+
+
+/* === ACTION CHOOSER === */
+
 form#action-chooser {
     /* box */
     padding: 2ch;
