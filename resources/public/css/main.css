@@ -23,6 +23,11 @@ body {
 	background-attachment: fixed;
 }
 
+a {
+    /* So that links won't suddenly reset a custom font to the global one. */
+    font-family: inherit;
+}
+
 /* === ANIMATIONS === */
 
 @keyframes fade-in {
