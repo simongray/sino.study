@@ -23,6 +23,20 @@ body {
 	background-attachment: fixed;
 }
 
+/* === ANIMATIONS === */
+
+@keyframes fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+
+/* === CORE PAGE ELEMENTS === */
+
 /*  A transparent, virtual background element that fills the screen.
     This is necessary for the transition from a gradient to a white background.
     It would have been nice to just transition the body element,
@@ -39,23 +53,13 @@ div#bg.with-page {
 	transition: all 1s;
 }
 
-
-/* === ANIMATIONS === */
-
-@keyframes fade-in {
-	from {
-		opacity: 0;
-	}
-	to {
-		opacity: 1;
-	}
-}
-
-
-/* === CORE PAGE ELEMENTS === */
-
-img#logo {
+/*  The main logo of the site fades in like most elements and gets smaller
+    when the site displays some page content. */
+div#bg img#logo {
 	animation: fade-in 0.5s ease;
+	transition: all 0.3s;
+    max-height: 7em;
+    margin-bottom: 0.5em;
 	width: 100%; /* otherwise image could overflow on small page widths */
 
     /* TODO: find fixes for non-Chrome browsers */
@@ -63,16 +67,9 @@ img#logo {
     user-select: none;
 }
 
-img#logo.big-logo {
-	max-height: 7em;
-	transition: all 0.3s;
-	margin-bottom: 0.5em;
-}
-
-img#logo.small-logo {
+div#bg.with-page img#logo {
 	max-height: 4em;
 	margin: 0.8em auto 0 auto;
-	transition: all 0.3s;
 }
 
 /* Centering vertically is still fucking hard!

@@ -20,8 +20,8 @@
       [:a
        {:on-click #(rf/dispatch [::events/reset-scroll-state
                                  [::pages/static to]])
-        :href to
-        :key key}
+        :href     to
+        :key      key}
        text])))
 
 (defn navify [from links]
@@ -36,14 +36,12 @@
 
 ;;;; VIEWS
 
-(defn logo []
-  (let [nav @(rf/subscribe [::subs/current-nav])]
-    [:header
-     [:a {:href "/"}
-      [:img#logo {:src   "/img/logo_min.svg"
-                  :class (if (= "/" nav)
-                           "big-logo"
-                           "small-logo")}]]]))
+(defn logo
+  "The site logo (part of the header trifecta)."
+  []
+  [:header
+   [:a {:href "/"}
+    [:img#logo {:src "/img/logo_min.svg"}]]])
 
 ;; The smart input field.
 ;; All key presses are also handled from here.
