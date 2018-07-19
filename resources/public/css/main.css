@@ -28,16 +28,21 @@ body {
 	margin: 0;
 	padding: 0;
 
-	/*  grey glow behind input textfield
-		(gradients don't support transitions, unfortunately) */
+	/*  grey glow behind input textfield */
 	background: white; /* for browsers w/o gradient support */
 	background: radial-gradient(circle, #FCFCFB, white);
 	background-repeat: no-repeat;
 	background-attachment: fixed;
 }
 
+/*  A transparent, virtual background element that fills the screen.
+    This is necessary for the transition from a gradient to a white background.
+    It would have been nice to just transition the body element,
+    but gradients unfortunately don't support transitions.
+    Instead, we resort to transitioning this virtual background from
+    transparent to white (on top of the body element with the gradient). */
 #bg {
-    min-height: 100vh; /* necessary to fill screen */
+    min-height: 100vh;
     transition: all 1s;
 }
 
