@@ -60,7 +60,7 @@ div#bg.with-page {
 
 /*  The main logo of the site fades in like most elements and gets smaller
     when the site displays some page content. */
-div#bg img#logo {
+img#logo {
 	animation: fade-in 0.5s ease;
 	transition: all 0.3s;
     max-height: 7em;
@@ -77,9 +77,8 @@ div#bg.with-page img#logo {
 	margin: 0.8em auto 0 auto;
 }
 
-/* Centering vertically is still fucking hard!
-https://stackoverflow.com/questions/356809/best-way-to-center-a-div-on-a-page-vertically-and-horizontally */
-div#bg .main {
+/* The header (logo, input bar, hint) transitions from center to top.  */
+header {
 	z-index: 1;
 	position: fixed;
 	min-width: 100%; /* expand entirely, but always keep a little margin*/
@@ -95,7 +94,7 @@ div#bg .main {
 	border-bottom: solid 2pt rgba(233, 233, 233, 0);
 }
 
-div#bg.with-page .main {
+div#bg.with-page > header {
 	background: #FCFCFB;
 	border-bottom: solid 1pt rgba(220, 220, 220, 1);
 	top: 0;
@@ -118,6 +117,75 @@ div#aligner {
 	padding: 0 1ch;
 }
 
+/* Also known as the #study-form */
+header form {
+	display: flex;
+	margin: 1em 0 0 0;
+}
+
+/* Formerly known as the #study-input */
+header form > input {
+	animation: fade-in 1s ease;
+    transition: all 0.5s;
+
+	/* positioning */
+	flex: 1;
+
+	/* text-related */
+	font-size: 14pt;
+
+	/* box */
+	padding: 0.5ch;
+	border: 1pt solid #999999;
+	border-radius: 0.5ch;
+	background-color: white;
+}
+
+/*
+    TODO: currently not available, remove entirely?
+    red colouring of input when evaluation returns 0 actions */
+header form > input.no-actions {
+	background-color: #ffdcc6;
+	transition: all 0.5s;
+}
+
+/* Grey colouring of input when action-chooser is active */
+header form > input.disabled {
+	background-color: #DDDDDD;
+	transition: all 0.5s;
+}
+
+/* Formerly known as the #study-button */
+header form > button {
+	border: 0;
+	padding: 0;
+	font-size: 0;
+	width: 0;
+}
+
+/* Formerly known as the #study-hint */
+header p {
+	max-width: 100%;
+	animation: fade-in 0.5s ease;
+
+	/* text-related */
+    font-size: 9pt;
+    font-weight: lighter;
+    color: #999999;
+    margin: 0.4em 0;
+    padding: 0.5ch;
+    letter-spacing: 0.6ch;
+
+	/* make sure text stays on a single line */
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+
+	/* make sure the hint keeps its height when empty */
+	height: 1.2em; /* 1em is having problems displaying span.keypress */
+}
+
+/* The Action Chooser is a pop-in dialog. */
 form#action-chooser {
     /* box */
     padding: 2ch;
@@ -150,10 +218,6 @@ form#action-chooser {
     box-sizing: border-box;
 
     animation: fade-in 0.3s linear;
-}
-
-.hidden {
-    display: none;
 }
 
 form#action-chooser p#action-header {
@@ -202,76 +266,9 @@ form#action-chooser .marked, form#action-chooser .marked * {
     color: white;
 }
 
-/* for styling checked radio buttons
-form#action-chooser input:checked + label {
-    color: white;
-}*/
 
-form#study-form {
-	display: flex;
-	margin: 1em 0 0 0;
-}
 
-input#study-input {
-	animation: fade-in 1s ease;
 
-	/* positioning */
-	flex: 1;
-
-	/* text-related */
-	font-size: 14pt;
-
-	/* box */
-	padding: 0.5ch;
-	border: 1pt solid #999999;
-	border-radius: 0.5ch;
-}
-
-button#study-button {
-	/* hiding using trick: https://stackoverflow.com/questions/477691/submitting-a-form-by-pressing-enter-without-a-submit-button*/
-	border: 0;
-	padding: 0;
-	font-size: 0;
-	width: 0;
-}
-
-input.default {
-	background-color: white;
-	transition: all 0.5s;
-}
-
-/* red colouring of input when evaluation returns 0 actions */
-input.no-actions {
-	background-color: #ffdcc6;
-	transition: all 0.5s;
-}
-
-/* grey colouring of input when action-chooser is active */
-input.disabled {
-	background-color: #DDDDDD;
-	transition: all 0.5s;
-}
-
-div#study-hint {
-	max-width: 100%;
-	animation: fade-in 0.5s ease;
-
-	/* text-related */
-    font-size: 9pt;
-    font-weight: lighter;
-    color: #999999;
-    margin: 0.4em 0;
-    padding: 0.5ch;
-    letter-spacing: 0.6ch;
-
-	/* make sure text stays on a single line */
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-
-	/* make sure the hint keeps its height when empty */
-	height: 1.2em; /* 1em is having problems displaying span.keypress */
-}
 
 span.keypress {
 	padding: 0 0.8ch;

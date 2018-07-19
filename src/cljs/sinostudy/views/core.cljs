@@ -39,9 +39,8 @@
 (defn logo
   "The site logo (part of the header trifecta)."
   []
-  [:header
-   [:a {:href "/"}
-    [:img#logo {:src "/img/logo_min.svg"}]]])
+  [:a {:href "/"}
+   [:img#logo {:src "/img/logo_min.svg"}]])
 
 ;; The smart input field.
 ;; All key presses are also handled from here.
@@ -55,6 +54,7 @@
                           (empty? (:actions evaluation))
                           (not= "" (:query evaluation))) "default no-actions"
                      :else "default")]
+    ;; The #study-input id is required to regain focus (see :set-focus).
     [:input#study-input
      {:type          :text
       :auto-complete "off"
@@ -73,13 +73,13 @@
 ;; button captures these submit events and sends straight them to /dev/null.
 (defn input-button []
   (let [input (rf/subscribe [::subs/input])]
-    [:button#study-button
+    [:button
      {:type     :submit
       :on-click (fn [e] (.preventDefault e)
                   (rf/dispatch [::events/submit @input]))}]))
 
 (defn form []
-  [:form#study-form
+  [:form
    {:auto-complete "off"}
    [input-field]
    [input-button]])
@@ -89,15 +89,19 @@
         hint    (first hints)
         key     (count hints)
         content (get events/hint-contents (:type hint))]
-    [:div#study-hint
+    [:p
      {:key key}
      content]))
 
-(defn header []
-  [:div
-   [logo]
-   [form]
-   [hint]])
+(defn header
+  "The header trifecta: logo, form and hint."
+  []
+  [:header
+   [:div#aligner
+    [:div
+     [logo]
+     [form]
+     [hint]]]])
 
 (defn content-pane
   "The main content pane of the site."
@@ -191,9 +195,7 @@
 (defn main-panel []
   (let [not-home? (not= "/" @(rf/subscribe [::subs/current-nav]))]
     [:div#bg {:class (when not-home? "with-page")}
-     [:div {:class "main"}
-      [:div#aligner
-       [header]]]
+     [header]
      [action-chooser]
      [content-pane]
      [footer]]))
