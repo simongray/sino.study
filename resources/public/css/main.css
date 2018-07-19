@@ -79,7 +79,7 @@ div#bg.with-page img#logo {
 
 /* Centering vertically is still fucking hard!
 https://stackoverflow.com/questions/356809/best-way-to-center-a-div-on-a-page-vertically-and-horizontally */
-.main {
+div#bg .main {
 	z-index: 1;
 	position: fixed;
 	min-width: 100%; /* expand entirely, but always keep a little margin*/
@@ -95,7 +95,7 @@ https://stackoverflow.com/questions/356809/best-way-to-center-a-div-on-a-page-ve
 	border-bottom: solid 2pt rgba(233, 233, 233, 0);
 }
 
-.main.top {
+div#bg.with-page .main {
 	background: #FCFCFB;
 	border-bottom: solid 1pt rgba(220, 220, 220, 1);
 	top: 0;

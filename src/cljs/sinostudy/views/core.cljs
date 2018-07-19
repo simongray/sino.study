@@ -190,8 +190,8 @@
 
 (defn main-panel []
   (let [not-home? (not= "/" @(rf/subscribe [::subs/current-nav]))]
-    [:div#bg {:class (if not-home? "with-page" "")}
-     [:div {:class (if not-home? "main top" "main")}
+    [:div#bg {:class (when not-home? "with-page")}
+     [:div {:class "main"}
       [:div#aligner
        [header]]]
      [action-chooser]
