@@ -1,15 +1,3 @@
-/* === ANIMATIONS === */
-
-@keyframes fade-in {
-	from {
-		opacity: 0;
-	}
-	to {
-		opacity: 1;
-	}
-}
-
-
 /* === GLOBAL === */
 
 * {
@@ -41,34 +29,47 @@ body {
     but gradients unfortunately don't support transitions.
     Instead, we resort to transitioning this virtual background from
     transparent to white (on top of the body element with the gradient). */
-#bg {
+div#bg {
     min-height: 100vh;
     transition: all 1s;
 }
 
-#bg.with-page {
+div#bg.with-page {
 	background: white;
 	transition: all 1s;
 }
 
-img#logo {
-	animation: fade-in 0.5s ease;
 
-	/* TODO: find fixes for non-Chrome browsers */
-	user-drag: none;
-    user-select: none;
+/* === ANIMATIONS === */
 
-	/* size */
-	width: 100%; /* otherwise image could overflow on small page widths */
+@keyframes fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
 }
 
-.big-logo {
+
+/* === CORE PAGE ELEMENTS === */
+
+img#logo {
+	animation: fade-in 0.5s ease;
+	width: 100%; /* otherwise image could overflow on small page widths */
+
+    /* TODO: find fixes for non-Chrome browsers */
+    user-drag: none;
+    user-select: none;
+}
+
+img#logo.big-logo {
 	max-height: 7em;
 	transition: all 0.3s;
 	margin-bottom: 0.5em;
 }
 
-.small-logo {
+img#logo.small-logo {
 	max-height: 4em;
 	margin: 0.8em auto 0 auto;
 	transition: all 0.3s;
