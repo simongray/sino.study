@@ -1,4 +1,5 @@
-/* https://www.w3schools.com/css/css3_animations.asp */
+/* === ANIMATIONS === */
+
 @keyframes fade-in {
 	from {
 		opacity: 0;
@@ -8,16 +9,22 @@
 	}
 }
 
-html {
-	margin: 0;
-	padding: 0;
+
+/* === GLOBAL === */
+
+* {
+    font-family: "Gill Sans", sans-serif;
+    font-weight: lighter;
+
+    /* otherwise safari fonts become too thin */
+    -webkit-font-smoothing: subpixel-antialiased;
 }
 
 body {
-	/* global text styles */
-	font-family: "Gill Sans", sans-serif;
-	font-weight: lighter;
+	/* TODO: figure out what to do with this*/
 	letter-spacing: 0.4ch;
+
+	/* TODO: move to global effect */
 	margin: 0;
 	padding: 0;
 
@@ -27,9 +34,6 @@ body {
 	background: radial-gradient(circle, #FCFCFB, white);
 	background-repeat: no-repeat;
 	background-attachment: fixed;
-
-	/* otherwise safari fonts become too thin */
-	-webkit-font-smoothing: subpixel-antialiased;
 }
 
 #bg {
