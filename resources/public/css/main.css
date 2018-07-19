@@ -477,14 +477,17 @@ hr {
 
 .frequency-high {
     color: #7bce34;
+    font-family: inherit;
 }
 
 .frequency-medium {
     color: #ffcc2f;
+    font-family: inherit;
 }
 
 .frequency-low {
     color: #ead7cf;
+    font-family: inherit;
 }
 
 .dictionary-entry h1 {
