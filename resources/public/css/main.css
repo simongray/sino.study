@@ -81,13 +81,19 @@ div#bg.with-page img#logo {
 
 /* The header (logo, input bar, hint) transitions from center to top.  */
 header {
-	z-index: 1;
-	position: fixed;
+    position: fixed;
 	min-width: 100%; /* expand entirely, but always keep a little margin*/
 	max-width: 80%; /* fixes problem with layout when hint length > page width */
-	top: 42%; /* using 50% looks off somehow...*/
 	left: 50%;
-	transition: all 0.3s; /* must be "all", not individual attributes */
+
+    /* Display on top of content when transitioning. */
+	z-index: 1;
+
+	/* Faster going down than up! */
+	transition: all 0.3s;
+
+    /* Centered vertically */
+	top: 42%; /* using 50% looks off somehow...*/
 	transform: translate(-50%, -40%);
 	-webkit-transform: translate(-50%, -40%);
     -moz-transform: translate(-50%, -40%);
@@ -97,11 +103,15 @@ header {
 }
 
 div#bg.with-page > header {
+	/* Slower going up than down. */
+	transition: all 0.5s;
+
+    /* Add some colours. */
 	background: #FCFCFB;
 	border-bottom: solid 1pt rgba(220, 220, 220, 1);
+
+    /* Go to the top of the page. */
 	top: 0;
-	position: fixed;
-	transition: all 0.5s; /* must be "all", not individual attributes */
     transform: translate(-50%, 0);
 	-webkit-transform: translate(-50%, 0);
     -moz-transform: translate(-50%, 0);
@@ -113,7 +123,7 @@ div#bg.with-page > header {
 	without "min-width:98%;" in .vcenter, .vcentor gets crammed,
 	so this extra class is necessary to get a max-width.
 */
-div#aligner {
+header div#aligner {
 	max-width: 80ch;
 	margin: auto;
 	padding: 0 1ch;
