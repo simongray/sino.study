@@ -126,7 +126,7 @@ div#bg.with-page > header {
 header div#aligner {
 	max-width: 80ch;
 	margin: auto;
-	padding: 0 1ch;
+	padding: 0 0.5ch;
 }
 
 /* Also known as the #study-form */
