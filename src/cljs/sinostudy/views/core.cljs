@@ -98,10 +98,9 @@
   []
   [:header
    [:div#aligner
-    [:div
-     [logo]
-     [form]
-     [hint]]]])
+    [logo]
+    [form]
+    [hint]]])
 
 (defn content-pane
   "The main content pane of the site."
