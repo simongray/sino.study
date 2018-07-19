@@ -51,11 +51,6 @@ body {
 	transition: all 1s;
 }
 
-header {
-	/* center the logo */
-	text-align: center;
-}
-
 img#logo {
 	animation: fade-in 0.5s ease;
 
