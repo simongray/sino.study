@@ -3,19 +3,15 @@
 * {
     font-family: "Gill Sans", sans-serif;
     font-weight: lighter;
+    letter-spacing: 0.2ch;
+    padding: 0;
+    margin: 0; /* TODO: fix search result filters */
 
     /* otherwise safari fonts become too thin */
     -webkit-font-smoothing: subpixel-antialiased;
 }
 
 body {
-	/* TODO: figure out what to do with this*/
-	letter-spacing: 0.4ch;
-
-	/* TODO: move to global effect */
-	margin: 0;
-	padding: 0;
-
 	/*  grey glow behind input textfield */
 	background: white; /* for browsers w/o gradient support */
 	background: radial-gradient(circle, #FCFCFB, white);
@@ -31,14 +27,11 @@ a {
 }
 
 a:hover {
-	text-decoration: none;
 	color: #4477DD;
 }
 
 p, h1, h2 {
 	color: #555555;
-	margin: 0;
-	letter-spacing: 0.2ch;
 }
 
 h1, h2 {
@@ -57,6 +50,14 @@ p {
 	font-weight: 100;
 	margin: 0 0 1em 0;
 	color: #777777;
+}
+
+ol, ul {
+    margin: 1em 0 1em 4ch;
+}
+
+li {
+    margin-bottom: 0.4em;
 }
 
 
