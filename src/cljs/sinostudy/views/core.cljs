@@ -181,12 +181,12 @@
    [:label {:for action} (action-text action)]])
 
 (defn action-chooser []
+  "The pop-in dialog that is used to select from different possible options."
   (let [actions @(rf/subscribe [::subs/actions])
         marked  @(rf/subscribe [::subs/marked-action])]
     (when actions
       [:form#action-chooser
-       {:action ""}
-       [:p#action-header "Select an action"]
+       [:h1 "Select an action"]
        [:ol
         (map (partial action-choice (nth actions marked)) actions)]])))
 

@@ -228,10 +228,11 @@ form#action-chooser {
     animation: fade-in 0.3s linear;
 }
 
-form#action-chooser p#action-header {
+form#action-chooser > h1 {
     /* text-related */
     font-family: "Gill Sans", sans-serif;
     font-size: 14pt;
+    font-weight: lighter; /* TODO: remove once h1 has been sorted out? */
     color: #FFBBBB;
     text-align: center;
 
@@ -240,14 +241,13 @@ form#action-chooser p#action-header {
     border-bottom: 1pt solid #CC6666;
 }
 
-form#action-chooser ol {
+form#action-chooser > ol {
     margin: 0;
     padding: 0 0 0 3ch;
     color: #FFBBBB;
 }
 
-/* TODO: don't use radio buttons? */
-form#action-chooser input {
+form#action-chooser input[type=radio] {
     /* remove radio button */
     -webkit-appearance: none;
     -moz-appearance: none;
