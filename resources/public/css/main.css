@@ -3,6 +3,7 @@
 * {
     font-family: "Gill Sans", sans-serif;
     font-weight: lighter;
+    color: #999999;
     letter-spacing: 0.2ch;
     padding: 0;
     margin: 0; /* TODO: fix search result filters */
@@ -46,7 +47,6 @@ h2 {
 p {
 	font-size: 14pt;
 	margin: 0 0 1em 0;
-	color: #999999;
 }
 
 ol, ul {
@@ -173,6 +173,7 @@ header form > input {
     transition: all 0.5s;
 
 	font-size: 14pt;
+	color: black;
 
 	padding: 0.5ch;
 	border: 1pt solid #999999;
@@ -236,9 +237,6 @@ main {
 
 	/* box */
 	max-width: 80ch;
-
-	/* text-related */
-    color: #999999;
 }
 
 footer {
@@ -333,9 +331,6 @@ form#action-chooser {
     border-radius: 1ch;
     box-shadow: 0 4pt 8pt 0 rgba(0, 0, 0, 0.2), 0 6pt 20pt 0 rgba(0, 0, 0, 0.19);
 
-    /* center horisontally */
-    margin: auto;
-
     /* center vertically
       adapted from .main */
     z-index: 2;
@@ -357,12 +352,14 @@ form#action-chooser {
     animation: fade-in 0.3s linear;
 }
 
+form#action-chooser * {
+    color: #FFBBBB;
+}
+
 form#action-chooser > h1 {
     /* text-related */
     font-family: "Gill Sans", sans-serif;
-    font-size: 14pt;
-    font-weight: lighter; /* TODO: remove once h1 has been sorted out? */
-    color: #FFBBBB;
+    font-size: 16pt;
     text-align: center;
 
     margin: 0 0 0.5em 0;
@@ -373,7 +370,6 @@ form#action-chooser > h1 {
 form#action-chooser > ol {
     margin: 0;
     padding: 0 0 0 3ch;
-    color: #FFBBBB;
 }
 
 form#action-chooser > ol > li > input[type=radio] {
@@ -383,15 +379,10 @@ form#action-chooser > ol > li > input[type=radio] {
     -ms-appearance: none;
     -o-appearance: none;
     appearance: none;
-
-    /* remove last little bit on the left */
-    margin: 0;
 }
 
 form#action-chooser > ol > li > label {
-    color: #FFBBBB;
     cursor: pointer;
-    font-family: "Gill Sans", sans-serif;
     font-size: 14pt;
 }
 
