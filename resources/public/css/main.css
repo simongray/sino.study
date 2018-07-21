@@ -30,26 +30,23 @@ a:hover {
 	color: #4477DD;
 }
 
-p, h1, h2 {
+h1, h2 {
 	color: #555555;
+	font-family: Didot, serif;
 }
 
-h1, h2 {
-	font-family: Didot, serif;
-	font-weight: 600;
-	font-size: 24pt;
+h1 {
+    font-size: 24pt;
 }
 
 h2 {
-    font-weight: 400;
     font-size: 20pt;
 }
 
 p {
 	font-size: 14pt;
-	font-weight: 100;
 	margin: 0 0 1em 0;
-	color: #777777;
+	color: #999999;
 }
 
 ol, ul {
