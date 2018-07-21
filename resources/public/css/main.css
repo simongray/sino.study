@@ -208,7 +208,7 @@ header p {
     color: #999999;
     margin: 0.4em 0;
     padding: 0.5ch;
-    letter-spacing: 0.6ch;
+    letter-spacing: 0.4ch;
 
 	/* make sure text stays on a single line */
 	white-space: nowrap;

@@ -82,16 +82,26 @@
    [input-field]
    [input-button]])
 
+(defn press-enter-to
+  [s]
+  ["press " [:span.keypress "enter"] " to " s])
+
+;; action-related hints (press-enter-to ...) must match action name!
+(def hint-content
+  {::events/query-failure       "something went wrong..."
+   ::events/no-actions          "not sure what to do with that..."
+   ::events/digits->diacritics  (press-enter-to "convert to tone diacritics")
+   ::events/diacritics->digits  (press-enter-to "convert to tone digits")
+   ::events/look-up             (press-enter-to "look up the term")
+   ::events/open-action-chooser (press-enter-to "choose an action")})
+
 (defn hint []
   "The hint (part of the header trifecta).
   Provides helpful hints based on the current input."
   (let [hints   @(rf/subscribe [::subs/hints])
-        hint    (first hints)
-        key     (count hints)
-        content (get events/hint-contents (:type hint))]
-    [:p
-     {:key key}
-     content]))
+        content (get hint-content (:type (first hints)))]
+    (into [:p {:key (count hints)}]
+          content)))
 
 (defn header
   "The header trifecta: logo, form and hint."
