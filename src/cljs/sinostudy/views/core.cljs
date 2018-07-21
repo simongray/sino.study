@@ -115,7 +115,7 @@
              content  @(rf/subscribe [::subs/content])]
          (when content
            [:div.pedestal
-            [:article
+            [:main
              (cond
                (= ::pages/terms category) [vd/dictionary-page]
                :else content)]])))
@@ -158,7 +158,7 @@
      [:nav (interpose " · "
              (conj (vec (navify from links))
                    [script-changer {:key "script-changer"}]))]
-     [:p#copyright "© " year-string " Simon Gray (" github-link ")"]]))
+     [:address "© " year-string " Simon Gray (" github-link ")"]]))
 
 (defn- action-text
   [[action query]]
