@@ -151,12 +151,6 @@ header form > input {
     flex: 1;
 }
 
-/*  TODO: currently not available, remove entirely?
-    Red colouring of input when evaluation returns 0 actions. */
-header form > input.no-actions {
-	background-color: #ffdcc6;
-}
-
 /* Grey colouring of input when action-chooser is active */
 header form > input[disabled] {
 	background-color: #DDDDDD;
