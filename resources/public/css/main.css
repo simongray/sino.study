@@ -158,7 +158,7 @@ header form > input.no-actions {
 }
 
 /* Grey colouring of input when action-chooser is active */
-header form > input.disabled {
+header form > input[disabled] {
 	background-color: #DDDDDD;
 }
 

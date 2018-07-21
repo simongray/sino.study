@@ -45,22 +45,15 @@
 ;; The smart input field.
 ;; All key presses are also handled from here.
 (defn input-field []
+  "The input field (part of the header form)."
   (let [input      @(rf/subscribe [::subs/input])
-        actions    @(rf/subscribe [::subs/actions])
-        evaluation @(rf/subscribe [::subs/current-evaluation])
-        css-class  (cond
-                     actions "default disabled"
-                     (and evaluation
-                          (empty? (:actions evaluation))
-                          (not= "" (:query evaluation))) "default no-actions"
-                     :else "default")]
+        actions    @(rf/subscribe [::subs/actions])]
     ;; The #study-input id is required to regain focus (see :set-focus).
     [:input#study-input
      {:type          :text
       :auto-complete "off"
       :disabled      (not (nil? actions))
       :value         input
-      :class         css-class
       :on-change     (fn [e]
                        (when (nil? actions)
                          (rf/dispatch [::events/on-input-change
@@ -72,19 +65,25 @@
 ;; action-chooser can misfire a submit event. The on-click event in the submit
 ;; button captures these submit events and sends straight them to /dev/null.
 (defn input-button []
+  "The hidden input button (part of the header form).
+  Secretly enables the input field to submit when pressing enter."
   (let [input (rf/subscribe [::subs/input])]
     [:button
      {:type     :submit
-      :on-click (fn [e] (.preventDefault e)
+      :on-click (fn [e]
+                  (.preventDefault e)
                   (rf/dispatch [::events/submit @input]))}]))
 
 (defn form []
+  "The form (part of the header trifecta)."
   [:form
    {:auto-complete "off"}
    [input-field]
    [input-button]])
 
 (defn hint []
+  "The hint (part of the header trifecta).
+  Provides helpful hints based on the current input."
   (let [hints   @(rf/subscribe [::subs/hints])
         hint    (first hints)
         key     (count hints)
