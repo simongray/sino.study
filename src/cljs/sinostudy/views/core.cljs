@@ -102,7 +102,7 @@
     [form]
     [hint]]])
 
-(defn content-pane
+(defn main
   "The main content pane of the site."
   []
   (reagent/create-class
@@ -114,11 +114,10 @@
        (let [category @(rf/subscribe [::subs/current-category])
              content  @(rf/subscribe [::subs/content])]
          (when content
-           [:div.pedestal
-            [:main
-             (cond
-               (= ::pages/terms category) [vd/dictionary-page]
-               :else content)]])))
+           [:main
+            (cond
+              (= ::pages/terms category) [vd/dictionary-page]
+              :else content)])))
 
      ;; Ensures that scroll state is restored when pushing back/forward button.
      ;; Sadly, this behaviour is global for all updates, so links/buttons/etc.
@@ -196,5 +195,5 @@
     [:div#bg {:class (when not-home? "with-page")}
      [header]
      [action-chooser]
-     [content-pane]
+     [main]
      [footer]]))

@@ -221,30 +221,24 @@ header p {
 	height: 1.2em;
 }
 
-.pedestal {
+main {
+	animation: fade-in 0.5s ease;
+
 	/* positioning */
     position: relative;
     top: 11em; /* pos relative to header varies a bit on different browsers */
     margin: auto;
     padding: 0 1ch;
 
-	/* 	to make sure the page can reached on small screen sizes,
-		otherwise the footer might block the view */
-	border-bottom: 5.5em solid rgba(255,255,255,0);
-}
-
-main {
-	animation: fade-in 0.5s ease;
+    /* 	to make sure the page can reached on small screen sizes,
+        otherwise the footer might block the view */
+    border-bottom: 5.5em solid rgba(255,255,255,0);
 
 	/* box */
 	max-width: 80ch;
 
-	/* positioning */
-    margin: auto;
-
 	/* text-related */
     color: #999999;
-    letter-spacing: 0.2ch;
 }
 
 footer {
