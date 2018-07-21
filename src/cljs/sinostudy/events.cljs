@@ -329,7 +329,7 @@
   (fn [cofx [_ key]]
     (let [db         (:db cofx)
           actions    (:actions db)
-          marked     (:marked-action db)
+          marked     (:checked-action db)
           next?      (fn [k] (contains? #{"ArrowRight" "ArrowDown"} k))
           prev?      (fn [k] (contains? #{"ArrowLeft" "ArrowUp"} k))
           valid-num? (fn [k] (let [num (js/parseInt k)]
@@ -363,7 +363,7 @@
   (fn [db _]
     (let [actions (:actions (first (:evaluations db)))]
       (-> db
-          (assoc :marked-action 0)
+          (assoc :checked-action 0)
           (assoc :actions (conj actions [::close-action-chooser]))))))
 
 ;; TODO: figure out a better way to regain focus for previously disabled field
@@ -379,7 +379,7 @@
 (rf/reg-event-db
   ::mark-action
   (fn [db [_ n]]
-    (assoc db :marked-action n)))
+    (assoc db :checked-action n)))
 
 ;; Dispatched by user selecting an action in the action-chooser.
 ;; ::close-action-chooser (= cancel) is a special action (doesn't clear input).

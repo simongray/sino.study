@@ -46,8 +46,8 @@
 ;; All key presses are also handled from here.
 (defn input-field []
   "The input field (part of the header form)."
-  (let [input      @(rf/subscribe [::subs/input])
-        actions    @(rf/subscribe [::subs/actions])]
+  (let [input   @(rf/subscribe [::subs/input])
+        actions @(rf/subscribe [::subs/actions])]
     ;; The #study-input id is required to regain focus (see :set-focus).
     [:input#study-input
      {:type          :text
@@ -168,12 +168,12 @@
     ::events/close-action-chooser "Cancel"))
 
 (defn- action-choice
-  [marked action]
-  [:li {:key   action
-        :class (when (= marked action) "marked")}
+  [checked action]
+  [:li {:key action}
    [:input {:type     :radio
             :name     "action"
             :value    action
+            :checked  (= action checked)
             :id       action
             :on-click (fn [e]
                         (.preventDefault e)
@@ -183,12 +183,12 @@
 (defn action-chooser []
   "The pop-in dialog that is used to select from different possible options."
   (let [actions @(rf/subscribe [::subs/actions])
-        marked  @(rf/subscribe [::subs/marked-action])]
+        checked @(rf/subscribe [::subs/checked-action])]
     (when actions
       [:form#action-chooser
        [:h1 "Select an action"]
        [:ol
-        (map (partial action-choice (nth actions marked)) actions)]])))
+        (map (partial action-choice (nth actions checked)) actions)]])))
 
 (defn main-panel []
   (let [not-home? (not= "/" @(rf/subscribe [::subs/current-nav]))]

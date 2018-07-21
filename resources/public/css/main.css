@@ -248,7 +248,7 @@ form#action-chooser > ol {
 }
 
 form#action-chooser input[type=radio] {
-    /* remove radio button */
+    /* hide the actual radio button */
     -webkit-appearance: none;
     -moz-appearance: none;
     -ms-appearance: none;
@@ -266,11 +266,13 @@ form#action-chooser label {
     font-size: 14pt;
 }
 
+/* Reveal that the options are also clickable */
 form#action-chooser label:hover {
     text-decoration: underline;
 }
 
-form#action-chooser .marked, form#action-chooser .marked * {
+/* Colour the currently checked button white */
+form#action-chooser input[type=radio]:checked + label {
     color: white;
 }
 

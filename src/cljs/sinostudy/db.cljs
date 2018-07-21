@@ -10,7 +10,7 @@
 (def default-db
   {:input          ""
    :actions        nil
-   :marked-action  0
+   :checked-action 0
    :script         ::d/simplified
    :result-filters {}
    :pages          {::pages/terms  {}

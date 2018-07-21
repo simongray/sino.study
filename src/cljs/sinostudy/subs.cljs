@@ -44,9 +44,9 @@
     (:actions db)))
 
 (rf/reg-sub
-  ::marked-action
+  ::checked-action
   (fn [db]
-    (:marked-action db)))
+    (:checked-action db)))
 
 (rf/reg-sub
   ::current-evaluation
