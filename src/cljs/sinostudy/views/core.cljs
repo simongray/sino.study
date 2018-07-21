@@ -72,7 +72,8 @@
      {:type     :submit
       :on-click (fn [e]
                   (.preventDefault e)
-                  (rf/dispatch [::events/submit @input]))}]))
+                  (rf/dispatch [::events/submit @input]))}
+     "go"]))
 
 (defn form []
   "The form (part of the header trifecta)."
