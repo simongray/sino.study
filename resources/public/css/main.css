@@ -26,7 +26,41 @@ body {
 a {
     /* So that links won't suddenly reset a custom font to the global one. */
     font-family: inherit;
+	color: inherit;
+	text-decoration: none;
 }
+
+a:hover {
+	text-decoration: none;
+	color: #4477DD;
+}
+
+p, h1, h2 {
+	color: #555555;
+	margin: 0;
+	letter-spacing: 0.2ch;
+}
+
+h1, h2 {
+	font-family: Didot, serif;
+	font-weight: 600;
+	font-size: 24pt;
+}
+
+h2 {
+    font-weight: 400;
+    font-size: 20pt;
+}
+
+p {
+	font-size: 14pt;
+	font-weight: 100;
+	margin: 0 0 1em 0;
+	color: #777777;
+}
+
+
+
 
 /* === ANIMATIONS === */
 
@@ -189,6 +223,102 @@ header p {
 	height: 1.2em;
 }
 
+.pedestal {
+	/* positioning */
+    position: relative;
+    top: 11em; /* pos relative to header varies a bit on different browsers */
+    margin: auto;
+    padding: 0 1ch;
+
+	/* 	to make sure the page can reached on small screen sizes,
+		otherwise the footer might block the view */
+	border-bottom: 5.5em solid rgba(255,255,255,0);
+}
+
+article {
+	animation: fade-in 0.5s ease;
+
+	/* box */
+	max-width: 80ch;
+
+	/* positioning */
+    margin: auto;
+
+	/* text-related */
+    color: #999999;
+    letter-spacing: 0.2ch;
+}
+
+footer {
+	animation: fade-in 1.5s ease;
+
+	/* text */
+	text-align: center;
+	color: #DD8888;
+
+	/* box */
+	border-top: solid 1pt #AA4433;
+	background: linear-gradient(#BB5544, #AB4230);
+	border-left: 1pt solid #BB5544; /* fixes problem with transparent left border */
+	padding: 1.2em 0 0.5em 0;
+	width: 100%;
+
+	/* position */
+	position: fixed;
+	margin: 0;
+    bottom: 0;
+}
+
+nav {
+	/* text-related */
+	font-family: "Gill Sans", sans-serif;
+    font-size: 12pt;
+    margin-bottom: 0.8em;
+}
+
+footer .script-changer {
+    padding: 0.2em 0.5em;
+    border: 1pt solid #CC6666;
+    border-radius: 0.5ch;
+    color: #FFBBBB;
+
+    /* nav links shouldn't jump around when changing script */
+    display: inline-block;
+    min-width: 7ch;
+
+    /* fix for #14 (translation pop-up on Chrome mobile) */
+    user-drag: none;
+    user-select: none;
+}
+
+p#copyright {
+	color: #DD8888;
+	font-size: 8pt;
+}
+
+footer a {
+	color: white;
+}
+
+footer a:hover {
+	color: white;
+	text-decoration: underline;
+}
+
+footer a.current-page, footer a.current-page:hover {
+	color: #661111;
+	text-decoration: none;
+}
+
+footer .script-changer:hover {
+	text-decoration: none;
+	border-color: white;
+}
+
+.fake-link {
+	cursor: pointer;
+}
+
 
 
 
@@ -279,7 +409,7 @@ form#action-chooser > ol > li > input[type=radio]:checked + label {
 
 
 
-
+/* === DICTIONARY === */
 span.keypress {
 	padding: 0 0.8ch;
 	border: 1pt solid #AAAAAA;
@@ -288,21 +418,9 @@ span.keypress {
     color: #666666;
 }
 
-p, h1, h2 {
-	color: #555555;
-	margin: 0;
-	letter-spacing: 0.2ch;
-}
-
 .dictionary-header {
     display: flex;
     flex-direction: row;
-}
-
-h1, h2 {
-	font-family: Didot, serif;
-	font-weight: 600;
-	font-size: 24pt;
 }
 
 .dictionary-header-bubble {
@@ -328,11 +446,6 @@ h1, h2 {
     color: #777777;
 }
 
-h2 {
-    font-weight: 400;
-    font-size: 20pt;
-}
-
 /* headers above lists (e.g. search results) should be centered */
 .list-header, .list-subheader {
 	text-align: center;
@@ -342,46 +455,6 @@ h2 {
 	color: #AAAAAA;
 	font-size: 10pt;
 	font-style: italic;
-}
-
-p {
-	font-size: 14pt;
-	font-weight: 100;
-	margin: 0 0 1em 0;
-	color: #777777;
-}
-
-.pedestal {
-	/* positioning */
-    position: relative;
-    top: 11em; /* pos relative to header varies a bit on different browsers */
-    margin: auto;
-    padding: 0 1ch;
-
-	/* 	to make sure the page can reached on small screen sizes,
-		otherwise the footer might block the view */
-	border-bottom: 5.5em solid rgba(255,255,255,0);
-}
-
-article {
-	animation: fade-in 0.5s ease;
-
-	/* box */
-	max-width: 80ch;
-
-	/* positioning */
-    margin: auto;
-
-	/* text-related */
-    color: #999999;
-    letter-spacing: 0.2ch;
-}
-
-hr {
-    height: 1pt;
-    background: rgba(220, 220, 220, 1);
-    font-size: 0;
-    border: 0;
 }
 
 .search-result h1 {
@@ -518,97 +591,12 @@ hr {
 	content: "]";
 }
 
-footer {
-	animation: fade-in 1.5s ease;
-
-	/* text */
-	text-align: center;
-	color: #DD8888;
-
-	/* box */
-	border-top: solid 1pt #AA4433;
-	background: linear-gradient(#BB5544, #AB4230);
-	border-left: 1pt solid #BB5544; /* fixes problem with transparent left border */
-	padding: 1.2em 0 0.5em 0;
-	width: 100%;
-
-	/* position */
-	position: fixed;
-	margin: 0;
-    bottom: 0;
-}
-
-nav {
-	/* text-related */
-	font-family: "Gill Sans", sans-serif;
-    font-size: 12pt;
-    margin-bottom: 0.8em;
-}
-
-footer .script-changer {
-    padding: 0.2em 0.5em;
-    border: 1pt solid #CC6666;
-    border-radius: 0.5ch;
-    color: #FFBBBB;
-
-    /* nav links shouldn't jump around when changing script */
-    display: inline-block;
-    min-width: 7ch;
-
-    /* fix for #14 (translation pop-up on Chrome mobile) */
-    user-drag: none;
-    user-select: none;
-}
-
-p#copyright {
-	color: #DD8888;
-	font-size: 8pt;
-}
-
-
-/* LINKS IN GENERAL */
-a {
-	color: inherit;
-	text-decoration: none;
-}
-
 .hanzi a, .pinyin a, .dictionary-entries a {
 	color: inherit;
-}
-
-a:hover {
-	text-decoration: none;
-	color: #4477DD;
 }
 
 /* TODO: clean up this mess... */
 .hanzi a:hover, .pinyin a:hover, .dictionary-entries a:hover, a:hover .hanzi, a:hover .pinyin, .dictionary-entries li:hover span.pinyin, .dictionary-entries li:hover span.pinyin:first-child  {
 	color: #4477DD;
 	border-color: #4477DD;
-}
-
-
-/* FOOTER / NAV LINKS */
-
-footer a {
-	color: white;
-}
-
-footer a:hover {
-	color: white;
-	text-decoration: underline;
-}
-
-footer a.current-page, footer a.current-page:hover {
-	color: #661111;
-	text-decoration: none;
-}
-
-footer .script-changer:hover {
-	text-decoration: none;
-	border-color: white;
-}
-
-.fake-link {
-	cursor: pointer;
 }
