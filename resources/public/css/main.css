@@ -247,7 +247,7 @@ form#action-chooser > ol {
     color: #FFBBBB;
 }
 
-form#action-chooser input[type=radio] {
+form#action-chooser > ol > li > input[type=radio] {
     /* hide the actual radio button */
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -259,7 +259,7 @@ form#action-chooser input[type=radio] {
     margin: 0;
 }
 
-form#action-chooser label {
+form#action-chooser > ol > li > label {
     color: #FFBBBB;
     cursor: pointer;
     font-family: "Gill Sans", sans-serif;
@@ -267,12 +267,12 @@ form#action-chooser label {
 }
 
 /* Reveal that the options are also clickable */
-form#action-chooser label:hover {
+form#action-chooser > ol > li > label:hover {
     text-decoration: underline;
 }
 
 /* Colour the currently checked button white */
-form#action-chooser input[type=radio]:checked + label {
+form#action-chooser > ol > li > input[type=radio]:checked + label {
     color: white;
 }
 
