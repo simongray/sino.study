@@ -138,7 +138,7 @@ header form {
 /* Formerly known as the #study-input */
 header form > input {
 	animation: fade-in 1s ease;
-    transition: all 5.0s;
+    transition: all 0.5s;
 
 	font-size: 14pt;
 
