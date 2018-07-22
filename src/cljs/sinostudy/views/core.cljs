@@ -48,10 +48,11 @@
   "The input field (part of the header form)."
   (let [input   @(rf/subscribe [::subs/input])
         actions @(rf/subscribe [::subs/actions])]
-    ;; The #study-input id is required to regain focus (see :set-focus).
     [:input
      {:type          :text
       :auto-complete "off"
+      ;; The #study-input id is required to regain focus (see :set-focus).
+      :id            "study-input"
       :disabled      (not (nil? actions))
       :value         input
       :on-change     (fn [e]
@@ -199,7 +200,7 @@
        [:ol
         (map (partial action-choice (nth actions checked)) actions)]])))
 
-(defn main-panel []
+(defn app []
   (let [not-home? (not= "/" @(rf/subscribe [::subs/current-nav]))]
     [:div#bg {:class (when not-home? "with-page")}
      [header]

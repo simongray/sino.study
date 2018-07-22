@@ -16,8 +16,7 @@
 
 (defn mount-root []
   (rf/clear-subscription-cache!)
-  (reagent/render [views/main-panel]
-                  (.getElementById js/document "app"))
+  (reagent/render [views/app] (.getElementById js/document "app"))
 
   ;; Start the CLJS app from current page in the address bar.
   ;; The routing mostly takes place on the frontend,
