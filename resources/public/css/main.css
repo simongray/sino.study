@@ -222,6 +222,14 @@ header p {
 	height: 1.2em;
 }
 
+span.keypress {
+	padding: 0 0.8ch;
+	border: 1pt solid #AAAAAA;
+    border-radius: 0.5ch;
+    background-color: white;
+    color: #666666;
+}
+
 
 
 
@@ -324,6 +332,9 @@ footer a.current-page, footer a.current-page:hover {
 	text-decoration: none;
 }
 
+
+
+
 /* === ACTION CHOOSER === */
 
 form#action-chooser {
@@ -405,14 +416,6 @@ form#action-chooser > ol > li > input[type=radio]:checked + label {
 
 
 /* === DICTIONARY === */
-
-span.keypress {
-	padding: 0 0.8ch;
-	border: 1pt solid #AAAAAA;
-    border-radius: 0.5ch;
-    background-color: white;
-    color: #666666;
-}
 
 .dictionary-header {
     display: flex;
