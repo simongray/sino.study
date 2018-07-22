@@ -6,7 +6,7 @@
     color: #999999;
     letter-spacing: 0.2ch;
     padding: 0;
-    margin: 0; /* TODO: fix search result filters */
+    margin: 0;
 
     /* otherwise safari fonts become too thin */
     -webkit-font-smoothing: subpixel-antialiased;
@@ -448,19 +448,45 @@ span.keypress {
 }
 
 .search-result h1 {
-	margin: 0 0 0.5em 0;
+	margin: 0 0 0.2em 0;
 }
 
-.search-result form {
+/* Search result filters */
+.search-result > form {
     margin-bottom: 1em;
     font-size: 12pt;
     letter-spacing: 0.3ch;
+    text-align: center;
     padding: 0.5em 1ch;
     margin-right: 0.5ch;
-    border: 1pt solid #FFAAAA;
-    border-radius: 0.5ch;
-    background-color: #FFCCCC;
-    color: #994444;
+}
+
+.search-result > form input[type=radio] {
+    /* hide the actual radio button */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+}
+
+.search-result > form input[type=radio] + label {
+    cursor: pointer;
+    color: #CCCCCC;
+    transition: all 0.5s;
+}
+
+.search-result > form input[type=radio] + label:hover {
+    text-decoration: underline;
+}
+
+.search-result > form input[type=radio]:checked + label {
+    color: #770000;
+}
+
+.search-result > form input[type=radio]:checked + label:hover {
+    text-decoration: none;
+    cursor: default;
 }
 
 .dictionary-entry, .dictionary-entries {
