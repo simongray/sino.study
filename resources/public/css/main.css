@@ -74,7 +74,7 @@ li {
 
 
 
-/* === CORE PAGE ELEMENTS === */
+/* === HEADER & BG === */
 
 /*  A transparent, virtual background element that fills the screen.
     This is necessary for the transition from a gradient to a white background.
@@ -222,6 +222,11 @@ header p {
 	height: 1.2em;
 }
 
+
+
+
+/* === MAIN === */
+
 main {
 	animation: fade-in 0.5s ease;
 
@@ -238,6 +243,11 @@ main {
 	/* box */
 	max-width: 80ch;
 }
+
+
+
+
+/* === FOOTER === */
 
 footer {
 	animation: fade-in 1.5s ease;
@@ -400,6 +410,7 @@ form#action-chooser > ol > li > input[type=radio]:checked + label {
 
 
 /* === DICTIONARY === */
+
 span.keypress {
 	padding: 0 0.8ch;
 	border: 1pt solid #AAAAAA;
