@@ -281,11 +281,12 @@ nav a {
     letter-spacing: 0.4ch;
 }
 
-footer .script-changer {
+nav > #script-changer {
     padding: 0.2em 0.5em;
     border: 1pt solid #CC6666;
     border-radius: 0.5ch;
     color: #FFBBBB;
+    cursor: pointer;
 
     /* nav links shouldn't jump around when changing script */
     display: inline-block;
@@ -296,7 +297,14 @@ footer .script-changer {
     user-select: none;
 }
 
-footer address {
+nav > #script-changer:hover {
+	text-decoration: none;
+	color: white;
+	border-color: white;
+}
+
+
+footer > address {
 	color: #DD8888;
 	font-size: 8pt;
 	font-style: inherit;
@@ -316,18 +324,6 @@ footer a.current-page, footer a.current-page:hover {
 	color: #661111;
 	text-decoration: none;
 }
-
-footer .script-changer:hover {
-	text-decoration: none;
-	border-color: white;
-}
-
-.fake-link {
-	cursor: pointer;
-}
-
-
-
 
 /* === ACTION CHOOSER === */
 

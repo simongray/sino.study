@@ -148,9 +148,8 @@
         title      (str "Click to use " (if (= ::d/simplified alt-script)
                                           "simplified characters"
                                           "traditional characters"))]
-    [:a
+    [:a#script-changer
      {:key      alt-script
-      :class    "script-changer fake-link"
       :title    title
       :on-click #(rf/dispatch [::events/change-script alt-script])}
      text]))
