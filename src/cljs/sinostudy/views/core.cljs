@@ -139,6 +139,7 @@
          (rf/dispatch [::events/load-scroll-state page])))}))
 
 (defn script-changer []
+  "The button used to toggle traditional/simplified Chinese script."
   (let [script     @(rf/subscribe [::subs/script])
         text       (if (= ::d/simplified script)
                      "Simpl."
@@ -161,6 +162,7 @@
   [:a {:href "https://github.com/simongray/sino.study"} (str "v" v/version)])
 
 (defn footer []
+  "The footer (contains navigation and copyright notice)."
   (let [from  @(rf/subscribe [::subs/current-nav])
         links [["/" "Home"] ["/help" "Help"] ["/about" "About"]]]
     [:footer
