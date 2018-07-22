@@ -92,25 +92,6 @@ div#bg.with-page {
 	transition: all 1s;
 }
 
-/*  The main logo of the site fades in like most elements and gets smaller
-    when the site displays some page content. */
-img#logo {
-	animation: fade-in 0.5s ease;
-	transition: all 0.3s;
-    max-height: 7em;
-    margin-bottom: 0.5em;
-	width: 100%; /* otherwise image could overflow on small page widths */
-
-    /* TODO: find fixes for non-Chrome browsers */
-    user-drag: none;
-    user-select: none;
-}
-
-div#bg.with-page img#logo {
-	max-height: 4em;
-	margin: 0.8em auto 0 auto;
-}
-
 /* The header (logo, input bar, hint) transitions from center to top.  */
 header {
     position: fixed;
@@ -159,6 +140,25 @@ header div#aligner {
 	max-width: 80ch;
 	margin: auto;
 	padding: 0 0.5ch;
+}
+
+/*  The main logo of the site fades in like most elements and gets smaller
+    when the site displays some page content. */
+header img {
+	animation: fade-in 0.5s ease;
+	transition: all 0.3s;
+    max-height: 7em;
+    margin-bottom: 0.5em;
+	width: 100%; /* otherwise image could overflow on small page widths */
+
+    /* TODO: find fixes for non-Chrome browsers */
+    user-drag: none;
+    user-select: none;
+}
+
+div#bg.with-page > header img {
+	max-height: 4em;
+	margin: 0.8em auto 0 auto;
 }
 
 /* Also known as the #study-form */

@@ -40,7 +40,7 @@
   "The site logo (part of the header trifecta)."
   []
   [:a {:href "/"}
-   [:img#logo {:src "/img/logo_min.svg"}]])
+   [:img {:src "/img/logo_min.svg"}]])
 
 ;; The smart input field.
 ;; All key presses are also handled from here.
@@ -49,7 +49,7 @@
   (let [input   @(rf/subscribe [::subs/input])
         actions @(rf/subscribe [::subs/actions])]
     ;; The #study-input id is required to regain focus (see :set-focus).
-    [:input#study-input
+    [:input
      {:type          :text
       :auto-complete "off"
       :disabled      (not (nil? actions))
