@@ -67,6 +67,16 @@ If there are any issues getting the app to show up (e.g. blank page),
 then try clearing the browser cache. Note that most functionality will require
 the development backend service to be running too.
 
+If I want to test on a mobile phone I will typically run
+
+````
+ipconfig getifaddr en0
+
+````
+
+to get the local IP address of my Mac and then visit that address on port 3449 
+(or whatever port is being used).
+
 
 ## Deploying to production
 Currently, there are three steps to deploying a production Docker image:
