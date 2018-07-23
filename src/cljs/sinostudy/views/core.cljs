@@ -51,8 +51,6 @@
     [:input
      {:type          :text
       :auto-complete "off"
-      ;; The #study-input id is required to regain focus (see :set-focus).
-      :id            "study-input"
       :disabled      (not (nil? actions))
       :value         input
       :on-change     (fn [e]

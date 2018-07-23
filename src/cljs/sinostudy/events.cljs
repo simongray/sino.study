@@ -157,9 +157,9 @@
 ;; This is definitely a less than optimal solution...
 (rf/reg-fx
   :set-focus
-  (fn [[id delay]]
+  (fn [[element delay]]
     (js/setTimeout
-      #(.focus (.getElementById js/document id))
+      #(.focus element)
       delay)))
 
 ;; Dispatched by ::use-scroll-state.
@@ -361,7 +361,7 @@
   (fn [cofx _]
     (let [db (:db cofx)]
       {:db        (assoc db :actions nil)
-       :set-focus ["study-input" 100]})))
+       :set-focus [(.querySelector js/document "header form > input") 100]})))
 
 ;; dispatched by ::choose-action
 (rf/reg-event-db
