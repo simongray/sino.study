@@ -14,35 +14,41 @@
   "The title of the term with links to characters -OR- decomposition
   into components if the term is a character."
   []
-  (let [{term          ::d/term
+  (let [script         @(rf/subscribe [::subs/script])
+        {term          ::d/term
          decomposition ::d/decomposition} @(rf/subscribe [::subs/content])
         attribute      @(rf/subscribe [::subs/current-attribute])
+        zh             (vc/zh script)
         decomposition* (when (not= decomposition "？") decomposition)]
     (if (> (count term) 1)
-      [:span.hanzi (vc/link-term term)]
+      [:span {:lang zh} (vc/link-term term)]
       (cond
         (= attribute "decomposition")
-        [:span.hanzi {:title (str "Character decomposition")}
+        [:span {:lang  zh
+                :title (str "Character decomposition")}
          (map vc/hanzi-link decomposition*)]
 
         decomposition*
-        [:span.hanzi
-         {:key   ::d/term
+        [:span
+         {:lang  zh
+          :key   ::d/term
           :title (str "Click to decompose")}
          [:a
           {:href (str "/" (name ::pages/terms) "/" term "/decomposition")}
           term]]
 
         :else
-        [:span.hanzi
-         {:title term}
+        [:span
+         {:lang  zh
+          :title term}
          term]))))
 
 (defn etymology-blurb
   "Etymology information about a specific character."
   []
   (let [script @(rf/subscribe [::subs/script])
-        {etymology ::d/etymology} @(rf/subscribe [::subs/content])]
+        {etymology ::d/etymology} @(rf/subscribe [::subs/content])
+        zh     (vc/zh script)]
     (when etymology
       (let [{type     ::d/type
              hint     ::d/hint
@@ -63,9 +69,9 @@
                 phonetic)
            [:div.etymology
             {:title (str "Type: " type)}
-            [:span.hanzi (vc/link-term semantic)]
+            [:span {:lang zh} (vc/link-term semantic)]
             " (" hint ") + "
-            [:span.hanzi (vc/link-term phonetic)]])]))))
+            [:span {:lang zh} (vc/link-term phonetic)]])]))))
 
 (defn dictionary-header
   "Dictionary entry header."
@@ -94,7 +100,8 @@
         script (cond
                  (contains? variations ::d/traditional) ::d/traditional
                  (contains? variations ::d/simplified) ::d/simplified
-                 :else nil)]
+                 :else nil)
+        zh     (vc/zh script)]
     (when script
       [:span.tag
        {:key   ::d/variations
@@ -109,14 +116,15 @@
                             (map vector)
                             (map vc/link-term)
                             (map (fn [variation]
-                                   [:span.hanzi
-                                    {:key variation}
+                                   [:span {:lang zh
+                                           :key  variation}
                                     variation]))))])))
 
 (defn classifiers-tag
   "Tag with the classifiers of an entry in a given script."
   []
   (let [script @(rf/subscribe [::subs/script])
+        zh     (vc/zh script)
         {classifiers ::d/classifiers} @(rf/subscribe [::subs/content])]
     (when classifiers
       [:span.tag {:key   ::d/classifiers
@@ -124,15 +132,18 @@
        "cl.|"
        (interpose ", "
          (for [classifier (sort-by ::d/pinyin classifiers)]
-           [:span.hanzi
-            {:key (script classifier)}
+           [:span
+            {:lang zh
+             :key  (script classifier)}
             (vc/link-term (vector (script classifier)))]))])))
 
 (defn radical-tag
   "Tag with the radical of a Hanzi."
   []
-  (let [{term    ::d/term
-         radical ::d/radical} @(rf/subscribe [::subs/content])]
+  (let [script @(rf/subscribe [::subs/script])
+        {term    ::d/term
+         radical ::d/radical} @(rf/subscribe [::subs/content])
+        zh     (vc/zh script)]
     (when radical
       (if (= term radical)
         [:span.tag
@@ -143,7 +154,7 @@
          {:key   ::d/radical
           :title (str "Radical")}
          "rad.|"
-         [:span.hanzi (vc/link-term (vector radical))]]))))
+         [:span {:lang zh} (vc/link-term (vector radical))]]))))
 
 (defn tags
   "Available tags of a dictionary entry."
@@ -225,7 +236,7 @@
                                     (rf/dispatch [::events/set-result-filter
                                                   search-term
                                                   result-type]))}]
-              [:label {:for result-type
+              [:label {:for   result-type
                        :title (str "View " result-type-str " results")}
                result-type-str]])))])))
 
@@ -254,7 +265,7 @@
     [:li {:key term}
      [:a
       {:href (str "/" (name ::d/terms) "/" term)}
-      [:span.hanzi term]
+      [:span {:lang (vc/zh script)} term]
       " "
       [:ul
        entry-uses]]]))

@@ -12,6 +12,11 @@
     -webkit-font-smoothing: subpixel-antialiased;
 }
 
+/* Hanzi are made a bit darker than latin text to make them stand out */
+:lang(zh) {
+	color: #555555;
+}
+
 body {
 	/*  grey glow behind input textfield */
 	background: white; /* for browsers w/o gradient support */
@@ -374,7 +379,6 @@ form#action-chooser * {
 
 /* the action chooser h1 is (unlike other h1 elements) styled sans-serif */
 form#action-chooser > h1 {
-    /* text-related */
     font-family: "Gill Sans", "Gill Sans MT", Calibri, "KaiTi", "楷体", STKaiti, "华文楷体", sans-serif;
     font-size: 16pt;
     text-align: center;
@@ -439,10 +443,6 @@ form#action-chooser > ol > li > input[type=radio]:checked + label {
     text-align: center;
     color: #BBBBBB;
     letter-spacing: 0.5ch;
-}
-
-.etymology .hanzi {
-    color: #777777;
 }
 
 /* headers above lists (e.g. search results) should be centered */
@@ -517,7 +517,7 @@ form#action-chooser > ol > li > input[type=radio]:checked + label {
     margin-bottom: 0.8em;
 }
 
-.dictionary-entries a > .hanzi {
+.dictionary-entries a > *:lang(zh) {
     display: inline-block;
 	font-size: 20pt;
 	padding: 0.2em;
@@ -547,13 +547,6 @@ form#action-chooser > ol > li > input[type=radio]:checked + label {
 .dictionary-entries ul li {
     padding: 0;
     margin: 0 0 0.5em 0;
-}
-
-/* mark variants that only appear in a different script (e.g. traditional) */
-.false-variant, .false-variant .hanzi, .false-variant .pinyin {
-	color: #DDDDDD;
-	border-color: #DDDDDD;
-	text-decoration: line-through;
 }
 
 /* marks a special tag in a dictionary entry (in the subheader after pinyin) */
@@ -588,17 +581,9 @@ form#action-chooser > ol > li > input[type=radio]:checked + label {
 	font-size: 52pt;
 }
 
-.dictionary-entry h1 .hanzi {
-	font-weight: 100;
-}
-
 .dictionary-entry .subheader {
 	font-size: 18pt;
 	line-height: 1.5;
-}
-
-.hanzi {
-	color: #555555;
 }
 
 .pinyin {
@@ -614,12 +599,12 @@ form#action-chooser > ol > li > input[type=radio]:checked + label {
 	content: "]";
 }
 
-.hanzi a, .pinyin a, .dictionary-entries a {
+.pinyin a, .dictionary-entries a {
 	color: inherit;
 }
 
 /* TODO: clean up this mess... */
-.hanzi a:hover, .pinyin a:hover, .dictionary-entries a:hover, a:hover .hanzi, a:hover .pinyin, .dictionary-entries li:hover span.pinyin, .dictionary-entries li:hover span.pinyin:first-child  {
+.pinyin a:hover, .dictionary-entries a:hover, a:hover .pinyin, .dictionary-entries li:hover span.pinyin, .dictionary-entries li:hover span.pinyin:first-child  {
 	color: #4477DD;
 	border-color: #4477DD;
 }

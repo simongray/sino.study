@@ -22,11 +22,11 @@
   (let [ids  (range (count text))
         link (fn [term id]
                [:a
-                {:title (str "look up " term)
+                {:title    (str "look up " term)
                  :on-click #(rf/dispatch [::events/reset-scroll-state
                                           [::pages/terms term]])
-                 :href  (str "/" (name ::pages/terms) "/" term)
-                 :key   (str term "-" id)}
+                 :href     (str "/" (name ::pages/terms) "/" term)
+                 :key      (str term "-" id)}
                 term])]
     (map link text ids)))
 
@@ -50,11 +50,20 @@
      ::d/simplified  simplified
      ::d/pinyin      pinyin}))
 
+(defn zh
+  "Get the proper Chinese lang attribute based on the script."
+  [script]
+  (case script
+    ::d/traditional "zh-Hant"
+    ::d/simplified "zh-Hans"
+    "zh"))
+
 (defn- handle-ref
   "Handle s with f in the given script if s is a reference.
   Helper function for `link-references."
   [script f s]
-  (let [use-script (fn [coll]
+  (let [zh         (zh script)
+        use-script (fn [coll]
                      (get coll (cond
                                  (= (count coll) 1) 0
                                  (= script ::d/simplified) 1
@@ -65,14 +74,17 @@
                                                   (map f)
                                                   (interpose " "))]
                                   [:span
-                                   [:span.hanzi (f (script m))]
+                                   [:span {:lang zh}
+                                    (f (script m))]
                                    [:span.pinyin pinyin]])
 
-      (re-matches embed/hanzi s) [:span.hanzi (f (-> s
-                                                     (str/split #"\|")
-                                                     use-script))]
+      (re-matches embed/hanzi s) [:span {:lang zh}
+                                  (f (-> s
+                                         (str/split #"\|")
+                                         use-script))]
 
-      (pe/hanzi-block? s) [:span.hanzi (f s)]
+      (pe/hanzi-block? s) [:span {:lang zh}
+                           (f s)]
 
       ;; TODO: do this properly when I find an example
       (re-matches embed/pinyin s) [:span.pinyin (f s)]
@@ -89,7 +101,3 @@
   (let [non-ref     #"[^\s]+\[[^\]]+\]|[^,.;'\"`´+?&()#%\s]+"
         handle-ref* (partial handle-ref script f)]
     (rim/re-handle s non-ref handle-ref*)))
-
-(defn embedded-digits->diacritics
-  [s]
-  (rim/re-handle s #"\[[^\]]+\]" p/digits->diacritics))
