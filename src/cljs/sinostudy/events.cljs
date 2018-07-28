@@ -317,7 +317,7 @@
   (fn [cofx [_ key]]
     (let [db         (:db cofx)
           actions    (:actions db)
-          marked     (:checked-action db)
+          checked    (:checked-action db)
           next?      (fn [k] (contains? #{"ArrowRight" "ArrowDown"} k))
           prev?      (fn [k] (contains? #{"ArrowLeft" "ArrowUp"} k))
           valid-num? (fn [k] (let [num (js/parseInt k)]
@@ -328,7 +328,7 @@
         (rf/dispatch [::choose-action [::close-action-chooser]])
 
         (= "Enter" key)
-        (rf/dispatch [::choose-action (nth actions marked)])
+        (rf/dispatch [::choose-action (nth actions checked)])
 
         (valid-num? key)
         (let [action (nth actions (dec (js/parseInt key)))]
@@ -337,13 +337,13 @@
         ;; Starts from beginning when upper bound is crossed.
         (next? key)
         (let [bound (dec (count actions))
-              n     (if (< marked bound) (inc marked) 0)]
-          (rf/dispatch [::mark-action n]))
+              n     (if (< checked bound) (inc checked) 0)]
+          (rf/dispatch [::check-action n]))
 
         ;; Goes to last action when lower bound is crossed.
         (prev? key)
-        (let [n (if (> marked 0) (dec marked) (dec (count actions)))]
-          (rf/dispatch [::mark-action n]))))))
+        (let [n (if (> checked 0) (dec checked) (dec (count actions)))]
+          (rf/dispatch [::check-action n]))))))
 
 ;; dispatched by ::on-submit when there are >1 actions based on query eval
 (rf/reg-event-db
@@ -365,7 +365,7 @@
 
 ;; dispatched by ::choose-action
 (rf/reg-event-db
-  ::mark-action
+  ::check-action
   (fn [db [_ n]]
     (assoc db :checked-action n)))
 
