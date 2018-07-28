@@ -279,7 +279,6 @@ footer {
 
 nav {
 	/* text-related */
-	font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
     font-size: 12pt;
     word-spacing: 0.3ch;
     margin-bottom: 0.8em;
@@ -434,7 +433,6 @@ form#action-chooser > ol > li > input[type=radio]:checked + label {
     margin: auto;
     font-size: 10pt;
     font-style: italic;
-    font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
     font-weight: 100;
     text-align: center;
     color: #BBBBBB;
