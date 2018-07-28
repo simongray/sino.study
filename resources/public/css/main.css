@@ -40,6 +40,7 @@ a:hover {
 h1, h2, h3, h1 *, h2 *, h3 * {
 	color: #555555;
 	font-family: Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", "KaiTi", "楷体", STKaiti, "华文楷体", serif;
+	margin-bottom: 0.5em;
 }
 
 h1 {
@@ -445,19 +446,8 @@ form#action-chooser > ol > li > input[type=radio]:checked + label {
     letter-spacing: 0.5ch;
 }
 
-/* headers above lists (e.g. search results) should be centered */
-.list-header, .list-subheader {
-	text-align: center;
-}
-
-.list-subheader {
-	color: #AAAAAA;
-	font-size: 10pt;
-	font-style: italic;
-}
-
 .search-result h1 {
-	margin: 0 0 0.2em 0;
+    text-align: center;
 }
 
 /* Search result filters */
@@ -466,8 +456,6 @@ form#action-chooser > ol > li > input[type=radio]:checked + label {
     font-size: 12pt;
     letter-spacing: 0.3ch;
     text-align: center;
-    padding: 0.5em 1ch;
-    margin-right: 0.5ch;
 }
 
 .search-result > form input[type=radio] {

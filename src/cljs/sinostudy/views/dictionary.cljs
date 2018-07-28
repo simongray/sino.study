@@ -213,7 +213,7 @@
   "The header for a dictionary search result."
   []
   (let [{search-term ::d/term} @(rf/subscribe [::subs/content])]
-    [:h1.list-header "\"" search-term "\""]))
+    [:h1 search-term]))
 
 (defn search-result-filter
   "Filter for what type of dictionary search result should be shown."
@@ -300,7 +300,7 @@
   []
   (let [{search-term ::d/term} @(rf/subscribe [::subs/content])]
     [:div.search-result
-     [:h1.list-header "\"" search-term "\""]
+     [:h1 search-term]
      [:p "There are no dictionary entries available for this term."]]))
 
 (defn dictionary-page
