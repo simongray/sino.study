@@ -1,7 +1,7 @@
 /* === GLOBAL === */
 
 * {
-    font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, "KaiTi", "楷体", STKaiti, "华文楷体", sans-serif;
     font-weight: lighter;
     color: #999999;
     letter-spacing: 0.2ch;
@@ -31,9 +31,10 @@ a:hover {
 	color: #4477DD;
 }
 
-h1, h2 {
+/* headings and content inside them get the serif fonts */
+h1, h2, h3, h1 *, h2 *, h3 * {
 	color: #555555;
-	font-family: Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", serif;
+	font-family: Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", "KaiTi", "楷体", STKaiti, "华文楷体", serif;
 }
 
 h1 {
@@ -371,9 +372,10 @@ form#action-chooser * {
     color: #FFBBBB;
 }
 
+/* the action chooser h1 is (unlike other h1 elements) styled sans-serif */
 form#action-chooser > h1 {
     /* text-related */
-    font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, "KaiTi", "楷体", STKaiti, "华文楷体", sans-serif;
     font-size: 16pt;
     text-align: center;
 
@@ -557,7 +559,7 @@ form#action-chooser > ol > li > input[type=radio]:checked + label {
 /* marks a special tag in a dictionary entry (in the subheader after pinyin) */
 .tag {
 	font-size: 14pt;
-	font-family: Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", serif;
+	font-family: Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", "KaiTi", "楷体", STKaiti, "华文楷体", serif;
 	letter-spacing: 0.3ch;
     padding: 0.2em 1ch;
     margin-right: 0.5ch;
@@ -597,13 +599,11 @@ form#action-chooser > ol > li > input[type=radio]:checked + label {
 
 .hanzi {
 	color: #555555;
-	/* http://www.kendraschaefer.com/2012/06/chinese-standard-web-fonts-the-ultimate-guide-to-css-font-family-declarations-for-web-design-in-simplified-chinese/ */
-	font-family: Georgia, "Times New Roman", "KaiTi", "楷体", STKaiti, "华文楷体", serif;
 }
 
 .pinyin {
 	color: #DD8888;
-	font-family: Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", serif;
+	font-family: Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", "KaiTi", "楷体", STKaiti, "华文楷体", serif;
 }
 
 .pinyin::before {
