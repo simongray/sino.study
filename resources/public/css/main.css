@@ -145,7 +145,7 @@ div#bg.with-page > header {
 header div#aligner {
 	max-width: 80ch;
 	margin: auto;
-	padding: 0.5ch 0.5ch 0 0.5ch;
+	padding: 1ch 1ch 0 1ch;
 	text-align: center;
 	vertical-align: middle;
 
@@ -158,9 +158,9 @@ header div#aligner {
 header img {
 	animation: fade-in 0.5s ease;
 	transition: all 0.3s;
-    max-height: 6em;
-    margin-bottom: 1.2em;
-	width: 100%; /* otherwise image could overflow on small page widths */
+    max-height: 7em;
+    margin-bottom: 2em;
+	width: 90%; /* otherwise image could overflow on small page widths */
 
     /* TODO: find fixes for non-Chrome browsers */
     user-drag: none;
