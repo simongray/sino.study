@@ -15,11 +15,9 @@
 ;; During development, frontend and backend are served on different ports,
 ;; but in production the backend is served on the same host and port.
 (def query-uri
-  (if config/debug?
-    "http://localhost:3000/query/"
-    (let [hostname js/window.location.hostname
-          port     js/window.location.port]
-      (str "http://" hostname ":" port "/query/"))))
+  (let [hostname js/window.location.hostname
+        port     (if config/debug? 3000 js/window.location.port)]
+    (str "http://" hostname ":" port "/query/")))
 
 
 ;;;; HELPER FUNCTIONS
