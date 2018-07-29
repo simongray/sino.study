@@ -127,7 +127,7 @@ div#bg.with-page > header {
 
     /* Add some colours. */
 	background: #FCFCFB;
-	border-bottom: solid 1pt rgba(220, 220, 220, 1);
+	border-bottom: solid 1pt #DDDDDD;
 
     /* Go to the top of the page. */
 	top: 0;
@@ -464,9 +464,9 @@ form#action-chooser > ol > li > input[type=radio]:checked + label {
     margin-bottom: 1em;
     padding: 0.8ch;
     font-size: 12pt;
-    background: #FFEFEF;
-    color: #EEBBBB;
-    border: 1pt solid #EEBBBB;
+    background: #FCFCFB;
+    border: solid 1pt #DDDDDD;
+    color: #DDDDDD;
     border-radius: 0.5ch;
     letter-spacing: 0.3ch;
     word-spacing: 1ch;
@@ -484,7 +484,7 @@ form#action-chooser > ol > li > input[type=radio]:checked + label {
 
 .search-result > form input[type=radio] + label {
     cursor: pointer;
-    color: #EEBBBB;
+    color: #DDDDDD;
     transition: all 0.5s;
 }
 
@@ -493,7 +493,7 @@ form#action-chooser > ol > li > input[type=radio]:checked + label {
 }
 
 .search-result > form input[type=radio]:checked + label {
-    color: #880000;
+    color: #333333;
 }
 
 .search-result > form input[type=radio]:checked + label:hover {
