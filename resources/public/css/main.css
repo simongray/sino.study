@@ -2,7 +2,7 @@
 
 * {
     font-family: "Gill Sans", "Gill Sans MT", Calibri, "KaiTi", "楷体", STKaiti, "华文楷体", sans-serif;
-    font-weight: lighter;
+    font-weight: 300;
     color: #999999;
     letter-spacing: 0.2ch;
     padding: 0;
@@ -256,7 +256,7 @@ main {
 
 	/* positioning */
     position: relative;
-    top: 5.8em; /* pos relative to header varies a bit on different browsers */
+    top: 6em; /* pos relative to header varies a bit on different browsers */
     margin: auto;
     padding: 0 1ch;
 
@@ -466,10 +466,10 @@ form#action-chooser > ol > li > input[type=radio]:checked + label {
     font-size: 12pt;
     background: #FCFCFB;
     border: solid 1pt #DDDDDD;
-    color: #DDDDDD;
+    color: #DDDDDD; /* for the separating dots */
     border-radius: 0.5ch;
     letter-spacing: 0.3ch;
-    word-spacing: 1ch;
+    word-spacing: 0.5ch;
     text-align: center;
 }
 
@@ -484,7 +484,7 @@ form#action-chooser > ol > li > input[type=radio]:checked + label {
 
 .search-result > form input[type=radio] + label {
     cursor: pointer;
-    color: #DDDDDD;
+    color: #CCCCCC;
     transition: all 0.5s;
 }
 
@@ -493,7 +493,7 @@ form#action-chooser > ol > li > input[type=radio]:checked + label {
 }
 
 .search-result > form input[type=radio]:checked + label {
-    color: #333333;
+    color: black;
 }
 
 .search-result > form input[type=radio]:checked + label:hover {
