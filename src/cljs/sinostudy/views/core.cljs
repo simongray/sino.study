@@ -39,8 +39,7 @@
 (defn logo
   "The site logo (part of the header trifecta)."
   []
-  [:a {:href "/"}
-   [:img {:src "/img/logo_min.svg"}]])
+  [:img {:src "/img/logo_min.svg"}])
 
 ;; The smart input field.
 ;; All key presses are also handled from here.

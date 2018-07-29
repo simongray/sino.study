@@ -91,12 +91,11 @@ li {
     transparent to white (on top of the body element with the gradient). */
 div#bg {
     min-height: 100vh;
-    transition: all 1s;
+    transition: all 0.5s;
 }
 
 div#bg.with-page {
 	background: white;
-	transition: all 1s;
 }
 
 /* The header (logo, input bar, hint) transitions from center to top.  */
@@ -146,7 +145,12 @@ div#bg.with-page > header {
 header div#aligner {
 	max-width: 80ch;
 	margin: auto;
-	padding: 0 0.5ch;
+	padding: 0.5ch 0.5ch 0 0.5ch;
+	text-align: center;
+	vertical-align: middle;
+
+	/* makes logo img able to assume 0 height */
+	line-height: 0;
 }
 
 /*  The main logo of the site fades in like most elements and gets smaller
@@ -154,8 +158,8 @@ header div#aligner {
 header img {
 	animation: fade-in 0.5s ease;
 	transition: all 0.3s;
-    max-height: 7em;
-    margin-bottom: 0.5em;
+    max-height: 6em;
+    margin-bottom: 1.2em;
 	width: 100%; /* otherwise image could overflow on small page widths */
 
     /* TODO: find fixes for non-Chrome browsers */
@@ -164,14 +168,14 @@ header img {
 }
 
 div#bg.with-page > header img {
-	max-height: 4em;
-	margin: 0.8em auto 0 auto;
+	max-height: 0;
+	margin: 0;
+	vertical-align: middle;
 }
 
 /* Also known as the #study-form */
 header form {
 	display: flex;
-	margin: 1em 0 0 0;
 }
 
 /* Formerly known as the #study-input */
@@ -179,7 +183,7 @@ header form > input {
 	animation: fade-in 1s ease;
     transition: all 0.5s;
 
-	font-size: 14pt;
+	font-size: 18pt;
 	color: black;
 
 	padding: 0.5ch;
@@ -213,9 +217,13 @@ header p {
     font-size: 9pt;
     font-weight: lighter;
     color: #999999;
-    margin: 0.4em 0;
+    margin: 0.5em 0;
     padding: 0.5ch;
     letter-spacing: 0.4ch;
+
+    /* revert logo img-related declarations above */
+    line-height: 100%;
+    text-align: left;
 
 	/* make sure text stays on a single line */
 	white-space: nowrap;
@@ -226,7 +234,7 @@ header p {
 
 	/*  Make sure the hint keeps its height when empty
 	    (1em is having problems displaying span.keypress). */
-	height: 1.2em;
+	height: 1em;
 }
 
 span.keypress {
@@ -242,12 +250,13 @@ span.keypress {
 
 /* === MAIN === */
 
+/* controls where the content appears */
 main {
 	animation: fade-in 0.5s ease;
 
 	/* positioning */
     position: relative;
-    top: 11em; /* pos relative to header varies a bit on different browsers */
+    top: 5.8em; /* pos relative to header varies a bit on different browsers */
     margin: auto;
     padding: 0 1ch;
 
@@ -381,7 +390,7 @@ form#action-chooser * {
 /* the action chooser h1 is (unlike other h1 elements) styled sans-serif */
 form#action-chooser > h1 {
     font-family: "Gill Sans", "Gill Sans MT", Calibri, "KaiTi", "楷体", STKaiti, "华文楷体", sans-serif;
-    font-size: 16pt;
+    font-size: 18pt;
     text-align: center;
 
     margin: 0 0 0.5em 0;
@@ -392,6 +401,7 @@ form#action-chooser > h1 {
 form#action-chooser > ol {
     margin: 0;
     padding: 0 0 0 3ch;
+    font-size: 16pt;
 }
 
 form#action-chooser > ol > li > input[type=radio] {
@@ -405,7 +415,6 @@ form#action-chooser > ol > li > input[type=radio] {
 
 form#action-chooser > ol > li > label {
     cursor: pointer;
-    font-size: 14pt;
 }
 
 /* Reveal that the options are also clickable */
