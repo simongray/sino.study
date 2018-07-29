@@ -453,8 +453,14 @@ form#action-chooser > ol > li > input[type=radio]:checked + label {
 /* Search result filters */
 .search-result > form {
     margin-bottom: 1em;
+    padding: 0.8ch;
     font-size: 12pt;
+    background: #FFEFEF;
+    color: #EEBBBB;
+    border: 1pt solid #EEBBBB;
+    border-radius: 0.5ch;
     letter-spacing: 0.3ch;
+    word-spacing: 1ch;
     text-align: center;
 }
 
@@ -469,7 +475,7 @@ form#action-chooser > ol > li > input[type=radio]:checked + label {
 
 .search-result > form input[type=radio] + label {
     cursor: pointer;
-    color: #CCCCCC;
+    color: #EEBBBB;
     transition: all 0.5s;
 }
 
@@ -478,7 +484,7 @@ form#action-chooser > ol > li > input[type=radio]:checked + label {
 }
 
 .search-result > form input[type=radio]:checked + label {
-    color: #AA0000;
+    color: #880000;
 }
 
 .search-result > form input[type=radio]:checked + label:hover {
