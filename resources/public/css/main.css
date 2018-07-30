@@ -297,7 +297,6 @@ nav {
 	/* text-related */
     font-size: 12pt;
     word-spacing: 0.3ch;
-    margin-bottom: 0.8em;
 }
 
 nav a {
@@ -331,6 +330,12 @@ footer > address {
 	font-size: 8pt;
 	font-style: inherit;
 	letter-spacing: 0.2ch;
+	margin-top: 0.8em;
+	transition: all 0.3s;
+}
+
+div#bg.with-page footer > address {
+    font-size: 0;
 }
 
 footer a {
