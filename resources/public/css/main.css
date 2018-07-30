@@ -98,11 +98,10 @@ main.with-article {
 	background: white;
 }
 
-/* The header (logo, input bar, hint) transitions from center to top.  */
+/* The header (logo, input bar) transitions from center to top.  */
 header {
     position: fixed;
 	min-width: 100%; /* expand entirely, but always keep a little margin*/
-	max-width: 80%; /* fixes problem with layout when hint length > page width */
 	left: 50%;
 
     /* Display on top of content when transitioning. */
@@ -145,7 +144,7 @@ main.with-article > header {
 header div#aligner {
 	max-width: 80ch;
 	margin: auto;
-	padding: 1ch 1ch 0 1ch;
+	padding: 1ch;
 	text-align: center;
 	vertical-align: middle;
 
@@ -208,43 +207,6 @@ header form > button {
 	width: 0;
 }
 
-/* Formerly known as the #study-hint */
-header p {
-	max-width: 100%;
-	animation: fade-in 0.5s ease;
-
-	/* text-related */
-    font-size: 9pt;
-    font-weight: lighter;
-    color: #999999;
-    margin: 0.5em 0;
-    padding: 0.5ch;
-    letter-spacing: 0.4ch;
-
-    /* revert logo img-related declarations above */
-    line-height: 100%;
-    text-align: left;
-
-	/* make sure text stays on a single line */
-	white-space: nowrap;
-	overflow: hidden;
-
-	/* TODO: fix? Doesn't work */
-	text-overflow: ellipsis;
-
-	/*  Make sure the hint keeps its height when empty
-	    (1em is having problems displaying span.keypress). */
-	height: 1em;
-}
-
-span.keypress {
-	padding: 0 0.8ch;
-	border: 1pt solid #AAAAAA;
-    border-radius: 0.5ch;
-    background-color: white;
-    color: #666666;
-}
-
 
 
 
@@ -256,7 +218,7 @@ article {
 
 	/* positioning */
     position: relative;
-    top: 6em; /* pos relative to header varies a bit on different browsers */
+    top: 5em; /* pos relative to header varies a bit on different browsers */
     margin: auto;
     padding: 0 1ch;
 

@@ -191,7 +191,7 @@
     (let [scroll-state (get-in cofx [:db :scroll-states page] [0 0])]
       {:scroll-to scroll-state})))
 
-;; display hints below the input field
+;; Display hints as the mousover title of the input field.
 (rf/reg-event-fx
   ::display-hint
   [(rf/inject-cofx ::now)]

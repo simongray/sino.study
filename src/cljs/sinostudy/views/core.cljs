@@ -46,9 +46,11 @@
 (defn input-field []
   "The input field (part of the header form)."
   (let [input   @(rf/subscribe [::subs/input])
-        actions @(rf/subscribe [::subs/actions])]
+        actions @(rf/subscribe [::subs/actions])
+        hint    @(rf/subscribe [::subs/hint])]
     [:input
      {:type          :text
+      :title         hint
       :auto-complete "off"
       :disabled      (not (nil? actions))
       :value         input
@@ -80,35 +82,13 @@
    [input-field]
    [input-button]])
 
-(defn press-enter-to
-  [s]
-  ["press " [:span.keypress "enter"] " to " s])
-
-;; action-related hints (press-enter-to ...) must match action name!
-(def hint-content
-  {::events/query-failure       "something went wrong..."
-   ::events/no-actions          "not sure what to do with that..."
-   ::events/digits->diacritics  (press-enter-to "convert to tone diacritics")
-   ::events/diacritics->digits  (press-enter-to "convert to tone digits")
-   ::events/look-up             (press-enter-to "look up the term")
-   ::events/open-action-chooser (press-enter-to "choose an action")})
-
-(defn hint []
-  "The hint (part of the header trifecta).
-  Provides helpful hints based on the current input."
-  (let [hints   @(rf/subscribe [::subs/hints])
-        content (get hint-content (:type (first hints)))]
-    (into [:p {:key (count hints)}]
-          content)))
-
 (defn header
-  "The header trifecta: logo, form and hint."
+  "The header contains the logo and the main input form."
   []
   [:header
    [:div#aligner
     [logo]
-    [form]
-    [hint]]])
+    [form]]])
 
 (defn article
   "The content pane of the site."

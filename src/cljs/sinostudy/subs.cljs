@@ -1,6 +1,7 @@
 (ns sinostudy.subs
   (:require [re-frame.core :as rf]
             [sinostudy.pages.core :as pages]
+            [sinostudy.events :as events]
             [sinostudy.dictionary.core :as d]))
 
 (rf/reg-sub
@@ -22,6 +23,21 @@
   ::hints
   (fn [db]
     (:hints db)))
+
+(def hint-content
+  {::events/query-failure       "something went wrong..."
+   ::events/no-actions          "not sure what to do with that..."
+   ::events/digits->diacritics  "press enter to convert to tone diacritics"
+   ::events/diacritics->digits  "press enter to convert to tone digits"
+   ::events/look-up             "press enter to look up the term"
+   ::events/open-action-chooser "press enter to choose an action"})
+
+(rf/reg-sub
+  ::hint
+  (fn [_]
+    (rf/subscribe [::hints]))
+  (fn [hints]
+    (get hint-content (:type (first hints)))))
 
 (rf/reg-sub
   ::queries
