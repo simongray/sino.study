@@ -110,8 +110,8 @@
     [form]
     [hint]]])
 
-(defn main
-  "The main content pane of the site."
+(defn article
+  "The content pane of the site."
   []
   (reagent/create-class
     {:display-name
@@ -122,7 +122,7 @@
        (let [category @(rf/subscribe [::subs/current-category])
              content  @(rf/subscribe [::subs/content])]
          (when content
-           [:main
+           [:article
             (cond
               (= ::pages/terms category) [vd/dictionary-page]
               :else content)])))
@@ -201,8 +201,8 @@
 
 (defn app []
   (let [not-home? (not= "/" @(rf/subscribe [::subs/current-nav]))]
-    [:div#bg {:class (when not-home? "with-page")}
-     [header]
+    [:main {:class (when not-home? "with-article")}
      [action-chooser]
-     [main]
+     [header]
+     [article]
      [footer]]))

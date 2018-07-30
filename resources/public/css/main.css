@@ -81,7 +81,7 @@ li {
 
 
 
-/* === HEADER & BG === */
+/* === MAIN & HEADER === */
 
 /*  A transparent, virtual background element that fills the screen.
     This is necessary for the transition from a gradient to a white background.
@@ -89,12 +89,12 @@ li {
     but gradients unfortunately don't support transitions.
     Instead, we resort to transitioning this virtual background from
     transparent to white (on top of the body element with the gradient). */
-div#bg {
+main {
     min-height: 100vh;
     transition: all 0.5s;
 }
 
-div#bg.with-page {
+main.with-article {
 	background: white;
 }
 
@@ -121,7 +121,7 @@ header {
 	border-bottom: solid 2pt rgba(233, 233, 233, 0);
 }
 
-div#bg.with-page > header {
+main.with-article > header {
 	/* Slower going up than down. */
 	transition: all 0.5s;
 
@@ -167,7 +167,7 @@ header img {
     user-select: none;
 }
 
-div#bg.with-page > header img {
+main.with-article > header img {
 	max-height: 0;
 	margin: 0;
 	vertical-align: middle;
@@ -248,10 +248,10 @@ span.keypress {
 
 
 
-/* === MAIN === */
+/* === ARTICLE === */
 
 /* controls where the content appears */
-main {
+article {
 	animation: fade-in 0.5s ease;
 
 	/* positioning */
@@ -334,7 +334,7 @@ footer > address {
 	transition: all 0.3s;
 }
 
-div#bg.with-page footer > address {
+main.with-article footer > address {
     font-size: 0;
 }
 
