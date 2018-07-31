@@ -103,6 +103,7 @@
     (when page
       (get-in pages page))))
 
+;; The result filters are stored in a map with pages as keys.
 (rf/reg-sub
   ::result-filters
   (fn [db]
@@ -111,25 +112,31 @@
 (rf/reg-sub
   ::current-result-types
   (fn [_]
-    (rf/subscribe [::content]))
-  (fn [content]
-    (->> (keys content)
-         (filter (partial not= ::d/term))
-         (sort))))
+    [(rf/subscribe [::current-category])
+     (rf/subscribe [::content])])
+  (fn [[category content]]
+    (when (and (= category ::pages/terms)
+               (not (contains? content ::d/uses)))
+      (->> (keys content)
+           (filter (partial not= ::d/term))
+           (sort)))))
 
 (rf/reg-sub
   ::current-result-filter
   (fn [_]
-    [(rf/subscribe [::content])
+    [(rf/subscribe [::current-category])
+     (rf/subscribe [::content])
      (rf/subscribe [::result-filters])
      (rf/subscribe [::current-result-types])])
-  (fn [[{search-term ::d/term
+  (fn [[category
+        {search-term ::d/term
          :as         content}
         result-filter
         current-result-types]]
-    (or (get result-filter search-term)
-        (apply max-key (comp count (partial get content))
-               current-result-types))))
+    (when (= category ::pages/terms)
+      (or (get result-filter search-term)
+          (apply max-key (comp count (partial get content))
+                 current-result-types)))))
 
 ;; the currently active link in the nav section
 ;; used to determine which top-level link to disable

@@ -209,37 +209,6 @@
    [tags]
    [usage-list]])
 
-(defn search-result-header
-  "The header for a dictionary search result."
-  []
-  (let [{search-term ::d/term} @(rf/subscribe [::subs/content])]
-    [:h1 search-term]))
-
-(defn search-result-filter
-  "Filter for what type of dictionary search result should be shown."
-  []
-  (let [{search-term ::d/term} @(rf/subscribe [::subs/content])
-        current-filter @(rf/subscribe [::subs/current-result-filter])
-        result-types   @(rf/subscribe [::subs/current-result-types])]
-    (when (> (count result-types) 1)
-      [:form
-       (interpose " · "
-         (for [result-type result-types]
-           (let [result-type-str (str/capitalize (name result-type))]
-             [:span {:key result-type}
-              [:input {:type      "radio"
-                       :name      "result-filter"
-                       :value     result-type
-                       :id        result-type
-                       :checked   (= current-filter result-type)
-                       :on-change (fn [_]
-                                    (rf/dispatch [::events/set-result-filter
-                                                  search-term
-                                                  result-type]))}]
-              [:label {:for   result-type
-                       :title (str "View " result-type-str " results")}
-               result-type-str]])))])))
-
 (defn- result-entry-uses
   "Listed uses of a search result entry."
   [script term uses]
@@ -291,17 +260,12 @@
   "Dictionary search result."
   []
   [:div.search-result
-   [search-result-header]
-   [search-result-filter]
    [search-result-entries]])
 
 (defn unknown-term
   "Dictionary entry for a term that does not exist."
   []
-  (let [{search-term ::d/term} @(rf/subscribe [::subs/content])]
-    [:div.search-result
-     [:h1 search-term]
-     [:p "There are no dictionary entries available for this term."]]))
+  [:p "There are no dictionary entries available for this term."])
 
 (defn dictionary-page
   "A dictionary page can be 1 of 3 types: entry, search result, or unknown."

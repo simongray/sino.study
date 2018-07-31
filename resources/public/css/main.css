@@ -17,6 +17,10 @@
 	color: #555555;
 }
 
+::placeholder {
+    color: #DDD;
+}
+
 body {
 	/*  grey glow behind input textfield */
 	background: white; /* for browsers w/o gradient support */
@@ -173,12 +177,12 @@ main.with-article > header img {
 }
 
 /* Also known as the #study-form */
-header form {
+div#header-input {
 	display: flex;
 }
 
 /* Formerly known as the #study-input */
-header form > input {
+div#header-input > input {
 	animation: fade-in 1s ease;
     transition: all 0.5s;
 
@@ -195,16 +199,55 @@ header form > input {
 }
 
 /* Grey colouring of input when action-chooser is active */
-header form > input[disabled] {
+div#header-input > input[disabled] {
 	background-color: #DDDDDD;
 }
 
 /* Formerly known as the #study-button */
-header form > button {
+div#header-input > button {
 	border: 0;
 	padding: 0;
 	font-size: 0;
 	width: 0;
+}
+
+
+/* === FILTERS === */
+div#filters {
+    margin: 1.2em 0 0.3em 0;
+    font-size: 12pt;
+    color: #DDDDDD; /* for the separating dots */
+    letter-spacing: 0.3ch;
+    word-spacing: 0.5ch;
+    text-align: center;
+}
+
+div#filters input[type=radio] {
+    /* hide the actual radio button */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+}
+
+div#filters input[type=radio] + label {
+    cursor: pointer;
+    color: #CCCCCC;
+    transition: all 0.5s;
+}
+
+div#filters input[type=radio] + label:hover {
+    text-decoration: underline;
+}
+
+div#filters input[type=radio]:checked + label {
+    color: black;
+}
+
+div#filters input[type=radio]:checked + label:hover {
+    text-decoration: none;
+    cursor: default;
 }
 
 
@@ -215,6 +258,7 @@ header form > button {
 /* controls where the content appears */
 article {
 	animation: fade-in 0.5s ease;
+	transition: all 0.3s;
 
 	/* positioning */
     position: relative;
@@ -228,6 +272,11 @@ article {
 
 	/* box */
 	max-width: 80ch;
+}
+
+/* when filters are available for search results, the content appears lower */
+article.with-filters {
+    top: 6.8em;
 }
 
 
@@ -424,48 +473,6 @@ form#action-chooser > ol > li > input[type=radio]:checked + label {
 
 .search-result h1 {
     text-align: center;
-}
-
-/* Search result filters */
-.search-result > form {
-    margin-bottom: 1em;
-    padding: 0.8ch;
-    font-size: 12pt;
-    background: #FCFCFB;
-    border: solid 1pt #DDDDDD;
-    color: #DDDDDD; /* for the separating dots */
-    border-radius: 0.5ch;
-    letter-spacing: 0.3ch;
-    word-spacing: 0.5ch;
-    text-align: center;
-}
-
-.search-result > form input[type=radio] {
-    /* hide the actual radio button */
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    -ms-appearance: none;
-    -o-appearance: none;
-    appearance: none;
-}
-
-.search-result > form input[type=radio] + label {
-    cursor: pointer;
-    color: #CCCCCC;
-    transition: all 0.5s;
-}
-
-.search-result > form input[type=radio] + label:hover {
-    text-decoration: underline;
-}
-
-.search-result > form input[type=radio]:checked + label {
-    color: black;
-}
-
-.search-result > form input[type=radio]:checked + label:hover {
-    text-decoration: none;
-    cursor: default;
 }
 
 .dictionary-entry, .dictionary-entries {

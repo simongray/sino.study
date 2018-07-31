@@ -2,6 +2,7 @@
   (:require [re-frame.core :as rf]
             [reagent.core :as reagent]
             [version :as v]
+            [clojure.string :as str]
             [sinostudy.subs :as subs]
             [sinostudy.events :as events]
             [sinostudy.views.dictionary :as vd]
@@ -47,10 +48,12 @@
   "The input field (part of the header form)."
   (let [input   @(rf/subscribe [::subs/input])
         actions @(rf/subscribe [::subs/actions])
+        page    @(rf/subscribe [::subs/current-page])
         hint    @(rf/subscribe [::subs/hint])]
-    [:input
+    [:input#input-field
      {:type          :text
       :title         hint
+      :placeholder   (events/input-title page)
       :auto-complete "off"
       :disabled      (not (nil? actions))
       :value         input
@@ -75,12 +78,40 @@
                   (rf/dispatch [::events/submit @input]))}
      "go"]))
 
+(defn filters
+  "Filter for what type of dictionary search result should be shown."
+  []
+  (let [{search-term ::d/term} @(rf/subscribe [::subs/content])
+        current-filter @(rf/subscribe [::subs/current-result-filter])
+        result-types   @(rf/subscribe [::subs/current-result-types])]
+    (when (and result-types
+               (> (count result-types) 1))
+      [:div#filters
+       (interpose " · "
+         (for [result-type result-types]
+           (let [result-type-str (str/capitalize (name result-type))]
+             [:span {:key result-type}
+              [:input {:type      "radio"
+                       :name      "result-filter"
+                       :value     result-type
+                       :id        result-type
+                       :checked   (= current-filter result-type)
+                       :on-change (fn [_]
+                                    (rf/dispatch [::events/set-result-filter
+                                                  search-term
+                                                  result-type]))}]
+              [:label {:for   result-type
+                       :title (str "View " result-type-str " results")}
+               result-type-str]])))])))
+
 (defn form []
   "The form (part of the header trifecta)."
   [:form
    {:auto-complete "off"}
-   [input-field]
-   [input-button]])
+   [:div#header-input
+    [input-field]
+    [input-button]]
+   [filters]])
 
 (defn header
   "The header contains the logo and the main input form."
@@ -95,14 +126,16 @@
   []
   (reagent/create-class
     {:display-name
-     "content-pane"
+     "article"
 
      :reagent-render
      (fn []
-       (let [category @(rf/subscribe [::subs/current-category])
-             content  @(rf/subscribe [::subs/content])]
+       (let [category     @(rf/subscribe [::subs/current-category])
+             content      @(rf/subscribe [::subs/content])
+             result-types @(rf/subscribe [::subs/current-result-types])]
          (when content
            [:article
+            {:class (when (> (count result-types) 1) "with-filters")}
             (cond
               (= ::pages/terms category) [vd/dictionary-page]
               :else content)])))

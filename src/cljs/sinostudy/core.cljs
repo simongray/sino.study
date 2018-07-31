@@ -25,7 +25,7 @@
     (secretary/dispatch! current-page))
 
   ;; The input bar needs to have immediate focus on page load.
-  (.focus (.querySelector js/document "header form > input"))
+  (.focus (.getElementById js/document "input-field"))
 
   ;; Intercepts all key presses in the document.
   ;; Only defers from normal operation in the action-chooser mode.

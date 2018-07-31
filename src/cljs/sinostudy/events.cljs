@@ -359,7 +359,7 @@
   (fn [cofx _]
     (let [db (:db cofx)]
       {:db        (assoc db :actions nil)
-       :set-focus [(.querySelector js/document "header form > input") 100]})))
+       :set-focus [(.getElementById js/document "input-field") 100]})))
 
 ;; dispatched by ::choose-action
 (rf/reg-event-db
@@ -414,6 +414,13 @@
                                         {:dispatch [::send-query dict-page]}
                                         {}))))))
 
+(defn input-title
+  "What the input field should display as a 'title' based on a given page."
+  [[category id]]
+  (cond
+    (= ::pages/terms category) id
+    :else ""))
+
 ;; Dispatched by clicking links only!
 ;; It's never dispatched directly, as we want to leave a browser history trail.
 ;; Link-clicking is facilitated by frontend routing (secretary + Accountant).
@@ -428,7 +435,9 @@
                          (-> history first first))
           timestamp    (:now cofx)
           scroll-state (:scroll-state cofx)]
-      {:db         (assoc db :history (conj history [new-page timestamp]))
+      {:db         (-> db
+                       (assoc :history (conj history [new-page timestamp]))
+                       (assoc :input (input-title new-page)))
        :dispatch-n [[::save-scroll-state current-page scroll-state]
                     [::load-content new-page]]})))
 
