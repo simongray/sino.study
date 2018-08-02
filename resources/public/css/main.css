@@ -7,6 +7,7 @@
     letter-spacing: 0.2ch;
     padding: 0;
     margin: 0;
+    hyphens: auto;
 
     /* otherwise safari fonts become too thin */
     -webkit-font-smoothing: subpixel-antialiased;
