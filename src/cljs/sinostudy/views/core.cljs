@@ -30,9 +30,9 @@
 
 (def year-string
   (let [year (.getFullYear (js/Date.))]
-    (if (> year 2017)
-      (str "2017-" year)
-      "2017")))
+    (if (> year 2018)
+      (str "2018-" year)
+      "2018")))
 
 
 ;;;; VIEWS
@@ -114,13 +114,19 @@
     [input-button]]
    [filters]])
 
+;; Project version number based on git tag + commit SHA
+;; More info: https://github.com/roomkey/lein-v
+(def github-link
+  [:a {:href "https://github.com/simongray/sino.study"} (str "v" v/version)])
+
 (defn header
   "The header contains the logo and the main input form."
   []
   [:header
    [:div#aligner
     [logo]
-    [form]]])
+    [form]
+    [:address "© " year-string " Simon Gray (" github-link ")"]]])
 
 (defn article
   "The content pane of the site."
@@ -167,11 +173,6 @@
       :on-click #(rf/dispatch [::events/change-script alt-script])}
      text]))
 
-;; Project version number based on git tag + commit SHA
-;; More info: https://github.com/roomkey/lein-v
-(def github-link
-  [:a {:href "https://github.com/simongray/sino.study"} (str "v" v/version)])
-
 (defn footer []
   "The footer (contains navigation and copyright notice)."
   (let [from  @(rf/subscribe [::subs/current-nav])
@@ -179,8 +180,7 @@
     [:footer
      [:nav (interpose " · "
              (conj (vec (navify from links))
-                   [script-changer {:key "script-changer"}]))]
-     [:address "© " year-string " Simon Gray (" github-link ")"]]))
+                   [script-changer {:key "script-changer"}]))]]))
 
 (defn- action-text
   [[action query]]

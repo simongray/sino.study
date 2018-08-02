@@ -213,6 +213,25 @@ div#header-input > button {
 }
 
 
+
+/* === COPYRIGHT NOTICE === */
+address {
+	animation: fade-in 1.5s ease;
+	color: #DDD;
+	font-size: 10pt;
+	font-style: inherit;
+	letter-spacing: 0.2ch;
+	margin-top: 2.8em;
+	transition: all 0.3s;
+}
+
+main.with-article address {
+    font-size: 0;
+}
+
+
+
+
 /* === FILTERS === */
 div#filters {
     transition: all 0.3s;
@@ -312,6 +331,7 @@ footer {
 
 	/* position */
 	position: fixed;
+	z-index: 2;
 	margin: 0;
     bottom: 0;
 }
@@ -346,19 +366,6 @@ nav > #script-changer:hover {
 	text-decoration: none;
 	color: white;
 	border-color: white;
-}
-
-footer > address {
-	color: #DD8888;
-	font-size: 8pt;
-	font-style: inherit;
-	letter-spacing: 0.2ch;
-	margin-top: 0.8em;
-	transition: all 0.3s;
-}
-
-main.with-article footer > address {
-    font-size: 0;
 }
 
 footer a {
