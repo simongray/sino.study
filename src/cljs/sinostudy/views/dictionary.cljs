@@ -5,7 +5,6 @@
             [sinostudy.pinyin.core :as p]
             [sinostudy.views.common :as vc]
             [sinostudy.subs :as subs]
-            [sinostudy.events :as events]
             [sinostudy.pages.core :as pages]))
 
 ;; TODO: refactor this whole namespace, too many args to functions
