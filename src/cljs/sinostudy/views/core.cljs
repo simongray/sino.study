@@ -83,26 +83,27 @@
   []
   (let [{search-term ::d/term} @(rf/subscribe [::subs/content])
         current-filter @(rf/subscribe [::subs/current-result-filter])
-        result-types   @(rf/subscribe [::subs/current-result-types])]
-    (when (and result-types
-               (> (count result-types) 1))
-      [:div#filters
-       (interpose " · "
-         (for [result-type result-types]
-           (let [result-type-str (str/capitalize (name result-type))]
-             [:span {:key result-type}
-              [:input {:type      "radio"
-                       :name      "result-filter"
-                       :value     result-type
-                       :id        result-type
-                       :checked   (= current-filter result-type)
-                       :on-change (fn [_]
-                                    (rf/dispatch [::events/set-result-filter
-                                                  search-term
-                                                  result-type]))}]
-              [:label {:for   result-type
-                       :title (str "View " result-type-str " results")}
-               result-type-str]])))])))
+        result-types   @(rf/subscribe [::subs/current-result-types])
+        hidden?        (not (and result-types
+                                 (> (count result-types) 1)))]
+    [:div#filters
+     {:class (when hidden? "hidden")}
+     (interpose " · "
+       (for [result-type result-types]
+         (let [result-type-str (str/capitalize (name result-type))]
+           [:span {:key result-type}
+            [:input {:type      "radio"
+                     :name      "result-filter"
+                     :value     result-type
+                     :id        result-type
+                     :checked   (= current-filter result-type)
+                     :on-change (fn [_]
+                                  (rf/dispatch [::events/set-result-filter
+                                                search-term
+                                                result-type]))}]
+            [:label {:for   result-type
+                     :title (str "View " result-type-str " results")}
+             result-type-str]])))]))
 
 (defn form []
   "The form (part of the header trifecta)."

@@ -214,12 +214,23 @@ div#header-input > button {
 
 /* === FILTERS === */
 div#filters {
+    transition: all 0.3s;
     margin: 1.2em 0 0.3em 0;
     font-size: 12pt;
     color: #DDDDDD; /* for the separating dots */
     letter-spacing: 0.3ch;
     word-spacing: 0.5ch;
     text-align: center;
+}
+
+/* TODO: there is a slight cursor flicker on hover I can't seem to remove */
+/* the opacity of the labels is changed back instantly to avoid overflow */
+div#filters.hidden {
+    transition: height 0.3s, margin 0.3s, opacity 0s;
+    height: 0;
+    margin: 0;
+    opacity: 0;
+    display: hidden; /* make sure it's not selectable */
 }
 
 div#filters input[type=radio] {
@@ -258,7 +269,7 @@ div#filters input[type=radio]:checked + label:hover {
 /* controls where the content appears */
 article {
 	animation: fade-in 0.5s ease;
-	transition: all 0.3s;
+	transition: all 0.3s; /* should be synchronised with filters transition */
 
 	/* positioning */
     position: relative;
