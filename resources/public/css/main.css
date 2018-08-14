@@ -387,11 +387,10 @@ footer a.current-page, footer a.current-page:hover {
 
 /* === ACTION CHOOSER === */
 
-form#action-chooser {
+fieldset#actions {
     /* box */
     padding: 2ch;
     width: 40ch;
-    border: 1pt solid black;
 	background: radial-gradient(#BB5544, #AB4230);
     border: solid 1pt #AA4433;
     border-radius: 1ch;
@@ -418,28 +417,33 @@ form#action-chooser {
     animation: fade-in 0.3s linear;
 }
 
-form#action-chooser * {
+fieldset#actions * {
     color: #FFBBBB;
 }
 
 /* the action chooser h1 is (unlike other h1 elements) styled sans-serif */
-form#action-chooser > h1 {
+fieldset#actions > legend {
     font-family: "Gill Sans", "Gill Sans MT", Calibri, "KaiTi", "楷体", STKaiti, "华文楷体", sans-serif;
     font-size: 18pt;
     text-align: center;
 
-    margin: 0 0 0.5em 0;
-    padding-bottom: 0.5em;
+    /* positioning is a bit weird with this thing */
+    position: relative;
+    top: 1em;
+    margin: 1em 0;
+    padding: 1ch 0 0.5ch 0;
+    width: 100%;
+
     border-bottom: 1pt solid #CC6666;
 }
 
-form#action-chooser > ol {
+fieldset#actions > ol {
     margin: 0;
     padding: 0 0 0 3ch;
     font-size: 16pt;
 }
 
-form#action-chooser > ol > li > input[type=radio] {
+fieldset#actions > ol > li > input[type=radio] {
     /* hide the actual radio button */
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -448,17 +452,17 @@ form#action-chooser > ol > li > input[type=radio] {
     appearance: none;
 }
 
-form#action-chooser > ol > li > label {
+fieldset#actions > ol > li > label {
     cursor: pointer;
 }
 
 /* Reveal that the options are also clickable */
-form#action-chooser > ol > li > label:hover {
+fieldset#actions > ol > li > label:hover {
     text-decoration: underline;
 }
 
 /* Colour the currently checked button white */
-form#action-chooser > ol > li > input[type=radio]:checked + label {
+fieldset#actions > ol > li > input[type=radio]:checked + label {
     color: white;
 }
 

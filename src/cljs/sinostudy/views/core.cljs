@@ -208,8 +208,8 @@
   (let [actions @(rf/subscribe [::subs/actions])
         checked @(rf/subscribe [::subs/checked-action])]
     (when actions
-      [:form#action-chooser
-       [:h1 "Select an action"]
+      [:fieldset#actions
+       [:legend "Select an action"]
        [:ol
         (map (partial action-choice (nth actions checked)) actions)]])))
 
