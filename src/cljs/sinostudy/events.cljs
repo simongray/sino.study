@@ -103,12 +103,9 @@
   "Evaluate a word/Pinyin query to get a vector of possible actions."
   [query]
   (let [query* (p/umlaut query)]
-    ;; The reason why the starting point isn't [[::look-up query]] is so that
-    ;; any umlaut-conversions will always appear before the unconverted term.
-    (cond-> []
+    (cond-> [[::look-up query]]
             (and (pinyin-block? query*)
                  (not= query query*)) (conj [::look-up (d/pinyin-key query*)])
-            true (conj [::look-up query])
             (digits->diacritics? query*) (conj [::digits->diacritics query*])
             (diacritics->digits? query*) (conj [::diacritics->digits query*]))))
 
