@@ -114,19 +114,13 @@
     [input-button]]
    [filters]])
 
-;; Project version number based on git tag + commit SHA
-;; More info: https://github.com/roomkey/lein-v
-(def github-link
-  [:a {:href "https://github.com/simongray/sino.study"} (str "v" v/version)])
-
 (defn header
   "The header contains the logo and the main input form."
   []
   [:header
    [:div#aligner
     [logo]
-    [form]
-    [:address "© " year-string " Simon Gray (" github-link ")"]]])
+    [form]]])
 
 (defn article
   "The content pane of the site."
@@ -174,7 +168,7 @@
      text]))
 
 (defn footer []
-  "The footer (contains navigation and copyright notice)."
+  "The footer (contains navigation)."
   (let [from  @(rf/subscribe [::subs/current-nav])
         links [["/" "Home"] ["/help" "Help"] ["/about" "About"]]]
     [:footer
@@ -213,10 +207,20 @@
        [:ol
         (map (partial action-choice (nth actions checked)) actions)]])))
 
+;;; Project version number based on git tag + commit SHA
+;;; More info: https://github.com/roomkey/lein-v
+(defn version
+  "Current version with link to project on Github."
+  []
+  [:address
+   [:a {:href "https://github.com/simongray/sino.study"}
+    (str "v" v/version)]])
+
 (defn app []
   (let [not-home? (not= "/" @(rf/subscribe [::subs/current-nav]))]
     [:main {:class (when not-home? "with-article")}
      [action-chooser]
+     [version]
      [header]
      [article]
      [footer]]))

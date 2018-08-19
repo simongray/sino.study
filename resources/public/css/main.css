@@ -214,19 +214,21 @@ div#header-input > button {
 
 
 
-/* === COPYRIGHT NOTICE === */
+/* === VERSION NUMBER === */
 address {
-	animation: fade-in 1.5s ease;
+	animation: fade-in 3s ease;
 	color: #DDD;
 	font-size: 10pt;
 	font-style: inherit;
 	letter-spacing: 0.2ch;
-	margin-top: 2.8em;
-	transition: all 0.3s;
+	position: absolute;
+	padding: 1em;
+	right: 0;
+	transition: all 0.5s;
 }
 
 main.with-article address {
-    font-size: 0;
+    opacity: 0;
 }
 
 
