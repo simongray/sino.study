@@ -183,9 +183,9 @@
   (let [script @(rf/subscribe [::subs/script])
         {term ::d/term
          uses ::d/uses} @(rf/subscribe [::subs/content])]
-    [:div
+    [:<>
      (for [[pinyin definitions] uses]
-       [:div {:key pinyin}
+       [:<> {:key pinyin}
         [:h2.pinyin
          (->> (str/split pinyin #" ")
               (map p/digits->diacritics)

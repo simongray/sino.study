@@ -3,9 +3,9 @@
             [sinostudy.dictionary.core :as d]))
 
 (def static-pages
-  {"/help"  [:div [:h1 "Help"] [:p "This is the Help page."]]
-   "/blog"  [:div [:h1 "Blog"] [:p "This is the Blog page."]]
-   "/about" [:div [:h1 "About"] [:p "This is the About page."]]})
+  {"/help"  [:<> [:h1 "Help"] [:p "This is the Help page."]]
+   "/blog"  [:<> [:h1 "Blog"] [:p "This is the Blog page."]]
+   "/about" [:<> [:h1 "About"] [:p "This is the About page."]]})
 
 (def default-db
   {:input          ""
