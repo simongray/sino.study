@@ -298,13 +298,13 @@ article {
 
 	/* positioning */
     position: relative;
-    top: 5em; /* pos relative to header varies a bit on different browsers */
+    top: 4.2em; /* pos relative to header varies a bit on different browsers */
     margin: auto;
     padding: 0 1ch;
 
     /* 	to make sure the page can reached on small screen sizes,
         otherwise the footer might block the view */
-    border-bottom: 5.5em solid rgba(255,255,255,0);
+    border-bottom: 3.5rem solid rgba(255,255,255,0);
 
 	/* box */
 	max-width: 80ch;
@@ -312,7 +312,7 @@ article {
 
 /* when filters are available for search results, the content appears lower */
 article.with-filters {
-    top: 6.8em;
+    top: 6rem;
 }
 
 
