@@ -250,11 +250,10 @@
         content       @(rf/subscribe [::subs/content])
         result-filter @(rf/subscribe [::subs/current-result-filter])]
     (when-let [entries (get content result-filter)]
-      [:ul.dictionary-entries
-       (->> entries
-            (filter in-script)
-            (map (partial search-result-entry script))
-            (doall))])))
+      (into [:ul.dictionary-entries]
+        (->> entries
+             (filter in-script)
+             (map (partial search-result-entry script)))))))
 
 (defn search-result
   "Dictionary search result."
