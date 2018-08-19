@@ -122,7 +122,6 @@ header {
     -moz-transform: translate(-50%, -40%);
     -o-transform: translate(-50%, -40%);
     -ms-transform: translate(-50%, -40%);
-	border-bottom: solid 2pt rgba(233, 233, 233, 0);
 }
 
 main.with-article > header {
@@ -140,6 +139,9 @@ main.with-article > header {
     -moz-transform: translate(-50%, 0);
     -o-transform: translate(-50%, 0);
     -ms-transform: translate(-50%, 0);
+
+    /* shadow */
+    box-shadow: 0 0 1.5rem 0 rgba(0, 0, 0, 0.03);
 }
 
 /* 	aligner is necessary for limiting width and centering horisontally!
@@ -326,11 +328,12 @@ footer {
 	color: #DD8888;
 
 	/* box */
-	border-top: solid 1pt #AA4433;
 	background: #BB5544;
-	border-left: 1pt solid #BB5544; /* fixes problem with transparent left border */
 	padding: 1.2em 0;
 	width: 100%;
+
+	/* shadow */
+	box-shadow: 0 -1.5rem 1.5rem rgba(0, 0, 0, 0.03);
 
 	/* position */
 	position: fixed;
@@ -343,6 +346,7 @@ nav {
 	/* text-related */
     font-size: 12pt;
     word-spacing: 0.3ch;
+    line-height: 1em;
 }
 
 nav a {
@@ -394,10 +398,10 @@ fieldset#actions {
     /* box */
     padding: 2ch;
     width: 40ch;
-	background: radial-gradient(#BB5544, #AB4230);
-    border: solid 1pt #AA4433;
+	background: #BB5544;
+    border: none;
     border-radius: 1ch;
-    box-shadow: 0 4pt 8pt 0 rgba(0, 0, 0, 0.2), 0 6pt 20pt 0 rgba(0, 0, 0, 0.19);
+    box-shadow: 0 4pt 12pt 0 rgba(0, 0, 0, 0.2), 0 4pt 12pt 0 rgba(0, 0, 0, 0.19);
 
     /* center vertically
       adapted from .main */
@@ -437,7 +441,11 @@ fieldset#actions > legend {
     padding: 1ch 0 0.5ch 0;
     width: 100%;
 
+    /* displays as a kind of HR */
     border-bottom: 1pt solid #CC6666;
+
+    /* fake top border of the fieldset itself */
+    border-top: none;
 }
 
 fieldset#actions > ol {
