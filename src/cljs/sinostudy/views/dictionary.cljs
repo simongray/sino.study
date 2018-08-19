@@ -9,7 +9,7 @@
 
 ;; TODO: refactor this whole namespace, too many args to functions
 
-(defn term-title
+(defn entry-title
   "The title of the term with links to characters -OR- decomposition
   into components if the term is a character."
   []
@@ -19,28 +19,28 @@
         attribute      @(rf/subscribe [::subs/current-attribute])
         zh             (vc/zh script)
         decomposition* (when (not= decomposition "？") decomposition)]
-    (if (> (count term) 1)
-      [:span {:lang zh} (vc/link-term term)]
-      (cond
-        (= attribute "decomposition")
-        [:span {:lang  zh
-                :title (str "Character decomposition")}
-         (map vc/hanzi-link decomposition*)]
+    (cond
+      (> (count term) 1)
+      [:h1 {:lang zh} (vc/link-term term)]
 
-        decomposition*
-        [:span
-         {:lang  zh
-          :key   ::d/term
-          :title (str "Click to decompose")}
-         [:a
-          {:href (str "/" (name ::pages/terms) "/" term "/decomposition")}
-          term]]
+      (= attribute "decomposition")
+      [:h1 {:lang  zh
+            :title (str "Character decomposition")}
+       (map vc/hanzi-link decomposition*)]
 
-        :else
-        [:span
-         {:lang  zh
-          :title term}
-         term]))))
+      decomposition*
+      [:h1
+       {:lang  zh
+        :title (str "Click to decompose")}
+       [:a
+        {:href (str "/" (name ::pages/terms) "/" term "/decomposition")}
+        term]]
+
+      :else
+      [:h1
+       {:lang  zh
+        :title term}
+       term])))
 
 (defn etymology-blurb
   "Etymology information about a specific character."
@@ -71,13 +71,6 @@
             [:span {:lang zh} (vc/link-term semantic)]
             " (" hint ") + "
             [:span {:lang zh} (vc/link-term phonetic)]])]))))
-
-(defn dictionary-header
-  "Dictionary entry header."
-  []
-  [:div.dictionary-header
-   [:h1 [term-title]]
-   [etymology-blurb]])
 
 (defn frequency-tag
   "A tag with a frequency label based on a word frequency."
@@ -203,9 +196,12 @@
   "Dictionary entry for a specific term."
   []
   [:div.dictionary-entry
-   [dictionary-header]
    [tags]
-   [usage-list]])
+   ;[etymology-blurb] ; TODO: only show this when decomposing
+   [:div.entry-usages
+    [entry-title]
+    [:div
+     [usage-list]]]])
 
 (defn- result-entry-uses
   "Listed uses of a search result entry."
@@ -251,9 +247,9 @@
         result-filter @(rf/subscribe [::subs/current-result-filter])]
     (when-let [entries (get content result-filter)]
       (into [:ul.dictionary-entries]
-        (->> entries
-             (filter in-script)
-             (map (partial search-result-entry script)))))))
+            (->> entries
+                 (filter in-script)
+                 (map (partial search-result-entry script)))))))
 
 (defn search-result
   "Dictionary search result."

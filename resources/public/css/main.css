@@ -37,7 +37,6 @@ a:hover {
 h1, h2, h3, h1 *, h2 *, h3 * {
 	color: #555555;
 	font-family: Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", "KaiTi", "楷体", STKaiti, "华文楷体", serif;
-	margin-bottom: 0.5em;
 }
 
 h1 {
@@ -458,9 +457,14 @@ fieldset#actions > ol > li > input[type=radio]:checked + label {
 
 /* === DICTIONARY === */
 
-.dictionary-header {
+.entry-usages {
     display: flex;
-    flex-direction: row;
+}
+
+.dictionary-entry h1 {
+    writing-mode: vertical-lr;
+    font-size: 10vh;
+    margin-right: 1vh;
 }
 
 .dictionary-header-bubble {
@@ -538,7 +542,7 @@ fieldset#actions > ol > li > input[type=radio]:checked + label {
 
 /* marks a special tag in a dictionary entry (in the subheader after pinyin) */
 .tag {
-	font-size: 14pt;
+	font-size: 12pt;
 	font-family: Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", "KaiTi", "楷体", STKaiti, "华文楷体", serif;
 	letter-spacing: 0.3ch;
     padding: 0.2em 1ch;
@@ -547,6 +551,9 @@ fieldset#actions > ol > li > input[type=radio]:checked + label {
     border-radius: 0.5ch;
     background-color: white;
     color: #666666;
+
+    /* prevent wrapping in the middle of a tag */
+    display: inline-block;
 }
 
 .frequency-high {
@@ -564,13 +571,7 @@ fieldset#actions > ol > li > input[type=radio]:checked + label {
     font-family: inherit;
 }
 
-.dictionary-entry h1 {
-	font-size: 52pt;
-}
-
 .dictionary-entry .subheader {
-	font-size: 18pt;
-	line-height: 1.5;
 }
 
 .pinyin {
