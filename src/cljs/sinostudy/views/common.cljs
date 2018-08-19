@@ -59,8 +59,7 @@
     "zh"))
 
 (defn- handle-ref
-  "Handle s with f in the given script if s is a reference.
-  Helper function for `link-references."
+  "Handle s with f in the given script if s is a reference."
   [script f s]
   (let [zh         (zh script)
         use-script (fn [coll]
@@ -72,22 +71,25 @@
       (re-matches embed/refr s) (let [m      (refr->m s)
                                       pinyin (->> (::d/pinyin m)
                                                   (map f)
-                                                  (interpose " "))]
-                                  [:span
-                                   [:span {:lang zh}
-                                    (f (script m))]
-                                   [:span.pinyin pinyin]])
+                                                  (interpose " "))
+                                      hanzi  (script m)]
+                                  [:span {:key hanzi}
+                                   [:span {:lang zh :key "zh"}
+                                    (f hanzi)]
+                                   [:span.pinyin {:key "pinyin"}
+                                    pinyin]])
 
-      (re-matches embed/hanzi s) [:span {:lang zh}
-                                  (f (-> s
-                                         (str/split #"\|")
-                                         use-script))]
+      (re-matches embed/hanzi s) (let [hanzi (-> s
+                                                 (str/split #"\|")
+                                                 (use-script))]
+                                   [:span {:lang zh :key hanzi}
+                                    (f hanzi)])
 
-      (pe/hanzi-block? s) [:span {:lang zh}
+      (pe/hanzi-block? s) [:span {:lang zh :key s}
                            (f s)]
 
-      ;; TODO: do this properly when I find an example
-      (re-matches embed/pinyin s) [:span.pinyin (f s)]
+      ;;; TODO: do this properly when I find an example
+      (re-matches embed/pinyin s) [:span.pinyin {:key s} (f s)]
 
       ;; TODO: don't link numbers? i.e. 118 in "Kangxi radical 118"
       :else (f s))))

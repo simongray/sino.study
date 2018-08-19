@@ -214,15 +214,15 @@
   (for [[pronunciation definitions] uses]
     (when (not (empty? definitions))
       (let [handle-refs* (partial vc/handle-refs script identity)
-            definitions* (no-fake-variants script term definitions)]
-        [:li
-         {:key pronunciation}
+            definitions* (->> definitions
+                              (no-fake-variants script term)
+                              (map handle-refs*))]
+        [:li {:key pronunciation}
          [:span.pinyin
-          {:key pronunciation}
           (p/digits->diacritics pronunciation)]
          " "
          [:span.definition
-          (interpose "; " (map handle-refs* definitions*))]]))))
+          (interpose "; " definitions*)]]))))
 
 (defn- search-result-entry
   "Entry in a results-list."
@@ -252,8 +252,10 @@
         result-filter @(rf/subscribe [::subs/current-result-filter])]
     (when-let [entries (get content result-filter)]
       [:ul.dictionary-entries
-       (doall (for [entry (filter in-script entries)]
-                (search-result-entry script entry)))])))
+       (->> entries
+            (filter in-script)
+            (map (partial search-result-entry script))
+            (doall))])))
 
 (defn search-result
   "Dictionary search result."
