@@ -220,7 +220,7 @@
   (let [not-home? (not= "/" @(rf/subscribe [::subs/current-nav]))]
     [:main {:class (when not-home? "with-article")}
      [action-chooser]
-     [version]
      [header]
      [article]
-     [footer]]))
+     [footer]
+     [version]]))

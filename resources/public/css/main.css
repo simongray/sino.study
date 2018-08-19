@@ -224,6 +224,7 @@ address {
 	position: absolute;
 	padding: 1em;
 	right: 0;
+	top: 0;
 	transition: all 0.5s;
 }
 
