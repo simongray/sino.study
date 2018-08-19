@@ -313,7 +313,6 @@ footer {
 
 	/* text */
 	text-align: center;
-	color: #DD8888;
 
 	/* box */
 	background: #BB5544;
@@ -336,6 +335,7 @@ nav {
     font-size: 12pt;
     word-spacing: 0.3ch;
     line-height: 1em;
+    color: #FFBBBB;
 }
 
 nav a {
