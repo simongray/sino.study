@@ -158,11 +158,10 @@
 (defn tags
   "Available tags of a dictionary entry."
   []
-  [:p.subheader
-   (interpose " " [[frequency-tag]
-                   [variations-tag]
-                   [classifiers-tag]
-                   [radical-tag]])])
+  (into [:p.subheader] (interpose " " [[frequency-tag]
+                                       [variations-tag]
+                                       [classifiers-tag]
+                                       [radical-tag]])))
 
 ;; In certain cases, entries may include these "fake" definitions.
 ;; They're removed on the frontend since the variant may well be valid in
