@@ -22,14 +22,6 @@
     color: #DDD;
 }
 
-body {
-	/*  grey glow behind input textfield */
-	background: white; /* for browsers w/o gradient support */
-	background: radial-gradient(circle, #FCFCFB, white);
-	background-repeat: no-repeat;
-	background-attachment: fixed;
-}
-
 a {
     /* So that links won't suddenly reset a custom font to the global one. */
     font-family: inherit;
@@ -88,14 +80,10 @@ li {
 
 /* === MAIN & HEADER === */
 
-/*  A transparent, virtual background element that fills the screen.
-    This is necessary for the transition from a gradient to a white background.
-    It would have been nice to just transition the body element,
-    but gradients unfortunately don't support transitions.
-    Instead, we resort to transitioning this virtual background from
-    transparent to white (on top of the body element with the gradient). */
+/*  would have styled BODY or HTML instead if React could access them */
 main {
     min-height: 100vh;
+    background: #FCFCFB;
     transition: all 0.5s;
 }
 
