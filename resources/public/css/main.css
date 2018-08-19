@@ -187,10 +187,10 @@ div#header-input > input {
 	animation: fade-in 1s ease;
     transition: all 0.5s;
 
-	font-size: 18pt;
+	font-size: 20pt;
 	color: black;
 
-	padding: 0.5ch;
+	padding: 0.2ch 0.4ch;
 	border: 1pt solid #999999;
 	border-radius: 0.5ch;
 	background-color: white;
