@@ -74,9 +74,9 @@
                                                   (interpose " "))
                                       hanzi  (script m)]
                                   [:span {:key hanzi}
-                                   [:span {:lang zh :key "zh"}
+                                   [:span {:lang zh}
                                     (f hanzi)]
-                                   [:span.pinyin {:key "pinyin"}
+                                   [:span.pinyin
                                     pinyin]])
 
       (re-matches embed/hanzi s) (let [hanzi (-> s
@@ -85,11 +85,13 @@
                                    [:span {:lang zh :key hanzi}
                                     (f hanzi)])
 
-      (pe/hanzi-block? s) [:span {:lang zh :key s}
+      (pe/hanzi-block? s) [:span {:lang zh
+                                  :key s}
                            (f s)]
 
       ;;; TODO: do this properly when I find an example
-      (re-matches embed/pinyin s) [:span.pinyin {:key s} (f s)]
+      (re-matches embed/pinyin s) [:span.pinyin {:key s}
+                                   (f s)]
 
       ;; TODO: don't link numbers? i.e. 118 in "Kangxi radical 118"
       :else (f s))))
