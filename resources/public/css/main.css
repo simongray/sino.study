@@ -94,8 +94,7 @@ main.with-article {
 /* The header (logo, input bar) transitions from center to top.  */
 header {
     position: fixed;
-	min-width: 100%; /* expand entirely, but always keep a little margin*/
-	left: 50%;
+	width: 100%;
 
     /* Display on top of content when transitioning. */
 	z-index: 1;
@@ -104,12 +103,7 @@ header {
 	transition: all 0.3s;
 
     /* Centered vertically */
-	top: 42%; /* using 50% looks off somehow...*/
-	transform: translate(-50%, -40%);
-	-webkit-transform: translate(-50%, -40%);
-    -moz-transform: translate(-50%, -40%);
-    -o-transform: translate(-50%, -40%);
-    -ms-transform: translate(-50%, -40%);
+	top: 33%;
 }
 
 main.with-article > header {
@@ -122,11 +116,6 @@ main.with-article > header {
 
     /* Go to the top of the page. */
 	top: 0;
-    transform: translate(-50%, 0);
-	-webkit-transform: translate(-50%, 0);
-    -moz-transform: translate(-50%, 0);
-    -o-transform: translate(-50%, 0);
-    -ms-transform: translate(-50%, 0);
 }
 
 /* 	aligner is necessary for limiting width and centering horisontally!
