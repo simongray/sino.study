@@ -193,14 +193,14 @@
 (defn- action-choice
   [checked action]
   [:li {:key action}
-   [:input {:type     :radio
-            :name     "action"
-            :value    action
-            :checked  (= action checked)
-            :id       action
-            :on-click (fn [e]
-                        (.preventDefault e)
-                        (rf/dispatch [::events/choose-action action]))}]
+   [:input {:type      :radio
+            :name      "action"
+            :value     action
+            :checked   (= action checked)
+            :id        action
+            :on-change (fn [e]
+                         (.preventDefault e)
+                         (rf/dispatch [::events/choose-action action]))}]
    [:label {:for action} (action-text action)]])
 
 (defn action-chooser []
