@@ -127,9 +127,6 @@ main.with-article > header {
     -moz-transform: translate(-50%, 0);
     -o-transform: translate(-50%, 0);
     -ms-transform: translate(-50%, 0);
-
-    /* shadow */
-    box-shadow: 0 0 1rem 1rem rgba(0, 0, 0, 0.015);
 }
 
 /* 	aligner is necessary for limiting width and centering horisontally!
@@ -320,8 +317,7 @@ footer {
 	width: 100%;
 
 	/* shadow */
-	box-shadow: 0 0 1rem 1rem rgba(0, 0, 0, 0.015),
-	            inset 0 0 1.5rem 0 rgba(0, 0, 0, 0.3);
+	box-shadow: inset 0 0 1.5rem 0 rgba(0, 0, 0, 0.3);
 
 	/* position */
 	position: fixed;
