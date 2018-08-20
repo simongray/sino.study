@@ -473,7 +473,7 @@ fieldset#actions > ol > li > input[type=radio]:checked + label {
 .dictionary-entry h1 {
     writing-mode: vertical-lr;
     font-size: 4em;
-    margin-right: 0.3em;
+    margin-right: 0.2em;
 
     /* remove hidden left margin (from writing-mode: vertical-lr) */
     line-height: 1em;
