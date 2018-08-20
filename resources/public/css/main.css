@@ -63,6 +63,8 @@ li {
 table {
     /* remove double border */
     border-collapse: collapse;
+
+    font-size: 12pt;
 }
 
 td {
@@ -481,12 +483,12 @@ fieldset#actions > ol > li > input[type=radio]:checked + label {
     width: 100%;
 }
 
-.dictionary-entry table.info td {
+.dictionary-entry table.info td:first-child {
     white-space: nowrap;
 }
 
 .dictionary-entry table.info td:last-child {
-    width: 80%;
+    width: 100%;
 }
 
 .etymology {

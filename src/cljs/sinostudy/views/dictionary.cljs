@@ -42,139 +42,6 @@
         :title term}
        term])))
 
-(defn etymology-blurb
-  "Etymology information about a specific character."
-  []
-  (let [script @(rf/subscribe [::subs/script])
-        {etymology ::d/etymology} @(rf/subscribe [::subs/content])
-        zh     (vc/zh script)]
-    (when etymology
-      (let [{type     ::d/type
-             hint     ::d/hint
-             semantic ::d/semantic
-             phonetic ::d/phonetic} etymology]
-        [:div.dictionary-header-bubble
-         (cond
-           (and (or (= type "pictographic")
-                    (= type "ideographic"))
-                hint)
-           [:div.etymology
-            {:title (str "Type: " type)}
-            (let [link (comp vc/link-term vector)]
-              (vc/handle-refs script link hint))]
-
-           (and (= type "pictophonetic")
-                semantic
-                phonetic)
-           [:div.etymology
-            {:title (str "Type: " type)}
-            [:span {:lang zh} (vc/link-term semantic)]
-            " (" hint ") + "
-            [:span {:lang zh} (vc/link-term phonetic)]])]))))
-
-(defn frequency-tag
-  "A tag with a frequency label based on a word frequency."
-  []
-  (let [{frequency ::d/frequency} @(rf/subscribe [::subs/content])
-        label (d/frequency-label frequency)]
-    [:span.tag
-     {:key   ::d/frequency
-      :title "Word frequency"}
-     (cond
-       (= label :high) [:span.frequency-high "frequent"]
-       (= label :medium) [:span.frequency-medium "average"]
-       (= label :low) [:span.frequency-low "infrequent"])]))
-
-(defn variations-tag
-  "Tag with the variations of an entry in a given script."
-  []
-  (let [{variations ::d/variations} @(rf/subscribe [::subs/content])
-        script (cond
-                 (contains? variations ::d/traditional) ::d/traditional
-                 (contains? variations ::d/simplified) ::d/simplified
-                 :else nil)
-        zh     (vc/zh script)]
-    (when script
-      [:span.tag
-       {:key   ::d/variations
-        :title (str (if (= ::d/traditional script)
-                      "In Traditional Chinese"
-                      "In Simplified Chinese"))}
-       (if (= script ::d/traditional)
-         "tr.|"
-         "s.|")
-       (interpose ", " (->> variations
-                            script
-                            (map vector)
-                            (map vc/link-term)
-                            (map (fn [variation]
-                                   [:span {:lang zh
-                                           :key  variation}
-                                    variation]))))])))
-
-(defn classifiers-tag
-  "Tag with the classifiers of an entry in a given script."
-  []
-  (let [script @(rf/subscribe [::subs/script])
-        zh     (vc/zh script)
-        {classifiers ::d/classifiers} @(rf/subscribe [::subs/content])]
-    (when classifiers
-      [:span.tag {:key   ::d/classifiers
-                  :title (str "Common classifiers")}
-       "cl.|"
-       (interpose ", "
-         (for [classifier (sort-by ::d/pinyin classifiers)]
-           [:span
-            {:lang zh
-             :key  (script classifier)}
-            (vc/link-term (vector (script classifier)))]))])))
-
-(defn radical-tag
-  "Tag with the radical of a Hanzi."
-  []
-  (let [script @(rf/subscribe [::subs/script])
-        {term    ::d/term
-         radical ::d/radical} @(rf/subscribe [::subs/content])
-        zh     (vc/zh script)]
-    (when radical
-      (if (= term radical)
-        [:span.tag
-         {:key   ::d/radical
-          :title "The character is a radical"}
-         "radical"]
-        [:span.tag
-         {:key   ::d/radical
-          :title (str "Radical")}
-         "rad.|"
-         [:span {:lang zh} (vc/link-term (vector radical))]]))))
-
-(defn tags
-  "Available tags of a dictionary entry."
-  []
-  (into [:p.subheader] (interpose " " [[frequency-tag]
-                                       [variations-tag]
-                                       [classifiers-tag]
-                                       [radical-tag]])))
-
-;; TODO: move tags info into this table
-(defn info-table
-  "Additional information about the dictionary entry."
-  []
-  [:table.info
-   [:tbody
-    [:tr
-     [:td "frequency"]
-     [:td "<500"]]
-    [:tr
-     [:td "traditional"]
-     [:td "尼日利亞"]]
-    [:tr
-     [:td "classifiers"]
-     [:td "个"]]
-    [:tr
-     [:td "other"]
-     [:td "glen"]]]])
-
 ;; In certain cases, entries may include these "fake" definitions.
 ;; They're removed on the frontend since the variant may well be valid in
 ;; .e.g. traditional Chinese, but not in simplified Chinese (see: 喂).
@@ -211,6 +78,85 @@
              (let [link (comp vc/link-term vector)]
                (vc/handle-refs script link definition))]])]])]))
 
+(defn info-table
+  "Additional information about the dictionary entry."
+  []
+  (let [script       @(rf/subscribe [::subs/script])
+        zh           (vc/zh script)
+        {term        ::d/term
+         radical     ::d/radical
+         frequency   ::d/frequency
+         variations  ::d/variations
+         classifiers ::d/classifiers
+         etymology   ::d/etymology} @(rf/subscribe [::subs/content])
+        label        (d/frequency-label frequency)
+        entry-script (cond
+                       (contains? variations ::d/traditional) ::d/traditional
+                       (contains? variations ::d/simplified) ::d/simplified)
+        entry-zh     (vc/zh entry-script)]
+    [:table.info
+     [:tbody
+      [:tr {:key   ::d/frequency
+            :title "Word frequency"}
+       [:td "frequency"]
+       [:td (cond
+              (= label :high) [:span.frequency-high "frequent"]
+              (= label :medium) [:span.frequency-medium "average"]
+              (= label :low) [:span.frequency-low "infrequent"])]]
+      (when entry-script
+        [:tr {:key   ::d/variations
+              :title (str (if (= ::d/traditional entry-script)
+                            "In Traditional Chinese"
+                            "In Simplified Chinese"))}
+         (if (= entry-script ::d/traditional)
+           [:td "traditional"]
+           [:td "simplified"])
+         [:td {:lang entry-zh}
+          (interpose ", " (->> variations
+                               entry-script
+                               (map vector)
+                               (map vc/link-term)
+                               (map (fn [variation]
+                                      [:span {:key variation}
+                                       variation]))))]])
+      (when classifiers
+        [:tr {:key   ::d/classifiers
+              :title (str "Common classifiers")}
+         [:td "classifier"]
+         [:td
+          (interpose ", "
+            (for [classifier (sort-by ::d/pinyin classifiers)]
+              [:span
+               {:lang zh
+                :key  (script classifier)}
+               (vc/link-term (vector (script classifier)))]))]])
+      (when radical
+        [:tr {:key   ::d/radical
+              :title "Radical"}
+         [:td "radical"]
+         (if (= term radical)
+           [:td "The character is a radical"]
+           [:td {:lang zh} (vc/link-term (vector radical))])])
+      (when etymology
+        (let [{type     ::d/type
+               hint     ::d/hint
+               semantic ::d/semantic
+               phonetic ::d/phonetic} etymology]
+          [:tr {:key   ::d/etymology
+                :title "Etymology"}
+           [:td "etymology"]
+           [:td {:title (str "Type: " type)}
+            (cond
+              (and (or (= type "pictographic") (= type "ideographic")) hint)
+              [:<> (let [link (comp vc/link-term vector)]
+                     (vc/handle-refs script link hint))]
+
+              (and (= type "pictophonetic") semantic phonetic)
+              [:<>
+               [:span {:lang zh} (vc/link-term semantic)]
+               " (" hint ") + "
+               [:span {:lang zh} (vc/link-term phonetic)]])]]))]]))
+
 (defn entry
   "Dictionary entry for a specific term."
   []
@@ -218,7 +164,6 @@
    [entry-title]
    [:div.usages
     [usage-list]
-    ;[tags]
     [info-table]]])
 
 (defn- result-entry-uses
