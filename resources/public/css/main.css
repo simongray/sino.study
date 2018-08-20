@@ -485,10 +485,13 @@ fieldset#actions > ol > li > input[type=radio]:checked + label {
 
 .dictionary-entry table.info td:first-child {
     white-space: nowrap;
+    text-align: right;
+    color: #333;
 }
 
 .dictionary-entry table.info td:last-child {
     width: 100%;
+    font-style: italic;
 }
 
 .etymology {
