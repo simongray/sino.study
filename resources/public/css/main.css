@@ -60,8 +60,15 @@ li {
     margin-bottom: 0.2em;
 }
 
+table {
+    /* remove double border */
+    border-collapse: collapse;
+}
 
-
+td {
+    padding: 1ch 2ch;
+    border: 1px solid #DDD;
+}
 
 /* === ANIMATIONS === */
 
@@ -457,20 +464,29 @@ fieldset#actions > ol > li > input[type=radio]:checked + label {
 
 /* === DICTIONARY === */
 
-.entry-usages {
+.dictionary-entry {
     display: flex;
 }
 
 .dictionary-entry h1 {
     writing-mode: vertical-lr;
-    font-size: 10vh;
-    margin-right: 1vh;
+    font-size: 4em;
+    margin-right: 0.3em;
+
+    /* remove hidden left margin (from writing-mode: vertical-lr) */
+    line-height: 1em;
 }
 
-.dictionary-header-bubble {
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
+.dictionary-entry .usages {
+    width: 100%;
+}
+
+.dictionary-entry table.info td {
+    white-space: nowrap;
+}
+
+.dictionary-entry table.info td:last-child {
+    width: 80%;
 }
 
 .etymology {
@@ -569,9 +585,6 @@ fieldset#actions > ol > li > input[type=radio]:checked + label {
 .frequency-low {
     color: #ead7cf;
     font-family: inherit;
-}
-
-.dictionary-entry .subheader {
 }
 
 .pinyin {

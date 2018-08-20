@@ -156,6 +156,25 @@
                                        [classifiers-tag]
                                        [radical-tag]])))
 
+;; TODO: move tags info into this table
+(defn info-table
+  "Additional information about the dictionary entry."
+  []
+  [:table.info
+   [:tbody
+    [:tr
+     [:td "frequency"]
+     [:td "<500"]]
+    [:tr
+     [:td "traditional"]
+     [:td "尼日利亞"]]
+    [:tr
+     [:td "classifiers"]
+     [:td "个"]]
+    [:tr
+     [:td "other"]
+     [:td "glen"]]]])
+
 ;; In certain cases, entries may include these "fake" definitions.
 ;; They're removed on the frontend since the variant may well be valid in
 ;; .e.g. traditional Chinese, but not in simplified Chinese (see: 喂).
@@ -196,12 +215,11 @@
   "Dictionary entry for a specific term."
   []
   [:div.dictionary-entry
-   [tags]
-   ;[etymology-blurb] ; TODO: only show this when decomposing
-   [:div.entry-usages
-    [entry-title]
-    [:div
-     [usage-list]]]])
+   [entry-title]
+   [:div.usages
+    [usage-list]
+    ;[tags]
+    [info-table]]])
 
 (defn- result-entry-uses
   "Listed uses of a search result entry."
