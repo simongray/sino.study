@@ -65,7 +65,7 @@ table {
     border-collapse: collapse;
 
     font-size: 12pt;
-    margin-bottom: 1em;
+    margin: 2rem 0 1rem 0;
 }
 
 td {
@@ -473,8 +473,8 @@ fieldset#actions > ol > li > input[type=radio]:checked + label {
 
 .dictionary-entry h1 {
     writing-mode: vertical-lr;
-    font-size: 4em;
-    margin-right: 0.2em;
+    font-size: 5rem;
+    margin-right: 1rem;
 
     /* remove hidden left margin (from writing-mode: vertical-lr) */
     line-height: 1em;
@@ -482,6 +482,8 @@ fieldset#actions > ol > li > input[type=radio]:checked + label {
 
 .dictionary-entry .usages {
     width: 100%;
+    padding-left: 1rem;
+    border-left: 1pt solid #DDD;
 }
 
 .dictionary-entry table.info td:first-child {
