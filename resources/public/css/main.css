@@ -280,14 +280,13 @@ article {
 	transition: all 0.3s; /* should be synchronised with filters transition */
 
 	/* positioning */
-    position: relative;
+    position: absolute;
+    left: 0;
     top: 4.2em; /* pos relative to header varies a bit on different browsers */
+    bottom: -7em;
     margin: auto;
-    padding: 0 1ch;
+    padding: 1ch; /* TODO: fix issues at bottom */
 
-    /* 	to make sure the page can reached on small screen sizes,
-        otherwise the footer might block the view */
-    border-bottom: 3.5rem solid rgba(255,255,255,0);
 
 	/* box */
 	max-width: 80ch;
@@ -469,6 +468,7 @@ fieldset#actions > ol > li > input[type=radio]:checked + label {
 
 .dictionary-entry {
     display: flex;
+    height: 100%; /* enables border all the way down (in tandem with article) */
 }
 
 .dictionary-entry h1 {
@@ -481,7 +481,9 @@ fieldset#actions > ol > li > input[type=radio]:checked + label {
 }
 
 .dictionary-entry .usages {
+    /* make border all the way down */
     width: 100%;
+    margin-bottom: 1rem;
     padding-left: 1rem;
     border-left: 1pt solid #DDD;
 }
