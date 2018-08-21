@@ -78,6 +78,7 @@
              (let [link (comp vc/link-term vector)]
                (vc/handle-refs script link definition))]])]])]))
 
+;; TODO: empty etymology at http://localhost:3449/terms/%E7%B3%BB
 (defn info-table
   "Additional information about the dictionary entry."
   []
