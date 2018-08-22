@@ -476,7 +476,7 @@ fieldset#actions > ol > li > input[type=radio]:checked + label {
 
 .dictionary-entry h1 {
     writing-mode: vertical-lr;
-    font-size: 4rem;
+    font-size: 8vh; /* vh better supports small screens */
     margin-right: 1rem;
 
     /* don't overflow onto usages */
