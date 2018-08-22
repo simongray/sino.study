@@ -111,10 +111,6 @@ main {
     transition: all 0.5s;
 }
 
-main.with-article {
-	background: white;
-}
-
 /* The header (logo, input bar) transitions from center to top.  */
 header {
 	width: 100%;
@@ -129,10 +125,6 @@ header {
 main.with-article > header {
 	/* Slower going up than down. */
 	transition: all 0.5s;
-
-    /* Add some colours. */
-	background: #FCFCFB;
-	border-bottom: solid 1pt #DDDDDD;
 
     /* Go to the top of the page (resets  margin set in header) */
 	margin-top: 0;
@@ -288,6 +280,9 @@ div#filters input[type=radio]:checked + label:hover {
 
 /* controls where the content appears */
 article {
+    background: white;
+    border: 1px solid #DDD;
+    border-bottom: none;
 	animation: fade-in 0.5s ease;
 	transition: all 0.3s; /* should be synchronised with filters transition */
 
@@ -472,23 +467,25 @@ fieldset#actions > ol > li > input[type=radio]:checked + label {
 
 .dictionary-entry h1 {
     writing-mode: vertical-lr;
-    font-size: 5rem;
+    font-size: 4rem;
     margin-right: 1rem;
 
-    /* remove hidden left margin (from writing-mode: vertical-lr) */
-    line-height: 1em;
+    /* don't overflow onto usages */
+    white-space: nowrap;
+
+    /* remove hidden left margin */
+    line-height: 1;
 }
 
 .dictionary-entry .usages {
-    /* make border all the way down */
-    box-sizing: border-box; /* allow 100% width + padding with not overflow */
+    box-sizing: border-box; /* allow 100% height + padding with not overflow */
     width: 100%;
     height: 100%;
+    border-left: 1pt solid #DDD;
     padding: 1ch;
 
     /* TODO: should I find a way to make entire page scrollable */
     overflow: auto;
-    border-left: 1pt solid #DDD;
 }
 
 .dictionary-entry table.info td:first-child {
