@@ -488,6 +488,13 @@ fieldset#actions > ol > li > input[type=radio]:checked + label {
     overflow: auto;
 }
 
+/* add appropriate padding (not margin, to keep border all the way up)m*/
+.dictionary-entry > h1,
+.dictionary-entry > .usages {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
 .dictionary-entry table.info td:first-child {
     white-space: nowrap;
     text-align: right;
@@ -511,17 +518,12 @@ fieldset#actions > ol > li > input[type=radio]:checked + label {
     letter-spacing: 0.5ch;
 }
 
-.search-result h1 {
-    text-align: center;
-}
-
 .dictionary-entry, .dictionary-entries {
 	font-size: 14pt;
 }
 
 .dictionary-entries {
 	list-style-type: none;
-	padding: 0;
 	margin: 0;
 
     /* TODO: need new html that makes text-overflow: ellipsis possible */
