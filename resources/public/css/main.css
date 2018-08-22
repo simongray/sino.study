@@ -188,6 +188,10 @@ div#header-input > input {
 	font-size: 20pt;
 	color: black;
 
+	/* fixes overflow in Chrome iPhone 5/SE device inspector */
+	max-width: 100%;
+	box-sizing: border-box;
+
 	padding: 0.2ch 0.4ch;
 	border: 1pt solid #999999;
 	border-radius: 0.5ch;
