@@ -79,7 +79,7 @@
                (vc/handle-refs script link definition))]])]])]))
 
 ;; TODO: empty etymology at http://localhost:3449/terms/%E7%B3%BB
-(defn info-table
+(defn details-table
   "Additional information about the dictionary entry."
   []
   (let [script       @(rf/subscribe [::subs/script])
@@ -95,11 +95,15 @@
                        (contains? variations ::d/traditional) ::d/traditional
                        (contains? variations ::d/simplified) ::d/simplified)
         entry-zh     (vc/zh entry-script)]
-    [:table.info
+    [:table.details
+     [:thead
+      [:tr
+       [:th {:colspan 2}
+        "Details"]]]
      [:tbody
       [:tr {:key   ::d/frequency
             :title "Word frequency"}
-       [:td "frequency"]
+       [:td "Frequency"]
        [:td (cond
               (= label :high) [:span.frequency-high "frequent"]
               (= label :medium) [:span.frequency-medium "average"]
@@ -110,8 +114,8 @@
                             "In Traditional Chinese"
                             "In Simplified Chinese"))}
          (if (= entry-script ::d/traditional)
-           [:td "traditional"]
-           [:td "simplified"])
+           [:td "Traditional"]
+           [:td "Simplified"])
          [:td {:lang entry-zh}
           (interpose ", " (->> variations
                                entry-script
@@ -123,7 +127,7 @@
       (when classifiers
         [:tr {:key   ::d/classifiers
               :title (str "Common classifiers")}
-         [:td "classifier"]
+         [:td "Classifiers"]
          [:td
           (interpose ", "
             (for [classifier (sort-by ::d/pinyin classifiers)]
@@ -134,7 +138,7 @@
       (when radical
         [:tr {:key   ::d/radical
               :title "Radical"}
-         [:td "radical"]
+         [:td "Radical"]
          (if (= term radical)
            [:td "The character is a radical"]
            [:td {:lang zh} (vc/link-term (vector radical))])])
@@ -145,7 +149,7 @@
                phonetic ::d/phonetic} etymology]
           [:tr {:key   ::d/etymology
                 :title "Etymology"}
-           [:td "etymology"]
+           [:td "Etymology"]
            [:td {:title (str "Type: " type)}
             (cond
               (and (or (= type "pictographic") (= type "ideographic")) hint)
@@ -165,7 +169,7 @@
    [entry-title]
    [:div.usages
     [usage-list]
-    [info-table]]])
+    [details-table]]])
 
 (defn- result-entry-uses
   "Listed uses of a search result entry."

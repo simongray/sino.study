@@ -72,12 +72,21 @@ table {
     margin: 1rem 0 0 0;
 }
 
-td {
-    padding: 1ch 2ch;
+tr {
     border: 1px solid #DDD;
 }
 
+td, th {
+    padding: 1ch 2ch;
+}
 
+th {
+    color: #333;
+    background: #EEE;
+	font-family: Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", "KaiTi", "楷体", STKaiti, "华文楷体", serif;
+    font-size: 125%;
+    font-weight: 400;
+}
 
 
 /* === ANIMATIONS === */
@@ -495,15 +504,21 @@ fieldset#actions > ol > li > input[type=radio]:checked + label {
     padding-bottom: 1rem;
 }
 
-.dictionary-entry table.info td:first-child {
+.dictionary-entry table.details td:first-child {
     white-space: nowrap;
+    font-weight: 400;
+    font-family: Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", "KaiTi", "楷体", STKaiti, "华文楷体", serif;
     text-align: right;
+    border-right: none;
+    padding-right: 1ch;
     color: #333;
 }
 
-.dictionary-entry table.info td:last-child {
-    width: 100%;
+.dictionary-entry table.details td:last-child {
     font-style: italic;
+    border-left: none;
+    padding-left: 1ch;
+    width: 100%;
 }
 
 .etymology {
