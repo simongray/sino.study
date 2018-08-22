@@ -22,6 +22,10 @@
     color: #DDD;
 }
 
+html, body, #app {
+    height: 100%;
+}
+
 a {
     /* So that links won't suddenly reset a custom font to the global one. */
     font-family: inherit;
@@ -65,13 +69,16 @@ table {
     border-collapse: collapse;
 
     font-size: 12pt;
-    margin: 2rem 0 1rem 0;
+    margin: 1rem 0 0 0;
 }
 
 td {
     padding: 1ch 2ch;
     border: 1px solid #DDD;
 }
+
+
+
 
 /* === ANIMATIONS === */
 
@@ -91,8 +98,16 @@ td {
 
 /*  would have styled BODY or HTML instead if React could access them */
 main {
-    min-height: 100vh;
+    height: 100%; /* also set for all parent elements */
+
+    /* align items vertically */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* center horisontally */
+    justify-content: space-between; /* add space between header and footer */
+
     background: #FCFCFB;
+
     transition: all 0.5s;
 }
 
@@ -102,17 +117,13 @@ main.with-article {
 
 /* The header (logo, input bar) transitions from center to top.  */
 header {
-    position: fixed;
 	width: 100%;
 
-    /* Display on top of content when transitioning. */
-	z-index: 1;
+    /* align approximately in the center when*/
+	margin-top: 33.3vh;
 
 	/* Faster going down than up! */
 	transition: all 0.3s;
-
-    /* Centered vertically */
-	top: 33%;
 }
 
 main.with-article > header {
@@ -123,11 +134,12 @@ main.with-article > header {
 	background: #FCFCFB;
 	border-bottom: solid 1pt #DDDDDD;
 
-    /* Go to the top of the page. */
-	top: 0;
+    /* Go to the top of the page (resets  margin set in header) */
+	margin-top: 0;
 }
 
-/* 	aligner is necessary for limiting width and centering horisontally!
+/* 	TODO: do I need this?
+    aligner is necessary for limiting width and centering horisontally!
 	without "min-width:98%;" in .vcenter, .vcentor gets crammed,
 	so this extra class is necessary to get a max-width.
 */
@@ -279,24 +291,17 @@ article {
 	animation: fade-in 0.5s ease;
 	transition: all 0.3s; /* should be synchronised with filters transition */
 
-	/* positioning */
-    position: absolute;
-    left: 0;
-    top: 4.2em; /* pos relative to header varies a bit on different browsers */
-    bottom: -7em;
-    margin: auto;
-    padding: 1ch; /* TODO: fix issues at bottom */
-
+	/* take up all middle space and allow for scrolling */
+    flex-grow: 1;
+    overflow: auto;
 
 	/* box */
+    box-sizing: border-box; /* allow 100% width + padding with not overflow */
+	width: 100%;
+	height: 100%;
+	padding: 1ch;
 	max-width: 80ch;
 }
-
-/* when filters are available for search results, the content appears lower */
-article.with-filters {
-    top: 6rem;
-}
-
 
 
 
@@ -315,12 +320,6 @@ footer {
 
 	/* shadow */
 	box-shadow: inset 0 0 1.5rem 0 rgba(0, 0, 0, 0.3);
-
-	/* position */
-	position: fixed;
-	z-index: 2;
-	margin: 0;
-    bottom: 0;
 }
 
 nav {
@@ -482,9 +481,13 @@ fieldset#actions > ol > li > input[type=radio]:checked + label {
 
 .dictionary-entry .usages {
     /* make border all the way down */
+    box-sizing: border-box; /* allow 100% width + padding with not overflow */
     width: 100%;
-    margin-bottom: 1rem;
-    padding-left: 1rem;
+    height: 100%;
+    padding: 1ch;
+
+    /* TODO: should I find a way to make entire page scrollable */
+    overflow: auto;
     border-left: 1pt solid #DDD;
 }
 
