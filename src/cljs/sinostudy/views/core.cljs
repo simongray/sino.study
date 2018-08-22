@@ -131,12 +131,10 @@
 
      :reagent-render
      (fn []
-       (let [category     @(rf/subscribe [::subs/current-category])
-             content      @(rf/subscribe [::subs/content])
-             result-types @(rf/subscribe [::subs/current-result-types])]
+       (let [category @(rf/subscribe [::subs/current-category])
+             content  @(rf/subscribe [::subs/content])]
          (when content
            [:article
-            {:class (when (> (count result-types) 1) "with-filters")}
             (cond
               (= ::pages/terms category) [vd/dictionary-page]
               :else content)])))
