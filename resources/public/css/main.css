@@ -91,7 +91,7 @@ table {
 }
 
 td, th {
-    padding: 1rem 2rem;
+    padding: 1rem;
 }
 
 tr {
@@ -522,6 +522,7 @@ fieldset#actions > ol > li > input[type=radio]:checked + label {
 
 table.details {
     margin-top: 3rem;
+    font-size: 1.2rem;
 }
 
 table.details tbody > tr > td:first-child {
@@ -529,12 +530,11 @@ table.details tbody > tr > td:first-child {
     font-weight: 400;
     text-align: right;
     text-transform: uppercase;
-    padding-right: 1rem;
+    color: #990000;
 }
 
 table.details td:last-child {
     border-left: none;
-    padding-left: 1rem;
     width: 100%;
 }
 
