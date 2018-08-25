@@ -635,8 +635,7 @@ fieldset#actions > ol > li > input[type=radio]:checked + label {
 	color: inherit;
 }
 
-/* TODO: clean up this mess... */
-.pinyin a:hover, .dictionary-entries a:hover, a:hover .pinyin, .dictionary-entries li:hover span.pinyin, .dictionary-entries li:hover span.pinyin:first-child  {
+.dictionary-entries li:hover *, .dictionary-entries li:hover .pinyin {
 	color: #4477DD;
 	border-color: #4477DD;
 }
