@@ -143,20 +143,21 @@
                hint     ::d/hint
                semantic ::d/semantic
                phonetic ::d/phonetic} etymology]
-          [:tr {:key   ::d/etymology
-                :title "Etymology"}
-           [:td "Etymology"]
-           [:td {:title (str "Type: " type)}
-            (cond
-              (and (or (= type "pictographic") (= type "ideographic")) hint)
-              [:<> (let [link (comp vc/link-term vector)]
-                     (vc/handle-refs script link hint))]
+          (when-let [etym (cond
+                            (and (or (= type "pictographic")
+                                     (= type "ideographic")) hint)
+                            [:<> (let [link (comp vc/link-term vector)]
+                                   (vc/handle-refs script link hint))]
 
-              (and (= type "pictophonetic") semantic phonetic)
-              [:<>
-               [:span {:lang zh} (vc/link-term semantic)]
-               " (" hint ") + "
-               [:span {:lang zh} (vc/link-term phonetic)]])]]))]]))
+                            (and (= type "pictophonetic") semantic phonetic)
+                            [:<>
+                             [:span {:lang zh} (vc/link-term semantic)]
+                             " (" hint ") + "
+                             [:span {:lang zh} (vc/link-term phonetic)]])]
+            [:tr {:key   ::d/etymology
+                  :title "Etymology"}
+             [:td type]
+             [:td etym]])))]]))
 
 (defn entry
   "Dictionary entry for a specific term."
