@@ -3,8 +3,7 @@
 * {
     font-family: "Gill Sans", "Gill Sans MT", Calibri, "KaiTi", "楷体", STKaiti, "华文楷体", sans-serif;
     font-weight: 300;
-    color: #999999;
-    letter-spacing: 0.2ch;
+    color: #555;
     padding: 0;
     margin: 0;
     hyphens: auto;
@@ -15,8 +14,14 @@
 
 /* Hanzi are made a bit darker than latin text to make them stand out */
 :lang(zh) {
-	color: #555555;
+	letter-spacing: 0.4ch;
+	color: #333;
 }
+
+:lang(en) {
+	letter-spacing: 0.2ch;
+}
+
 
 ::placeholder {
     color: #DDD;
@@ -24,7 +29,7 @@
 
 /* https://www.sitepoint.com/understanding-and-using-rem-units-in-css/ */
 html {
-    font-size: 62.5%; /* 10 px (down from 16px) */
+    font-size: 62.5%; /* = 10px (down from 16px) */
 }
 
 html, body, #app {
@@ -48,46 +53,74 @@ h1, h2, h3, h1 *, h2 *, h3 * {
 	font-family: Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", "KaiTi", "楷体", STKaiti, "华文楷体", serif;
 }
 
+/* basic document margin */
+h1, h2, p, ol, ul, table {
+    margin-top: 2rem;
+}
+
+h1 + p {
+    margin-top: 1rem;
+}
+
 h1 {
-    font-size: 24pt;
+    font-size: 2.8rem;
+}
+
+h2 {
+    font-size: 2.4rem;
 }
 
 p {
-	font-size: 14pt;
-	margin: 0 0 1em 0;
+	font-size: 1.8rem;
 }
 
 ol, ul {
-    margin: 1em 0 1em 4ch;
+    margin-left: 4rem;
 }
 
 li {
-    margin-bottom: 0.2em;
+    font-size: 1.8rem;
+    margin-bottom: 0.8rem;
 }
 
 table {
+    font-size: 1.4rem;
+
     /* remove double border */
     border-collapse: collapse;
-
-    font-size: 12pt;
-    margin: 1rem 0 0 0;
-}
-
-tr {
-    border: 1px solid #DDD;
 }
 
 td, th {
-    padding: 1ch 2ch;
+    padding: 1rem 2rem;
+}
+
+tr {
+    border-left: 1px solid #AAA;
+    border-right: 1px solid #AAA;
+}
+
+tr + tr {
+    border-top: 1px solid #EEE;
+}
+
+thead > tr:first-child {
+    border-top:  1px solid #AAA;
+}
+
+tbody > tr:last-child {
+    border-bottom: 1px solid #AAA;
 }
 
 th {
     color: #333;
+    text-transform: uppercase;
+    letter-spacing: 1rem !important;
     background: #EEE;
-	font-family: Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", "KaiTi", "楷体", STKaiti, "华文楷体", serif;
-    font-size: 125%;
-    font-weight: 400;
+    font-size: 1.6rem;
+    font-weight: 600;
 }
+
+
 
 
 /* === ANIMATIONS === */
@@ -495,47 +528,30 @@ fieldset#actions > ol > li > input[type=radio]:checked + label {
     box-sizing: border-box; /* allow 100% height + padding with not overflow */
     width: 100%;
     height: 100%;
-    border-left: 1pt solid #DDD;
-    padding: 1rem;
+    border-left: 1px solid #DDD;
+    padding: 0 0 1rem 1rem;
 
     /* TODO: should I find a way to make entire page scrollable */
     overflow: auto;
 }
 
-/* add appropriate padding (not margin, to keep border all the way up)m*/
-.dictionary-entry > h1,
-.dictionary-entry > .usages {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-}
-
-.dictionary-entry table.details td:first-child {
+table.details tbody > tr > td:first-child {
     white-space: nowrap;
     font-weight: 400;
-    font-family: Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", "KaiTi", "楷体", STKaiti, "华文楷体", serif;
     text-align: right;
-    border-right: none;
-    padding-right: 1ch;
+    padding-right: 1rem;
     color: #333;
 }
 
-.dictionary-entry table.details td:last-child {
-    font-style: italic;
-    border-left: none;
-    padding-left: 1ch;
-    width: 100%;
+table.details tbody > tr > td:first-child:after {
+    content: ":";
 }
 
-.etymology {
-    border-radius: 1ch;
-    padding: 1em;
-    margin: auto;
-    font-size: 10pt;
+table.details td:last-child {
     font-style: italic;
-    font-weight: 100;
-    text-align: center;
-    color: #BBBBBB;
-    letter-spacing: 0.5ch;
+    border-left: none;
+    padding-left: 1rem;
+    width: 100%;
 }
 
 .dictionary-entry, .dictionary-entries {
@@ -586,22 +602,6 @@ fieldset#actions > ol > li > input[type=radio]:checked + label {
 .dictionary-entries ul li {
     padding: 0;
     margin: 0 0 0.5em 0;
-}
-
-/* marks a special tag in a dictionary entry (in the subheader after pinyin) */
-.tag {
-	font-size: 12pt;
-	font-family: Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", "KaiTi", "楷体", STKaiti, "华文楷体", serif;
-	letter-spacing: 0.3ch;
-    padding: 0.2em 1ch;
-    margin-right: 0.5ch;
-    border: 1pt solid #AAAAAA;
-    border-radius: 0.5ch;
-    background-color: white;
-    color: #666666;
-
-    /* prevent wrapping in the middle of a tag */
-    display: inline-block;
 }
 
 .frequency-high {
