@@ -95,29 +95,20 @@ td, th {
 }
 
 tr {
-    border-left: 1px solid #AAA;
-    border-right: 1px solid #AAA;
+    border-left: 2rem solid #DD8888;
+    border-right: 2px solid #DD8888;
 }
 
 tr + tr {
-    border-top: 1px solid #EEE;
+    border-top: 1px dashed #FFDDDD;
 }
 
-thead > tr:first-child {
-    border-top:  1px solid #AAA;
+tr:first-child {
+    border-top: 2px solid #DD8888;
 }
 
-tbody > tr:last-child {
-    border-bottom: 1px solid #AAA;
-}
-
-th {
-    color: #333;
-    text-transform: uppercase;
-    letter-spacing: 1rem !important;
-    background: #EEE;
-    font-size: 1.6rem;
-    font-weight: 600;
+tr:last-child {
+    border-bottom: 2px solid #DD8888;
 }
 
 
@@ -529,20 +520,19 @@ fieldset#actions > ol > li > input[type=radio]:checked + label {
     overflow: auto;
 }
 
+table.details {
+    margin-top: 3rem;
+}
+
 table.details tbody > tr > td:first-child {
     white-space: nowrap;
     font-weight: 400;
     text-align: right;
+    text-transform: uppercase;
     padding-right: 1rem;
-    color: #333;
-}
-
-table.details tbody > tr > td:first-child:after {
-    content: ":";
 }
 
 table.details td:last-child {
-    font-style: italic;
     border-left: none;
     padding-left: 1rem;
     width: 100%;
@@ -598,6 +588,8 @@ table.details td:last-child {
     margin: 0 0 0.5em 0;
 }
 
+
+/* TODO: figure out if this is needed at all
 .frequency-high {
     color: #7bce34;
     font-family: inherit;
@@ -612,6 +604,7 @@ table.details td:last-child {
     color: #ead7cf;
     font-family: inherit;
 }
+*/
 
 .pinyin {
 	color: #DD8888;

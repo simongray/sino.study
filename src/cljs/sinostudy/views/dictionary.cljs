@@ -96,10 +96,6 @@
                        (contains? variations ::d/simplified) ::d/simplified)
         entry-zh     (vc/zh entry-script)]
     [:table.details
-     [:thead
-      [:tr
-       [:th {:colspan 2}
-        "Details"]]]
      [:tbody
       [:tr {:key   ::d/frequency
             :title "Word frequency"}
