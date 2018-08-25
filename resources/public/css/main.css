@@ -22,6 +22,11 @@
     color: #DDD;
 }
 
+/* https://www.sitepoint.com/understanding-and-using-rem-units-in-css/ */
+html {
+    font-size: 62.5%; /* 10 px (down from 16px) */
+}
+
 html, body, #app {
     height: 100%;
 }
@@ -45,10 +50,6 @@ h1, h2, h3, h1 *, h2 *, h3 * {
 
 h1 {
     font-size: 24pt;
-}
-
-h2 {
-    font-size: 20pt;
 }
 
 p {
@@ -145,9 +146,9 @@ main.with-article > header {
 	so this extra class is necessary to get a max-width.
 */
 header div#aligner {
-	max-width: 80ch;
+	max-width: 65rem;
 	margin: auto;
-	padding: 1ch;
+	padding: 0.8rem;
 	text-align: center;
 	vertical-align: middle;
 
@@ -160,8 +161,8 @@ header div#aligner {
 header img {
 	animation: fade-in 0.5s ease;
 	transition: all 0.3s;
-    max-height: 7em;
-    margin-bottom: 2em;
+    max-height: 11rem;
+    margin-bottom: 3rem;
 	width: 90%; /* otherwise image could overflow on small page widths */
 
     /* TODO: find fixes for non-Chrome browsers */
@@ -185,16 +186,16 @@ div#header-input > input {
 	animation: fade-in 1s ease;
     transition: all 0.5s;
 
-	font-size: 20pt;
+	font-size: 2.8rem;
 	color: black;
 
 	/* fixes overflow in Chrome iPhone 5/SE device inspector */
 	max-width: 100%;
 	box-sizing: border-box;
 
-	padding: 0.2ch 0.4ch;
+	padding: 0.2rem 0.5rem;
 	border: 1pt solid #999999;
-	border-radius: 0.5ch;
+	border-radius: 0.5rem;
 	background-color: white;
 
 	/* Take up full width */
@@ -240,11 +241,11 @@ main.with-article address {
 /* === FILTERS === */
 div#filters {
     transition: all 0.3s;
-    margin: 1.2em 0 0.3em 0;
-    font-size: 12pt;
+    margin: 2rem 0 0.5rem 0; /* TODO: weird values here */
+    font-size: 1.6rem;
     color: #DDDDDD; /* for the separating dots */
-    letter-spacing: 0.3ch;
-    word-spacing: 0.5ch;
+    letter-spacing: 0.2rem;
+    word-spacing: 0.3rem;
     text-align: center;
 }
 
@@ -307,8 +308,8 @@ article {
     box-sizing: border-box; /* allow 100% width + padding with not overflow */
 	width: 100%;
 	height: 100%;
-	padding: 1ch;
-	max-width: 80ch;
+	padding: 1rem;
+	max-width: 65rem;
 }
 
 
@@ -323,7 +324,7 @@ footer {
 
 	/* box */
 	background: #BB5544;
-	padding: 1.2em 0;
+	padding: 2rem 0;
 	width: 100%;
 
 	/* shadow */
@@ -481,7 +482,7 @@ fieldset#actions > ol > li > input[type=radio]:checked + label {
 .dictionary-entry h1 {
     writing-mode: vertical-lr;
     font-size: 8vh; /* vh better supports small screens */
-    margin-right: 1rem;
+    margin-right: 1.5rem;
 
     /* don't overflow onto usages */
     white-space: nowrap;
@@ -495,7 +496,7 @@ fieldset#actions > ol > li > input[type=radio]:checked + label {
     width: 100%;
     height: 100%;
     border-left: 1pt solid #DDD;
-    padding: 1ch;
+    padding: 1rem;
 
     /* TODO: should I find a way to make entire page scrollable */
     overflow: auto;
