@@ -178,16 +178,19 @@
 
 (defn- action-choice
   [checked action]
-  [:li {:key action}
-   [:input {:type      :radio
-            :name      "action"
-            :value     action
-            :checked   (= action checked)
-            :id        action
-            :on-change (fn [e]
-                         (.preventDefault e)
-                         (rf/dispatch [::events/choose-action action]))}]
-   [:label {:for action} (action-text action)]])
+  (let [choose-action (fn [e]
+                        (.preventDefault e)
+                        (rf/dispatch [::events/choose-action action]))]
+    [:li {:key action}
+     [:input {:type      :radio
+              :name      "action"
+              :value     action
+              :checked   (= action checked)
+              :id        action
+              :on-change choose-action}]
+     [:label {:for      action
+              :on-click choose-action}
+      (action-text action)]]))
 
 (defn action-chooser []
   "The pop-in dialog that is used to select from different possible options."

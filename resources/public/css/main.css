@@ -176,7 +176,7 @@ header {
 	width: 100%;
 
     /* align approximately in the center */
-	margin-top: 33.3vh;
+	margin-top: calc(33.3vh - 3rem);
 
 	/* Faster going down than up! */
 	transition: all 0.3s;

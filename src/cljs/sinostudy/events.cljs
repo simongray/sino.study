@@ -146,6 +146,13 @@
       #(.focus element)
       delay)))
 
+;; Dispatched by ::close-action-chooser.
+;; This is definitely a less than optimal solution...
+(rf/reg-fx
+  :blur
+  (fn [element]
+    (.blur element)))
+
 ;; Dispatched by ::use-scroll-state.
 (rf/reg-fx
   :scroll-to
@@ -344,14 +351,19 @@
           (assoc :checked-action 0)
           (assoc :actions (conj actions [::close-action-chooser]))))))
 
-;; TODO: figure out a better way to regain focus for previously disabled field
 ;; dispatched by ::choose-action
 (rf/reg-event-fx
   ::close-action-chooser
   (fn [cofx _]
     (let [db (:db cofx)]
-      {:db        (assoc db :actions nil)
-       :set-focus [(.getElementById js/document "input-field") 100]})))
+      {:db (assoc db :actions nil)})))
+
+;; TODO: figure out a better way to regain focus for previously disabled field
+;; dispatched by ::choose-action
+(rf/reg-event-fx
+  ::regain-input-focus
+  (fn [_ _]
+    {:set-focus [(.getElementById js/document "input-field") 100]}))
 
 ;; dispatched by ::choose-action
 (rf/reg-event-db
@@ -365,7 +377,8 @@
   ::choose-action
   (fn [_ [_ action]]
     (if (= [::close-action-chooser] action)
-      {:dispatch [::close-action-chooser]}
+      {:dispatch-n [[::close-action-chooser]
+                    [::regain-input-focus]]}
       {:dispatch-n (conj [[::close-action-chooser] action])})))
 
 (rf/reg-event-db
@@ -455,6 +468,7 @@
   ::look-up
   (fn [_ [_ term]]
     {:navigate-to (str "/" (name ::pages/terms) "/" term)
+     :blur        (.-activeElement js/document)
      :dispatch-n  [[::display-hint nil]
                    [::reset-scroll-state [::pages/terms term]]]}))
 
@@ -463,13 +477,15 @@
   (fn [cofx [_ input]]
     (let [db        (:db cofx)
           new-input (p/digits->diacritics input)]
-      {:db       (assoc db :input new-input)
-       :dispatch [::display-hint nil]})))
+      {:db         (assoc db :input new-input)
+       :dispatch-n [[::display-hint nil]
+                    [::regain-input-focus]]})))
 
 (rf/reg-event-fx
   ::diacritics->digits
   (fn [cofx [_ input]]
     (let [db        (:db cofx)
           new-input (p/diacritics->digits input)]
-      {:db       (assoc db :input new-input)
-       :dispatch [::display-hint nil]})))
+      {:db         (assoc db :input new-input)
+       :dispatch-n [[::display-hint nil]
+                    [::regain-input-focus]]})))
