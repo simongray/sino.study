@@ -432,9 +432,7 @@
                          (-> history first first))
           timestamp    (:now cofx)
           scroll-state (:scroll-state cofx)]
-      {:db         (-> db
-                       (assoc :history (conj history [new-page timestamp]))
-                       (assoc :input (input-title new-page)))
+      {:db         (assoc db :history (conj history [new-page timestamp]))
        :dispatch-n [[::save-scroll-state current-page scroll-state]
                     [::load-content new-page]]})))
 
