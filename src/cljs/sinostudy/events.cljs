@@ -19,17 +19,6 @@
         port     (if config/debug? 3000 js/window.location.port)]
     (str "http://" hostname ":" port "/query/")))
 
-
-;;;; HELPER FUNCTIONS
-
-(defn add-query
-  "Returns a list of queries with the new query prepended."
-  [queries state content timestamp]
-  (conj queries {:id        (count queries)
-                 :state     state
-                 :content   content
-                 :timestamp timestamp}))
-
 ;; all responses from the Compojure backend are Transit-encoded
 (def transit-reader
   (transit/reader :json))
@@ -276,7 +265,10 @@
           queries (:queries db)
           content (transit/read transit-reader result)
           now     (:now cofx)]
-      {:db       (assoc db :queries (add-query queries :success content now))
+      {:db       (assoc db :queries (conj queries {:id        (count queries)
+                                                   :state     :success
+                                                   :content   content
+                                                   :timestamp now}))
        :dispatch [::save-page content]})))
 
 ;; dispatched upon an unsuccessful retrieval of a query result
@@ -287,7 +279,10 @@
     (let [db      (:db cofx)
           queries (:queries db)
           now     (:now cofx)]
-      {:db       (assoc db :queries (add-query queries :failure result now))
+      {:db       (assoc db :queries (conj queries {:id        (count queries)
+                                                   :state     :failure
+                                                   :content   result
+                                                   :timestamp now}))
        :dispatch [::display-hint ::query-failure]})))
 
 ;; dispatched by ::load-content
