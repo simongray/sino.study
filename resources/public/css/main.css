@@ -603,24 +603,6 @@ fieldset#actions > ol > li > input[type=radio]:checked + label {
     margin: 0 0 0.5em 0;
 }
 
-
-/* TODO: figure out if this is needed at all
-.frequency-high {
-    color: #7bce34;
-    font-family: inherit;
-}
-
-.frequency-medium {
-    color: #ffcc2f;
-    font-family: inherit;
-}
-
-.frequency-low {
-    color: #ead7cf;
-    font-family: inherit;
-}
-*/
-
 .pinyin {
 	color: #DD8888;
 	font-family: Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", "KaiTi", "楷体", STKaiti, "华文楷体", serif;

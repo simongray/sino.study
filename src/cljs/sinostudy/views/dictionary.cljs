@@ -102,9 +102,9 @@
              :title "Word frequency"}
         [:td "Frequency"]
         [:td (cond
-               (= label :high) [:span.frequency-high "frequent"]
-               (= label :medium) [:span.frequency-medium "average"]
-               (= label :low) [:span.frequency-low "infrequent"])]]
+               (= label :high) "frequent"
+               (= label :medium) "average"
+               (= label :low) "infrequent")]]
        (when entry-script
          [:tr {:key   ::d/variations
                :title (str (if (= ::d/traditional entry-script)
@@ -157,7 +157,7 @@
                               [:span {:lang zh} (vc/link-term phonetic)]])]
              [:tr {:key   ::d/etymology
                    :title "Etymology"}
-              [:td type]
+              [:td (str/capitalize type)] ;TODO: do this during compilation?
               [:td etym]])))]]]))
 
 (defn entry
