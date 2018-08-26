@@ -28,12 +28,6 @@
 (defn navify [from links]
   (map (fn [[to text]] (navlink from to text)) links))
 
-(def year-string
-  (let [year (.getFullYear (js/Date.))]
-    (if (> year 2018)
-      (str "2018-" year)
-      "2018")))
-
 
 ;;;; VIEWS
 
@@ -134,7 +128,7 @@
        (let [category @(rf/subscribe [::subs/current-category])
              content  @(rf/subscribe [::subs/content])]
          (when content
-           [:article
+           [:<>
             (cond
               (= ::pages/terms category) [vd/dictionary-page]
               :else content)])))

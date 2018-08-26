@@ -54,7 +54,7 @@ h1, h2, h3, h1 *, h2 *, h3 * {
 }
 
 /* basic document margin */
-h1, h2, p, ol, ul, table {
+h1, h2, p, ol, ul, dl, dd + dt, table {
     margin-top: 2rem;
 }
 
@@ -76,6 +76,14 @@ p {
 
 ol, ul {
     margin-left: 4rem;
+}
+
+section + section {
+    margin-top: 4rem;
+}
+
+dt {
+    font-size: 2.4rem;
 }
 
 li {
@@ -330,7 +338,7 @@ article {
     box-sizing: border-box; /* allow 100% width + padding with not overflow */
 	width: 100%;
 	height: 100%;
-	padding: 1rem;
+	padding: 1.5rem;
 	max-width: 65rem; /* sync with header aligner */
 }
 
@@ -490,14 +498,14 @@ fieldset#actions > ol > li > input[type=radio]:checked + label {
 
 
 
-/* === DICTIONARY === */
+/* === DICTIONARY ENTRY === */
 
-.dictionary-entry {
+.entry {
     display: flex;
     height: 100%; /* enables border all the way down (in tandem with article) */
 }
 
-.dictionary-entry h1 {
+.entry h1 {
     writing-mode: vertical-lr;
     font-size: 8vh; /* vh better supports small screens */
     margin-right: 1.5rem;
@@ -509,23 +517,22 @@ fieldset#actions > ol > li > input[type=radio]:checked + label {
     line-height: 1;
 }
 
-.dictionary-entry .usages {
+.entry div.content {
     box-sizing: border-box; /* allow 100% height + padding with not overflow */
     width: 100%;
     height: 100%;
-    border-left: 1px solid #DDD;
-    padding: 0 0 1rem 1rem;
+    border-left: 2px solid #EEE;
+    padding: 0 0 2rem 1.5rem;
 
     /* TODO: should I find a way to make entire page scrollable */
     overflow: auto;
 }
 
-table.details {
-    margin-top: 3rem;
+#details table {
     font-size: 1.2rem;
 }
 
-table.details tbody > tr > td:first-child {
+#details table tbody > tr > td:first-child {
     white-space: nowrap;
     font-weight: 400;
     text-align: right;
@@ -533,18 +540,22 @@ table.details tbody > tr > td:first-child {
     color: #990000;
 }
 
-table.details *:lang(zh) {
+#details table *:lang(zh) {
     font-size: 2rem;
 }
 
-table.details td:last-child {
-    border-left: none;
+#details table  td:last-child {
     width: 100%;
 }
 
-.dictionary-entry, .dictionary-entries {
+.entry, .dictionary-entries {
 	font-size: 14pt;
 }
+
+
+
+
+/* === DICTIONARY SEARCH RESULT === */
 
 .dictionary-entries {
 	list-style-type: none;

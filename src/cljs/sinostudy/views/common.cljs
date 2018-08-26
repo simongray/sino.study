@@ -22,7 +22,7 @@
   (let [ids  (range (count text))
         link (fn [term id]
                [:a
-                {:title    (str "look up " term)
+                {:title    (str "Look up " term)
                  :on-click #(rf/dispatch [::events/reset-scroll-state
                                           [::pages/terms term]])
                  :href     (str "/" (name ::pages/terms) "/" term)

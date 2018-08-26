@@ -62,23 +62,23 @@
   (let [script @(rf/subscribe [::subs/script])
         {term ::d/term
          uses ::d/uses} @(rf/subscribe [::subs/content])]
-    [:<>
-     (for [[pinyin definitions] uses]
-       [:<> {:key pinyin}
-        [:h2.pinyin
-         (->> (str/split pinyin #" ")
-              (map p/digits->diacritics)
-              (map vector)
-              (map vc/link-term)
-              (interpose " "))]
-        [:ol
-         (for [definition (no-fake-variants script term definitions)]
-           [:li {:key definition}
-            [:span.definition
-             (let [link (comp vc/link-term vector)]
-               (vc/handle-refs script link definition))]])]])]))
+    [:section#usages
+     [:dl
+      (for [[pinyin definitions] uses]
+        (let [pinyin* (->> (str/split pinyin #" ")
+                           (map p/digits->diacritics)
+                           (map vector)
+                           (map vc/link-term)
+                           (interpose " "))]
+          [:<> {:key pinyin*}
+           [:dt.pinyin pinyin*]
+           [:dd
+            [:ol
+             (for [definition (no-fake-variants script term definitions)]
+               [:li {:key definition}
+                (let [link (comp vc/link-term vector)]
+                  (vc/handle-refs script link definition))])]]]))]]))
 
-;; TODO: empty etymology at http://localhost:3449/terms/%E7%B3%BB
 (defn details-table
   "Additional information about the dictionary entry."
   []
@@ -95,76 +95,77 @@
                        (contains? variations ::d/traditional) ::d/traditional
                        (contains? variations ::d/simplified) ::d/simplified)
         entry-zh     (vc/zh entry-script)]
-    [:table.details
-     [:tbody
-      [:tr {:key   ::d/frequency
-            :title "Word frequency"}
-       [:td "Frequency"]
-       [:td (cond
-              (= label :high) [:span.frequency-high "frequent"]
-              (= label :medium) [:span.frequency-medium "average"]
-              (= label :low) [:span.frequency-low "infrequent"])]]
-      (when entry-script
-        [:tr {:key   ::d/variations
-              :title (str (if (= ::d/traditional entry-script)
-                            "In Traditional Chinese"
-                            "In Simplified Chinese"))}
-         (if (= entry-script ::d/traditional)
-           [:td "Traditional"]
-           [:td "Simplified"])
-         [:td {:lang entry-zh}
-          (interpose ", " (->> variations
-                               entry-script
-                               (map vector)
-                               (map vc/link-term)
-                               (map (fn [variation]
-                                      [:span {:key variation}
-                                       variation]))))]])
-      (when classifiers
-        [:tr {:key   ::d/classifiers
-              :title (str "Common classifiers")}
-         [:td "Classifiers"]
-         [:td
-          (interpose ", "
-            (for [classifier (sort-by ::d/pinyin classifiers)]
-              [:span
-               {:lang zh
-                :key  (script classifier)}
-               (vc/link-term (vector (script classifier)))]))]])
-      (when radical
-        [:tr {:key   ::d/radical
-              :title "Radical"}
-         [:td "Radical"]
-         (if (= term radical)
-           [:td "The character is a radical"]
-           [:td {:lang zh} (vc/link-term (vector radical))])])
-      (when etymology
-        (let [{type     ::d/type
-               hint     ::d/hint
-               semantic ::d/semantic
-               phonetic ::d/phonetic} etymology]
-          (when-let [etym (cond
-                            (and (or (= type "pictographic")
-                                     (= type "ideographic")) hint)
-                            [:<> (let [link (comp vc/link-term vector)]
-                                   (vc/handle-refs script link hint))]
+    [:section#details
+     [:table
+      [:tbody
+       [:tr {:key   ::d/frequency
+             :title "Word frequency"}
+        [:td "Frequency"]
+        [:td (cond
+               (= label :high) [:span.frequency-high "frequent"]
+               (= label :medium) [:span.frequency-medium "average"]
+               (= label :low) [:span.frequency-low "infrequent"])]]
+       (when entry-script
+         [:tr {:key   ::d/variations
+               :title (str (if (= ::d/traditional entry-script)
+                             "In Traditional Chinese"
+                             "In Simplified Chinese"))}
+          (if (= entry-script ::d/traditional)
+            [:td "Traditional"]
+            [:td "Simplified"])
+          [:td {:lang entry-zh}
+           (interpose ", " (->> variations
+                                entry-script
+                                (map vector)
+                                (map vc/link-term)
+                                (map (fn [variation]
+                                       [:span {:key variation}
+                                        variation]))))]])
+       (when classifiers
+         [:tr {:key   ::d/classifiers
+               :title (str "Common classifiers")}
+          [:td "Classifiers"]
+          [:td
+           (interpose ", "
+             (for [classifier (sort-by ::d/pinyin classifiers)]
+               [:span
+                {:lang zh
+                 :key  (script classifier)}
+                (vc/link-term (vector (script classifier)))]))]])
+       (when radical
+         [:tr {:key   ::d/radical
+               :title "Radical"}
+          [:td "Radical"]
+          (if (= term radical)
+            [:td "The character is a radical"]
+            [:td {:lang zh} (vc/link-term (vector radical))])])
+       (when etymology
+         (let [{type     ::d/type
+                hint     ::d/hint
+                semantic ::d/semantic
+                phonetic ::d/phonetic} etymology]
+           (when-let [etym (cond
+                             (and (or (= type "pictographic")
+                                      (= type "ideographic")) hint)
+                             [:<> (let [link (comp vc/link-term vector)]
+                                    (vc/handle-refs script link hint))]
 
-                            (and (= type "pictophonetic") semantic phonetic)
-                            [:<>
-                             [:span {:lang zh} (vc/link-term semantic)]
-                             " (" hint ") + "
-                             [:span {:lang zh} (vc/link-term phonetic)]])]
-            [:tr {:key   ::d/etymology
-                  :title "Etymology"}
-             [:td type]
-             [:td etym]])))]]))
+                             (and (= type "pictophonetic") semantic phonetic)
+                             [:<>
+                              [:span {:lang zh} (vc/link-term semantic)]
+                              " (" hint ") + "
+                              [:span {:lang zh} (vc/link-term phonetic)]])]
+             [:tr {:key   ::d/etymology
+                   :title "Etymology"}
+              [:td type]
+              [:td etym]])))]]]))
 
 (defn entry
   "Dictionary entry for a specific term."
   []
-  [:div.dictionary-entry
+  [:article.entry
    [entry-title]
-   [:div.usages
+   [:div.content
     [usage-list]
     [details-table]]])
 
@@ -219,13 +220,14 @@
 (defn search-result
   "Dictionary search result."
   []
-  [:div.search-result
+  [:article.search-result
    [search-result-entries]])
 
 (defn unknown-term
   "Dictionary entry for a term that does not exist."
   []
-  [:p "There are no dictionary entries available for this term."])
+  [:article
+   [:p "There are no dictionary entries available for this term."]])
 
 (defn dictionary-page
   "A dictionary page can be 1 of 3 types: entry, search result, or unknown."
