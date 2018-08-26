@@ -95,7 +95,7 @@
                        (contains? variations ::d/traditional) ::d/traditional
                        (contains? variations ::d/simplified) ::d/simplified)
         entry-zh     (vc/zh entry-script)]
-    [:section#details
+    [:section.details
      [:table
       [:tbody
        [:tr {:key   ::d/frequency
