@@ -533,6 +533,10 @@ table.details tbody > tr > td:first-child {
     color: #990000;
 }
 
+table.details *:lang(zh) {
+    font-size: 2rem;
+}
+
 table.details td:last-child {
     border-left: none;
     width: 100%;
