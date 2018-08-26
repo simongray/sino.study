@@ -122,6 +122,24 @@ tr:last-child {
 
 
 
+/* === GLOBAL CLASSES === */
+.pinyin {
+	color: #DD8888;
+	font-family: Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", "KaiTi", "楷体", STKaiti, "华文楷体", serif;
+}
+
+.pinyin::before {
+	content: "[";
+}
+
+.pinyin::after {
+	content: "]";
+}
+
+
+
+
+
 /* === ANIMATIONS === */
 
 @keyframes fade-in {
@@ -550,66 +568,61 @@ section.details table td:last-child {
 
 /* === DICTIONARY SEARCH RESULT === */
 
-.dictionary-entries {
-	list-style-type: none;
-	margin: 0;
-
-    /* TODO: need new html that makes text-overflow: ellipsis possible */
-    /* make sure text stays on a single line */
-    white-space: nowrap;
+dl.entries {
     overflow: hidden;
+    margin-top: 0;
 }
 
-.dictionary-entries li {
-    margin-bottom: 0.8em;
+dl.entries a {
+    display: flex;
+    padding: 1rem;
+    border: 1px solid #EEE;
+    border-radius: 0.5rem;
 }
 
-.dictionary-entries a > *:lang(zh) {
-    display: inline-block;
-	font-size: 20pt;
-	padding: 0.2em;
-	border: 1pt solid #AAAAAA;
-	border-radius: 0.5ch;
-	background-color: white;
-	color: #666666;
+dl.entries a + a {
+    margin-top: 1.5rem;
 }
 
-.dictionary-entries span.pinyin {
+dl.entries a > dt {
+    writing-mode: vertical-lr;
+    white-space: nowrap;
+    align-self: center;
+    font-size: 3.2rem;
+    padding-right: 1rem;
+}
+
+dl.entries a > dd {
+    padding-left: 1rem;
+    border-left: 2px solid #EEE;
+    min-height: 100%; /* ensures line goes all the way down */
+}
+
+dl.entries span.pinyin {
     color: #999999;
 }
 
-.dictionary-entries span.pinyin:first-child {
+dl.entries span.pinyin:first-child {
     color: #DD8888;
 }
 
-.dictionary-entries ul {
-    font-size: 14pt;
-    vertical-align: top;
-    display: inline-block;
+dl.entries dl {
     list-style-type: none;
 	padding: 0;
-	margin: 0.3em 0 0 0;
+	margin: 0;
 }
 
-.dictionary-entries ul li {
-    padding: 0;
-    margin: 0 0 0.5em 0;
+dl.entries dl > dt {
+    font-size: 1.8rem;
 }
 
-.pinyin {
-	color: #DD8888;
-	font-family: Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", "KaiTi", "楷体", STKaiti, "华文楷体", serif;
+dl.entries dl > dd {
+    font-size: 1.8rem;
+    margin-top: 1rem;
 }
 
-.pinyin::before {
-	content: "[";
-}
-
-.pinyin::after {
-	content: "]";
-}
-
-.dictionary-entries li:hover *, .dictionary-entries li:hover .pinyin {
+/* entire block should become blue on hover */
+dl.entries a:hover, dl.entries a:hover *, dl.entries a:hover .pinyin {
 	color: #4477DD;
 	border-color: #4477DD;
 }
