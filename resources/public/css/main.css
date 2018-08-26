@@ -616,10 +616,6 @@ fieldset#actions > ol > li > input[type=radio]:checked + label {
 	content: "]";
 }
 
-.pinyin a, .dictionary-entries a {
-	color: inherit;
-}
-
 .dictionary-entries li:hover *, .dictionary-entries li:hover .pinyin {
 	color: #4477DD;
 	border-color: #4477DD;
