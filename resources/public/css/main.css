@@ -280,8 +280,6 @@ div#filters {
     text-align: center;
 }
 
-/* TODO: there is a slight cursor flicker on hover I can't seem to remove */
-/* the opacity of the labels is changed back instantly to avoid overflow */
 div#filters.hidden {
     transition: all 0.3s;
     height: 0;
