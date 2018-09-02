@@ -172,25 +172,31 @@
 
 (defn- result-entry-uses
   "Listed uses of a search result entry."
-  [script term uses]
+  [script search-term term uses]
   (for [[pronunciation definitions] uses]
-    (when (not (empty? definitions))
-      (let [handle-refs* (partial vc/handle-refs script identity)
-            definitions* (->> definitions
-                              (no-fake-variants script term)
-                              (map handle-refs*))]
+    (let [handle-refs*  (partial vc/handle-refs script identity)
+          relevant-defs (sort (if search-term
+                                (d/defs-containing-term search-term definitions)
+                                definitions))
+          other-defs    (->> definitions
+                             (remove (set relevant-defs))
+                             (sort)
+                             (no-fake-variants script term)
+                             (map handle-refs*)
+                             (map (fn [x] [:span.understated x])))]
+      (when (not (empty? relevant-defs))
         [:<> {:key pronunciation}
          [:dt.pinyin
           (p/digits->diacritics pronunciation)]
-         [:dd
-          (interpose "; " definitions*)]]))))
+         ;; TODO: resolve relevant and other during save step
+         (into [:dd] (interpose [:span.understated " / "]
+                       (concat relevant-defs other-defs)))]))))
 
 (defn- search-result-entry
   "Entry in a results-list."
-  [script
-   {term ::d/term
-    uses ::d/uses}]
-  (when-let [entry-uses (result-entry-uses script term uses)]
+  [script search-term {term ::d/term
+                       uses ::d/uses}]
+  (when-let [entry-uses (result-entry-uses script search-term term uses)]
     [:article {:key term}
      [:a {:href (str "/" (name ::d/terms) "/" term)}
       [:h1 {:lang (vc/zh script)}
@@ -204,12 +210,14 @@
   (let [script             @(rf/subscribe [::subs/script])
         content            @(rf/subscribe [::subs/content])
         result-filter      @(rf/subscribe [::subs/current-result-filter])
+        search-term        (when (= result-filter ::d/english)
+                             @(rf/subscribe [::subs/current-id]))
         in-current-script? #(contains? (::d/scripts %) script)]
     (when-let [entries (get content result-filter)]
       [:main.entries
        (->> entries
             (filter in-current-script?)
-            (map (partial search-result-entry script)))])))
+            (map (partial search-result-entry script search-term)))])))
 
 (defn unknown-term
   "Dictionary entry for a term that does not exist."

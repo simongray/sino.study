@@ -454,11 +454,12 @@
 
             diacritics
             (assoc ::pinyin+diacritics
-                   (filter-uses term diacritics p/digits->diacritics))
+                   (filter-uses term diacritics p/digits->diacritics)))))
 
-            english
-            (assoc ::english
-                   (filter-defs term english)))))
+;; TODO: disabled for now, re-enable when more intelligent (issue #37)
+;english
+;(assoc ::english
+;       (filter-defs term english)))))
 
 (defn sort-result
   "Sort the content of a dictionary look-up result.

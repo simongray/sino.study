@@ -86,6 +86,13 @@
     (first page)))
 
 (rf/reg-sub
+  ::current-id
+  (fn [_]
+    (rf/subscribe [::current-page]))
+  (fn [page]
+    (second page)))
+
+(rf/reg-sub
   ::current-attribute
   (fn [_]
     (rf/subscribe [::history]))
