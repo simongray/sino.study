@@ -41,38 +41,31 @@
         hint    @(rf/subscribe [::subs/hint])]
     [:div#header-input
      [:input#input-field
-      {:type          :text
-       :title         hint
-       :placeholder   (or (events/input-title page) "look up a term...")
-       :auto-complete "off"
-       :disabled      (not (nil? actions))
-       :value         input
-       :on-change     (fn [e]
-                        (when (nil? actions)
-                          (rf/dispatch [::events/on-input-change
-                                        (-> e .-target .-value)])))}]
+      {:type            "text"
+       :auto-capitalize "off"
+       :auto-correct    "off"
+       :auto-complete   "off"
+       :spell-check     false
+       :title           hint
+       :placeholder     (or (events/input-title page) "look up a term...")
+       :disabled        (not (nil? actions))
+       :value           input
+       :on-change       (fn [e]
+                          (when (nil? actions)
+                            (rf/dispatch [::events/on-input-change
+                                          (-> e .-target .-value)])))}]
+
+     ;; The button is not actually displayed!
+     ;; It's kept around to prevent "Enter" submitting the input to an unknown href.
+     ;; If the button isn't there, pressing enter to select an action in the
+     ;; action-chooser can misfire a submit event. The on-click event in the submit
+     ;; button captures these submit events and sends straight them to /dev/null.
      [:button
-      {:type     :submit
+      {:type     "submit"
        :on-click (fn [e]
                    (.preventDefault e)
                    (rf/dispatch [::events/submit input]))}
       "go"]]))
-
-;; The button is not actually displayed!
-;; It's kept around to prevent "Enter" submitting the input to an unknown href.
-;; If the button isn't there, pressing enter to select an action in the
-;; action-chooser can misfire a submit event. The on-click event in the submit
-;; button captures these submit events and sends straight them to /dev/null.
-(defn input-button []
-  "The hidden input button (part of the header form).
-  Secretly enables the input field to submit when pressing enter."
-  (let [input (rf/subscribe [::subs/input])]
-    [:button
-     {:type     :submit
-      :on-click (fn [e]
-                  (.preventDefault e)
-                  (rf/dispatch [::events/submit @input]))}
-     "go"]))
 
 (defn filters
   "Filter for what type of dictionary search result should be shown."
