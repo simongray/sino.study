@@ -74,7 +74,7 @@
            [:dt.pinyin pinyin*]
            [:dd
             [:ol
-             (for [definition (no-fake-variants script term definitions)]
+             (for [definition (no-fake-variants script term (sort definitions))]
                [:li {:key definition}
                 (let [link (comp vc/link-term vector)]
                   (vc/handle-refs script link definition))])]]]))]]))
