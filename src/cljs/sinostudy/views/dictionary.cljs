@@ -100,7 +100,7 @@
       [:tbody
        [:tr {:key   ::d/frequency
              :title "Word frequency"}
-        [:td "Frequency"]
+        [:td "Freq"]
         [:td (cond
                (= label :high) "frequent"
                (= label :medium) "average"
@@ -111,8 +111,8 @@
                              "In Traditional Chinese"
                              "In Simplified Chinese"))}
           (if (= entry-script ::d/traditional)
-            [:td "Traditional"]
-            [:td "Simplified"])
+            [:td "Trad"]
+            [:td "Simp"])
           [:td {:lang entry-zh}
            (interpose ", " (->> variations
                                 entry-script
@@ -124,7 +124,7 @@
        (when classifiers
          [:tr {:key   ::d/classifiers
                :title (str "Common classifiers")}
-          [:td "Classifiers"]
+          [:td "Cl"]
           [:td
            (interpose ", "
              (for [classifier (sort-by ::d/pinyin classifiers)]
@@ -135,7 +135,7 @@
        (when radical
          [:tr {:key   ::d/radical
                :title "Radical"}
-          [:td "Radical"]
+          [:td "Rad"]
           (if (= term radical)
             [:td "The character is a radical"]
             [:td {:lang zh} (vc/link-term (vector radical))])])
@@ -157,7 +157,7 @@
                               [:span {:lang zh} (vc/link-term phonetic)]])]
              [:tr {:key   ::d/etymology
                    :title "Etymology"}
-              [:td (str/capitalize type)]                   ;TODO: do this during compilation?
+              [:td "Hint"]
               [:td etym]])))]]]))
 
 (defn entry

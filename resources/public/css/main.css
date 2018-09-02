@@ -106,12 +106,8 @@ td, th {
 }
 
 tr {
-    border-left: 2rem solid #DD8888;
+    border-left: 2px solid #DD8888;
     border-right: 2px solid #DD8888;
-}
-
-tr + tr {
-    border-top: 1px dashed #FFDDDD;
 }
 
 tr:first-child {
@@ -545,7 +541,8 @@ section.details table tbody > tr > td:first-child {
     font-weight: 400;
     text-align: right;
     text-transform: uppercase;
-    color: #990000;
+    color: #662222;
+    background: #DD8888;
 }
 
 section.details table *:lang(zh) {
