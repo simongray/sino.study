@@ -31,30 +31,32 @@
 
 ;;;; VIEWS
 
-(defn logo
-  "The site logo (part of the header trifecta)."
-  []
-  [:img {:src "/img/logo_min.svg"}])
-
 ;; The smart input field.
 ;; All key presses are also handled from here.
-(defn input-field []
+(defn input []
   "The input field (part of the header form)."
   (let [input   @(rf/subscribe [::subs/input])
         actions @(rf/subscribe [::subs/actions])
         page    @(rf/subscribe [::subs/current-page])
         hint    @(rf/subscribe [::subs/hint])]
-    [:input#input-field
-     {:type          :text
-      :title         hint
-      :placeholder   (events/input-title page)
-      :auto-complete "off"
-      :disabled      (not (nil? actions))
-      :value         input
-      :on-change     (fn [e]
-                       (when (nil? actions)
-                         (rf/dispatch [::events/on-input-change
-                                       (-> e .-target .-value)])))}]))
+    [:div#header-input
+     [:input#input-field
+      {:type          :text
+       :title         hint
+       :placeholder   (events/input-title page)
+       :auto-complete "off"
+       :disabled      (not (nil? actions))
+       :value         input
+       :on-change     (fn [e]
+                        (when (nil? actions)
+                          (rf/dispatch [::events/on-input-change
+                                        (-> e .-target .-value)])))}]
+     [:button
+      {:type     :submit
+       :on-click (fn [e]
+                   (.preventDefault e)
+                   (rf/dispatch [::events/submit input]))}
+      "go"]]))
 
 ;; The button is not actually displayed!
 ;; It's kept around to prevent "Enter" submitting the input to an unknown href.
@@ -99,24 +101,16 @@
                      :title (str "View " result-type-str " results")}
              result-type-str]])))]))
 
-(defn form []
-  "The form (part of the header trifecta)."
-  [:form
-   {:auto-complete "off"}
-   [:div#header-input
-    [input-field]
-    [input-button]]
-   [filters]])
-
 (defn header
   "The header contains the logo and the main input form."
   []
   [:header
    [:div#aligner
-    [logo]
-    [form]]])
+    [:form {:auto-complete "off"}
+     [input]
+     [filters]]]])
 
-(defn article
+(defn main
   "The content pane of the site."
   []
   (reagent/create-class
@@ -127,11 +121,16 @@
      (fn []
        (let [category @(rf/subscribe [::subs/current-category])
              content  @(rf/subscribe [::subs/content])]
-         (when content
-           [:<>
-            (cond
-              (= ::pages/terms category) [vd/dictionary-page]
-              :else content)])))
+         (cond
+           content [:<>
+                    (cond
+                      (= ::pages/terms category) [vd/dictionary-page]
+                      :else content)]
+
+           (and (not= ::pages/static category)
+                (nil? content)) [:main]
+
+           :else [:main.splash])))
 
      ;; Ensures that scroll state is restored when pushing back/forward button.
      ;; Sadly, this behaviour is global for all updates, so links/buttons/etc.
@@ -206,16 +205,16 @@
 ;;; More info: https://github.com/roomkey/lein-v
 (defn version
   "Current version with link to project on Github."
-  []
-  [:address
+  [attr]
+  [:address attr
    [:a {:href "https://github.com/simongray/sino.study"}
     (str "v" v/version)]])
 
 (defn app []
   (let [not-home? (not= "/" @(rf/subscribe [::subs/current-nav]))]
-    [:main {:class (when not-home? "with-article")}
+    [:<>
      [action-chooser]
-     [header]
-     [article]
+     [header not-home?]
+     [main]
      [footer]
-     [version]]))
+     [version (when not-home? {:class "hidden"})]]))

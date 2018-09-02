@@ -15,7 +15,7 @@
    version="1.1"
    id="svg8"
    inkscape:version="0.92.2 5c3e80d, 2017-08-06"
-   sodipodi:docname="logo.svg">
+   sodipodi:docname="logo_dark.svg">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -56,7 +56,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -76,9 +76,9 @@
          x="42.362141"
          y="289.3678"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.70000076px;line-height:4.23333311px;font-family:Didot;-inkscape-font-specification:Didot;text-align:center;letter-spacing:2.77812505px;text-anchor:middle;stroke-width:0.26458332px"><tspan
-           style="font-size:12.70000076px;line-height:4.23333311px;text-align:center;letter-spacing:2.77812505px;text-anchor:middle;fill:#333333"
+           style="font-size:12.70000076px;line-height:4.23333311px;text-align:center;letter-spacing:2.77812505px;text-anchor:middle;fill:#d5d5d5;fill-opacity:1"
            id="tspan157">sino</tspan><tspan
-           style="font-size:12.70000076px;line-height:4.23333311px;text-align:center;letter-spacing:2.77812505px;text-anchor:middle;fill:#bbbbbb;fill-opacity:1"
+           style="font-size:12.70000076px;line-height:4.23333311px;text-align:center;letter-spacing:2.77812505px;text-anchor:middle;fill:#333333;fill-opacity:1"
            id="tspan4660">·</tspan><tspan
            style="font-size:12.70000076px;line-height:4.23333311px;text-align:center;letter-spacing:2.77812505px;text-anchor:middle;fill:#bb2222;fill-opacity:1"
            id="tspan161">study</tspan></tspan></text>

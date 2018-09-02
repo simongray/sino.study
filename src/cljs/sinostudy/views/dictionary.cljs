@@ -163,11 +163,12 @@
 (defn entry
   "Dictionary entry for a specific term."
   []
-  [:article.entry
-   [entry-title]
-   [:div.content
-    [usage-list]
-    [details-table]]])
+  [:main
+   [:article.entry.full
+    [entry-title]
+    [:div.content
+     [usage-list]
+     [details-table]]]])
 
 (defn- result-entry-uses
   "Listed uses of a search result entry."
@@ -190,11 +191,10 @@
    {term ::d/term
     uses ::d/uses}]
   (when-let [entry-uses (result-entry-uses script term uses)]
-    [:a {:key  term
-         :href (str "/" (name ::d/terms) "/" term)}
-     [:dt {:lang (vc/zh script)}
-      term]
-     [:dd
+    [:article {:key term}
+     [:a {:href (str "/" (name ::d/terms) "/" term)}
+      [:h1 {:lang (vc/zh script)}
+       term]
       [:dl
        entry-uses]]]))
 
@@ -205,18 +205,19 @@
         content            @(rf/subscribe [::subs/content])
         result-filter      @(rf/subscribe [::subs/current-result-filter])
         in-current-script? #(contains? (::d/scripts %) script)]
-    [:article
-     (when-let [entries (get content result-filter)]
-       (into [:dl.entries]
-             (->> entries
-                  (filter in-current-script?)
-                  (map (partial search-result-entry script)))))]))
+    (when-let [entries (get content result-filter)]
+      [:main.entries
+       (->> entries
+            (filter in-current-script?)
+            (map (partial search-result-entry script)))])))
 
 (defn unknown-term
   "Dictionary entry for a term that does not exist."
   []
-  [:article
-   [:p "There are no dictionary entries available for this term."]])
+  [:main
+   [:article.full
+    [:h1 "Sorry,"]
+    [:p "but here are no dictionary entries available matching that term."]]])
 
 (defn dictionary-page
   "A dictionary page can be 1 of 3 types: entry, search result, or unknown."

@@ -32,7 +32,7 @@ html {
     font-size: 62.5%; /* = 10px (down from 16px) */
 }
 
-html, body, #app {
+html, body {
     height: 100%;
 }
 
@@ -79,7 +79,7 @@ ol, ul {
 }
 
 section + section {
-    margin-top: 4rem;
+    margin-top: 1.5rem;
 }
 
 dt {
@@ -156,38 +156,37 @@ tr:last-child {
 
 /* === MAIN & HEADER === */
 
-/*  would have styled BODY or HTML instead if React could access them */
-main {
+
+div#app {
     height: 100%; /* also set for all parent elements */
 
-    /* align items vertically */
     display: flex;
     flex-direction: column;
-    align-items: center; /* center horisontally */
-    justify-content: space-between; /* add space between header and footer */
+    align-items: center;
+    justify-content: space-between;
 
-    background: #FCFCFB;
-
-    transition: all 0.5s;
+    background: #555;
 }
 
-/* The header (logo, input bar) transitions from center to top.  */
+/*  would have styled BODY or HTML instead if React could access them */
+main {
+    /* take up all middle space and allow for scrolling */
+    height: 100%;
+    width: calc(100% - 1rem);
+    max-width: 65rem;
+    overflow: auto;
+    padding: 0.8rem 0.5rem 1rem 0.5rem;
+}
+
+main.splash {
+    background: url("/img/logo_dark_min.svg") no-repeat center center;
+    background-size: contain;
+    width: 96%
+}
+
 header {
 	width: 100%;
-
-    /* align approximately in the center */
-	margin-top: calc(33.3vh - 3rem);
-
-	/* Faster going down than up! */
-	transition: all 0.3s;
-}
-
-main.with-article > header {
-	/* Slower going up than down. */
-	transition: all 0.5s;
-
-    /* Go to the top of the page (resets  margin set in header) */
-	margin-top: 0;
+	background: #555;
 }
 
 /* 	TODO: do I need this?
@@ -196,9 +195,9 @@ main.with-article > header {
 	so this extra class is necessary to get a max-width.
 */
 header div#aligner {
-	max-width: 65rem; /* sync with article */
+	max-width: 65rem; /* sync with main */
 	margin: auto;
-	padding: 0.8rem;
+	padding: 0.5rem;
 	text-align: center;
 	vertical-align: middle;
 
@@ -206,25 +205,6 @@ header div#aligner {
 	line-height: 0;
 }
 
-/*  The main logo of the site fades in like most elements and gets smaller
-    when the site displays some page content. */
-header img {
-	animation: fade-in 0.5s ease;
-	transition: all 0.3s;
-    max-height: 11rem;
-    margin-bottom: 3rem;
-	width: 90%; /* otherwise image could overflow on small page widths */
-
-    /* TODO: find fixes for non-Chrome browsers */
-    user-drag: none;
-    user-select: none;
-}
-
-main.with-article > header img {
-	max-height: 0;
-	margin: 0;
-	vertical-align: middle;
-}
 
 /* Also known as the #study-form */
 div#header-input {
@@ -243,9 +223,9 @@ div#header-input > input {
 	max-width: 100%;
 	box-sizing: border-box;
 
-	padding: 0.2rem 0.5rem;
+	padding: 0.3rem 0.5rem;
 	border: 1px solid #999999;
-	border-radius: 0.5rem;
+	border-radius: 0.3rem;
 	background-color: white;
 
 	/* Take up full width */
@@ -271,16 +251,16 @@ div#header-input > button {
 /* === VERSION NUMBER === */
 address {
 	animation: fade-in 3s ease;
-	color: #DDD;
+	color: #333;
 	font-size: 1.4rem;
 	position: absolute;
 	padding: 1rem;
 	right: 0;
-	top: 0;
+	bottom: 7rem;
 	transition: all 0.5s;
 }
 
-main.with-article address {
+address.hidden {
     opacity: 0;
 }
 
@@ -289,17 +269,16 @@ main.with-article address {
 
 /* === FILTERS === */
 div#filters {
-    transition: all 0.3s;
+    transition: all 0.2s;
     margin: 2rem 0 0.5rem 0; /* TODO: weird values here */
     font-size: 1.6rem;
-    color: #DDDDDD; /* for the separating dots */
+    color: #999; /* for the separating dots */
     letter-spacing: 0.2rem;
     word-spacing: 0.3rem;
     text-align: center;
 }
 
 div#filters.hidden {
-    transition: all 0.3s;
     height: 0;
     margin: 0;
     opacity: 0;
@@ -316,7 +295,7 @@ div#filters input[type=radio] {
 
 div#filters input[type=radio] + label {
     cursor: pointer;
-    color: #CCCCCC;
+    color: #888;
     animation: fade-in 0.5s ease;
 }
 
@@ -325,7 +304,7 @@ div#filters input[type=radio] + label:hover {
 }
 
 div#filters input[type=radio]:checked + label {
-    color: black;
+    color: #eee;
 }
 
 div#filters input[type=radio]:checked + label:hover {
@@ -338,26 +317,28 @@ div#filters input[type=radio]:checked + label:hover {
 
 /* === ARTICLE === */
 
-/* controls where the content appears */
 article {
+    animation: fade-in 0.2s ease;
+    transition: all 0.2s; /* should be synchronised with filters transition */
+
     background: white;
     border: 1px solid #DDD;
-    border-bottom: none;
-	animation: fade-in 0.5s ease;
-	transition: all 0.3s; /* should be synchronised with filters transition */
+    border-radius: 0.3rem;
+    padding: 1.5rem;
 
+    box-sizing: border-box; /* allow 100% width + padding with not overflow */
+    width: 100%;
+}
+
+/* controls where the content appears */
+article.full {
 	/* take up all middle space and allow for scrolling */
     flex-grow: 1;
     overflow: auto;
 
 	/* box */
-    box-sizing: border-box; /* allow 100% width + padding with not overflow */
-	width: 100%;
 	height: 100%;
-	padding: 1.5rem;
-	max-width: 65rem; /* sync with header aligner */
 }
-
 
 
 /* === FOOTER === */
@@ -438,8 +419,7 @@ fieldset#actions {
                 0 1rem 2rem 0 rgba(0, 0, 0, 0.19),
                 inset 0 0 1rem 0 rgba(0, 0, 0, 0.3);
 
-    /* center vertically
-      adapted from .main */
+    /* center vertically */
     z-index: 2;
     position: fixed;
     top: 50%; /* using 50% looks off somehow...*/
@@ -540,8 +520,15 @@ article.entry div.content {
     border-left: 2px solid #EEE;
     padding: 0 0 2rem 1.5rem;
 
+    display: flex;
+    flex-direction: column;
+
     /* TODO: should I find a way to make entire page scrollable */
     overflow: auto;
+}
+
+section#usages {
+    margin-bottom: auto;
 }
 
 section.details table {
@@ -568,61 +555,44 @@ section.details table td:last-child {
 
 /* === DICTIONARY SEARCH RESULT === */
 
-dl.entries {
-    overflow: hidden;
-    margin-top: 0;
-}
-
-dl.entries a {
+.entries article a {
     display: flex;
-    padding: 1rem;
-    border: 1px solid #EEE;
-    border-radius: 0.5rem;
+    flex-direction: row;
+    align-items: stretch;
+    height: 100%;
 }
 
-dl.entries a + a {
-    margin-top: 1.5rem;
+.entries article + article {
+    margin-top: 1rem;
 }
 
-dl.entries a > dt {
+.entries h1 {
     writing-mode: vertical-lr;
     white-space: nowrap;
     align-self: center;
     font-size: 3.2rem;
+    margin: 0;
     padding-right: 1rem;
 }
 
-dl.entries a > dd {
+.entries h1 + dl {
     padding-left: 1rem;
     border-left: 2px solid #EEE;
-    min-height: 100%; /* ensures line goes all the way down */
+    list-style-type: none;
+    padding: 0 0 0 1rem;
+    margin: 0;
 }
 
-dl.entries span.pinyin {
+/* TODO: check this */
+.entries span.pinyin {
     color: #999999;
 }
 
-dl.entries span.pinyin:first-child {
-    color: #DD8888;
-}
-
-dl.entries dl {
-    list-style-type: none;
-	padding: 0;
-	margin: 0;
-}
-
-dl.entries dl > dt {
+.entries dl > dt {
     font-size: 1.8rem;
 }
 
-dl.entries dl > dd {
+.entries dl > dd {
     font-size: 1.8rem;
     margin-top: 1rem;
-}
-
-/* entire block should become blue on hover */
-dl.entries a:hover, dl.entries a:hover *, dl.entries a:hover .pinyin {
-	color: #4477DD;
-	border-color: #4477DD;
 }
