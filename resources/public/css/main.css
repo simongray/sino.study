@@ -25,6 +25,8 @@
 
 ::placeholder {
     color: #DDD;
+    transform: scale(0.75);
+    transform-origin: 0% 50%;
 }
 
 /* https://www.sitepoint.com/understanding-and-using-rem-units-in-css/ */
