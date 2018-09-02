@@ -422,9 +422,7 @@
 (defn input-title
   "What the input field should display as a 'title' based on a given page."
   [[category id]]
-  (cond
-    (= ::pages/terms category) id
-    :else ""))
+  (when (= ::pages/terms category) id))
 
 ;; Dispatched by clicking links only!
 ;; It's never dispatched directly, as we want to leave a browser history trail.
