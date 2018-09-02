@@ -175,7 +175,7 @@ main {
     width: calc(100% - 1rem);
     max-width: 65rem;
     overflow: auto;
-    padding: 0.5rem 0.5rem 1rem 0.5rem;
+    padding: 0.4rem 0.5rem 1rem 0.5rem;
 }
 
 main.splash {
