@@ -43,7 +43,7 @@
      [:input#input-field
       {:type          :text
        :title         hint
-       :placeholder   (or (events/input-title page) "look something up...")
+       :placeholder   (or (events/input-title page) "look up a term...")
        :auto-complete "off"
        :disabled      (not (nil? actions))
        :value         input
