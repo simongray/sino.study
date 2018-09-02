@@ -177,13 +177,13 @@ main {
     width: calc(100% - 1rem);
     max-width: 65rem;
     overflow: auto;
-    padding: 0.4rem 0.5rem 1rem 0.5rem;
+    padding: 0 0.5rem 0.5rem 0.5rem;
 }
 
 main.splash {
     background: url("/img/logo_dark_min.svg") no-repeat center center;
     background-size: contain;
-    width: 96%
+    width: 95%
 }
 
 header {
@@ -225,7 +225,7 @@ div#header-input > input {
 	max-width: 100%;
 	box-sizing: border-box;
 
-	padding: 0.3rem 0.5rem;
+	padding: 0.5rem;
 	border: 1px solid #999999;
 	border-radius: 0.3rem;
 	background-color: white;
@@ -272,7 +272,7 @@ address.hidden {
 /* === FILTERS === */
 div#filters {
     transition: all 0.2s;
-    margin: 2rem 0 0.5rem 0; /* TODO: weird values here */
+    margin: 1.8rem 0 0.7rem 0; /* TODO: weird values here */
     font-size: 1.6rem;
     color: #999; /* for the separating dots */
     letter-spacing: 0.2rem;
@@ -283,7 +283,7 @@ div#filters {
 div#filters.hidden {
     height: 0;
     margin: 0;
-    opacity: 0;
+    opacity: 0;''
 }
 
 div#filters input[type=radio] {
@@ -565,7 +565,7 @@ section.details table td:last-child {
 }
 
 .entries article + article {
-    margin-top: 1rem;
+    margin-top: 0.5rem;
 }
 
 .entries h1 {
