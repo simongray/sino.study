@@ -175,22 +175,25 @@
   [script search-term term uses]
   (for [[pronunciation definitions] uses]
     (let [handle-refs*  (partial vc/handle-refs script identity)
-          relevant-defs (sort (if search-term
-                                (d/defs-containing-term search-term definitions)
-                                definitions))
-          other-defs    (->> definitions
-                             (remove (set relevant-defs))
-                             (sort)
-                             (no-fake-variants script term)
-                             (map handle-refs*)
-                             (map (fn [x] [:span.understated x])))]
+          all-defs      (no-fake-variants script term definitions)
+          relevant-defs (->> (if search-term
+                               (d/defs-containing-term search-term all-defs)
+                               all-defs))
+          other-defs    (->> all-defs
+                             (remove (set relevant-defs)))]
       (when (not (empty? relevant-defs))
         [:<> {:key pronunciation}
          [:dt.pinyin
           (p/digits->diacritics pronunciation)]
-         ;; TODO: resolve relevant and other during save step
+         ;; TODO: resolve relevant and other during save step instead
          (into [:dd] (interpose [:span.understated " / "]
-                       (concat relevant-defs other-defs)))]))))
+                       (concat (->> relevant-defs
+                                    (sort)
+                                    (map handle-refs*))
+                               (->> other-defs
+                                    (sort)
+                                    (map handle-refs*)
+                                    (map (fn [x] [:span.understated x]))))))]))))
 
 (defn- search-result-entry
   "Entry in a results-list."
