@@ -89,9 +89,11 @@
                                   :key s}
                            (f s)]
 
-      ;;; TODO: do this properly when I find an example
-      (re-matches embed/pinyin s) [:span.pinyin {:key s}
-                                   (f s)]
+      (re-matches embed/pinyin s) (let [pinyin (-> s
+                                                   (subs 1 (dec (count s)))
+                                                   (str/split #" "))]
+                                    [:span.pinyin {:key s}
+                                     (map f pinyin)])
 
       ;; TODO: don't link numbers? i.e. 118 in "Kangxi radical 118"
       :else (f s))))
