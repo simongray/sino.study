@@ -35,37 +35,45 @@
 ;; All key presses are also handled from here.
 (defn input []
   "The input field (part of the header form)."
-  (let [input   @(rf/subscribe [::subs/input])
-        actions @(rf/subscribe [::subs/actions])
-        page    @(rf/subscribe [::subs/current-page])
-        hint    @(rf/subscribe [::subs/hint])]
-    [:div#header-input
-     [:input#input-field
-      {:type            "text"
-       :auto-capitalize "off"
-       :auto-correct    "off"
-       :auto-complete   "off"
-       :spell-check     false
-       :title           hint
-       :placeholder     (or (events/input-title page) "look up a term...")
-       :disabled        (not (nil? actions))
-       :value           input
-       :on-change       (fn [e]
-                          (when (nil? actions)
-                            (rf/dispatch [::events/on-input-change
-                                          (-> e .-target .-value)])))}]
+  (let [state (reagent/atom {})]
+    (fn []
+      (let [input     @(rf/subscribe [::subs/input])
+            actions   @(rf/subscribe [::subs/actions])
+            page      @(rf/subscribe [::subs/current-page])
+            hint      @(rf/subscribe [::subs/hint])
+            disabled? (not (nil? actions))
+            focus?    (= js/document.activeElement
+                         (:input @state))]
+        [:div#header-input
+         [:input#input-field
+          {:ref             #(swap! state assoc :input %)
+           :type            "text"
+           :auto-capitalize "off"
+           :auto-correct    "off"
+           :auto-complete   "off"
+           :spell-check     false
+           :title           hint
+           :disabled        disabled?
+           :value           (if (or focus? disabled?)
+                              input
+                              (or (events/input-title page)
+                                  "Look something up..."))
+           :on-change       (fn [e]
+                              (when (nil? actions)
+                                (rf/dispatch [::events/on-input-change
+                                              (-> e .-target .-value)])))}]
 
-     ;; The button is not actually displayed!
-     ;; It's kept around to prevent "Enter" submitting the input to an unknown href.
-     ;; If the button isn't there, pressing enter to select an action in the
-     ;; action-chooser can misfire a submit event. The on-click event in the submit
-     ;; button captures these submit events and sends straight them to /dev/null.
-     [:button
-      {:type     "submit"
-       :on-click (fn [e]
-                   (.preventDefault e)
-                   (rf/dispatch [::events/submit input]))}
-      "go"]]))
+         ;; The button is not actually displayed!
+         ;; It's kept around to prevent "Enter" submitting the input to an unknown href.
+         ;; If the button isn't there, pressing enter to select an action in the
+         ;; action-chooser can misfire a submit event. The on-click event in the submit
+         ;; button captures these submit events and sends straight them to /dev/null.
+         [:button
+          {:type     "submit"
+           :on-click (fn [e]
+                       (.preventDefault e)
+                       (rf/dispatch [::events/submit input]))}
+          "go"]]))))
 
 (defn filters
   "Filter for what type of dictionary search result should be shown."

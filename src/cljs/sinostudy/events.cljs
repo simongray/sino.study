@@ -409,12 +409,12 @@
 (rf/reg-event-fx
   ::load-content
   (fn [cofx [_ page]]
-    (let [db        (:db cofx)
-          pages     (:pages db)
-          page-type (first page)]
+    (let [db       (:db cofx)
+          pages    (:pages db)
+          category (first page)]
       (cond
-        (= ::pages/static page-type) {}
-        (= ::pages/terms page-type) (let [dict-page (subvec page 0 2)]
+        (= ::pages/static category) {}
+        (= ::pages/terms category) (let [dict-page (subvec page 0 2)]
                                       (if (not (get-in pages dict-page))
                                         {:dispatch [::send-query dict-page]}
                                         {}))))))
@@ -422,7 +422,10 @@
 (defn input-title
   "What the input field should display as a 'title' based on a given page."
   [[category id]]
-  (when (= ::pages/terms category) id))
+  (cond
+    (= ::pages/terms category) (if (pe/hanzi-block? id)
+                                 (str "Dictionary")
+                                 (str "Search: " id))))
 
 ;; Dispatched by clicking links only!
 ;; It's never dispatched directly, as we want to leave a browser history trail.
