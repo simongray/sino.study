@@ -56,8 +56,7 @@
            :disabled        disabled?
            :value           (if (or focus? disabled?)
                               input
-                              (or (events/input-title page)
-                                  "Look something up..."))
+                              (events/input-title page))
            :on-change       (fn [e]
                               (when (nil? actions)
                                 (rf/dispatch [::events/on-input-change
