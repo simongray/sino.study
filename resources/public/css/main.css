@@ -602,8 +602,7 @@ section.details table td:last-child {
 }
 
 .entries article:hover {
-    border-color: #4477DD;
-    border-width: 0.5rem;
+    background: #EEFFFF;
 }
 
 .entries h1 + dl {
