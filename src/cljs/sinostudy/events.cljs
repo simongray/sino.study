@@ -31,15 +31,6 @@
       (d/reduce-result)
       (d/sort-result)))
 
-(defn hint
-  "Get a hint based on the current evaluation.
-  Note that hints match the name of the action!"
-  [query actions]
-  (case (count actions)
-    0 (if (empty? query) nil ::no-actions)
-    1 (first (first actions))
-    ::open-action-chooser))
-
 (defn save-dict-entries
   "Save the individual entries of a dictionary search result into the db.
   Note: this is a separate step from saving the search result itself!"
@@ -184,20 +175,6 @@
     (let [scroll-state (get-in cofx [:db :scroll-states page] [0 0])]
       {:scroll-to scroll-state})))
 
-;; Display hints as the mousover title of the input field.
-(rf/reg-event-fx
-  ::display-hint
-  [(rf/inject-cofx ::now)]
-  (fn [cofx [_ hint-type]]
-    (let [db     (:db cofx)
-          hints  (:hints db)
-          now    (:now cofx)
-          hints* (conj hints {:id        (count hints)
-                              :type      hint-type
-                              :timestamp now})]
-      {:db (assoc db :hints hints*)})))
-
-
 ;; dispatched by both ::evaluate-input and ::on-study-button-press
 (rf/reg-event-fx
   ::save-evaluation
@@ -225,11 +202,9 @@
           query             (str/trim input)
           new-query?        (not= query (:query latest-evaluation))]
       (when (and latest-input? new-query?)
-        (let [actions  (eval-query query)
-              new-hint (hint query actions)]
-          {:dispatch-n (list [::save-evaluation query actions]
-                             [::display-hint new-hint])})))))
+        {:dispatch [::save-evaluation query (eval-query query)]}))))
 
+;; TODO: what to do about this now that hints are gone?
 ;; dispatched every time the input field changes
 ;; for performance reasons, non-blank queries are evaluated with a short lag
 ;; while blank queries are dispatched immediately for evaluation
@@ -242,8 +217,7 @@
     (let [db (:db cofx)
           fx {:db (assoc db :input input)}]
       (if (str/blank? input)
-        (assoc fx :dispatch-n [[::display-hint nil]
-                               [::evaluate-input input]])
+        (assoc fx :dispatch [::evaluate-input input])
         (assoc fx :dispatch-later [{:dispatch [::evaluate-input input]
                                     :ms       1000}])))))
 
@@ -286,11 +260,10 @@
     (let [db      (:db cofx)
           queries (:queries db)
           now     (:now cofx)]
-      {:db       (assoc db :queries (conj queries {:id        (count queries)
-                                                   :state     :failure
-                                                   :content   result
-                                                   :timestamp now}))
-       :dispatch [::display-hint ::query-failure]})))
+      {:db (assoc db :queries (conj queries {:id        (count queries)
+                                             :state     :failure
+                                             :content   result
+                                             :timestamp now}))})))
 
 ;; dispatched by ::load-content
 (rf/reg-event-fx
@@ -401,7 +374,6 @@
       {:dispatch-n
        [(when new-query? [::save-evaluation query actions])
         (case (count actions)
-          0 [::display-hint ::no-actions]
           1 (first actions)
           [::open-action-chooser])]})))
 
@@ -462,23 +434,20 @@
   (fn [_ [_ term]]
     {:navigate-to (str "/" (name ::pages/terms) "/" term)
      :blur        (.-activeElement js/document)
-     :dispatch-n  [[::display-hint nil]
-                   [::reset-scroll-state [::pages/terms term]]]}))
+     :dispatch    [::reset-scroll-state [::pages/terms term]]}))
 
 (rf/reg-event-fx
   ::digits->diacritics
   (fn [cofx [_ input]]
     (let [db        (:db cofx)
           new-input (p/digits->diacritics input)]
-      {:db         (assoc db :input new-input)
-       :dispatch-n [[::display-hint nil]
-                    [::regain-input-focus]]})))
+      {:db       (assoc db :input new-input)
+       :dispatch [::regain-input-focus]})))
 
 (rf/reg-event-fx
   ::diacritics->digits
   (fn [cofx [_ input]]
     (let [db        (:db cofx)
           new-input (p/diacritics->digits input)]
-      {:db         (assoc db :input new-input)
-       :dispatch-n [[::display-hint nil]
-                    [::regain-input-focus]]})))
+      {:db       (assoc db :input new-input)
+       :dispatch [::regain-input-focus]})))

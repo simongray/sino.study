@@ -17,5 +17,4 @@
    :history        '()
    :scroll-states  {}
    :evaluations    '()
-   :hints          '()
    :queries        '()})
