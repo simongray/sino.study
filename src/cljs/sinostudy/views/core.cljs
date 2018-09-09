@@ -7,7 +7,8 @@
             [sinostudy.events :as events]
             [sinostudy.views.dictionary :as vd]
             [sinostudy.pages.core :as pages]
-            [sinostudy.dictionary.core :as d]))
+            [sinostudy.dictionary.core :as d]
+            [sinostudy.pinyin.eval :as pe]))
 
 ;;;; HELPER FUNCTIONS
 
@@ -31,48 +32,41 @@
 
 ;;;; VIEWS
 
-;; The smart input field.
-;; All key presses are also handled from here.
-(defn input []
+(defn smart-input []
   "The input field (part of the header form)."
-  (let [state (reagent/atom {})]
-    (fn []
-      (let [input     @(rf/subscribe [::subs/input])
-            actions   @(rf/subscribe [::subs/actions])
-            page      @(rf/subscribe [::subs/current-page])
-            hint      @(rf/subscribe [::subs/hint])
-            disabled? (not (nil? actions))
-            focus?    (= js/document.activeElement
-                         (:input @state))]
-        [:div#header-input
-         [:input#input-field
-          {:ref             #(swap! state assoc :input %)
-           :type            "text"
-           :auto-capitalize "off"
-           :auto-correct    "off"
-           :auto-complete   "off"
-           :spell-check     false
-           :title           hint
-           :disabled        disabled?
-           :value           (if (or focus? disabled?)
-                              input
-                              (events/input-title page))
-           :on-change       (fn [e]
-                              (when (nil? actions)
-                                (rf/dispatch [::events/on-input-change
-                                              (-> e .-target .-value)])))}]
+  (let [input     @(rf/subscribe [::subs/input])
+        actions   @(rf/subscribe [::subs/actions])
+        hint      @(rf/subscribe [::subs/hint])
+        home?     (= "/" @(rf/subscribe [::subs/current-nav]))
+        disabled? (not (nil? actions))]
+    [:div#header-input
+     [:input#input-field
+      {:type            "text"
+       :class           (when home? "no-content")
+       :placeholder     (when home? "look something up...")
+       :auto-capitalize "off"
+       :auto-correct    "off"
+       :auto-complete   "off"
+       :spell-check     false
+       :title           hint
+       :disabled        disabled?
+       :value           input
+       :on-change       (fn [e]
+                          (when (nil? actions)
+                            (rf/dispatch [::events/on-input-change
+                                          (-> e .-target .-value)])))}]
 
-         ;; The button is not actually displayed!
-         ;; It's kept around to prevent "Enter" submitting the input to an unknown href.
-         ;; If the button isn't there, pressing enter to select an action in the
-         ;; action-chooser can misfire a submit event. The on-click event in the submit
-         ;; button captures these submit events and sends straight them to /dev/null.
-         [:button
-          {:type     "submit"
-           :on-click (fn [e]
-                       (.preventDefault e)
-                       (rf/dispatch [::events/submit input]))}
-          "go"]]))))
+     ;; The button is not actually displayed!
+     ;; It's kept around to prevent "Enter" submitting the input to an unknown href.
+     ;; If the button isn't there, pressing enter to select an action in the
+     ;; action-chooser can misfire a submit event. The on-click event in the submit
+     ;; button captures these submit events and sends straight them to /dev/null.
+     [:button
+      {:type     "submit"
+       :on-click (fn [e]
+                   (.preventDefault e)
+                   (rf/dispatch [::events/submit input]))}
+      "go"]]))
 
 (defn filters
   "Filter for what type of dictionary search result should be shown."
@@ -101,14 +95,29 @@
                      :title (str "View " result-type-str " results")}
              result-type-str]])))]))
 
+(defn- input-title
+  "What the input field should display as a 'title' based on a given page."
+  [[category id]]
+  (cond
+    (= ::pages/terms category) (when (not (pe/hanzi-block? id))
+                                 [:<>
+                                  [:span.understated "« "]
+                                  id
+                                  [:span.understated " »"]])))
+
 (defn header
   "The header contains the logo and the main input form."
   []
-  [:header
-   [:div#aligner
-    [:form {:auto-complete "off"}
-     [input]
-     [filters]]]])
+  (let [page          @(rf/subscribe [::subs/current-page])
+        input-content @(rf/subscribe [::subs/input])]
+    [:header
+     [:div#aligner
+      [:form {:auto-complete "off"}
+       [smart-input]
+       (when-let [title (and (not= input-content (second page))
+                             (input-title page))]
+         [:p#title title])
+       [filters]]]]))
 
 (defn main
   "The content pane of the site."

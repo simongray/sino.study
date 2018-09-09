@@ -415,17 +415,9 @@
       (cond
         (= ::pages/static category) {}
         (= ::pages/terms category) (let [dict-page (subvec page 0 2)]
-                                      (if (not (get-in pages dict-page))
-                                        {:dispatch [::send-query dict-page]}
-                                        {}))))))
-
-(defn input-title
-  "What the input field should display as a 'title' based on a given page."
-  [[category id]]
-  (cond
-    (= ::pages/terms category) (if (pe/hanzi-block? id)
-                                 (str "Dictionary")
-                                 (str "Search: " id))))
+                                     (if (not (get-in pages dict-page))
+                                       {:dispatch [::send-query dict-page]}
+                                       {}))))))
 
 ;; Dispatched by clicking links only!
 ;; It's never dispatched directly, as we want to leave a browser history trail.
