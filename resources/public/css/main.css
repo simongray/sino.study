@@ -208,7 +208,7 @@ div#header-input > input {
 	animation: fade-in 1s ease;
     transition: all 0.3s;
 
-	font-size: 1.8rem;
+	font-size: 1.6rem;
 	color: #AAA;
 
 	/* fixes overflow in Chrome iPhone 5/SE device inspector */
@@ -229,7 +229,7 @@ div#header-input > input {
 
 div#header-input > input.no-content,
 div#header-input > input:focus {
-    font-size: 2.6rem;
+    font-size: 2.4rem;
 }
 
 div#header-input > input:focus {
