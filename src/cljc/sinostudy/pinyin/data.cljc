@@ -55,7 +55,7 @@
    4 #"(à|ò|è|ù|ì|ǜ|m̀|À|Ò|È|Ù|Ì|Ǜ|M̀)"})
 
 ;; adapted from http://pinyin.info/rules/initials_finals.html
-;; some non-standard syllables have been added: fiao, lo, r, yo
+;; some non-standard syllables have been added: fiao, lo, m, r, sei, yo
 (def syllables
   #{"a" "ai" "an" "ang" "ao"
 
@@ -108,10 +108,10 @@
     "r" "ran" "rang" "rao" "re" "ren" "reng" "ri" "rong" "rou" "ru" "rua" "ruan"
     "rui" "run" "ruo"
 
-    "sa" "sai" "san" "sang" "sao" "se" "sen" "seng" "sha" "shai" "shan" "shang"
-    "shao" "she" "shei" "shen" "sheng" "shi" "shou" "shu" "shua" "shuai" "shuan"
-    "shuang" "shui" "shun" "shuo" "si" "song" "sou" "su" "suan" "sui" "sun"
-    "suo"
+    "sa" "sai" "san" "sang" "sao" "se" "sei" "sen" "seng" "sha" "shai" "shan"
+    "shang" "shao" "she" "shei" "shen" "sheng" "shi" "shou" "shu" "shua" "shuai"
+    "shuan" "shuang" "shui" "shun" "shuo" "si" "song" "sou" "su" "suan" "sui"
+    "sun" "suo"
 
     "ta" "tai" "tan" "tang" "tao" "te" "tei" "teng" "ti" "tian" "tiao" "tie"
     "ting" "tong" "tou" "tu" "tuan" "tui" "tun" "tuo"

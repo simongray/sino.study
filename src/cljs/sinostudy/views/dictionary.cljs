@@ -7,8 +7,6 @@
             [sinostudy.subs :as subs]
             [sinostudy.pages.core :as pages]))
 
-;; TODO: refactor this whole namespace, too many args to functions
-
 (defn entry-title
   "The title of the term with links to characters -OR- decomposition
   into components if the term is a character."

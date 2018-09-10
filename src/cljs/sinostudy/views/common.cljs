@@ -86,14 +86,14 @@
                                     (f hanzi)])
 
       (pe/hanzi-block? s) [:span {:lang zh
-                                  :key s}
+                                  :key  s}
                            (f s)]
 
       (re-matches embed/pinyin s) (let [pinyin (-> s
                                                    (subs 1 (dec (count s)))
                                                    (str/split #" "))]
                                     [:span.pinyin {:key s}
-                                     (map f pinyin)])
+                                     (interpose " " (map f pinyin))])
 
       ;; TODO: don't link numbers? i.e. 118 in "Kangxi radical 118"
       :else (f s))))
@@ -102,8 +102,9 @@
   "Add hyperlink and style any references to dictionary entries in s.
   Script is the preferred script, i.e. traditional or simplified."
   [script f s]
-  ;; The part before the | matches the full embedded refs while the latter
-  ;; part matches all non-space/non-punctuation items, e.g. words, hanzi.
-  (let [non-ref     #"[^\s]+\[[^\]]+\]|[^,.;'\"`´+?&()#%\s]+"
+  ;; The part before the first | matches the full embedded refs;
+  ;; The part before the second | part matches embedded pinyin;
+  ;; The latter part matches all remaining words in English or Chinese.
+  (let [non-ref     #"[^\s]+\[[^\]]+\]|\[[^\]]+\]|[^,.;'\"`´+?&()#%\s]+"
         handle-ref* (partial handle-ref script f)]
     (rim/re-handle s non-ref handle-ref*)))

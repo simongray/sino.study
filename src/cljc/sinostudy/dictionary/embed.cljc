@@ -16,5 +16,5 @@
     (re-pattern (str hanzi+ "\\|?" hanzi+))))
 
 (def pinyin
+  "A pattern used in CC-CEDICT to embed a Pinyin pronunciation."
   #"\[[a-zA-Z0-9 ]+\]+")
-
