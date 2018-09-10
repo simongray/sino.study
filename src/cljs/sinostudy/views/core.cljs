@@ -42,7 +42,7 @@
       [:input#input-field
        {:type            "text"
         :class           (when home? "no-content")
-        :placeholder     (when home? "look something up...")
+        :placeholder     (when home? "look up...")
         :auto-capitalize "off"
         :auto-correct    "off"
         :auto-complete   "off"
