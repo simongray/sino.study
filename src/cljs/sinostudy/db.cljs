@@ -7,7 +7,7 @@
    "/about" [:main [:article.full [:h1 "About"] [:p "This is the About page."]]]})
 
 (def default-db
-  {:input          ""
+  {:input          nil
    :actions        nil
    :checked-action 0
    :script         ::d/simplified

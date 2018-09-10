@@ -7,8 +7,7 @@
             [sinostudy.events :as events]
             [sinostudy.views.dictionary :as vd]
             [sinostudy.pages.core :as pages]
-            [sinostudy.dictionary.core :as d]
-            [sinostudy.pinyin.eval :as pe]))
+            [sinostudy.dictionary.core :as d]))
 
 ;;;; HELPER FUNCTIONS
 
@@ -94,28 +93,18 @@
                      :title (str "View " result-type-str " results")}
              result-type-str]])))]))
 
-(defn- input-title
-  "What the input field should display as a 'title' based on a given page."
-  [[category id]]
-  (cond
-    (= ::pages/terms category) (when (not (pe/hanzi-block? id))
-                                 [:<>
-                                  [:span.understated "« "]
-                                  id
-                                  [:span.understated " »"]])))
-
 (defn header
   "The header contains the logo and the main input form."
   []
-  (let [page          @(rf/subscribe [::subs/current-page])
-        input-content @(rf/subscribe [::subs/input])]
+  (let [page  @(rf/subscribe [::subs/current-page])
+        input @(rf/subscribe [::subs/input])]
     [:header
      [:div#aligner
       [:form {:auto-complete "off"}
        [smart-input]
-       (when-let [title (and (not= input-content (second page))
-                             (input-title page))]
-         [:p#title title])
+       (when-let [title (and (not= input (second page))
+                             (events/mk-input page))]
+         [:p#title "↓ " [:em title] " ↓"])
        [filters]]]]))
 
 (defn main

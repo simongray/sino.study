@@ -253,14 +253,15 @@ div#header-input > button {
 }
 
 header p#title {
-    color: #EEE;
+    color: #888;
     font-size: 1.8rem;
     margin: 1.7rem 0 -0.5rem 0;
     animation: fade-in 1s ease;
 }
 
-header p#title .understated {
-    color: #888;
+header p#title em {
+    color: #EEE;
+    font-style: italic;
 }
 
 header p#title + div#filters {

@@ -48,6 +48,12 @@
               path* (conj path (::d/term entry))]
           (recur (assoc-in db* path* entry) (rest entries*)))))))
 
+(defn mk-input
+  "What the input field should display based on a given page."
+  [[category id]]
+  (cond
+    (= ::pages/terms category) (when (not (pe/hanzi-block? id)) id)))
+
 ;;;; QUERY EVALUATION
 
 ;; pinyin sentences with tone digits can converted to diacritics,
@@ -400,12 +406,15 @@
    (rf/inject-cofx ::scroll-state)]
   (fn [cofx [_ new-page]]
     (let [db           (:db cofx)
+          input        (:input db)
           history      (:history db)
           current-page (when (not (empty? history))
                          (-> history first first))
           timestamp    (:now cofx)
           scroll-state (:scroll-state cofx)]
-      {:db         (assoc db :history (conj history [new-page timestamp]))
+      {:db         (-> db
+                       (assoc :history (conj history [new-page timestamp]))
+                       (assoc :input (or input (mk-input new-page))))
        :dispatch-n [[::save-scroll-state current-page scroll-state]
                     [::load-content new-page]]})))
 
