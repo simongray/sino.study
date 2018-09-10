@@ -628,6 +628,11 @@ section.details table td:last-child {
     margin-top: 1rem;
 }
 
-span.understated, span.understated *, span.understated span.pinyin {
+.understated {
     color: #CCC;
+}
+
+.understated em {
+    color: initial;
+    font-style: normal;
 }

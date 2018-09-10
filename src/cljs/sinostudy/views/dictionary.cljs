@@ -186,14 +186,14 @@
          [:dt.pinyin
           (p/digits->diacritics pronunciation)]
          ;; TODO: resolve relevant and other during save step instead
-         (into [:dd] (interpose [:span.understated " / "]
-                       (concat (->> relevant-defs
-                                    (sort)
-                                    (map handle-refs*))
-                               (->> other-defs
-                                    (sort)
-                                    (map handle-refs*)
-                                    (map (fn [x] [:span.understated x]))))))]))))
+         (into [:dd.understated] (interpose " / "
+                                   (concat (->> relevant-defs
+                                                (sort)
+                                                (map handle-refs*)
+                                                (map (fn [x] [:em x])))
+                                           (->> other-defs
+                                                (sort)
+                                                (map handle-refs*)))))]))))
 
 (defn- search-result-entry
   "Entry in a results-list."
