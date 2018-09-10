@@ -26,7 +26,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.979899"
-     inkscape:cx="213.2079"
+     inkscape:cx="102.69251"
      inkscape:cy="59.625892"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
@@ -56,7 +56,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -80,7 +80,7 @@
            id="tspan157">sino</tspan><tspan
            style="font-size:12.70000076px;line-height:4.23333311px;text-align:center;letter-spacing:2.77812505px;text-anchor:middle;fill:#333333;fill-opacity:1"
            id="tspan4660">·</tspan><tspan
-           style="font-size:12.70000076px;line-height:4.23333311px;text-align:center;letter-spacing:2.77812505px;text-anchor:middle;fill:#bb2222;fill-opacity:1"
+           style="font-size:12.70000076px;line-height:4.23333311px;text-align:center;letter-spacing:2.77812505px;text-anchor:middle;fill:#c24f44;fill-opacity:1"
            id="tspan161">study</tspan></tspan></text>
     <text
        xml:space="preserve"

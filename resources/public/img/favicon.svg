@@ -59,7 +59,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -96,7 +96,7 @@
            style="font-size:24.76603127px;line-height:8.25534344px;text-align:center;letter-spacing:5.41756916px;text-anchor:middle;fill:#bb2222;fill-opacity:1;stroke-width:0.51595896px"
            id="tspan161" /></tspan></text>
     <path
-       style="font-style:normal;font-weight:normal;font-size:20.75131035px;line-height:1.25;font-family:sans-serif;letter-spacing:0.02593915px;word-spacing:0px;fill:#bb2222;fill-opacity:1;stroke:none;stroke-width:0.51878268px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="font-style:normal;font-weight:normal;font-size:20.75131035px;line-height:1.25;font-family:sans-serif;letter-spacing:0.02593915px;word-spacing:0px;fill:#c24f44;fill-opacity:1;stroke:none;stroke-width:0.51878268px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 14.559517,285.62009 c 0.09667,0.22271 0.145211,0.46673 0.145211,0.73174 0,0.52833 -0.191951,0.98467 -0.576193,1.36891 -0.04231,0.0423 -0.08611,0.0815 -0.130741,0.11885 0.156529,0.0925 0.304583,0.19364 0.439767,0.30748 0.33202,0.24902 0.497644,0.68897 0.497644,1.31982 0,0.73044 -0.207159,1.26168 -0.622185,1.5937 -0.415025,0.31542 -0.888319,0.47335 -1.419551,0.47335 -0.630838,0 -1.170279,-0.10819 -1.618506,-0.32401 -0.448227,-0.21581 -0.830247,-0.48963 -1.145666,-0.82165 -0.2988192,-0.34863 -0.5393093,-0.72244 -0.7219205,-1.12087 -0.1826112,-0.41502 -0.3323444,-0.82165 -0.4485516,-1.22008 h -0.273885 v 3.48661 h 0.273885 c 0.049803,-0.083 0.1164662,-0.15787 0.1994713,-0.22427 0.083005,-0.083 0.2158142,-0.12454 0.3984252,-0.12454 0.1826111,0 0.3815662,0.0415 0.5973796,0.12454 0.215813,0.0664 0.448617,0.14127 0.697632,0.22427 0.265616,0.083 0.547642,0.15736 0.84646,0.22376 0.315419,0.083 0.655904,0.12454 1.021126,0.12454 0.630839,0 1.186686,-0.0995 1.668116,-0.29869 0.49803,-0.19921 0.913381,-0.45662 1.245401,-0.77204 0.348622,-0.33203 0.60552,-0.71404 0.77153,-1.14567 0.182611,-0.43163 0.273885,-0.87159 0.273885,-1.31982 0,-0.76365 -0.248695,-1.37743 -0.746725,-1.84226 -0.376595,-0.35149 -0.834044,-0.64609 -1.372009,-0.88367 z"
        id="text151-7"
        inkscape:connector-curvature="0"
