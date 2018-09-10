@@ -171,10 +171,56 @@ main {
     padding: 0 0.5rem 0.5rem 0.5rem;
 }
 
-main.splash {
-    background: url("/img/logo_dark_min.svg") no-repeat center center;
-    background-size: contain;
-    width: calc(100% - 2rem);
+main#splash {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+main#splash img {
+    animation: fade-in 1.5s ease;
+    width: calc(100% - 1rem);
+    margin: auto;
+}
+
+main#splash blockquote {
+    animation: fade-in 1.5s ease;
+    transition: all 0.3s;
+    font-size: 1.6rem;
+    line-height: 1.5;
+    color: #999;
+    width: calc(100% - 6rem);
+    max-width: 40rem;
+    background: rgba(0,0,0,0.2);
+    border-radius: 0.3rem;
+    padding: 1rem 2rem;
+    margin: -4rem auto 4rem auto;
+    text-align: justify;
+}
+
+@media only screen and (max-height: 30rem) {
+    main#splash blockquote {
+        display: none;
+    }
+}
+
+main#splash em {
+    color: #DDD;
+    font-style: normal;
+}
+
+main#splash a {
+    color: #DD9999;
+    margin-top: 0.5rem;
+    text-align: center;
+    width: 100%;
+    font-variant: small-caps;
+    white-space: nowrap;
+}
+
+main#splash a:hover {
+    text-decoration: underline;
 }
 
 header {
@@ -284,6 +330,12 @@ address {
 
 address.hidden {
     opacity: 0;
+}
+
+@media only screen and (max-height: 15rem) {
+    address {
+        display: none;
+    }
 }
 
 

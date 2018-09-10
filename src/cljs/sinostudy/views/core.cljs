@@ -127,7 +127,14 @@
            (and (not= ::pages/static category)
                 (nil? content)) [:main]
 
-           :else [:main.splash])))
+           :else [:main#splash
+                  [:img {:src "/img/logo_dark_min.svg"}]
+                  [:blockquote
+                   "Welcome to " [:em "sino.study"] ": the multitool for learning Chinese. "
+                   "Here you can look up unfamiliar words or get a better understanding of Chinese sentences. "
+                   [:a {:href "/about"
+                        :title "Learn more about sino.study"}
+                    "Learn More."]]])))
 
      ;; Ensures that scroll state is restored when pushing back/forward button.
      ;; Sadly, this behaviour is global for all updates, so links/buttons/etc.
