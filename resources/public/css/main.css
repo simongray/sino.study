@@ -157,7 +157,8 @@ div#app {
     align-items: center;
     justify-content: space-between;
 
-    background: #555;
+    background-color: #555;
+    background-image: radial-gradient(circle at bottom, rgba(255,255,255,0.1) 0%, transparent 80%);
 }
 
 /*  would have styled BODY or HTML instead if React could access them */
@@ -178,7 +179,6 @@ main.splash {
 
 header {
 	width: 100%;
-	background: #555;
 }
 
 /* 	TODO: do I need this?
