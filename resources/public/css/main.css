@@ -433,7 +433,7 @@ nav {
 }
 
 nav > #script-changer {
-    padding: 0.4rem 0.6rem;
+    padding: 0.4rem;
     border: 1pt solid #CC6666;
     border-radius: 0.5rem;
     color: #FFBBBB;
@@ -441,7 +441,7 @@ nav > #script-changer {
 
     /* nav links shouldn't jump around when changing script */
     display: inline-block;
-    min-width: 7ch;
+    min-width: 6ch;
 
     /* fix for #14 (translation pop-up on Chrome mobile) */
     user-drag: none;
