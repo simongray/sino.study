@@ -35,14 +35,12 @@
   "The input field (part of the header form)."
   (let [input     @(rf/subscribe [::subs/input])
         actions   @(rf/subscribe [::subs/actions])
-        home?     (= "/" @(rf/subscribe [::subs/current-nav]))
         disabled? (not (nil? actions))]
     [:<>
      [:div#header-input
       [:input#input-field
        {:type            "text"
-        :class           (when home? "no-content")
-        :placeholder     (when home? "look up...")
+        :placeholder     "look up..."
         :auto-capitalize "off"
         :auto-correct    "off"
         :auto-complete   "off"
@@ -132,7 +130,7 @@
                   [:blockquote
                    "... a modern Chinese dictionary and grammar tool. "
                    "Here you can look up unknown words or find out what is going on in a sentence. "
-                   [:a {:href "/about"
+                   [:a {:href  "/about"
                         :title "Learn more about sino.study"}
                     "Learn More."]]])))
 
