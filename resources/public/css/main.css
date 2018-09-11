@@ -266,9 +266,7 @@ div#header-input > input {
 
 div#header-input > input:focus {
     padding: 0.5rem;
-	background-color: white;
 	background-position: calc(100% + 3.5rem) 50%;
-	color: black;
 }
 
 /* Grey colouring of input when action-chooser is active */
