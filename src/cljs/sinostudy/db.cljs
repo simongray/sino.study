@@ -3,8 +3,8 @@
             [sinostudy.dictionary.core :as d]))
 
 (def static-pages
-  {"/help"  [:main [:article.full [:h1 "Help"] [:p "This is the Help page."]]]
-   "/about" [:main [:article.full [:h1 "About"] [:p "This is the About page."]]]})
+  {"/about"    [:main [:article.full [:h1 "About"] [:p "This is the About page."]]]
+   "/settings" [:main [:article.full [:h1 "Settings"] [:p "This is the Settings page."]]]})
 
 (def default-db
   {:input          nil

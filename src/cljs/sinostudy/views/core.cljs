@@ -164,7 +164,7 @@
 (defn footer []
   "The footer (contains navigation)."
   (let [from  @(rf/subscribe [::subs/current-nav])
-        links [["/" "Home"] ["/help" "Help"] ["/about" "About"]]]
+        links [["/" "Home"] ["/about" "About"] ["/settings" "Settings"]]]
     [:footer
      [:nav (interpose " · "
              (conj (vec (navify from links))
