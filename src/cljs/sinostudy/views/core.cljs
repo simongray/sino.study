@@ -130,8 +130,7 @@
            :else [:main#splash
                   [:img {:src "/img/logo_dark_min.svg"}]
                   [:blockquote
-                   "Welcome to " [:em "sino.study"] ": the multitool for learning Chinese. "
-                   "Here you can look up unfamiliar words or get a better understanding of Chinese sentences. "
+                   "Here you can look up unknown Chinese words or see what is going on in a Chinese sentence. "
                    [:a {:href "/about"
                         :title "Learn more about sino.study"}
                     "Learn More."]]])))

@@ -158,7 +158,8 @@ div#app {
     justify-content: space-between;
 
     background-color: #555;
-    background-image: radial-gradient(circle at bottom, rgba(255,255,255,0.1) 0%, transparent 80%);
+    background-image: radial-gradient(ellipse at bottom, rgba(255,255,255,0.1) 0%, transparent 100%);
+    box-shadow: 0 0 15rem 0 rgba(0, 0, 0, 0.3) inset;
 }
 
 /*  would have styled BODY or HTML instead if React could access them */
@@ -179,42 +180,32 @@ main#splash {
 }
 
 main#splash img {
-    animation: fade-in 1.5s ease;
+    animation: fade-in 0.5s ease;
     width: calc(100% - 1rem);
-    margin: auto;
+    margin: 2rem auto;
 }
 
 main#splash blockquote {
-    animation: fade-in 1.5s ease;
-    transition: all 0.3s;
-    font-size: 1.6rem;
+    animation: fade-in 1s ease;
+    font-size: 1.8rem;
     line-height: 1.5;
     color: #999;
-    width: calc(100% - 6rem);
+    width: calc(100% - 3rem);
     max-width: 40rem;
-    background: rgba(0,0,0,0.2);
-    border-radius: 0.3rem;
-    padding: 1rem 2rem;
-    margin: -4rem auto 4rem auto;
+    border-left: 0.8rem solid #333;
+    padding-left: 1rem;
     text-align: justify;
 }
 
-@media only screen and (max-height: 30rem) {
+/* prevent squashing on mobile when the soft-keyboard is open */
+@media only screen and (max-height: 25rem) {
     main#splash blockquote {
         display: none;
     }
 }
 
-main#splash em {
-    color: #DDD;
-    font-style: normal;
-}
-
 main#splash a {
     color: #DD9999;
-    margin-top: 0.5rem;
-    text-align: center;
-    width: 100%;
     font-variant: small-caps;
     white-space: nowrap;
 }
