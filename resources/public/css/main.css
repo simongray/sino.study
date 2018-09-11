@@ -190,9 +190,11 @@ main#splash blockquote {
     font-size: 1.8rem;
     line-height: 1.5;
     color: #999;
-    width: calc(100% - 3rem);
-    border-left: 0.8rem solid #333;
-    padding-left: 1rem;
+    width: calc(100% - 6rem);
+    border-left: 0.5rem solid #333;
+    border-right: 0.5rem solid #333;
+    border-radius: 1rem;
+    padding: 0 2rem;
     text-align: justify;
 }
 

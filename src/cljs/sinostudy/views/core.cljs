@@ -130,7 +130,8 @@
            :else [:main#splash
                   [:img {:src "/img/logo_dark_min.svg"}]
                   [:blockquote
-                   "Here you can look up unknown words or find out what is going on in a Chinese sentence. "
+                   "... a modern Chinese dictionary and grammar tool. "
+                   "Here you can look up unknown words or find out what is going on in a sentence. "
                    [:a {:href "/about"
                         :title "Learn more about sino.study"}
                     "Learn More."]]])))
