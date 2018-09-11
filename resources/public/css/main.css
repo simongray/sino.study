@@ -292,7 +292,7 @@ header p#title {
 
 header p#title em {
     color: #EEE;
-    font-style: italic;
+    font-style: normal;
 }
 
 header p#title + div#filters {
