@@ -381,7 +381,6 @@ div#filters input[type=radio]:checked + label:hover {
 /* === ARTICLE === */
 
 article {
-    animation: fade-in 0.2s ease;
     transition: all 0.2s; /* should be synchronised with filters transition */
 
     background: white;
