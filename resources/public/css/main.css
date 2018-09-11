@@ -191,7 +191,6 @@ main#splash blockquote {
     line-height: 1.5;
     color: #999;
     width: calc(100% - 3rem);
-    max-width: 40rem;
     border-left: 0.8rem solid #333;
     padding-left: 1rem;
     text-align: justify;
