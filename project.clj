@@ -7,11 +7,6 @@
   :jar-name "sinostudy.jar"
   :uberjar-name "sinostudy-standalone.jar"
 
-  ;; needed for Java 9 issue with figwheel
-  ;; remove if using Java 8!
-  ;; https://github.com/bhauman/lein-figwheel/issues/612
-  :jvm-opts ["--add-modules" "java.xml.bind"]
-
   :dependencies [[org.clojure/clojure "1.9.0"]
 
                  ;; reagent/re-frame
