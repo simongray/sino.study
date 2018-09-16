@@ -1,7 +1,7 @@
 (defproject sinostudy "_"
   :description "The sino.study project."
   :url "http://sino.study"
-  :min-lein-version "2.5.3"
+  :min-lein-version "2.8.1"
   :source-paths ["src/clj" "src/cljc"]
   :resource-paths ["resources"]
   :jar-name "sinostudy.jar"
