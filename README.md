@@ -47,14 +47,18 @@ lein repl
 Once the REPL has loaded the user ns, evaluate the following:
 
 ````
-(def stop-server (start-server))
+(go)
 ````
 
-This will start a production server using html-kit
-(the returned function is used to stop the server again from the REPL).
+This will load the dictionary and start a production server using html-kit.
 Wait a bit, then browse to [http://localhost:8080](http://localhost:8080).
 
 The default port is 8080, but it can be configured in resources/config.edn.
+The server can be stopped again by evaluating:
+
+```
+(stop-server!)
+```
 
 ### Run live-reloading frontend app
 To start figwheel - a live-reloading process for the frontend - run:

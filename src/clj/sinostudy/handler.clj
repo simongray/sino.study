@@ -16,6 +16,8 @@
 ;; TODO: use coercions for regex check of input
 ;; https://weavejester.github.io/compojure/compojure.coercions.html
 
+(defonce dict (atom nil))
+
 (def index
   (slurp (io/resource "public/index.html")))
 
@@ -26,7 +28,8 @@
 
 ;; Note: dict compilation requires the sinostudy-data git repo to be located in:
 ;; ~/Code/sinostudy-data
-(defonce dict
+(defn load-dict!
+  []
   (let [data         #(in-home (str "Code/sinostudy-data/" %))
         listings     (load/load-cedict
                        (data "cedict_ts.u8"))
@@ -34,8 +37,10 @@
                        (data "frequency/internet-zh.num.txt")
                        (data "frequency/giga-zh.num.txt"))
         makemeahanzi (load/load-makemeahanzi
-                       (data "makemeahanzi/dictionary.txt"))]
-    (d/create-dict listings freq-dict makemeahanzi)))
+                       (data "makemeahanzi/dictionary.txt"))
+        dict*        (d/create-dict listings freq-dict makemeahanzi)]
+    (reset! dict dict*)
+    (::d/report dict*)))
 
 ;; First Access-Control header permits cross-origin requests.
 ;; Second prevents Chrome from stripping Content-Type header.
@@ -68,7 +73,7 @@
   [type query {:keys [limit]}]
   (let [ns-keywords* (partial ns-keywords #"," 'sinostudy.dictionary.core)]
     (cond
-      (= ::pages/terms type) (d/look-up dict query (ns-keywords* limit)))))
+      (= ::pages/terms type) (d/look-up @dict query (ns-keywords* limit)))))
 
 (defn transit-result
   "Get the Transit-encoded result of a query."
