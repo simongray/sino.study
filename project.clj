@@ -8,8 +8,6 @@
   :uberjar-name "sinostudy-standalone.jar"
 
   :dependencies [[org.clojure/clojure "1.9.0"]
-
-                 ;; reagent/re-frame
                  [org.clojure/clojurescript "1.10.339"]
                  [reagent "0.8.1"]
                  [re-frame "0.10.5"]
@@ -17,8 +15,6 @@
                  [secretary "1.2.3"]
                  [venantius/accountant "0.2.4"]
                  [com.cognitect/transit-cljs "0.8.256"]
-
-                 ;; compojure
                  [compojure "1.6.1"]
                  [http-kit "2.3.0"]
                  [ring/ring-defaults "0.3.2"]
@@ -40,11 +36,8 @@
                                     :message                ; Optional. The last commit message when clean.
                                     :timestamp]}            ; Optional. The last commit date when clean.]}
 
-                                      ;; reagent/re-frame
   :profiles {:dev     {:dependencies [[binaryage/devtools "0.9.10"]
                                       [day8.re-frame/re-frame-10x "0.3.3-react16"] ; Ctrl+h to toggle
-
-                                      ;; compojure
                                       [javax.servlet/servlet-api "2.5"]
                                       [ring/ring-mock "0.3.2"]]
                        :plugins      [[lein-figwheel "0.5.13"]]
@@ -57,10 +50,8 @@
                                     "compile"
                                     ["cljsbuild" "once" "min"]]}}
 
-  ;; compojure
   :ring {:handler sinostudy.handler/app}
 
-  ;; reagent/re-frame
   :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"]
   :figwheel {:css-dirs ["resources/public/css"]}
   :cljsbuild {:builds [{:id           "dev"
