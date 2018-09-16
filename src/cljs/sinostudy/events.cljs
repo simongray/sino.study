@@ -1,22 +1,26 @@
 (ns sinostudy.events
   (:require [clojure.string :as str]
             [clojure.set :as set]
+            [cljs.reader :as reader]
             [re-frame.core :as rf]
             [accountant.core :as accountant]
             [sinostudy.db :as db]
-            [sinostudy.config :as config]
             [sinostudy.pinyin.core :as p]
             [sinostudy.pinyin.eval :as pe]
             [sinostudy.dictionary.core :as d]
             [sinostudy.pages.core :as pages]
             [ajax.core :as ajax]
-            [cognitect.transit :as transit]))
+            [cognitect.transit :as transit])
+  (:require-macros [sinostudy.macros.core :as macros]))
+
+(def config
+  (reader/read-string (macros/slurp "resources/config.edn")))
 
 ;; During development, frontend and backend are served on different ports,
 ;; but in production the backend is served on the same host and port.
 (def query-uri
   (let [hostname js/window.location.hostname
-        port     (if config/debug? 3000 js/window.location.port)]
+        port     (:port config)]
     (str "http://" hostname ":" port "/query/")))
 
 ;; all responses from the Compojure backend are Transit-encoded

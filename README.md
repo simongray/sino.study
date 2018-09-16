@@ -37,18 +37,24 @@ is best tested in the REPL.
 Typical development involves running a development web service locally,
 while accessing the data from the service through a live-reloading frontend app.
 
-
-### Development server
-To start a development web server for the application, run:
+### Local backend server
+To start a local production web server for the application, run:
 
 ````
-lein ring server-headless
+lein repl
 ````
-Wait a bit, then browse to [http://localhost:3000](http://localhost:3000).
 
-Note: this should typically not be accessed directly, but rather through
-the live-reloading frontend app.
+Once the REPL has loaded the user ns, evaluate the following:
 
+````
+(def stop-server (start-server))
+````
+
+This will start a production server using html-kit
+(the returned function is used to stop the server again from the REPL).
+Wait a bit, then browse to [http://localhost:8080](http://localhost:8080).
+
+The default port is 8080, but it can be configured in resources/config.edn.
 
 ### Run live-reloading frontend app
 To start figwheel - a live-reloading process for the frontend - run:
@@ -143,39 +149,3 @@ or [http://sino.study](http://sino.study).
 
 Use ````docker ps -a```` to list all containers and their assigned names.
 Stop and remove containers using other relevant docker commands.
-
-## Other development
-These remaining sections are mainly included for completeness.
-
-
-### Compiling a frontend production build
-Note: this is usually done automatically when building an uberjar,
-but in some cases you might want to do it manually.
-
-To compile ClojureScript to JavaScript:
-
-```
-lein clean
-lein cljsbuild once min
-```
-
-
-### Local production server
-To start a local production web server for the application, run:
-
-````
-lein repl
-````
-
-Once the REPL has loaded the user ns, evaluate the following:
-
-````
-(def stop-server (start-server))
-````
-
-This will start a production server using html-kit
-(the returned function is used to stop the server again from the REPL).
-Wait a bit, then browse to [http://localhost:8080](http://localhost:8080).
-
-Be aware that the frontend application will need to be modified to get data
-from the local html-kit service (it accesses localhost:3000 by default).

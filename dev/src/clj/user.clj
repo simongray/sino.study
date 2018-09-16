@@ -4,7 +4,11 @@
             [sinostudy.handler :as handler]
             [sinostudy.dictionary.core :as d]
             [sinostudy.dictionary.load :as load]
-            [sinostudy.pinyin.core :as p]))
+            [sinostudy.pinyin.core :as p]
+            [clojure.tools.reader :as reader]))
+
+(def config
+  (reader/read-string (slurp "resources/config.edn")))
 
 (defn new-dict
   []
@@ -32,4 +36,4 @@
 
     Usage: (def stop-server (start-server))"
   []
-  (hs/run-server #'handler/app {:port 8080}))
+  (hs/run-server #'handler/app {:port (:port config)}))

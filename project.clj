@@ -14,16 +14,15 @@
                  [day8.re-frame/http-fx "0.1.6"]
                  [secretary "1.2.3"]
                  [venantius/accountant "0.2.4"]
+                 [com.cognitect/transit-clj "0.8.309"]
                  [com.cognitect/transit-cljs "0.8.256"]
                  [compojure "1.6.1"]
                  [http-kit "2.3.0"]
                  [ring/ring-defaults "0.3.2"]
-                 [com.cognitect/transit-clj "0.8.309"]
                  [clj-json "0.5.3"]]
 
   :plugins [[me.arrdem/lein-git-version "2.0.8"]
-            [lein-cljsbuild "1.1.5"]
-            [lein-ring "0.9.7"]]
+            [lein-cljsbuild "1.1.5"]]
 
   :git-version {:version-file      "resources/version.edn"
                 :version-file-keys [:tag                    ; Name of the last git tag if any
@@ -37,9 +36,7 @@
                                     :timestamp]}            ; Optional. The last commit date when clean.]}
 
   :profiles {:dev     {:dependencies [[binaryage/devtools "0.9.10"]
-                                      [day8.re-frame/re-frame-10x "0.3.3-react16"] ; Ctrl+h to toggle
-                                      [javax.servlet/servlet-api "2.5"]
-                                      [ring/ring-mock "0.3.2"]]
+                                      [day8.re-frame/re-frame-10x "0.3.3-react16"]]
                        :plugins      [[lein-figwheel "0.5.13"]]
                        :source-paths ["dev/src/clj"]
                        :repl-options {:init-ns user}}
@@ -49,8 +46,6 @@
                        :prep-tasks ["clean"
                                     "compile"
                                     ["cljsbuild" "once" "min"]]}}
-
-  :ring {:handler sinostudy.handler/app}
 
   :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"]
   :figwheel {:css-dirs ["resources/public/css"]}
