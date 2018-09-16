@@ -1,9 +1,11 @@
-(defproject sinostudy :lein-v
+(defproject sinostudy "_"
   :description "The sino.study project."
   :url "http://sino.study"
   :min-lein-version "2.5.3"
   :source-paths ["src/clj" "src/cljc"]
   :resource-paths ["resources"]
+  :jar-name "sinostudy.jar"
+  :uberjar-name "sinostudy-standalone.jar"
 
   ;; needed for Java 9 issue with figwheel
   ;; remove if using Java 8!
@@ -28,9 +30,20 @@
                  [com.cognitect/transit-clj "0.8.309"]
                  [clj-json "0.5.3"]]
 
-  :plugins [[com.roomkey/lein-v "6.3.0"]
+  :plugins [[me.arrdem/lein-git-version "2.0.8"]
             [lein-cljsbuild "1.1.5"]
             [lein-ring "0.9.7"]]
+
+  :git-version {:version-file      "resources/version.edn"
+                :version-file-keys [:tag                    ; Name of the last git tag if any
+                                    :ahead                  ; Number of commits ahead of the last tag, or 0
+                                    :ahead?                 ; Is the head ahead by more than 0 commits
+                                    :ref                    ; The full current ref
+                                    :ref-short              ; The "short" current ref
+                                    :branch                 ; The name of the current branch
+                                    :dirty?                 ; Optional. Boolean. Are there un-committed changes.
+                                    :message                ; Optional. The last commit message when clean.
+                                    :timestamp]}            ; Optional. The last commit date when clean.]}
 
                                       ;; reagent/re-frame
   :profiles {:dev     {:dependencies [[binaryage/devtools "0.9.10"]
@@ -39,23 +52,13 @@
                                       ;; compojure
                                       [javax.servlet/servlet-api "2.5"]
                                       [ring/ring-mock "0.3.2"]]
-
                        :plugins      [[lein-figwheel "0.5.13"]]
-
-                       ;; TODO: make this unnecessary
-                       ;; This is a workaround to make launching nREPL possible in Cursive while using lein-v.
-                       ;; Cursive nREPL won't start unless the path is absolute, while lein-v doesn't agree with absolute paths.
-                       ;; The unfortunate result is that the version in version.cljc will be reset to "0.0.0" while developing.
-                       ;; The uberjar is still built using the relative path, so releases should display the correct versions.
-                       :prep-tasks   [["v" "cache" ~(str (.getCanonicalPath (clojure.java.io/file ".")) "/src/cljc") "cljc"]]
-
                        :source-paths ["dev/src/clj"]
                        :repl-options {:init-ns user}}
 
              :uberjar {:main       sinostudy.server
                        :aot        [sinostudy.server]
                        :prep-tasks ["clean"
-                                    ["v" "cache" "src/cljc" "cljc"]
                                     "compile"
                                     ["cljsbuild" "once" "min"]]}}
 
@@ -66,7 +69,7 @@
   :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"]
   :figwheel {:css-dirs ["resources/public/css"]}
   :cljsbuild {:builds [{:id           "dev"
-                        :source-paths ["src/cljs" "src/cljc"]
+                        :source-paths ["src/cljs" "src/cljc" "src/clj/sinostudy/macros"]
                         :figwheel     {:on-jsload "sinostudy.core/mount-root"}
                         :compiler     {:main                 sinostudy.core
                                        :output-to            "resources/public/js/compiled/app.js"
@@ -80,7 +83,7 @@
                                        :external-config      {:devtools/config {:features-to-install :all}}}}
 
                        {:id           "min"
-                        :source-paths ["src/cljs" "src/cljc"]
+                        :source-paths ["src/cljs" "src/cljc" "src/clj/sinostudy/macros"]
                         :compiler     {:main            sinostudy.core
                                        :output-to       "resources/public/js/compiled/app.js"
                                        :optimizations   :advanced

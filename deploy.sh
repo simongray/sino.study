@@ -5,29 +5,25 @@
 #   * builds and tags a docker image containing the uberjar
 #   * pushes the docker image to the docker store
 
-re="version: ([^,]+)"
+re=":tag \"v([^\"]+)"
 
-if [[ $(curl localhost:3449 -s) != "" ]]; then
-    echo "ERROR: stop the figwheel process before running this script!";
+if [[ $(cat resources/version.edn) =~ $re ]]; then
+    version=${BASH_REMATCH[1]}
+    jarfile="sinostudy-standalone.jar"
+    jarpath="target/sinostudy-standalone.jar"
+    echo "version: ${version}";
+
+    echo "removing old build artifacts"
+    lein clean
+
+    echo "building uberjar: ${jarfile}"
+    lein uberjar
+
+    echo "building docker image"
+    docker build -t simongray/sino.study:latest -t simongray/sino.study:${version} --build-arg JARPATH=${jarpath} --build-arg JARFILE=${jarfile} .
+
+    echo "pushing docker image"
+    docker push simongray/sino.study
 else
-    if [[ $(lein v show) =~ $re ]]; then
-        version=${BASH_REMATCH[1]}
-        echo "version: ${version}";
-
-        echo "removing old build artifacts"
-        lein clean
-
-        jarfile="sinostudy-${version}-standalone.jar"
-        jarpath="target/sinostudy-${version}-standalone.jar"
-        echo "building uberjar: ${jarfile}"
-        lein uberjar
-
-        echo "building docker image"
-        docker build -t simongray/sino.study:latest -t simongray/sino.study:${version} --build-arg JARPATH=${jarpath} --build-arg JARFILE=${jarfile} .
-
-        echo "pushing docker image"
-        docker push simongray/sino.study
-    else
-        echo "ERROR: could not determine current version"
-    fi
+    echo "ERROR: could not determine current version"
 fi

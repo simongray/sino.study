@@ -1,13 +1,14 @@
 (ns sinostudy.views.core
   (:require [re-frame.core :as rf]
             [reagent.core :as reagent]
-            [version :as v]
             [clojure.string :as str]
+            [cljs.reader :as reader]
             [sinostudy.subs :as subs]
             [sinostudy.events :as events]
             [sinostudy.views.dictionary :as vd]
             [sinostudy.pages.core :as pages]
-            [sinostudy.dictionary.core :as d]))
+            [sinostudy.dictionary.core :as d])
+  (:require-macros [sinostudy.macros.core :as macros]))
 
 ;;;; HELPER FUNCTIONS
 
@@ -203,14 +204,15 @@
        [:ol
         (map (partial action-choice (nth actions checked)) actions)]])))
 
-;;; Project version number based on git tag + commit SHA
-;;; More info: https://github.com/roomkey/lein-v
-(defn version
+;;; Project version based on git tag
+;;; See: https://github.com/arrdem/lein-git-version
+(defn version-digest
   "Current version with link to project on Github."
   [attr]
-  [:address attr
-   [:a {:href "https://github.com/simongray/sino.study"}
-    (str "v" v/version)]])
+  (let [version (reader/read-string (macros/slurp "resources/version.edn"))]
+    [:address attr
+     [:a {:href "https://github.com/simongray/sino.study"}
+      (:tag version)]]))
 
 (defn app []
   (let [not-home? (not= "/" @(rf/subscribe [::subs/current-nav]))]
@@ -219,4 +221,4 @@
      [header not-home?]
      [main]
      [footer]
-     [version (when not-home? {:class "hidden"})]]))
+     [version-digest (when not-home? {:class "hidden"})]]))
