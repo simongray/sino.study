@@ -98,7 +98,7 @@ the sino.study-datafiles repo to be present at the correct path!
 To test that the uberjar was packaged correctly, run:
 
 ````
-java -jar target/sinostudy-$VERSION-standalone.jar
+java -jar target/sinostudy-standalone.jar
 ````
 
 (remember to replace $VERSION with the correct version number)
