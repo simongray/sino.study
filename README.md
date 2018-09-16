@@ -53,7 +53,7 @@ Once the REPL has loaded the user ns, evaluate the following:
 This will load the dictionary and start a production server using html-kit.
 Wait a bit, then browse to [http://localhost:8080](http://localhost:8080).
 
-The default port is 8080, but it can be configured in resources/config.edn.
+The default port is `8080`, but it can be configured in `resources/config.edn`.
 The server can be stopped again by evaluating:
 
 ```
@@ -81,7 +81,6 @@ If I want to test on a mobile phone I will typically run
 
 ````
 ipconfig getifaddr en0
-
 ````
 
 to get the local IP address of my Mac and then visit that address on port 3449 
@@ -122,7 +121,6 @@ To build an image from the Dockerfile, run:
 
 ```` 
 docker build -t simongray/sino.study:latest -t simongray/sino.study:${version} --build-arg JARPATH=${jarpath} --build-arg JARFILE=${jarfile} .
-
 ````
 
 Note: this requires the uberjar built during the previous step as well as the
@@ -145,8 +143,8 @@ docker run -v /root/Code/sinostudy-data:/root/Code/sinostudy-data -p 80:8080 sim
 docker run -v /Users/simongray/Code/sinostudy-data:/root/Code/sinostudy-data -p 80:8080 simongray/sino.study:latest
 ````
 
-(this will tunnel the exposed 8080 port of the docker container
-to the production system's port 80)
+(this will tunnel the exposed `8080` port of the docker container
+to the production system's port `80`)
 
 Wait a little while, then visit [http://localhost:80](http://localhost:80)
 or [http://sino.study](http://sino.study).
