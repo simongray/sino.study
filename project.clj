@@ -41,10 +41,16 @@
                                       [ring/ring-mock "0.3.2"]]
 
                        :plugins      [[lein-figwheel "0.5.13"]]
-                       :prep-tasks   [["v" "cache" "src/cljc" "cljc"]]
+
+                       ;; TODO: make this unnecessary
+                       ;; This is a workaround to make launching nREPL possible in Cursive while using lein-v.
+                       ;; Cursive nREPL won't start unless the path is absolute, while lein-v doesn't agree with absolute paths.
+                       ;; The unfortunate result is that the version in version.cljc will be reset to "0.0.0" while developing.
+                       ;; The uberjar is still built using the relative path, so releases should display the correct versions.
+                       :prep-tasks   [["v" "cache" ~(str (.getCanonicalPath (clojure.java.io/file ".")) "/src/cljc") "cljc"]]
+
                        :source-paths ["dev/src/clj"]
-                       :repl-options {:init-ns user
-                                      :init    (println "Started dev REPL in user")}}
+                       :repl-options {:init-ns user}}
 
              :uberjar {:main       sinostudy.server
                        :aot        [sinostudy.server]
