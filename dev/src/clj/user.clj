@@ -1,13 +1,6 @@
 (ns user
-  "Sino.study uses mount for managing state:
-
-    ;; Start a new system
-    (mount/start)
-
-    ;; Stop the running system
-    (mount/stop)"
   (:require [clojure.java.io :as io]
-            [mount.core :as mount]
+            [mount.core :as mount :refer [start stop]]
             [mount-up.core :as mount-up]
             [sinostudy.handler :as handler]
             [sinostudy.dictionary.core :as d]
@@ -16,6 +9,12 @@
             [sinostudy.pinyin.core :as p]))
 
 (mount-up/on-upndown :info mount-up/log :before)
+
+(defn restart
+  "Restart one or more pieces of mount state."
+  [& states]
+  (apply stop states)
+  (apply start states))
 
 (defn look-up*
   "A version of look-up that performs both the backend and frontend processing.
