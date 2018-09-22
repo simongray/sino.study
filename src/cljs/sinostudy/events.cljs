@@ -120,9 +120,9 @@
     (assoc cofx :scroll-state [js/window.scrollX js/window.scrollY])))
 
 (rf/reg-cofx
-  ::focus
+  ::active-element
   (fn [cofx _]
-    (assoc cofx :focus (.-activeElement js/document))))
+    (assoc cofx :active-element (.-activeElement js/document))))
 
 (rf/reg-cofx
   ::local-storage
@@ -326,13 +326,18 @@
           (rf/dispatch [::check-action n]))))))
 
 ;; dispatched by ::on-submit when there are >1 actions based on query eval
-(rf/reg-event-db
+(rf/reg-event-fx
   ::open-action-chooser
-  (fn [db _]
-    (let [actions (:actions (first (:evaluations db)))]
-      (-> db
-          (assoc :checked-action 0)
-          (assoc :actions (conj actions [::close-action-chooser]))))))
+  [(rf/inject-cofx ::active-element)]
+  (fn [cofx _]
+    (let [db             (:db cofx)
+          active-element (:active-element cofx)
+          actions        (:actions (first (:evaluations db)))]
+      ;; Firefox won't get keydown events without removing focus from the input
+      {:blur active-element
+       :db   (-> db
+                 (assoc :checked-action 0)
+                 (assoc :actions (conj actions [::close-action-chooser])))})))
 
 ;; dispatched by ::choose-action
 (rf/reg-event-fx
@@ -444,10 +449,12 @@
 
 (rf/reg-event-fx
   ::look-up
-  (fn [_ [_ term]]
-    {:navigate-to (str "/" (name ::pages/terms) "/" term)
-     :blur        (.-activeElement js/document)
-     :dispatch    [::reset-scroll-state [::pages/terms term]]}))
+  [(rf/inject-cofx ::active-element)]
+  (fn [cofx [_ term]]
+    (let [active-element (:active-element cofx)]
+      {:navigate-to (str "/" (name ::pages/terms) "/" term)
+       :blur        active-element
+       :dispatch    [::reset-scroll-state [::pages/terms term]]})))
 
 (rf/reg-event-fx
   ::digits->diacritics
