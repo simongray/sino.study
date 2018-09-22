@@ -9,6 +9,8 @@
 
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/clojurescript "1.10.339"]
+                 [mount "0.1.13"]
+                 [tolitius/mount-up "0.1.1"]
                  [reagent "0.8.1"]
                  [re-frame "0.10.5"]
                  [day8.re-frame/http-fx "0.1.6"]
@@ -41,8 +43,8 @@
                        :source-paths ["dev/src/clj"]
                        :repl-options {:init-ns user}}
 
-             :uberjar {:main       sinostudy.server
-                       :aot        [sinostudy.server]
+             :uberjar {:main       sinostudy.handler
+                       :aot        [sinostudy.handler]
                        :prep-tasks ["clean"
                                     "compile"
                                     ["cljsbuild" "once" "min"]]}}

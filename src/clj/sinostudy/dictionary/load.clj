@@ -104,3 +104,25 @@
     (let [raw-listings (->> (doall (line-seq reader))
                             (map json/parse-string))]
       (reduce #(assoc %1 (get %2 "character") %2) {} raw-listings))))
+
+
+;;;; FULL DICTIONARY
+
+(defn- in-home
+  "Expands to the current user's home directory + s."
+  [s]
+  (str (System/getProperty "user.home") "/" s))
+
+;; Note: dict compilation requires the sinostudy-data git repo to be located in:
+;; ~/Code/sinostudy-data
+(defn load-dict
+  []
+  (let [data         #(in-home (str "Code/sinostudy-data/" %))
+        listings     (load-cedict
+                       (data "cedict_ts.u8"))
+        freq-dict    (load-freq-dict
+                       (data "frequency/internet-zh.num.txt")
+                       (data "frequency/giga-zh.num.txt"))
+        makemeahanzi (load-makemeahanzi
+                       (data "makemeahanzi/dictionary.txt"))]
+    (d/create-dict listings freq-dict makemeahanzi)))

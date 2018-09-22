@@ -2,13 +2,18 @@
   (:import (java.io ByteArrayOutputStream))
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
+            [clojure.tools.reader :as reader]
             [compojure.core :refer :all]
             [compojure.route :as route]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [cognitect.transit :as transit]
+            [org.httpkit.server :as hs]
+            [mount.core :as mount :refer [defstate]]
+            [mount-up.core :as mount-up]
             [sinostudy.pages.core :as pages]
-            [sinostudy.dictionary.load :as load]
-            [sinostudy.dictionary.core :as d]))
+            [sinostudy.dictionary.load :as dl]
+            [sinostudy.dictionary.core :as d])
+  (:gen-class))
 
 ;; TODO: split into dev/production
 ;; https://github.com/JulianBirch/cljs-ajax/blob/master/docs/server.md#cross-origin-requests
@@ -16,31 +21,16 @@
 ;; TODO: use coercions for regex check of input
 ;; https://weavejester.github.io/compojure/compojure.coercions.html
 
-(defonce dict (atom nil))
+(defstate config
+  "System config file (EDN format)."
+  :start (-> "config.edn" io/resource slurp reader/read-string))
+
+(defstate dict
+  "Dictionary used for Chinese/English/pinyin term look-ups."
+  :start (dl/load-dict))
 
 (def index
   (slurp (io/resource "public/index.html")))
-
-(defn in-home
-  "Expands to the current user's home directory + s."
-  [s]
-  (str (System/getProperty "user.home") "/" s))
-
-;; Note: dict compilation requires the sinostudy-data git repo to be located in:
-;; ~/Code/sinostudy-data
-(defn load-dict!
-  []
-  (let [data         #(in-home (str "Code/sinostudy-data/" %))
-        listings     (load/load-cedict
-                       (data "cedict_ts.u8"))
-        freq-dict    (load/load-freq-dict
-                       (data "frequency/internet-zh.num.txt")
-                       (data "frequency/giga-zh.num.txt"))
-        makemeahanzi (load/load-makemeahanzi
-                       (data "makemeahanzi/dictionary.txt"))
-        dict*        (d/create-dict listings freq-dict makemeahanzi)]
-    (reset! dict dict*)
-    (::d/report dict*)))
 
 ;; First Access-Control header permits cross-origin requests.
 ;; Second prevents Chrome from stripping Content-Type header.
@@ -73,7 +63,7 @@
   [type query {:keys [limit]}]
   (let [ns-keywords* (partial ns-keywords #"," 'sinostudy.dictionary.core)]
     (cond
-      (= ::pages/terms type) (d/look-up @dict query (ns-keywords* limit)))))
+      (= ::pages/terms type) (d/look-up dict query (ns-keywords* limit)))))
 
 (defn transit-result
   "Get the Transit-encoded result of a query."
@@ -106,3 +96,15 @@
 
 (def app
   (wrap-defaults all-routes site-defaults))
+
+(defstate server
+  "Server instance (http-kit)."
+  :start (hs/run-server #'app config)
+  :stop (server))
+
+(defn -main
+  []
+  (mount-up/on-upndown :info mount-up/log :before)
+  (mount/start)
+  (println (str "Listening on port " (:port config))))
+
