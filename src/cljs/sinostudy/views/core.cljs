@@ -111,7 +111,7 @@
   []
   (reagent/create-class
     {:display-name
-     "article"
+     "main"
 
      :reagent-render
      (fn []

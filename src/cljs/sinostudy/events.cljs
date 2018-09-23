@@ -114,10 +114,24 @@
   (fn [cofx _]
     (assoc cofx :now (js/Date.))))
 
+;; Retrieves scroll states for all tags defined by the selector string.
+;; In the current design, the window/document itself is no longer scrollable,
+;; so there is no need to retrieve its scroll state.
 (rf/reg-cofx
-  ::scroll-state
+  ::scroll-states
   (fn [cofx _]
-    (assoc cofx :scroll-state [js/window.scrollX js/window.scrollY])))
+    (let [selector      "*[id], main, body"
+          elements      (array-seq (js/document.querySelectorAll selector))
+          ->selector    (fn [element]
+                          (->> [(.-tagName element) (.-id element)]
+                               (remove nil?)
+                               (str/join "#")))
+          scroll-states (into {} (for [element elements]
+                                   (let [x (.-scrollLeft element)
+                                         y (.-scrollTop element)]
+                                     (when (or (> x 0) (> y 0))
+                                       [(->selector element) [x y]]))))]
+      (assoc cofx :scroll-states scroll-states))))
 
 (rf/reg-cofx
   ::active-element
@@ -154,11 +168,14 @@
   (fn [element]
     (.blur element)))
 
-;; Dispatched by ::use-scroll-state.
+;; Dispatched by ::load-scroll-state.
 (rf/reg-fx
-  :scroll-to
-  (fn [[x y]]
-    (.scrollTo js/window x y)))
+  :set-scroll-states
+  (fn [scroll-states]
+    (doseq [[k [x y]] scroll-states]
+      (let [element (aget (js/document.querySelectorAll k) 0)]
+        (set! (.-scrollLeft element) x)
+        (set! (.-scrollTop element) y)))))
 
 ;;;; EVENTS
 
@@ -168,22 +185,21 @@
     db/default-db))
 
 (rf/reg-event-db
-  ::save-scroll-state
-  (fn [db [_ page scroll-state]]
-    (assoc-in db [:scroll-states page] scroll-state)))
+  ::save-scroll-states
+  (fn [db [_ page scroll-states]]
+    (assoc-in db [:scroll-states page] scroll-states)))
 
 (rf/reg-event-fx
   ::reset-scroll-state
   (fn [_ [_ page]]
-    {:dispatch [::save-scroll-state page [0 0]]}))
+    {:dispatch [::save-scroll-states page nil]}))
 
-;; Set the scroll-state for the current page and reset the saved state to [0 0].
 ;; This event is dispatched by the content-page component on updates.
 (rf/reg-event-fx
   ::load-scroll-state
   (fn [cofx [_ page]]
-    (let [scroll-state (get-in cofx [:db :scroll-states page] [0 0])]
-      {:scroll-to scroll-state})))
+    (let [scroll-states (get-in cofx [:db :scroll-states page])]
+      {:set-scroll-states scroll-states})))
 
 ;; dispatched by both ::evaluate-input and ::on-study-button-press
 (rf/reg-event-fx
@@ -412,19 +428,19 @@
 (rf/reg-event-fx
   ::change-page
   [(rf/inject-cofx ::now)
-   (rf/inject-cofx ::scroll-state)]
+   (rf/inject-cofx ::scroll-states)]
   (fn [cofx [_ new-page]]
-    (let [db           (:db cofx)
-          input        (:input db)
-          history      (:history db)
-          current-page (when (not (empty? history))
-                         (-> history first first))
-          timestamp    (:now cofx)
-          scroll-state (:scroll-state cofx)]
+    (let [db            (:db cofx)
+          input         (:input db)
+          history       (:history db)
+          current-page  (when (not (empty? history))
+                          (-> history first first))
+          timestamp     (:now cofx)
+          scroll-states (:scroll-states cofx)]
       {:db         (-> db
                        (assoc :history (conj history [new-page timestamp]))
                        (assoc :input (or input (mk-input new-page))))
-       :dispatch-n [[::save-scroll-state current-page scroll-state]
+       :dispatch-n [[::save-scroll-states current-page scroll-states]
                     [::load-content new-page]]})))
 
 ;; Dispatched by on-click handlers in various places.

@@ -626,18 +626,18 @@ section.details table td:last-child {
 
 /* === DICTIONARY SEARCH RESULT === */
 
-.entries article a {
+#entries article a {
     display: flex;
     flex-direction: row;
     align-items: stretch;
     height: 100%;
 }
 
-.entries article + article {
+#entries article + article {
     margin-top: 0.5rem;
 }
 
-.entries h1 {
+#entries h1 {
     writing-mode: vertical-lr;
     white-space: nowrap;
     align-self: center;
@@ -646,11 +646,11 @@ section.details table td:last-child {
     padding-right: 1rem;
 }
 
-.entries article:hover {
+#entries article:hover {
     background: #EEFFFF;
 }
 
-.entries h1 + dl {
+#entries h1 + dl {
     padding-left: 1rem;
     border-left: 2px solid #EEE;
     list-style-type: none;
@@ -659,15 +659,15 @@ section.details table td:last-child {
 }
 
 /* TODO: check this */
-.entries span.pinyin {
+#entries span.pinyin {
     color: #999999;
 }
 
-.entries dl > dt {
+#entries dl > dt {
     font-size: 1.8rem;
 }
 
-.entries dl > dd {
+#entries dl > dd {
     font-size: 1.8rem;
     margin-top: 1rem;
 }

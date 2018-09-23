@@ -215,7 +215,7 @@
                              @(rf/subscribe [::subs/current-id]))
         in-current-script? #(contains? (::d/scripts %) script)]
     (when-let [entries (get content result-filter)]
-      [:main.entries
+      [:main#entries
        (->> entries
             (filter in-current-script?)
             (map (partial search-result-entry script search-term)))])))
