@@ -38,8 +38,9 @@
                                     :timestamp]}            ; Optional. The last commit date when clean.]}
 
   :profiles {:dev     {:dependencies [[binaryage/devtools "0.9.10"]
-                                      [day8.re-frame/re-frame-10x "0.3.3-react16"]]
-                       :plugins      [[lein-figwheel "0.5.13"]]
+                                      [day8.re-frame/re-frame-10x "0.3.3-react16"]
+                                      [figwheel-sidecar "0.5.16"]] ; for Cursive-integrated figwheel REPL
+                       :plugins      [[lein-figwheel "0.5.16"]] ; for running `lein fighweel dev`
                        :source-paths ["dev/src/clj"]
                        :repl-options {:init-ns user}}
 

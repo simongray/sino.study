@@ -38,13 +38,7 @@ Typical development involves running a development web service locally,
 while accessing the data from the service through a live-reloading frontend app.
 
 ### Local backend server
-To start a local production web server for the application, run:
-
-````
-lein repl
-````
-
-Once the REPL has loaded the user ns, evaluate the following:
+Start a lein nREPL for the project, then evaluate the following:
 
 ````
 (start)
@@ -63,14 +57,15 @@ The system can be stopped again by evaluating:
 Pieces of state can be reloaded evaluating e.g. ```(restart #'dict)```.
 
 ### Run live-reloading frontend app
-To start figwheel - a live-reloading process for the frontend - run:
+For frontend development, the fighweel experience is currently [integrated with 
+Cursive using `fighweel-sidecar`](https://github.com/bhauman/lein-figwheel/wiki/Running-figwheel-in-a-Cursive-Clojure-REPL).
+An IntelliJ REPL should be configured using the `Use clojure.main in normal JVM 
+process` option and with `dev/src/clj/figwheel_repl.clj` set as the parameter.
 
-```
-lein clean
-lein figwheel dev
-```
+As an alternative, it is also possible to simply run ```lein figwheel dev```.
 
-Wait a bit, then browse to [http://localhost:3449](http://localhost:3449).
+Launch the REPL once configured, wait a bit, then browse to
+[http://localhost:3449](http://localhost:3449).
 
 Figwheel will automatically push CLJS changes to the browser, 
 while preserving the application state. A hard page reload will reset the state.
@@ -79,6 +74,7 @@ If there are any issues getting the app to show up (e.g. blank page),
 then try clearing the browser cache. Note that most functionality will require
 the development backend service to be running too.
 
+### Running dev app on a mobile phone
 If I want to test on a mobile phone I will typically run
 
 ````
