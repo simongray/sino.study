@@ -1,7 +1,6 @@
 (ns sinostudy.subs
   (:require [re-frame.core :as rf]
             [sinostudy.pages.core :as pages]
-            [sinostudy.events :as events]
             [sinostudy.dictionary.core :as d]))
 
 (rf/reg-sub

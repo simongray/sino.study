@@ -166,7 +166,8 @@
 (rf/reg-fx
   :blur
   (fn [element]
-    (.blur element)))
+    (when element
+      (.blur element))))
 
 ;; Dispatched by ::load-scroll-state.
 (rf/reg-fx
@@ -226,11 +227,14 @@
           latest-evaluation (first (:evaluations db))
           latest-input?     (= input (:input db))
           query             (str/trim input)
-          new-query?        (not= query (:query latest-evaluation))]
+          new-query?        (not= query (:query latest-evaluation))
+          actions           (eval-query query)]
       (when (and latest-input? new-query?)
-        {:dispatch [::save-evaluation query (eval-query query)]}))))
+        {:dispatch-n [[::save-evaluation query actions]
+                      (when (and actions
+                                 (= ::look-up (-> actions first first)))
+                        (first actions))]}))))
 
-;; TODO: what to do about this now that hints are gone?
 ;; dispatched every time the input field changes
 ;; for performance reasons, non-blank queries are evaluated with a short lag
 ;; while blank queries are dispatched immediately for evaluation
@@ -245,7 +249,7 @@
       (if (str/blank? input)
         (assoc fx :dispatch [::evaluate-input input])
         (assoc fx :dispatch-later [{:dispatch [::evaluate-input input]
-                                    :ms       1000}])))))
+                                    :ms       400}])))))
 
 ;; dispatched by ::on-query-success
 (rf/reg-event-db
@@ -405,7 +409,10 @@
       {:dispatch-n
        [(when new-query? [::save-evaluation query actions])
         (case (count actions)
-          1 (first actions)
+          1 (let [[kind query :as action] (first actions)]
+              (if (= kind ::look-up)
+                [::look-up query true]                      ; true = input looses focus
+                action))
           [::open-action-chooser])]})))
 
 ;; dispatched by ::change-page
@@ -466,10 +473,10 @@
 (rf/reg-event-fx
   ::look-up
   [(rf/inject-cofx ::active-element)]
-  (fn [cofx [_ term]]
+  (fn [cofx [_ term submit?]]
     (let [active-element (:active-element cofx)]
       {:navigate-to (str "/" (name ::pages/terms) "/" term)
-       :blur        active-element
+       :blur        (when submit? active-element)
        :dispatch    [::reset-scroll-state [::pages/terms term]]})))
 
 (rf/reg-event-fx
