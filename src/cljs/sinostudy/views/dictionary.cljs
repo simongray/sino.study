@@ -221,18 +221,20 @@
             (map (partial search-result-entry script search-term)))])))
 
 (defn unknown-term
-  "Dictionary entry for a term that does not exist."
-  []
+  "Slightly more specific than a 404."
+  [term]
   [:main
    [:article.full
     [:h1 "Sorry,"]
-    [:p "but here are no dictionary entries available matching that term."]]])
+    [:p "the dictionary currently doesn't contain an entry for " term "."]]])
 
 (defn dictionary-page
   "A dictionary page can be 1 of 3 types: entry, search result, or unknown."
   []
-  (let [content @(rf/subscribe [::subs/content])]
+  (let [{uses ::d/uses} @(rf/subscribe [::subs/content])
+        unknown     @(rf/subscribe [::subs/unknown])
+        search-term @(rf/subscribe [::subs/current-id])]
     (cond
-      (::d/uses content) [entry]
-      (> (count (keys content)) 1) [search-results]
-      :else [unknown-term])))
+      (unknown search-term) [unknown-term search-term]
+      uses [entry]
+      :else [search-results])))

@@ -7,6 +7,9 @@
 
 re=":tag \"v([^\"]+)"
 
+# Needs to run a lein action at least once to make sure version.edn is built.
+lein version
+
 if [[ $(cat resources/version.edn) =~ $re ]]; then
     version=${BASH_REMATCH[1]}
     jarfile="sinostudy-standalone.jar"

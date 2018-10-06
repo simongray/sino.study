@@ -1,1 +1,3 @@
-{:port 8080}
+{:server     {:port {:internal 8080
+                     :external 80}}
+ :evaluation {:delay 250}}

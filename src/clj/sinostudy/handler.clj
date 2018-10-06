@@ -82,7 +82,7 @@
 
   ;; HTML page requests all resolve to the ClojureScript app.
   ;; The internal routing of the app creates the correct presentation.
-  (route/not-found index))
+  (ANY "*" [] index))
 
 ;; Allows web resources in the JAR (such as CSS and JS) to be fetched.
 ;; This is especially important in production, i.e. using html-kit.
@@ -99,12 +99,11 @@
 
 (defstate server
   "Server instance (http-kit)."
-  :start (hs/run-server #'app config)
+  :start (hs/run-server #'app {:port (get-in config [:server :port :internal] 8080)})
   :stop (server))
 
 (defn -main
   []
   (mount-up/on-upndown :info mount-up/log :before)
   (mount/start)
-  (println (str "Listening on port " (:port config))))
-
+  (println (str "Listening on port " (get-in config [:server :port :internal] 8080))))
