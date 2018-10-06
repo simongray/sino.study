@@ -14,27 +14,31 @@
   (set! js/window.history.scrollRestoration "manual"))
 
 (defn app-routes []
-  ;; this prefixes routes with a hash for compability with older browsers
+  ;; This prefixes routes with a hash for compatibility with older browsers
   ;; however, it might not be necessary if I don't need to support IE 9
-  ;; furthermore, it may impede on some other functionality
+  ;; furthermore, it may impede on some other functionality.
   (secretary/set-config! :prefix "#")
 
-  ;; Combining the root route with the other page routes don't seem to work.
+  ;; Combining the root route with the other page routes doesn't seem to work.
   (defroute "/" []
-    (rf/dispatch [::events/change-page [::pages/static "/"]]))
+    (rf/dispatch [::events/change-location [::pages/static "/"]]))
 
   (defroute "/:page" [page]
-    (rf/dispatch [::events/change-page [::pages/static (str "/" page)]]))
+    (rf/dispatch [::events/change-location [::pages/static (str "/" page)]]))
 
   (defroute
     (str "/" (name :pages/terms) "/:term") [term]
-    (rf/dispatch [::events/change-page [::pages/terms term]]))
+    (rf/dispatch [::events/change-location [::pages/terms term]]))
 
   (defroute
     (str "/" (name ::pages/terms) "/:term/:attribute") [term attribute]
-    (rf/dispatch [::events/change-page [::pages/terms term attribute]]))
+    (rf/dispatch [::events/change-location [::pages/terms term attribute]]))
 
-  ;; following instructions at https://github.com/venantius/accountant
-  (accountant/configure-navigation!
-    {:nav-handler  (fn [path] (secretary/dispatch! path))
-     :path-exists? (fn [path] (secretary/locate-route path))}))
+  (defroute
+    "*" []
+    (rf/dispatch [::events/change-location [::pages/static "/404"]])))
+
+;; Following instructions from: https://github.com/venantius/accountant
+(accountant/configure-navigation!
+  {:nav-handler  (fn [path] (secretary/dispatch! path))
+   :path-exists? (fn [path] (secretary/locate-route path))})

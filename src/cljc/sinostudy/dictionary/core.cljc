@@ -81,12 +81,12 @@
                        ::scripts #{script}
                        ::uses    {(::pinyin listing) (::definitions listing)}}]
     (cond-> base-entry
-            script-diff? (assoc ::variations (make-vars script))
-            classifiers (assoc ::classifiers classifiers)
-            frequency (assoc ::frequency frequency)
-            decomposition (assoc ::decomposition decomposition)
-            etymology (assoc ::etymology etymology)
-            radical (assoc ::radical radical))))
+      script-diff? (assoc ::variations (make-vars script))
+      classifiers (assoc ::classifiers classifiers)
+      frequency (assoc ::frequency frequency)
+      decomposition (assoc ::decomposition decomposition)
+      etymology (assoc ::etymology etymology)
+      radical (assoc ::radical radical))))
 
 (defn add-hanzi*
   "Update the hanzi dict at the specified key k with the entry v.
@@ -102,14 +102,14 @@
           etym    (::etymology v)
           radical (::radical v)]
       (assoc dict k (cond-> old
-                            scripts (assoc ::scripts scripts)
-                            cls (assoc ::classifiers cls)
-                            uses (assoc ::uses uses)
-                            vars (assoc ::variations vars)
-                            freq (assoc ::frequency freq)
-                            decomp (assoc ::decomposition decomp)
-                            etym (assoc ::etymology etym)
-                            radical (assoc ::radical radical))))
+                      scripts (assoc ::scripts scripts)
+                      cls (assoc ::classifiers cls)
+                      uses (assoc ::uses uses)
+                      vars (assoc ::variations vars)
+                      freq (assoc ::frequency freq)
+                      decomp (assoc ::decomposition decomp)
+                      etym (assoc ::etymology etym)
+                      radical (assoc ::radical radical))))
     (assoc dict k v)))
 
 (defn add-hanzi
@@ -311,9 +311,9 @@
           assoc*        (fn [coll k v]
                           (assoc-in coll [::info script k] v))]
       (cond-> listing
-              decomposition (assoc* ::decomposition decomposition)
-              etymology (assoc* ::etymology etymology)
-              radical (assoc* ::radical radical)))
+        decomposition (assoc* ::decomposition decomposition)
+        etymology (assoc* ::etymology etymology)
+        radical (assoc* ::radical radical)))
     listing))
 
 (defn add-info
@@ -372,13 +372,16 @@
                                 (look-up* (limited ::pinyin+digits) term*))
          diacritics  (set/union (look-up* (limited ::pinyin+diacritics) term)
                                 (look-up* (limited ::pinyin+diacritics) term*))
-         english     (look-up* (limited ::english) (str/lower-case term))]
-     (cond-> {::term term}
-             hanzi (assoc ::hanzi #{hanzi})
-             pinyin (assoc ::pinyin (get-entries pinyin))
-             digits (assoc ::pinyin+digits (get-entries digits))
-             diacritics (assoc ::pinyin+diacritics (get-entries diacritics))
-             english (assoc ::english (get-entries english)))))
+         english     (look-up* (limited ::english) (str/lower-case term))
+         result      (cond-> {::term term}
+                       hanzi (assoc ::hanzi #{hanzi})
+                       pinyin (assoc ::pinyin (get-entries pinyin))
+                       digits (assoc ::pinyin+digits (get-entries digits))
+                       diacritics (assoc ::pinyin+diacritics (get-entries diacritics))
+                       english (assoc ::english (get-entries english)))]
+     (if (= result {::term term})
+       nil
+       result)))
   ([dict word]
    (look-up dict word nil)))
 
@@ -444,17 +447,17 @@
         english    (::english result)]
     (cond-> result
 
-            pinyin
-            (assoc ::pinyin
-                   (filter-uses term pinyin p/no-digits))
+      pinyin
+      (assoc ::pinyin
+             (filter-uses term pinyin p/no-digits))
 
-            digits
-            (assoc ::pinyin+digits
-                   (filter-uses term digits))
+      digits
+      (assoc ::pinyin+digits
+             (filter-uses term digits))
 
-            diacritics
-            (assoc ::pinyin+diacritics
-                   (filter-uses term diacritics p/digits->diacritics)))))
+      diacritics
+      (assoc ::pinyin+diacritics
+             (filter-uses term diacritics p/digits->diacritics)))))
 
 ;; TODO: disabled for now, re-enable when more intelligent (issue #37)
 ;english
@@ -474,11 +477,11 @@
         diacritics (::pinyin+diacritics result)
         english    (::english result)]
     (cond-> result
-            ;pinyin (assoc ::pinyin (sorted > pinyin))
-            ;digits (assoc ::pinyin+digits (sorted > digits))
-            ;diacritics (assoc ::pinyin+diacritics (sorted > diacritics))
-            ;; TODO: sort Pinyin properly too
-            pinyin (assoc ::pinyin pinyin)
-            digits (assoc ::pinyin+digits digits)
-            diacritics (assoc ::pinyin+diacritics diacritics)
-            english (assoc ::english (sorted relevance* english)))))
+      ;pinyin (assoc ::pinyin (sorted > pinyin))
+      ;digits (assoc ::pinyin+digits (sorted > digits))
+      ;diacritics (assoc ::pinyin+diacritics (sorted > diacritics))
+      ;; TODO: sort Pinyin properly too
+      pinyin (assoc ::pinyin pinyin)
+      digits (assoc ::pinyin+digits digits)
+      diacritics (assoc ::pinyin+diacritics diacritics)
+      english (assoc ::english (sorted relevance* english)))))

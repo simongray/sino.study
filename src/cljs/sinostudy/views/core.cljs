@@ -3,6 +3,7 @@
             [reagent.core :as reagent]
             [clojure.string :as str]
             [cljs.reader :as reader]
+            [sinostudy.db :as db]
             [sinostudy.subs :as subs]
             [sinostudy.events :as events]
             [sinostudy.views.dictionary :as vd]
@@ -36,11 +37,14 @@
   "The input field (part of the header form)."
   (let [input     @(rf/subscribe [::subs/input])
         actions   @(rf/subscribe [::subs/actions])
-        disabled? (not (nil? actions))]
+        unknown   @(rf/subscribe [::subs/unknown])
+        disabled? (not (nil? actions))
+        unknown?  (when input (unknown (str/trim input)))]
     [:<>
      [:div#header-input
       [:input#input-field
        {:type            "text"
+        :class           (when unknown? "unknown")
         :placeholder     "look up..."
         :auto-capitalize "off"
         :auto-correct    "off"
@@ -118,22 +122,8 @@
        (let [category @(rf/subscribe [::subs/current-category])
              content  @(rf/subscribe [::subs/content])]
          (cond
-           content [:<>
-                    (cond
-                      (= ::pages/terms category) [vd/dictionary-page]
-                      :else content)]
-
-           (and (not= ::pages/static category)
-                (nil? content)) [:main]
-
-           :else [:main#splash
-                  [:img {:src "/img/logo_dark_min.svg"}]
-                  [:blockquote
-                   "... a modern Chinese dictionary and grammar tool. "
-                   "Here you can look up unknown words or find out what is going on in a sentence. "
-                   [:a {:href  "/about"
-                        :title "Learn more about sino.study"}
-                    "Learn More."]]])))
+           (= ::pages/static category) (or content (db/static-pages "/404"))
+           (= ::pages/terms category) [vd/dictionary-page])))
 
      ;; Ensures that scroll state is restored when pushing back/forward button.
      ;; Sadly, this behaviour is global for all updates, so links/buttons/etc.

@@ -277,6 +277,13 @@ div#header-input > input[disabled] {
 	color: #AAA;
 }
 
+/* Grey colouring of input when action-chooser is active */
+div#header-input > input.unknown {
+	text-decoration: underline;
+	text-decoration-color: #884433;
+	text-decoration-style: dotted;
+}
+
 /* Formerly known as the #study-button */
 div#header-input > button {
 	border: 0;
@@ -572,6 +579,7 @@ article.entry {
 
 article.entry h1 {
     writing-mode: vertical-lr;
+    text-orientation: upright;
     font-size: 8vh; /* vh better supports small screens */
     margin-right: 1.5rem;
 
@@ -639,6 +647,7 @@ section.details table td:last-child {
 
 #entries h1 {
     writing-mode: vertical-lr;
+    text-orientation: upright;
     white-space: nowrap;
     align-self: center;
     font-size: 3.2rem;

@@ -1,7 +1,6 @@
 (ns sinostudy.subs
   (:require [re-frame.core :as rf]
             [sinostudy.pages.core :as pages]
-            [sinostudy.events :as events]
             [sinostudy.dictionary.core :as d]))
 
 (rf/reg-sub
@@ -13,6 +12,11 @@
   ::pages
   (fn [db]
     (:pages db)))
+
+(rf/reg-sub
+  ::unknown
+  (fn [db]
+    (:unknown db)))
 
 (rf/reg-sub
   ::history
@@ -50,13 +54,18 @@
     (first (:evaluations db))))
 
 (rf/reg-sub
+  ::current-query
+  (fn [_]
+    (rf/subscribe [::current-evaluation]))
+  (fn [evaluation]
+    (:query evaluation)))
+
+(rf/reg-sub
   ::current-page
   (fn [_]
     (rf/subscribe [::history]))
   (fn [history]
-    (let [[page _] (first history)]
-      (when (> (count page) 1)
-        (subvec page 0 2)))))
+    (first history)))
 
 (rf/reg-sub
   ::current-category
@@ -75,11 +84,9 @@
 (rf/reg-sub
   ::current-attribute
   (fn [_]
-    (rf/subscribe [::history]))
-  (fn [history]
-    (let [[page _] (first history)]
-      (when (> (count page) 2)
-        (get page 2)))))
+    (rf/subscribe [::current-page]))
+  (fn [page]
+    (get page 2)))
 
 (rf/reg-sub
   ::content
@@ -88,7 +95,7 @@
      (rf/subscribe [::current-page])])
   (fn [[pages page]]
     (when page
-      (get-in pages page))))
+      (get-in pages (pages/shortened page)))))
 
 ;; The result filters are stored in a map with pages as keys.
 (rf/reg-sub
