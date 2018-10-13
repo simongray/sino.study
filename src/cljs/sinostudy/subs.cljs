@@ -48,14 +48,30 @@
   (fn [db]
     (first (:evaluations db))))
 
+(defn- basic-page
+  "Helper function to make sure page is 2 items max."
+  [page]
+  (when (> (count page) 1)
+    (subvec page 0 2)))
+
+(defn- latest-content-page
+  "Search history to get the latest page that has any content available."
+  [pages init-history]
+  (loop [history init-history]
+    (let [[page _] (first history)
+          content (get-in pages (basic-page page))]
+      (when page
+        (if content
+          page
+          (recur (rest history)))))))
+
 (rf/reg-sub
   ::current-page
   (fn [_]
-    (rf/subscribe [::history]))
-  (fn [history]
-    (let [[page _] (first history)]
-      (when (> (count page) 1)
-        (subvec page 0 2)))))
+    [(rf/subscribe [::pages])
+     (rf/subscribe [::history])])
+  (fn [[pages history]]
+    (latest-content-page pages history)))
 
 (rf/reg-sub
   ::current-category

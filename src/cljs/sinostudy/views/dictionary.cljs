@@ -220,21 +220,10 @@
             (filter in-current-script?)
             (map (partial search-result-entry script search-term)))])))
 
-(defn unknown-term
-  "Dictionary entry for a term that does not exist."
-  []
-  [:main
-   [:article.full
-    [:h1 "Sorry,"]
-    [:p "but here are no dictionary entries available matching that term."]]])
-
 (defn dictionary-page
   "A dictionary page can be 1 of 3 types: entry, search result, or unknown."
   []
-  (let [content            @(rf/subscribe [::subs/content])
-        current-evaluation @(rf/subscribe [::subs/current-evaluation])
-        input              @(rf/subscribe [::subs/input])]
-    (cond
-      (::d/uses content) [entry]
-      (> (count (keys content)) 1) [search-results]
-      (not= input (:query current-evaluation)) [unknown-term])))
+  (let [content @(rf/subscribe [::subs/content])]
+    (if (::d/uses content)
+      [entry]
+      [search-results])))

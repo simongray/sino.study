@@ -116,24 +116,12 @@
      :reagent-render
      (fn []
        (let [category @(rf/subscribe [::subs/current-category])
-             content  @(rf/subscribe [::subs/content])]
+             content  @(rf/subscribe [::subs/content])
+             pages    @(rf/subscribe [::subs/pages])]
          (cond
-           content [:<>
-                    (cond
-                      (= ::pages/terms category) [vd/dictionary-page]
-                      :else content)]
-
-           (and (not= ::pages/static category)
-                (nil? content)) [:main]
-
-           :else [:main#splash
-                  [:img {:src "/img/logo_dark_min.svg"}]
-                  [:blockquote
-                   "... a modern Chinese dictionary and grammar tool. "
-                   "Here you can look up unknown words or find out what is going on in a sentence. "
-                   [:a {:href  "/about"
-                        :title "Learn more about sino.study"}
-                    "Learn More."]]])))
+           (= ::pages/static category) content
+           (= ::pages/terms category) [vd/dictionary-page]
+           :else (get-in pages [::pages/static "/404"]))))
 
      ;; Ensures that scroll state is restored when pushing back/forward button.
      ;; Sadly, this behaviour is global for all updates, so links/buttons/etc.

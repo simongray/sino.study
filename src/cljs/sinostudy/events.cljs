@@ -39,18 +39,20 @@
   "Save the individual entries of a dictionary search result into the db.
   Note: this is a separate step from saving the search result itself!"
   [db content]
-  (let [path    [:pages ::pages/terms]
-        entries (->> content
-                     (filter #(-> % first (not= ::d/term)))
-                     (map second)
-                     (apply set/union))]
-    (loop [db*      db
-           entries* entries]
-      (if (empty? entries*)
-        db*
-        (let [entry (first entries*)
-              path* (conj path (::d/term entry))]
-          (recur (assoc-in db* path* entry) (rest entries*)))))))
+  (if (not (::d/unknown content))
+    (let [path    [:pages ::pages/terms]
+          entries (->> content
+                       (filter #(-> % first (not= ::d/term)))
+                       (map second)
+                       (apply set/union))]
+      (loop [db*      db
+             entries* entries]
+        (if (empty? entries*)
+          db*
+          (let [entry (first entries*)
+                path* (conj path (::d/term entry))]
+            (recur (assoc-in db* path* entry) (rest entries*))))))
+    db))
 
 (defn mk-input
   "What the input field should display based on a given page."
@@ -94,10 +96,10 @@
   [query]
   (let [query* (p/umlaut query)]
     (cond-> [[::look-up query]]
-            (and (pinyin-block? query*)
-                 (not= query query*)) (conj [::look-up (d/pinyin-key query*)])
-            (digits->diacritics? query*) (conj [::digits->diacritics query*])
-            (diacritics->digits? query*) (conj [::diacritics->digits query*]))))
+      (and (pinyin-block? query*)
+           (not= query query*)) (conj [::look-up (d/pinyin-key query*)])
+      (digits->diacritics? query*) (conj [::digits->diacritics query*])
+      (diacritics->digits? query*) (conj [::diacritics->digits query*]))))
 
 (defn eval-query
   "Evaluate a query string to get a vector of possible actions."
@@ -255,14 +257,16 @@
 (rf/reg-event-db
   ::save-page
   (fn [db [_ {:keys [page result]}]]
-    (let [path      (into [:pages] page)
-          page-type (first page)]
+    (let [page-type (first page)]
       (cond
+        (nil? result)
+        (update db :unknown conj page)
+
         ;; Store result directly and then store individual entries.
         ;; TODO: reduce overwrites for hanzi result?
         (= page-type ::pages/terms)
         (-> db
-            (assoc-in path (dictionary-preprocess result))
+            (assoc-in (into [:pages] page) (dictionary-preprocess result))
             (save-dict-entries result))
 
         :else db))))
@@ -420,12 +424,14 @@
   ::load-content
   (fn [cofx [_ page]]
     (let [db       (:db cofx)
+          unknown  (:unknown db)
           pages    (:pages db)
           category (first page)]
       (cond
         (= ::pages/static category) {}
         (= ::pages/terms category) (let [dict-page (subvec page 0 2)]
-                                     (if (not (get-in pages dict-page))
+                                     (if (and (not (unknown dict-page))
+                                              (not (get-in pages dict-page)))
                                        {:dispatch [::send-query dict-page]}
                                        {}))))))
 

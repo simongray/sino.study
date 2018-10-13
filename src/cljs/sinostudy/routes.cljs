@@ -14,12 +14,12 @@
   (set! js/window.history.scrollRestoration "manual"))
 
 (defn app-routes []
-  ;; this prefixes routes with a hash for compability with older browsers
+  ;; This prefixes routes with a hash for compatibility with older browsers
   ;; however, it might not be necessary if I don't need to support IE 9
-  ;; furthermore, it may impede on some other functionality
+  ;; furthermore, it may impede on some other functionality.
   (secretary/set-config! :prefix "#")
 
-  ;; Combining the root route with the other page routes don't seem to work.
+  ;; Combining the root route with the other page routes doesn't seem to work.
   (defroute "/" []
     (rf/dispatch [::events/change-page [::pages/static "/"]]))
 
