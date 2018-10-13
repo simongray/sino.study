@@ -48,30 +48,23 @@
   (fn [db]
     (first (:evaluations db))))
 
-(defn- basic-page
-  "Helper function to make sure page is 2 items max."
-  [page]
-  (when (> (count page) 1)
-    (subvec page 0 2)))
-
-(defn- latest-content-page
-  "Search history to get the latest page that has any content available."
-  [pages init-history]
-  (loop [history init-history]
-    (let [[page _] (first history)
-          content (get-in pages (basic-page page))]
-      (when page
-        (if content
-          page
-          (recur (rest history)))))))
-
+;; Searches history to get the latest page that has any content available.
+;; If a new page is added to the page history stack, but doesn't yet have any
+;; content available, the current page will not change before it does.
+;; If no content exists (i.e. an unknown term) then it also stays the same.
 (rf/reg-sub
   ::current-page
   (fn [_]
     [(rf/subscribe [::pages])
      (rf/subscribe [::history])])
-  (fn [[pages history]]
-    (latest-content-page pages history)))
+  (fn [[pages full-history]]
+    (loop [history full-history]
+      (let [[page _] (first history)
+            content (get-in pages (pages/short page))]
+        (when page
+          (if content
+            page
+            (recur (rest history))))))))
 
 (rf/reg-sub
   ::current-category

@@ -429,7 +429,7 @@
           category (first page)]
       (cond
         (= ::pages/static category) {}
-        (= ::pages/terms category) (let [dict-page (subvec page 0 2)]
+        (= ::pages/terms category) (let [dict-page (pages/short page)]
                                      (if (and (not (unknown dict-page))
                                               (not (get-in pages dict-page)))
                                        {:dispatch [::send-query dict-page]}
