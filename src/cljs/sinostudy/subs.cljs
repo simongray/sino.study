@@ -60,7 +60,7 @@
   (fn [[pages full-history]]
     (loop [history full-history]
       (let [[page _] (first history)
-            content (get-in pages (pages/short page))]
+            content (get-in pages (pages/shortened page))]
         (when page
           (if content
             page

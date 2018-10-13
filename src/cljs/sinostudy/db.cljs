@@ -1,6 +1,16 @@
 (ns sinostudy.db
-  (:require [sinostudy.pages.core :as pages]
-            [sinostudy.dictionary.core :as d]))
+  (:require [cljs.reader :as reader]
+            [sinostudy.pages.core :as pages]
+            [sinostudy.dictionary.core :as d])
+  (:require-macros [sinostudy.macros.core :as macros]))
+
+(def config
+  (reader/read-string (macros/slurp "resources/config.edn")))
+
+(def query-uri
+  (let [hostname js/window.location.hostname
+        port     (get-in config [:server :port])]
+    (str "http://" hostname ":" port "/query/")))
 
 (def static-pages
   {"/404"      [:main
@@ -25,7 +35,9 @@
                  [:p "This is the Settings page."]]]})
 
 (def default-db
-  {:input          nil
+  {:config         config
+   :query-uri      query-uri
+   :input          nil
    :actions        nil
    :checked-action 0
    :script         ::d/simplified

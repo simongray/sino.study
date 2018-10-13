@@ -1,7 +1,6 @@
 (ns sinostudy.events
   (:require [clojure.string :as str]
             [clojure.set :as set]
-            [cljs.reader :as reader]
             [re-frame.core :as rf]
             [accountant.core :as accountant]
             [sinostudy.db :as db]
@@ -10,18 +9,7 @@
             [sinostudy.dictionary.core :as d]
             [sinostudy.pages.core :as pages]
             [ajax.core :as ajax]
-            [cognitect.transit :as transit])
-  (:require-macros [sinostudy.macros.core :as macros]))
-
-(def config
-  (reader/read-string (macros/slurp "resources/config.edn")))
-
-;; During development, frontend and backend are served on different ports,
-;; but in production the backend is served on the same host and port.
-(def query-uri
-  (let [hostname js/window.location.hostname
-        port     (:port config)]
-    (str "http://" hostname ":" port "/query/")))
+            [cognitect.transit :as transit]))
 
 ;; all responses from the Compojure backend are Transit-encoded
 (def transit-reader
@@ -246,12 +234,13 @@
 (rf/reg-event-fx
   ::on-input-change
   (fn [cofx [_ input]]
-    (let [db (:db cofx)
-          fx {:db (assoc db :input input)}]
+    (let [db    (:db cofx)
+          delay (get-in db [:config :evaluation :delay])
+          fx    {:db (assoc db :input input)}]
       (if (str/blank? input)
         (assoc fx :dispatch [::evaluate-input input])
         (assoc fx :dispatch-later [{:dispatch [::evaluate-input input]
-                                    :ms       400}])))))
+                                    :ms       delay}])))))
 
 ;; dispatched by ::on-query-success
 (rf/reg-event-db
@@ -302,7 +291,7 @@
 ;; dispatched by ::load-content
 (rf/reg-event-fx
   ::send-query
-  (fn [_ [_ query]]
+  (fn [cofx [_ query]]
     (let [default-request {:method          :get
                            :timeout         5000
                            :response-format (ajax/text-response-format)
@@ -310,6 +299,7 @@
                            :on-failure      [::on-query-failure]}
           query-type      (name (first query))
           query-string    (second query)
+          query-uri       (get-in cofx [:db :query-uri])
           uri             (str query-uri query-type "/" query-string)
           request         (assoc default-request :uri uri)]
       {:http-xhrio request})))
@@ -429,7 +419,7 @@
           category (first page)]
       (cond
         (= ::pages/static category) {}
-        (= ::pages/terms category) (let [dict-page (pages/short page)]
+        (= ::pages/terms category) (let [dict-page (pages/shortened page)]
                                      (if (and (not (unknown dict-page))
                                               (not (get-in pages dict-page)))
                                        {:dispatch [::send-query dict-page]}

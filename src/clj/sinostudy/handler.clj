@@ -106,5 +106,5 @@
   []
   (mount-up/on-upndown :info mount-up/log :before)
   (mount/start)
-  (println (str "Listening on port " (:port config))))
+  (println (str "Listening on port " (get-in config [:server :port]))))
 
