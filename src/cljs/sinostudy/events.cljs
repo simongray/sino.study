@@ -249,7 +249,7 @@
     (let [page-type (first page)]
       (cond
         (nil? result)
-        (update db :unknown conj page)
+        (update db :unknown conj (second page))
 
         ;; Store result directly and then store individual entries.
         ;; TODO: reduce overwrites for hanzi result?

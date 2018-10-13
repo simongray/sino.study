@@ -14,6 +14,11 @@
     (:pages db)))
 
 (rf/reg-sub
+  ::unknown
+  (fn [db]
+    (:unknown db)))
+
+(rf/reg-sub
   ::history
   (fn [db]
     (:history db)))

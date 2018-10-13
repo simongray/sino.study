@@ -36,11 +36,14 @@
   "The input field (part of the header form)."
   (let [input     @(rf/subscribe [::subs/input])
         actions   @(rf/subscribe [::subs/actions])
-        disabled? (not (nil? actions))]
+        unknown   @(rf/subscribe [::subs/unknown])
+        disabled? (not (nil? actions))
+        unknown?  (when input (unknown (str/trim input)))]
     [:<>
      [:div#header-input
       [:input#input-field
        {:type            "text"
+        :class           (when unknown? "unknown")
         :placeholder     "look up..."
         :auto-capitalize "off"
         :auto-correct    "off"
