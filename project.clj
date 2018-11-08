@@ -7,7 +7,7 @@
   :jar-name "sinostudy.jar"
   :uberjar-name "sinostudy-standalone.jar"
 
-  :dependencies [[org.clojure/clojure "1.9.0"]
+  :dependencies [[org.clojure/clojure "1.10.0-beta5"]       ; TODO: use release version
                  [org.clojure/clojurescript "1.10.339"]
                  [mount "0.1.13"]
                  [tolitius/mount-up "0.1.1"]
@@ -21,7 +21,9 @@
                  [compojure "1.6.1"]
                  [http-kit "2.3.0"]
                  [ring/ring-defaults "0.3.2"]
-                 [clj-json "0.5.3"]]
+                 [clj-json "0.5.3"]
+                 [net.sf.extjwnl/extjwnl "1.9.4"]
+                 [net.sf.extjwnl/extjwnl-data-wn31 "1.2"]]  ; TODO: load externally
 
   :plugins [[me.arrdem/lein-git-version "2.0.8"]
             [lein-cljsbuild "1.1.5"]]
