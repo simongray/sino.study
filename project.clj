@@ -8,13 +8,13 @@
   :uberjar-name "sinostudy-standalone.jar"
 
   :dependencies [[org.clojure/clojure "1.9.0"]
-                 [org.clojure/clojurescript "1.10.339"]
-                 [mount "0.1.13"]
-                 [tolitius/mount-up "0.1.1"]
+                 [org.clojure/clojurescript "1.10.439"]
+                 [mount "0.1.14"]
+                 [tolitius/mount-up "0.1.2"]
                  [reagent "0.8.1"]
                  [re-frame "0.10.6"]
                  [day8.re-frame/http-fx "0.1.6"]
-                 [secretary "1.2.3"]
+                 [clj-commons/secretary "1.2.4"]
                  [venantius/accountant "0.2.4"]
                  [com.cognitect/transit-clj "0.8.313"]
                  [com.cognitect/transit-cljs "0.8.256"]
@@ -24,7 +24,7 @@
                  [clj-json "0.5.3"]]
 
   :plugins [[me.arrdem/lein-git-version "2.0.8"]
-            [lein-cljsbuild "1.1.5"]]
+            [lein-cljsbuild "1.1.7"]]
 
   :git-version {:version-file      "resources/version.edn"
                 :version-file-keys [:tag                    ; Name of the last git tag if any
@@ -39,7 +39,7 @@
 
   :profiles {:dev     {:dependencies [[binaryage/devtools "0.9.10"]
                                       [day8.re-frame/re-frame-10x "0.3.3-react16"]
-                                      [figwheel-sidecar "0.5.16"]] ; for Cursive-integrated figwheel REPL
+                                      [figwheel-sidecar "0.5.17"]] ; for Cursive-integrated figwheel REPL
                        :plugins      [[lein-figwheel "0.5.16"]] ; for running `lein fighweel dev`
                        :source-paths ["dev/src/clj"]
                        :repl-options {:init-ns user}}
