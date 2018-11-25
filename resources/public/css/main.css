@@ -169,7 +169,8 @@ main {
     width: calc(100% - 1rem);
     max-width: 65rem;
     overflow: auto;
-    padding: 0 0.5rem 0.5rem 0.5rem;
+    padding: 0.5rem;
+    flex-grow: 1;
 }
 
 main#splash {
@@ -216,7 +217,16 @@ main#splash a:hover {
 }
 
 header {
-	width: 100%;
+    animation: fade-in 1s ease;
+
+    width: 100%;
+
+    background: #BB5544;
+    box-shadow: inset 0 0 1rem 0 rgba(255, 255, 255, 0.3),
+                0 0 1rem 0 rgba(0, 0, 0, 0.3);
+
+    /* make sure search results are covered by shadow */
+    z-index: 1;
 }
 
 /* 	TODO: do I need this?
@@ -247,7 +257,7 @@ div#header-input > input {
     transition: all 0.3s;
 
 	font-size: 2.4rem;
-	color: #AAA;
+	color: #CCC;
 
 	/* fixes overflow in Chrome iPhone 5/SE device inspector */
 	max-width: 100%;
@@ -256,11 +266,11 @@ div#header-input > input {
 	padding: 0.5rem 3.5rem 0.5rem 0.5rem;
 	border: none;
 	border-radius: 0.3rem;
-	background: #333 url("/img/search.svg");
+	background: #2A2A2A url("/img/search.svg");
 	background-repeat: no-repeat;
 	background-size: auto calc(100% - 1.5rem);
 	background-position: calc(100% - 0.75rem) 50%;
-	box-shadow: inset 0 0 0.5rem 0 rgba(0, 0, 0, 0.8),
+	box-shadow: inset 0 0 0.5rem 0 rgba(0, 0, 0, 1),
 	            0 0 0.5rem 0 rgba(255, 255, 255, 0.3);
 	/* Take up full width */
     flex: 1;
@@ -272,9 +282,9 @@ div#header-input > input:focus {
 }
 
 /* Grey colouring of input when action-chooser is active */
-div#header-input > input[disabled] {
-	background-color: #DDD;
-	color: #AAA;
+div#header-input > input[disabled],
+div#header-input > input::placeholder {
+	color: #666;
 }
 
 /* Grey colouring of input when action-chooser is active */
@@ -293,15 +303,15 @@ div#header-input > button {
 }
 
 header p#title {
-    color: #888;
+    color: #FFBBBB;
     font-size: 1.8rem;
     margin: 1.7rem 0 -0.5rem 0;
     animation: fade-in 1s ease;
 }
 
 header p#title em {
-    color: #EEE;
-    font-style: normal;
+    color: #FFBBBB;
+    font-style: bold;
 }
 
 header p#title + div#filters {
@@ -344,7 +354,7 @@ div#filters {
     transition: all 0.2s;
     margin: 1.8rem 0 0.7rem 0; /* TODO: weird values here */
     font-size: 1.6rem;
-    color: #999; /* for the separating dots */
+    color: #FFBBBB; /* for the separating dots */
     letter-spacing: 0.2rem;
     word-spacing: 0.3rem;
     text-align: center;
@@ -367,7 +377,7 @@ div#filters input[type=radio] {
 
 div#filters input[type=radio] + label {
     cursor: pointer;
-    color: #888;
+    color: white;
     animation: fade-in 0.5s ease;
 }
 
@@ -376,7 +386,7 @@ div#filters input[type=radio] + label:hover {
 }
 
 div#filters input[type=radio]:checked + label {
-    color: #eee;
+    color: #661111;
 }
 
 div#filters input[type=radio]:checked + label:hover {
@@ -402,14 +412,19 @@ article {
     box-shadow: inset 0 0 0.5rem 0 rgba(220, 210, 200, 1);
 }
 
+/* deal with Firefox quirk (bottom padding on main is being ignored) */
+@-moz-document url-prefix() {
+  #entries article:last-child {
+      margin-bottom: 0.5rem;
+  }
+}
+
 /* controls where the content appears */
 article.full {
 	/* take up all middle space and allow for scrolling */
     flex-grow: 1;
+    height: 100%; /* enables border all the way down (in tandem with article) */
     overflow: auto;
-
-	/* box */
-	height: 100%;
 }
 
 
@@ -574,7 +589,6 @@ fieldset#actions > ol > li > input[type=radio]:checked + label {
 
 article.entry {
     display: flex;
-    height: 100%; /* enables border all the way down (in tandem with article) */
 }
 
 article.entry h1 {
