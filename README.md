@@ -20,14 +20,18 @@ The functionality is built around my own wrapper library for Stanford CoreNLP,
 open-source datasets, most notably [CC-CEDICT](https://cc-cedict.org/) and
 [makemeahanzi](https://github.com/skishore/makemeahanzi).
 
+# Prerequisites
+* Building sino.study depends on Computerese, but Computerese has not been
+released to clojars. I keep it as a separate project on disk and import it using
+[lein checkouts](https://github.com/technomancy/leiningen/blob/master/doc/TUTORIAL.md#checkout-dependencies).
 
-# Development
 * Running the sino.study app requires the sinostudy-data git repository to be 
 located at ~/Code/sinostudy-data. Make sure that directory exists and pull from:
 [sino.study-data](https://github.com/simongray/sino.study-data).
 **Note: this applies to both dev and production environments.**
 
-* The REPL starts out in the `user` ns with various other namespaces required.
+# Development
+The REPL starts out in the `user` ns with various other namespaces required.
 The user ns also includes relevant custom functions for development.
 Changes to e.g. dictionary data structures and most other backend development 
 is best tested in the REPL.

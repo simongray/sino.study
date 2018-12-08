@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../Computerese/computerese.iml" filepath="$PROJECT_DIR$/../Computerese/computerese.iml" />
       <module fileurl="file://$PROJECT_DIR$/sinostudy.iml" filepath="$PROJECT_DIR$/sinostudy.iml" />
     </modules>
   </component>

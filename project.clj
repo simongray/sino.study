@@ -9,6 +9,7 @@
 
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/clojurescript "1.10.439"]
+                 [computerese "0.1.0-SNAPSHOT"]             ; local project (lein checkouts)
                  [mount "0.1.14"]
                  [tolitius/mount-up "0.1.2"]
                  [reagent "0.8.1"]
@@ -39,6 +40,8 @@
 
   :profiles {:dev     {:dependencies [[binaryage/devtools "0.9.10"]
                                       [day8.re-frame/re-frame-10x "0.3.3-react16"]
+                                      [edu.stanford.nlp/stanford-corenlp "3.9.2" :classifier "models"]
+                                      [edu.stanford.nlp/stanford-corenlp "3.9.2" :classifier "models-chinese"]
                                       [figwheel-sidecar "0.5.17"]] ; for Cursive-integrated figwheel REPL
                        :plugins      [[lein-figwheel "0.5.16"]] ; for running `lein fighweel dev`
                        :source-paths ["dev/src/clj"]
