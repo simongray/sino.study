@@ -1,5 +1,6 @@
 (ns sinostudy.dictionary.load
   (:require [clojure.java.io :as io]
+            [clojure.data.csv :as csv]
             [clojure.string :as str]
             [clj-json.core :as json]
             [sinostudy.dictionary.core :as d]
@@ -105,6 +106,39 @@
                             (map json/parse-string))]
       (reduce #(assoc %1 (get %2 "character") %2) {} raw-listings))))
 
+
+;;;; EXAMPLE SENTENCES + THEIR RELATIONS AND METADATA
+(defn load-sentences
+  [sentences-file links-file]
+  (with-open [sentences-reader (io/reader sentences-file)
+              links-reader     (io/reader links-file)]
+    (let [entries (->> (csv/read-csv sentences-reader :separator \tab :quote \^)
+                       ;(take-nth 1000)                 ; TODO: remove
+                       (map (partial take 3))
+                       (filter (comp #{"eng" "cmn"} second))
+                       (doall))
+
+          ;; We only want to keep stuff around that is present in both eng/cmn.
+          cmn-ids (->> entries
+                       (filter (comp #{"cmn"} second))
+                       (set))
+
+          ;; It seems like the links in this dataset include both directions.
+          links   (->> (csv/read-csv links-reader :separator \tab)
+                       (filter (comp cmn-ids second))
+                       (doall))] ;TODO: first, second?
+      {:entries (count entries)
+       :cmn-ids (count cmn-ids)
+       :links   (count links)})))
+
+
+(defn load-test
+  []
+  (load-sentences
+    (str (System/getProperty "user.home") "/" "Code/sinostudy-data/"
+         "tatoeba/sentences_detailed.csv")
+    (str (System/getProperty "user.home") "/" "Code/sinostudy-data/"
+         "tatoeba/links.csv")))
 
 ;;;; FULL DICTIONARY
 

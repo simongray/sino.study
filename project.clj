@@ -9,6 +9,7 @@
 
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/clojurescript "1.10.439"]
+                 [org.clojure/data.csv "0.1.4"]
                  [mount "0.1.14"]
                  [tolitius/mount-up "0.1.2"]
                  [reagent "0.8.1"]
