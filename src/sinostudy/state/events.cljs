@@ -77,10 +77,10 @@
   [query]
   (let [query* (p/umlaut query)]
     (cond-> [[::look-up query]]
-      (and (pinyin-block? query*)
-           (not= query query*)) (conj [::look-up (d/pinyin-key query*)])
-      (digits->diacritics? query*) (conj [::digits->diacritics query*])
-      (diacritics->digits? query*) (conj [::diacritics->digits query*]))))
+            (and (pinyin-block? query*)
+                 (not= query query*)) (conj [::look-up (d/pinyin-key query*)])
+            (digits->diacritics? query*) (conj [::digits->diacritics query*])
+            (diacritics->digits? query*) (conj [::diacritics->digits query*]))))
 
 (defn eval-query
   "Evaluate a query string to get a vector of possible actions."
@@ -146,9 +146,8 @@
 (rf/reg-event-fx
   ::save-evaluation
   [(rf/inject-cofx ::cofx/now)]
-  (fn [cofx [_ query actions]]
-    (let [db  (:db cofx)
-          now (::cofx/now cofx)]
+  (fn [{:keys [db] :as cofx} [_ query actions]]
+    (let [now (::cofx/now cofx)]
       {:db (update db :evaluations conj {:query     query
                                          :actions   actions
                                          :timestamp now})})))
@@ -158,9 +157,8 @@
 ;; also doesn't evaluate the same query twice in a row!
 (rf/reg-event-fx
   ::evaluate-input
-  (fn [cofx [_ input]]
-    (let [db                (:db cofx)
-          latest-evaluation (first (:evaluations db))
+  (fn [{:keys [db] :as cofx} [_ input]]
+    (let [latest-evaluation (first (:evaluations db))
           latest-input?     (= input (:input db))
           query             (str/trim input)
           new-query?        (not= query (:query latest-evaluation))
@@ -179,9 +177,8 @@
 ;; Otherwise, a queued query could modify the UI shortly after.
 (rf/reg-event-fx
   ::on-input-change
-  (fn [cofx [_ input]]
-    (let [db    (:db cofx)
-          delay (get-in db [:config :evaluation :delay])
+  (fn [{:keys [db] :as cofx} [_ input]]
+    (let [delay (get-in db [:config :evaluation :delay])
           fx    {:db (assoc db :input input)}]
       (if (str/blank? input)
         (assoc fx :dispatch [::evaluate-input input])
@@ -194,9 +191,8 @@
 ;;; Force an evaluation for the latest input if it hasn't been evaluated yet.
 (rf/reg-event-fx
   ::submit
-  (fn [cofx [_ input]]
-    (let [db          (:db cofx)
-          latest-eval (first (:evaluations db))
+  (fn [{:keys [db] :as cofx} [_ input]]
+    (let [latest-eval (first (:evaluations db))
           query       (str/trim input)
           new-query?  (not= query (:query latest-eval))
           actions     (if new-query?
@@ -204,18 +200,16 @@
                         (:actions latest-eval))
           n           (count actions)]
       {:dispatch-n (cond-> []
-                     new-query? (conj [::save-evaluation query actions])
-                     (= n 1) (concat (conj actions [::blur-active-element]))
-                     (> n 1) (conj [::open-action-chooser]))})))
+                           new-query? (conj [::save-evaluation query actions])
+                           (= n 1) (concat (conj actions [::blur-active-element]))
+                           (> n 1) (conj [::open-action-chooser]))})))
 
 ;; Pages are loaded on-demand from either the frontend db or (if N/A) by sending
 ;; a request to the backend. Currently, only dictionary pages are supported.
 (rf/reg-event-fx
   ::load-page
-  (fn [cofx [_ [category _ :as page]]]
-    (let [db      (:db cofx)
-          unknown (:unknown db)
-          pages   (:pages db)]
+  (fn [{:keys [db] :as cofx} [_ [category _ :as page]]]
+    (let [{:keys [unknown pages]} db]
       (when (= category ::pages/terms)
         (if (and (not (unknown page))
                  (not (get-in pages page)))
@@ -225,9 +219,8 @@
 (rf/reg-event-fx
   ::enqueue
   [(rf/inject-cofx ::cofx/now)]
-  (fn [cofx [_ page]]
-    (let [db          (:db cofx)
-          now         (::cofx/now cofx)
+  (fn [{:keys [db] :as cofx} [_ page]]
+    (let [now         (::cofx/now cofx)
           queued-page (with-meta page {:ts now})]
       {:db (update db :queue conj queued-page)})))
 
@@ -259,9 +252,8 @@
 (rf/reg-event-fx
   ::on-request-success
   [(rf/inject-cofx ::cofx/now)]
-  (fn [cofx [_ result]]
-    (let [db      (:db cofx)
-          content (transit/read transit-reader result)
+  (fn [{:keys [db] :as cofx} [_ result]]
+    (let [content (transit/read transit-reader result)
           page    (:page content)
           now     (::cofx/now cofx)]
       {:db         (update db :queries conj {:state     :success
@@ -273,9 +265,8 @@
 (rf/reg-event-fx
   ::on-request-failure
   [(rf/inject-cofx ::cofx/now)]
-  (fn [cofx [_ result]]
-    (let [db  (:db cofx)
-          now (::cofx/now cofx)]
+  (fn [{:keys [db] :as cofx} [_ result]]
+    (let [now (::cofx/now cofx)]
       {:db (update db :queries conj {:state     :failure
                                      :content   result
                                      :timestamp now})})))
@@ -314,11 +305,9 @@
 (rf/reg-event-fx
   ::update-location
   [(rf/inject-cofx ::cofx/pathname)]
-  (fn [cofx [_ [_ id :as page]]]
-    (let [pathname (::cofx/pathname cofx)
-          db       (:db cofx)
-          input    (:input db)
-          unknown  (:unknown db)]
+  (fn [{:keys [db] :as cofx} [_ [_ id :as page]]]
+    (let [{:keys [input unknown]} db
+          pathname (::cofx/pathname cofx)]
       (when (and (= input id)
                  (not (unknown id))
                  (not (pages/equivalent pathname page)))
@@ -328,10 +317,8 @@
   ::change-location
   [(rf/inject-cofx ::cofx/now)
    (rf/inject-cofx ::cofx/scroll-states)]
-  (fn [cofx [_ new-page]]
-    (let [db            (:db cofx)
-          input         (:input db)
-          history       (:history db)
+  (fn [{:keys [db] :as cofx} [_ new-page]]
+    (let [{:keys [input history]} db
           current-page  (first history)
           now           (::cofx/now cofx)
           scroll-states (::cofx/scroll-states cofx)]
@@ -347,10 +334,8 @@
 ;; Only dispatched when the action-chooser is open.
 (rf/reg-event-fx
   ::on-key-down
-  (fn [cofx [_ key]]
-    (let [db         (:db cofx)
-          actions    (:actions db)
-          checked    (:checked-action db)
+  (fn [{:keys [db] :as cofx} [_ key]]
+    (let [{:keys [actions checked-action]} db
           next?      (fn [k] (contains? #{"ArrowRight" "ArrowDown"} k))
           prev?      (fn [k] (contains? #{"ArrowLeft" "ArrowUp"} k))
           valid-num? (fn [k] (let [num (js/parseInt k)]
@@ -361,7 +346,7 @@
         (rf/dispatch [::choose-action [::close-action-chooser]])
 
         (= "Enter" key)
-        (rf/dispatch [::choose-action (nth actions checked)])
+        (rf/dispatch [::choose-action (nth actions checked-action)])
 
         (valid-num? key)
         (let [action (nth actions (dec (js/parseInt key)))]
@@ -370,20 +355,23 @@
         ;; Starts from beginning when upper bound is crossed.
         (next? key)
         (let [bound (dec (count actions))
-              n     (if (< checked bound) (inc checked) 0)]
+              n     (if (< checked-action bound)
+                      (inc checked-action)
+                      0)]
           (rf/dispatch [::check-action n]))
 
         ;; Goes to last action when lower bound is crossed.
         (prev? key)
-        (let [n (if (> checked 0) (dec checked) (dec (count actions)))]
+        (let [n (if (> checked-action 0)
+                  (dec checked-action)
+                  (dec (count actions)))]
           (rf/dispatch [::check-action n]))))))
 
 (rf/reg-event-fx
   ::open-action-chooser
   [(rf/inject-cofx ::cofx/active-element)]
-  (fn [cofx _]
-    (let [db             (:db cofx)
-          active-element (::cofx/active-element cofx)
+  (fn [{:keys [db] :as cofx} _]
+    (let [active-element (::cofx/active-element cofx)
           actions        (:actions (first (:evaluations db)))]
       ;; Firefox won't get keydown events without removing focus from the input
       {::fx/blur active-element
@@ -391,11 +379,10 @@
                      (assoc :checked-action 0)
                      (assoc :actions (conj actions [::close-action-chooser])))})))
 
-(rf/reg-event-fx
+(rf/reg-event-db
   ::close-action-chooser
-  (fn [cofx _]
-    (let [db (:db cofx)]
-      {:db (assoc db :actions nil)})))
+  (fn [db _]
+    (assoc db :actions nil)))
 
 ;; TODO: figure out a better way to regain focus for previously disabled field
 (rf/reg-event-fx
@@ -416,7 +403,8 @@
     (if (= [::close-action-chooser] action)
       {:dispatch-n [[::close-action-chooser]
                     [::regain-input-focus]]}
-      {:dispatch-n (conj [[::close-action-chooser] action])})))
+      {:dispatch-n [[::close-action-chooser]
+                    action]})))
 
 
 ;;;; ACTIONS (= events triggered by submitting input)
@@ -434,16 +422,14 @@
 
 (rf/reg-event-fx
   ::digits->diacritics
-  (fn [cofx [_ input]]
-    (let [db        (:db cofx)
-          new-input (p/digits->diacritics input)]
+  (fn [{:keys [db] :as cofx} [_ input]]
+    (let [new-input (p/digits->diacritics input)]
       {:db       (assoc db :input new-input)
        :dispatch [::regain-input-focus]})))
 
 (rf/reg-event-fx
   ::diacritics->digits
-  (fn [cofx [_ input]]
-    (let [db        (:db cofx)
-          new-input (p/diacritics->digits input)]
+  (fn [{:keys [db] :as cofx} [_ input]]
+    (let [new-input (p/diacritics->digits input)]
       {:db       (assoc db :input new-input)
        :dispatch [::regain-input-focus]})))
