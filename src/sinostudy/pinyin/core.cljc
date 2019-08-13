@@ -17,7 +17,7 @@
       (str/replace \v \ü)
       (str/replace \V \Ü)))
 
-(defn diacritic
+(defn with-diacritic
   "Get the diacriticised char based on Pinyin tone (0 through 5)."
   [char tone]
   (nth (data/diacritics char) tone))
@@ -56,7 +56,7 @@
     :else (let [tone           (parse-int (str (last s)))
                 s*             (subs s 0 (dec (count s)))
                 char           (nth s (diacritic-index s))
-                char+diacritic (diacritic char tone)]
+                char+diacritic (with-diacritic char tone)]
             (str/replace s* char char+diacritic))))
 
 ;; used by diacritic-string to find the bounds of the last Pinyin final

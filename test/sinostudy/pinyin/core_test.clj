@@ -11,22 +11,22 @@
   (testing "diacritic"
     (testing "added to characters?"
       (are [x y] (= x y)
-                 \a (diacritic \a 0)
-                 \ā (diacritic \a 1)
-                 \á (diacritic \a 2)
-                 \ǎ (diacritic \a 3)
-                 \à (diacritic \a 4)
-                 \a (diacritic \a 5)
-                 \A (diacritic \A 0)
-                 \Ā (diacritic \A 1)
-                 \Á (diacritic \A 2)
-                 \Ǎ (diacritic \A 3)
-                 \À (diacritic \A 4)
-                 \A (diacritic \A 5)))
+                 \a (with-diacritic \a 0)
+                 \ā (with-diacritic \a 1)
+                 \á (with-diacritic \a 2)
+                 \ǎ (with-diacritic \a 3)
+                 \à (with-diacritic \a 4)
+                 \a (with-diacritic \a 5)
+                 \A (with-diacritic \A 0)
+                 \Ā (with-diacritic \A 1)
+                 \Á (with-diacritic \A 2)
+                 \Ǎ (with-diacritic \A 3)
+                 \À (with-diacritic \A 4)
+                 \A (with-diacritic \A 5)))
     (testing "tone out of range?"
-      (is (thrown? IndexOutOfBoundsException (diacritic \a 6))))
+      (is (thrown? IndexOutOfBoundsException (with-diacritic \a 6))))
     (testing "string instead of char?"
-      (is (nil? (diacritic "a" 1))))))
+      (is (nil? (with-diacritic "a" 1))))))
 
 (deftest test-diacritic-index
   (testing "diacritic-index"
