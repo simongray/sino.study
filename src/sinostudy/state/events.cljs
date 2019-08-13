@@ -10,7 +10,7 @@
             [sinostudy.dictionary.core :as d]
             [sinostudy.navigation.pages :as pages]
             [sinostudy.state.coeffects :as cofx]
-            [sinostudy.effects :as fx]))
+            [sinostudy.state.effects :as fx]))
 
 ;; all responses from the Compojure backend are Transit-encoded
 (def transit-reader
