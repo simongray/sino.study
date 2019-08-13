@@ -10,7 +10,7 @@
   #?(:clj  (Integer/parseInt s)
      :cljs (js/parseInt s)))
 
-(defn umlaut
+(defn with-umlaut
   "Replace the common substitute letter V in s with the proper Pinyin Ü."
   [s]
   (-> s
@@ -66,8 +66,8 @@
   is the one immediately before the digit, i.e. the last final."
   [s]
   (let [digit  (last s)
-        end    (dec (count s))           ; decrementing b/c of affixed digit
-        length (if (< end 4) end 4)      ; most cases will be <4
+        end    (dec (count s))                              ; decrementing b/c of affixed digit
+        length (if (< end 4) end 4)                         ; most cases will be <4
         start  (- end length)]
     (loop [candidate (subs s start end)]
       (cond
@@ -100,10 +100,10 @@
   behind any Pinyin final in the block. Postfixing 0 or 5 (or nothing) will
   result in no diacritic being added, i.e. marking a neutral tone. Furthermore,
   any occurrence of V is treated as and implicitly converted into a Ü."
-  [s & {:keys [v-as-umlaut] :or {v-as-umlaut false}}]
+  [s & {:keys [v-as-umlaut?] :or {v-as-umlaut? false}}]
   (if (not (string? s))
     s
-    (let [s*                (if v-as-umlaut (umlaut s) s)
+    (let [s*                (if v-as-umlaut? (with-umlaut s) s)
           digit-strings     (re-seq #"[^\d]+\d" s*)
           diacritic-strings (map diacritic-string digit-strings)
           suffix            (re-seq #"[^\d]+$" s*)]

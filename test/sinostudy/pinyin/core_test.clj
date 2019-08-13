@@ -4,7 +4,7 @@
 
 (deftest test-umlaut
   (testing "umlaut"
-    (is (= (umlaut "VvÜü") "ÜüÜü"))))
+    (is (= (with-umlaut "VvÜü") "ÜüÜü"))))
 
 ;; only tests a single char for now!
 (deftest test-diacritic

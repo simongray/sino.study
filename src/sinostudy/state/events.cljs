@@ -43,52 +43,33 @@
 
 ;;;; QUERY EVALUATION
 
-;; pinyin sentences with tone digits can converted to diacritics,
-;; but the action shouldn't appear if the sentence contains no tone digits!
-(defn- digits->diacritics?
-  [query]
-  (and (pe/pinyin+digits+punct? query)
-       (not (pe/pinyin+punct? query))))
-
-(defn- diacritics->digits?
-  [query]
-  (and (pe/pinyin+diacritics+punct? query)
-       (not (pe/pinyin+punct? query))))
-
-(defn- pinyin-block?
-  [query]
-  (or (pe/pinyin-block? query)
-      (pe/pinyin-block+digits? query)
-      (pe/pinyin-block+diacritics? query)))
-
-(defn- command?
-  [query]
-  (str/starts-with? query "/"))
-
-(defn- eval-command
-  "Evaluate a command query to get a vector of possible actions."
-  [query]
-  (case (str/lower-case query)
-    "/clear" [[::initialize-db]]
-    []))
-
-(defn- eval-term
-  "Evaluate a word/Pinyin query to get a vector of possible actions."
-  [query]
-  (let [query* (p/umlaut query)]
-    (cond-> [[::look-up query]]
-            (and (pinyin-block? query*)
-                 (not= query query*)) (conj [::look-up (d/pinyin-key query*)])
-            (digits->diacritics? query*) (conj [::digits->diacritics query*])
-            (diacritics->digits? query*) (conj [::diacritics->digits query*]))))
-
 (defn eval-query
   "Evaluate a query string to get a vector of possible actions."
   [query]
-  (cond
-    (command? query) (eval-command query)
-    (pe/hanzi-block? query) [[::look-up query]]
-    (re-find #"^\w" query) (eval-term query)))
+  (let [query*              (p/with-umlaut query)
+        pinyin-block?       (or (pe/pinyin-block? query*)
+                                (pe/pinyin-block+digits? query*)
+                                (pe/pinyin-block+diacritics? query*))
+        diacritics->digits? (and (pe/pinyin+diacritics+punct? query*)
+                                 (not (pe/pinyin+punct? query*)))
+        digits->diacritics? (and (pe/pinyin+digits+punct? query*)
+                                 (not (pe/pinyin+punct? query*)))]
+    (cond
+      (pe/hanzi-block? query*)
+      [[::look-up query*]]
+
+      (re-find #"^\w" query*)
+      (cond-> [[::look-up query*]]
+
+              (and pinyin-block?
+                   (not= query query*))
+              (conj [::look-up (d/pinyin-key query*)])
+
+              digits->diacritics?
+              (conj [::digits->diacritics query*])
+
+              diacritics->digits?
+              (conj [::diacritics->digits query*])))))
 
 
 ;;;; MISCELLANEOUS
@@ -324,7 +305,8 @@
           scroll-states (::cofx/scroll-states cofx)]
       {:db         (-> db
                        (update :history conj (with-meta new-page now))
-                       (assoc :input (or input (mk-input new-page))))
+                       (assoc :input (or input
+                                         (mk-input new-page))))
        :dispatch-n [[::save-scroll-states current-page scroll-states]
                     [::load-page (pages/shortened new-page)]]})))
 
