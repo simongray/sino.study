@@ -16,6 +16,7 @@
                    (get-in config [:server :port :external]))]
     (str "http://" hostname ":" port "/query/")))
 
+;; TODO: these are views, move to appropriate ns
 (def static-pages
   {"/404"      [:main
                 [:article.full
