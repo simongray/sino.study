@@ -3,11 +3,11 @@
             [reagent.core :as reagent]
             [clojure.string :as str]
             [cljs.reader :as reader]
-            [sinostudy.db :as db]
-            [sinostudy.subs :as subs]
-            [sinostudy.events :as events]
+            [sinostudy.state.db :as db]
+            [sinostudy.state.subs :as subs]
+            [sinostudy.state.events :as events]
             [sinostudy.views.dictionary :as vd]
-            [sinostudy.pages.core :as pages]
+            [sinostudy.navigation.pages :as pages]
             [sinostudy.dictionary.core :as d])
   (:require-macros [sinostudy.macros.core :as macros]))
 

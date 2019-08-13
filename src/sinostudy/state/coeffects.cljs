@@ -1,4 +1,4 @@
-(ns sinostudy.coeffects
+(ns sinostudy.state.coeffects
   (:require [clojure.string :as str]
             [re-frame.core :as rf]))
 

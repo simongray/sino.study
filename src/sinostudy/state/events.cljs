@@ -1,15 +1,15 @@
-(ns sinostudy.events
+(ns sinostudy.state.events
   (:require [clojure.string :as str]
             [clojure.set :as set]
             [re-frame.core :as rf]
             [ajax.core :as ajax]
             [cognitect.transit :as transit]
-            [sinostudy.db :as db]
+            [sinostudy.state.db :as db]
             [sinostudy.pinyin.core :as p]
             [sinostudy.pinyin.eval :as pe]
             [sinostudy.dictionary.core :as d]
-            [sinostudy.pages.core :as pages]
-            [sinostudy.coeffects :as cofx]
+            [sinostudy.navigation.pages :as pages]
+            [sinostudy.state.coeffects :as cofx]
             [sinostudy.effects :as fx]))
 
 ;; all responses from the Compojure backend are Transit-encoded

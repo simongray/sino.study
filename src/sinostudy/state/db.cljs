@@ -1,7 +1,7 @@
-(ns sinostudy.db
+(ns sinostudy.state.db
   (:require [cljs.reader :as reader]
             [sinostudy.config :as cf]
-            [sinostudy.pages.core :as pages]
+            [sinostudy.navigation.pages :as pages]
             [sinostudy.dictionary.core :as d])
   (:require-macros [sinostudy.macros.core :as macros]))
 

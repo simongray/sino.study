@@ -3,9 +3,9 @@
             [re-frame.core :as rf]
             [day8.re-frame.http-fx]
             [secretary.core :as secretary]
-            [sinostudy.subs :as subs]
-            [sinostudy.routes :as routes]
-            [sinostudy.events :as events]
+            [sinostudy.navigation.routes :as routes]
+            [sinostudy.state.events :as events]
+            [sinostudy.state.subs :as subs]
             [sinostudy.views.core :as views]
             [sinostudy.config :as config]))
 

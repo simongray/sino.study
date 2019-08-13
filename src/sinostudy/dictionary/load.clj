@@ -34,7 +34,7 @@
   [definition]
   (set (str/split definition #"/")))
 
-(defn line->listing
+(defn line->cedict-listing
   "Extract the constituents of a line in a CC-CEDICT dictionary file.
   Returns a map representation suitable for use as a dictionary entry."
   [line]
@@ -55,8 +55,8 @@
   [file]
   (with-open [reader (io/reader file)]
     (->> (doall (line-seq reader))
-         (filter #(not (str/starts-with? % "#")))
-         (map line->listing)
+         (remove #(str/starts-with? % "#"))
+         (map line->cedict-listing)
          (vec))))
 
 
@@ -126,7 +126,7 @@
           ;; It seems like the links in this dataset include both directions.
           links   (->> (csv/read-csv links-reader :separator \tab)
                        (filter (comp cmn-ids second))
-                       (doall))] ;TODO: first, second?
+                       (doall))]                            ;TODO: first, second?
       {:entries (count entries)
        :cmn-ids (count cmn-ids)
        :links   (count links)})))

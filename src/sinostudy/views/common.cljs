@@ -1,6 +1,6 @@
 (ns sinostudy.views.common
-  (:require [sinostudy.pages.core :as pages]
-            [sinostudy.events :as events]
+  (:require [sinostudy.navigation.pages :as pages]
+            [sinostudy.state.events :as events]
             [sinostudy.pinyin.eval :as pe]
             [sinostudy.rim.core :as rim]
             [sinostudy.dictionary.core :as d]

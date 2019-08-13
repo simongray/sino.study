@@ -1,6 +1,6 @@
-(ns sinostudy.subs
+(ns sinostudy.state.subs
   (:require [re-frame.core :as rf]
-            [sinostudy.pages.core :as pages]
+            [sinostudy.navigation.pages :as pages]
             [sinostudy.dictionary.core :as d]))
 
 (rf/reg-sub

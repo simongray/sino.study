@@ -1,4 +1,4 @@
-(ns sinostudy.pages.core
+(ns sinostudy.navigation.pages
   "This namespace contains functions related to the page abstraction used in
   sino.study, as well as serving as a namespaced keyword prefix for the various
   page categories in use, e.g. ::pages/terms."

@@ -2,10 +2,9 @@
   (:require [clojure.java.io :as io]
             [mount.core :as mount :refer [start stop]]
             [mount-up.core :as mount-up]
-            [sinostudy.handler :as handler]
             [sinostudy.dictionary.core :as d]
             [sinostudy.dictionary.load :as load]
-            [sinostudy.handler :as handler :refer [dict config server]]
+            [sinostudy.navigation.handler :as handler :refer [dict config server]]
             [sinostudy.pinyin.core :as p]))
 
 (mount-up/on-upndown :info mount-up/log :before)

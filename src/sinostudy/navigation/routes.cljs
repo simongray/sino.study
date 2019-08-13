@@ -1,10 +1,10 @@
-(ns sinostudy.routes
+(ns sinostudy.navigation.routes
   (:require-macros [secretary.core :refer [defroute]])
   (:import goog.History)
   (:require [secretary.core :as secretary]
             [re-frame.core :as rf]
-            [sinostudy.events :as events]
-            [sinostudy.pages.core :as pages]
+            [sinostudy.state.events :as events]
+            [sinostudy.navigation.pages :as pages]
             [accountant.core :as accountant]))
 
 ;; Since scroll restoration differs in implementation between e.g. Firefox

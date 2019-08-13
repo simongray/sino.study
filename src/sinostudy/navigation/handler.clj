@@ -1,4 +1,4 @@
-(ns sinostudy.handler
+(ns sinostudy.navigation.handler
   (:import (java.io ByteArrayOutputStream))
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
@@ -10,7 +10,7 @@
             [org.httpkit.server :as hs]
             [mount.core :as mount :refer [defstate]]
             [mount-up.core :as mount-up]
-            [sinostudy.pages.core :as pages]
+            [sinostudy.navigation.pages :as pages]
             [sinostudy.dictionary.load :as dl]
             [sinostudy.dictionary.core :as d])
   (:gen-class))
@@ -76,7 +76,7 @@
   (ANY "/query/:type/:query" [type query & opts]
     {:status  200
      :headers ajax-headers
-     :body    (transit-result (keyword (str 'sinostudy.pages.core) type)
+     :body    (transit-result (keyword (str 'sinostudy.navigation.pages) type)
                               query
                               opts)})
 

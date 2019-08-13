@@ -4,8 +4,8 @@
             [sinostudy.dictionary.core :as d]
             [sinostudy.pinyin.core :as p]
             [sinostudy.views.common :as vc]
-            [sinostudy.subs :as subs]
-            [sinostudy.pages.core :as pages]))
+            [sinostudy.state.subs :as subs]
+            [sinostudy.navigation.pages :as pages]))
 
 (defn entry-title
   "The title of the term with links to characters -OR- decomposition
