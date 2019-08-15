@@ -1,48 +1,25 @@
-(ns sinostudy.state.events.core
+(ns sinostudy.events.core
+  "For miscellaneous events that do not have their own more specific namespace."
   (:require [clojure.string :as str]
             [clojure.set :as set]
             [re-frame.core :as rf]
             [ajax.core :as ajax]
             [cognitect.transit :as transit]
-            [sinostudy.state.db :as db]
+            [sinostudy.db :as db]
             [sinostudy.pinyin.core :as p]
             [sinostudy.pinyin.eval :as pe]
             [sinostudy.dictionary.core :as d]
             [sinostudy.navigation.pages :as pages]
-            [sinostudy.state.events.scrolling :as scrolling]
-            [sinostudy.state.coeffects :as cofx]
-            [sinostudy.state.effects :as fx]))
+            [sinostudy.events.scrolling :as scrolling]
+            [sinostudy.events.actions :as actions]
+            [sinostudy.cofx :as cofx]
+            [sinostudy.fx :as fx]))
 
 ;; all responses from the Compojure backend are Transit-encoded
 (def transit-reader
   (transit/reader :json))
 
-(defn- cache-dict-entries
-  "Save the individual entries of a dictionary search result in the db.
-  Note: this is a separate step from saving the search result itself!"
-  [db content]
-  (let [path      [:pages ::pages/terms]
-        entry-ks  #{::d/english
-                    ::d/hanzi
-                    ::d/pinyin
-                    ::d/pinyin+diacritics
-                    ::d/pinyin+digits}
-        entries   (->> (select-keys content entry-ks)
-                       (vals)
-                       (apply set/union))
-        add-entry (fn [db entry]
-                    (assoc-in db (conj path (::d/term entry)) entry))]
-    (reduce add-entry db entries)))
-
-(defn mk-input
-  "What the input field should display based on a given page."
-  [[category id :as page]]
-  (cond
-    (= ::pages/terms category) (when (not (pe/hanzi-block? id)) id)))
-
-;;;; QUERY EVALUATION
-
-(defn- available-actions
+(defn available-actions
   "Evaluate a query string to get a vector of possible actions."
   [query]
   (let [query*              (p/with-umlaut query)
@@ -70,6 +47,28 @@
               diacritics->digits?
               (conj [::diacritics->digits query*])))))
 
+(defn- cache-dict-entries
+  "Save the individual entries of a dictionary search result in the db.
+  Note: this is a separate step from saving the search result itself!"
+  [db content]
+  (let [path      [:pages ::pages/terms]
+        entry-ks  #{::d/english
+                    ::d/hanzi
+                    ::d/pinyin
+                    ::d/pinyin+diacritics
+                    ::d/pinyin+digits}
+        entries   (->> (select-keys content entry-ks)
+                       (vals)
+                       (apply set/union))
+        add-entry (fn [db entry]
+                    (assoc-in db (conj path (::d/term entry)) entry))]
+    (reduce add-entry db entries)))
+
+(defn mk-input
+  "What the input field should display based on a given page."
+  [[category id :as page]]
+  (cond
+    (= ::pages/terms category) (when (not (pe/hanzi-block? id)) id)))
 
 ;;;; MISCELLANEOUS
 
@@ -160,7 +159,7 @@
       {:dispatch-n (cond-> []
                            new-query? (conj [::save-evaluation query actions])
                            (= n 1) (concat (conj actions [::blur-active-element]))
-                           (> n 1) (conj [::open-action-chooser]))})))
+                           (> n 1) (conj [::actions/open-action-chooser]))})))
 
 ;; Pages are loaded on-demand from either the frontend db or (if N/A) by sending
 ;; a request to the backend. Currently, only dictionary pages are supported.
@@ -281,107 +280,7 @@
        :dispatch-n [[::scrolling/save-scroll-state current-page scroll-state]
                     [::load-page (pages/shortened new-page)]]})))
 
-
-;;;; ACTION CHOOSER
-
-;; Only dispatched when the action-chooser is open.
-(rf/reg-event-fx
-  ::on-key-down
-  (fn [{:keys [db] :as cofx} [_ key]]
-    (let [{:keys [actions checked-action]} db
-          next?      (fn [k] (contains? #{"ArrowRight" "ArrowDown"} k))
-          prev?      (fn [k] (contains? #{"ArrowLeft" "ArrowUp"} k))
-          valid-num? (fn [k] (let [num (js/parseInt k)]
-                               (and (int? num)
-                                    (< 0 num (inc (count actions))))))]
-      (cond
-        (= "Escape" key)
-        (rf/dispatch [::choose-action [::close-action-chooser]])
-
-        (= "Enter" key)
-        (rf/dispatch [::choose-action (nth actions checked-action)])
-
-        (valid-num? key)
-        (let [action (nth actions (dec (js/parseInt key)))]
-          (rf/dispatch [::choose-action action]))
-
-        ;; Starts from beginning when upper bound is crossed.
-        (next? key)
-        (let [bound (dec (count actions))
-              n     (if (< checked-action bound)
-                      (inc checked-action)
-                      0)]
-          (rf/dispatch [::check-action n]))
-
-        ;; Goes to last action when lower bound is crossed.
-        (prev? key)
-        (let [n (if (> checked-action 0)
-                  (dec checked-action)
-                  (dec (count actions)))]
-          (rf/dispatch [::check-action n]))))))
-
-(rf/reg-event-fx
-  ::open-action-chooser
-  [(rf/inject-cofx ::cofx/active-element)]
-  (fn [{:keys [db ::cofx/active-element] :as cofx} _]
-    (let [actions (:actions (first (:evaluations db)))]
-      ;; Firefox won't get keydown events without removing focus from the input
-      {::fx/blur active-element
-       :db       (-> db
-                     (assoc :checked-action 0)
-                     (assoc :actions (conj actions [::close-action-chooser])))})))
-
-(rf/reg-event-db
-  ::close-action-chooser
-  (fn [db _]
-    (assoc db :actions nil)))
-
-;; TODO: figure out a better way to regain focus for previously disabled field
-(rf/reg-event-fx
-  ::regain-input-focus
-  (fn [_ _]
-    {::fx/set-focus [(.getElementById js/document "input-field") 100]}))
-
-(rf/reg-event-db
-  ::check-action
-  (fn [db [_ n]]
-    (assoc db :checked-action n)))
-
-;; Dispatched by user selecting an action in the action-chooser.
-;; ::close-action-chooser (= cancel) is a special action (doesn't clear input).
-(rf/reg-event-fx
-  ::choose-action
-  (fn [_ [_ action]]
-    (if (= [::close-action-chooser] action)
-      {:dispatch-n [[::close-action-chooser]
-                    [::regain-input-focus]]}
-      {:dispatch-n [[::close-action-chooser]
-                    action]})))
-
-
-;;;; ACTIONS (= events triggered by submitting input)
-
-;; NOTE: actions that navigate to a new page should call ::reset-scroll-state
-;; in order to avoid (the default) restoration of the scroll state.
-;; It is currently not possible to distinguish between back/forward buttons
-;; and other forms of navigation, so this manual invocation is necessary.
-;; This is also the case for links on the site.
-
 (rf/reg-event-fx
   ::look-up
   (fn [_ [_ term]]
     {:dispatch [::load-page [::pages/terms term]]}))
-
-(rf/reg-event-fx
-  ::digits->diacritics
-  (fn [{:keys [db] :as cofx} [_ input]]
-    (let [new-input (p/digits->diacritics input)]
-      {:db       (assoc db :input new-input)
-       :dispatch [::regain-input-focus]})))
-
-(rf/reg-event-fx
-  ::diacritics->digits
-  (fn [{:keys [db] :as cofx} [_ input]]
-    (let [new-input (p/diacritics->digits input)]
-      {:db       (assoc db :input new-input)
-       :dispatch [::regain-input-focus]})))

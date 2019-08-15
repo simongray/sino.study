@@ -1,6 +1,6 @@
 (ns sinostudy.views.common
   (:require [sinostudy.navigation.pages :as pages]
-            [sinostudy.state.events.scrolling :as scrolling]
+            [sinostudy.events.scrolling :as scrolling]
             [sinostudy.pinyin.eval :as pe]
             [sinostudy.rim.core :as rim]
             [sinostudy.dictionary.core :as d]

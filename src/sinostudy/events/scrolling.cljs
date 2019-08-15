@@ -1,6 +1,8 @@
-(ns sinostudy.state.events.scrolling
+(ns sinostudy.events.scrolling
+  "For all events relating to preservation of scroll state when navigating
+  the browser history."
   (:require [re-frame.core :as rf]
-            [sinostudy.state.effects :as fx]))
+            [sinostudy.fx :as fx]))
 
 (rf/reg-event-db
   ::save-scroll-state

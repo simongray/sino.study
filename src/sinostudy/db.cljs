@@ -1,4 +1,4 @@
-(ns sinostudy.state.db
+(ns sinostudy.db
   (:require [cljs.reader :as reader]
             [sinostudy.config :as cf]
             [sinostudy.navigation.pages :as pages]

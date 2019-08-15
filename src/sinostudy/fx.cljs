@@ -1,4 +1,4 @@
-(ns sinostudy.state.effects
+(ns sinostudy.fx
   (:require [re-frame.core :as rf]
             [accountant.core :as accountant]))
 

@@ -1,4 +1,4 @@
-(ns sinostudy.state.subs
+(ns sinostudy.subs
   (:require [re-frame.core :as rf]
             [sinostudy.navigation.pages :as pages]
             [sinostudy.dictionary.core :as d]))

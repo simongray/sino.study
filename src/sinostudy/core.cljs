@@ -4,8 +4,10 @@
             [day8.re-frame.http-fx]
             [secretary.core :as secretary]
             [sinostudy.navigation.routes :as routes]
-            [sinostudy.state.events.core :as events]
-            [sinostudy.state.subs :as subs]
+            [sinostudy.events.core :as events]
+            [sinostudy.events.scrolling :as scrolling] ; don't remove - need to register events!
+            [sinostudy.events.actions :as actions]
+            [sinostudy.subs :as subs]
             [sinostudy.views.core :as views]
             [sinostudy.config :as config]))
 
@@ -34,7 +36,7 @@
   (set! (.-onkeydown js/document)
         (fn [e] (when @(rf/subscribe [::subs/actions])
                   (.preventDefault e)
-                  (rf/dispatch [::events/on-key-down (.-key e)])))))
+                  (rf/dispatch [::actions/on-key-down (.-key e)])))))
 
 (defn ^:export init []
   (routes/app-routes)

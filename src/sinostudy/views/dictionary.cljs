@@ -4,7 +4,7 @@
             [sinostudy.dictionary.core :as d]
             [sinostudy.pinyin.core :as p]
             [sinostudy.views.common :as vc]
-            [sinostudy.state.subs :as subs]
+            [sinostudy.subs :as subs]
             [sinostudy.navigation.pages :as pages]))
 
 (defn entry-title

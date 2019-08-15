@@ -3,10 +3,11 @@
             [reagent.core :as reagent]
             [clojure.string :as str]
             [cljs.reader :as reader]
-            [sinostudy.state.db :as db]
-            [sinostudy.state.subs :as subs]
-            [sinostudy.state.events.core :as events]
-            [sinostudy.state.events.scrolling :as scrolling]
+            [sinostudy.db :as db]
+            [sinostudy.subs :as subs]
+            [sinostudy.events.core :as events]
+            [sinostudy.events.scrolling :as scrolling]
+            [sinostudy.events.actions :as actions]
             [sinostudy.views.dictionary :as vd]
             [sinostudy.navigation.pages :as pages]
             [sinostudy.dictionary.core :as d])
@@ -128,11 +129,11 @@
 
      ;; Ensures that scroll state is restored when pushing back/forward button.
      ;; Sadly, this behaviour is global for all updates, so links/buttons/etc.
-     ;; must manually dispatch ::events/reset-scroll-state to avoid this!
+     ;; must manually dispatch ::scrolling/reset-scroll-state to avoid this!
      :component-did-update
      (fn [_ _]
        (let [page @(rf/subscribe [::subs/current-page])]
-         (rf/dispatch [::events/load-scroll-state page])))}))
+         (rf/dispatch [::scrolling/load-scroll-state page])))}))
 
 (defn script-changer []
   "The button used to toggle traditional/simplified Chinese script."
@@ -165,15 +166,15 @@
   [[action query]]
   (case action
     ::events/look-up (str "Look up " query)
-    ::events/digits->diacritics "Convert to diacritics"
-    ::events/diacritics->digits "Convert to digits"
-    ::events/close-action-chooser "Cancel"))
+    ::actions/digits->diacritics "Convert to diacritics"
+    ::actions/diacritics->digits "Convert to digits"
+    ::actions/close-action-chooser "Cancel"))
 
 (defn- action-choice
   [checked action]
   (let [choose-action (fn [e]
                         (.preventDefault e)
-                        (rf/dispatch [::events/choose-action action]))]
+                        (rf/dispatch [::actions/choose-action action]))]
     [:li {:key action}
      [:input {:type      :radio
               :name      "action"
