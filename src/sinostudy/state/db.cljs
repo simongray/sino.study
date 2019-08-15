@@ -14,7 +14,7 @@
         port     (if cf/debug?
                    (get-in config [:server :port :internal])
                    (get-in config [:server :port :external]))]
-    (str "http://" hostname ":" port "/query/")))
+    (str "http://" hostname ":" port "/query")))
 
 ;; TODO: these are views, move to appropriate ns
 (def static-pages

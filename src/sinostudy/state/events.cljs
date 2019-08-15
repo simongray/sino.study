@@ -41,7 +41,7 @@
 
 ;;;; QUERY EVALUATION
 
-(defn available-actions
+(defn- available-actions
   "Evaluate a query string to get a vector of possible actions."
   [query]
   (let [query*              (p/with-umlaut query)
@@ -95,8 +95,8 @@
 (rf/reg-event-fx
   ::blur-active-element
   [(rf/inject-cofx ::cofx/active-element)]
-  (fn [cofx _]
-    {::fx/blur (::cofx/active-element cofx)}))
+  (fn [{:keys [::cofx/active-element] :as cofx} _]
+    {::fx/blur active-element}))
 
 ;;;; SCROLLING
 
@@ -123,11 +123,10 @@
 (rf/reg-event-fx
   ::save-evaluation
   [(rf/inject-cofx ::cofx/now)]
-  (fn [{:keys [db] :as cofx} [_ query actions]]
-    (let [now (::cofx/now cofx)]
-      {:db (update db :evaluations conj {:query     query
-                                         :actions   actions
-                                         :timestamp now})})))
+  (fn [{:keys [db ::cofx/now] :as cofx} [_ query actions]]
+    {:db (update db :evaluations conj {:query     query
+                                       :actions   actions
+                                       :timestamp now})}))
 
 ;; Only evaluates the latest input (no change while still writing).
 ;; This improves performance when coupled with delayed dispatching
@@ -196,10 +195,8 @@
 (rf/reg-event-fx
   ::enqueue
   [(rf/inject-cofx ::cofx/now)]
-  (fn [{:keys [db] :as cofx} [_ page]]
-    (let [now         (::cofx/now cofx)
-          queued-page (with-meta page {:ts now})]
-      {:db (update db :queue conj queued-page)})))
+  (fn [{:keys [db ::cofx/now] :as cofx} [_ page]]
+    {:db (update db :queue conj (with-meta page {:ts now}))}))
 
 (rf/reg-event-db
   ::dequeue
@@ -213,10 +210,8 @@
 ;; dequeued once again, allowing for new requests to be sent.
 (rf/reg-event-fx
   ::request
-  (fn [cofx [_ [category id :as page]]]
-    (let [base-uri (get-in cofx [:db :query-uri])
-          uri      (str base-uri (name category) "/" id)
-          queue    (:queue cofx)]
+  (fn [{:keys [db queue] :as cofx} [_ [category id :as page]]]
+    (let [uri (str (:query-uri db) "/" (name category) "/" id)]
       (when (not (contains? queue page))
         {:dispatch   [::enqueue page]
          :http-xhrio {:method          :get
@@ -229,10 +224,9 @@
 (rf/reg-event-fx
   ::on-request-success
   [(rf/inject-cofx ::cofx/now)]
-  (fn [{:keys [db] :as cofx} [_ result]]
+  (fn [{:keys [db ::cofx/now] :as cofx} [_ result]]
     (let [content (transit/read transit-reader result)
-          page    (:page content)
-          now     (::cofx/now cofx)]
+          page    (:page content)]
       {:db         (update db :queries conj {:state     :success
                                              :content   content
                                              :timestamp now})
@@ -242,11 +236,10 @@
 (rf/reg-event-fx
   ::on-request-failure
   [(rf/inject-cofx ::cofx/now)]
-  (fn [{:keys [db] :as cofx} [_ result]]
-    (let [now (::cofx/now cofx)]
-      {:db (update db :queries conj {:state     :failure
-                                     :content   result
-                                     :timestamp now})})))
+  (fn [{:keys [db ::cofx/now] :as cofx} [_ result]]
+    {:db (update db :queries conj {:state     :failure
+                                   :content   result
+                                   :timestamp now})}))
 
 ;; Successful request to the backend lead to the retrieved page being saved in
 ;; the frontend db. In cases where a term does not have an associated page,
@@ -285,9 +278,8 @@
 (rf/reg-event-fx
   ::update-location
   [(rf/inject-cofx ::cofx/pathname)]
-  (fn [{:keys [db] :as cofx} [_ [_ id :as page]]]
-    (let [{:keys [input unknown-queries]} db
-          pathname (::cofx/pathname cofx)]
+  (fn [{:keys [db ::cofx/pathname] :as cofx} [_ [_ id :as page]]]
+    (let [{:keys [input unknown-queries]} db]
       (when (and (= input id)
                  (not (contains? unknown-queries id))
                  (not (pages/equivalent? pathname page)))
@@ -297,11 +289,9 @@
   ::change-location
   [(rf/inject-cofx ::cofx/now)
    (rf/inject-cofx ::cofx/scroll-state)]
-  (fn [{:keys [db] :as cofx} [_ new-page]]
+  (fn [{:keys [db ::cofx/now ::cofx/scroll-state] :as cofx} [_ new-page]]
     (let [{:keys [input history]} db
-          current-page (first history)
-          now          (::cofx/now cofx)
-          scroll-state (::cofx/scroll-state cofx)]
+          current-page (first history)]
       {:db         (-> db
                        (update :history conj (with-meta new-page now))
                        (assoc :input (or input
@@ -351,9 +341,8 @@
 (rf/reg-event-fx
   ::open-action-chooser
   [(rf/inject-cofx ::cofx/active-element)]
-  (fn [{:keys [db] :as cofx} _]
-    (let [active-element (::cofx/active-element cofx)
-          actions        (:actions (first (:evaluations db)))]
+  (fn [{:keys [db ::cofx/active-element] :as cofx} _]
+    (let [actions (:actions (first (:evaluations db)))]
       ;; Firefox won't get keydown events without removing focus from the input
       {::fx/blur active-element
        :db       (-> db
