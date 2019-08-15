@@ -57,12 +57,22 @@
    :input          nil
 
    :query-uri      query-uri
-   :result-filters {}
-   :unknown        #{}
    :pages          {::pages/terms  {}
                     ::pages/static static-pages}
+   :unknown        #{}
    :history        '()
    :queue          (sorted-set-by timestamp-comparator)
+
+   ;; Result filters are a mapping from terms to user-selected result filters.
+   ;; These filters are the ones that control whether we're searching for
+   ;; plain Pinyin, English, the official Pinyin with diacritics, or the popular
+   ;; online version where tone diacritics have been replaced by digits.
+   ;; Terms where the user never deviated from the default choice of filter
+   ;; do not appear in this map, only the ones that were actively selected.
+   ;; These are (in a similar fashion to :scroll-states) used to recreate UI
+   ;; state when navigating back in history during the browsing session.
+   :result-filters {}
+
    :evaluations    '()
    :queries        '()
 
