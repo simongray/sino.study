@@ -41,7 +41,7 @@
 
 ;;;; QUERY EVALUATION
 
-(defn eval-query
+(defn available-actions
   "Evaluate a query string to get a vector of possible actions."
   [query]
   (let [query*              (p/with-umlaut query)
@@ -141,7 +141,7 @@
           latest-input?     (= input (:input db))
           query             (str/trim input)
           new-query?        (not= query (:query latest-evaluation))
-          actions           (eval-query query)]
+          actions           (available-actions query)]
       (when (and latest-input? new-query?)
         {:dispatch-n [[::save-evaluation query actions]
                       (when (and actions
@@ -175,7 +175,7 @@
           query       (str/trim input)
           new-query?  (not= query (:query latest-eval))
           actions     (if new-query?
-                        (eval-query query)
+                        (available-actions query)
                         (:actions latest-eval))
           n           (count actions)]
       {:dispatch-n (cond-> []
