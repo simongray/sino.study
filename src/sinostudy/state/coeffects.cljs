@@ -11,20 +11,21 @@
 ;; In the current design, the window/document itself is no longer scrollable,
 ;; so there is no need to retrieve its scroll state.
 (rf/reg-cofx
-  ::scroll-states
+  ::scroll-state
   (fn [cofx _]
-    (let [selector      "*[id], main, body"
-          elements      (array-seq (js/document.querySelectorAll selector))
-          ->selector    (fn [element]
-                          (->> [(.-tagName element) (.-id element)]
-                               (remove nil?)
-                               (str/join "#")))
-          scroll-states (into {} (for [element elements]
-                                   (let [x (.-scrollLeft element)
-                                         y (.-scrollTop element)]
-                                     (when (or (> x 0) (> y 0))
-                                       [(->selector element) [x y]]))))]
-      (assoc cofx ::scroll-states scroll-states))))
+    (let [selector          "*[id], main, body"
+          elements          (array-seq (js/document.querySelectorAll selector))
+          element->selector (fn [element]
+                              (->> [(.-tagName element) (.-id element)]
+                                   (remove nil?)
+                                   (str/join "#")))
+          scroll-state      (into {} (for [element elements
+                                           :let [x (.-scrollLeft element)
+                                                 y (.-scrollTop element)]]
+                                       (when (or (> x 0)
+                                                 (> y 0))
+                                         [(element->selector element) [x y]])))]
+      (assoc cofx ::scroll-state scroll-state))))
 
 (rf/reg-cofx
   ::active-element

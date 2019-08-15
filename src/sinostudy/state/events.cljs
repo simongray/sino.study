@@ -100,24 +100,22 @@
 
 ;;;; SCROLLING
 
-(rf/reg-event-fx
-  ::save-scroll-states
-  (fn [{:keys [db]} [_ page scroll-states]]
-    (when page
-      {:db (if (empty? scroll-states)
-             (update db :scroll-states dissoc page)
-             (assoc-in db [:scroll-states page] scroll-states))})))
+(rf/reg-event-db
+  ::save-scroll-state
+  (fn [db [_ page scroll-state]]
+    (if (not (empty? scroll-state))
+      (assoc-in db [:scroll-states page] scroll-state)
+      db)))
 
-(rf/reg-event-fx
+(rf/reg-event-db
   ::reset-scroll-state
-  (fn [_ [_ page]]
-    {:dispatch [::save-scroll-states page nil]}))
+  (fn [db [_ page]]
+    (update db :scroll-states dissoc page)))
 
 (rf/reg-event-fx
   ::load-scroll-state
-  (fn [cofx [_ page]]
-    (let [scroll-states (get-in cofx [:db :scroll-states page])]
-      {::fx/set-scroll-states scroll-states})))
+  (fn [{:keys [db]} [_ page]]
+    {::fx/set-scroll-state (get-in db [:scroll-states page])}))
 
 
 ;;;; EVALUATION
@@ -298,17 +296,17 @@
 (rf/reg-event-fx
   ::change-location
   [(rf/inject-cofx ::cofx/now)
-   (rf/inject-cofx ::cofx/scroll-states)]
+   (rf/inject-cofx ::cofx/scroll-state)]
   (fn [{:keys [db] :as cofx} [_ new-page]]
     (let [{:keys [input history]} db
-          current-page  (first history)
-          now           (::cofx/now cofx)
-          scroll-states (::cofx/scroll-states cofx)]
+          current-page (first history)
+          now          (::cofx/now cofx)
+          scroll-state (::cofx/scroll-state cofx)]
       {:db         (-> db
                        (update :history conj (with-meta new-page now))
                        (assoc :input (or input
                                          (mk-input new-page))))
-       :dispatch-n [[::save-scroll-states current-page scroll-states]
+       :dispatch-n [[::save-scroll-state current-page scroll-state]
                     [::load-page (pages/shortened new-page)]]})))
 
 

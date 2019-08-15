@@ -27,9 +27,9 @@
 
 ;; Dispatched by ::load-scroll-state.
 (rf/reg-fx
-  ::set-scroll-states
-  (fn [scroll-states]
-    (doseq [[k [x y]] scroll-states]
-      (let [element (aget (js/document.querySelectorAll k) 0)]
+  ::set-scroll-state
+  (fn [scroll-state]
+    (doseq [[css-selector [x y]] scroll-state]
+      (let [element (aget (js/document.querySelectorAll css-selector) 0)]
         (set! (.-scrollLeft element) x)
         (set! (.-scrollTop element) y)))))
