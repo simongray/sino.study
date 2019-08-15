@@ -14,9 +14,9 @@
     (:pages db)))
 
 (rf/reg-sub
-  ::unknown
+  ::unknown-queries
   (fn [db]
-    (:unknown db)))
+    (:unknown-queries db)))
 
 (rf/reg-sub
   ::history

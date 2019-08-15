@@ -17,7 +17,7 @@
   [page]
   (str "/" (str/join "/" (map name page))))
 
-(defn equivalent
+(defn equivalent?
   "Is the window.location.pathname equivalent to the given page?"
   [pathname page]
   (= pathname (page->pathname page)))

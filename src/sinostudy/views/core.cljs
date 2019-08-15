@@ -35,20 +35,21 @@
 
 (defn smart-input []
   "The input field (part of the header form)."
-  (let [input     @(rf/subscribe [::subs/input])
-        actions   @(rf/subscribe [::subs/actions])
-        unknown   @(rf/subscribe [::subs/unknown])
-        disabled? (not (nil? actions))
-        unknown?  (when input (unknown (str/trim input)))]
+  (let [input           @(rf/subscribe [::subs/input])
+        actions         @(rf/subscribe [::subs/actions])
+        unknown-queries @(rf/subscribe [::subs/unknown-queries])
+        disabled?       (not (nil? actions))
+        unknown-query?  (when input
+                          (contains? unknown-queries (str/trim input)))]
     [:<>
      [:div#header-input
       [:input#input-field
        {:type            "text"
-        :class           (when unknown? "unknown")
+        :class           (when unknown-query? "unknown")
         :placeholder     "look up..."
         :auto-capitalize "off"
         :auto-correct    "off"
-        :auto-complete   "off"
+        :auto-complete   "off"'
         :spell-check     false
         :disabled        disabled?
         :value           input

@@ -232,9 +232,9 @@
   "A dictionary page can be 1 of 3 types: entry, search result, or unknown."
   []
   (let [{uses ::d/uses} @(rf/subscribe [::subs/content])
-        unknown     @(rf/subscribe [::subs/unknown])
-        search-term @(rf/subscribe [::subs/current-id])]
+        unknown-queries @(rf/subscribe [::subs/unknown-queries])
+        search-term     @(rf/subscribe [::subs/current-id])]
     (cond
-      (unknown search-term) [unknown-term search-term]
+      (contains? unknown-queries search-term) [unknown-term search-term]
       uses [entry]
       :else [search-results])))

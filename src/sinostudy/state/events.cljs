@@ -190,9 +190,9 @@
 (rf/reg-event-fx
   ::load-page
   (fn [{:keys [db] :as cofx} [_ [category _ :as page]]]
-    (let [{:keys [unknown pages]} db]
+    (let [{:keys [unknown-queries pages]} db]
       (when (= category ::pages/terms)
-        (if (and (not (unknown page))
+        (if (and (not (contains? unknown-queries page))
                  (not (get-in pages page)))
           {:dispatch [::request page]}
           {:dispatch [::update-location page]})))))
@@ -260,14 +260,14 @@
   (fn [_ [_ {:keys [page result]}]]
     (let [[category id] page]
       {:dispatch-n [(cond
-                      (nil? result) [::save-unknown id]
+                      (nil? result) [::register-unknown-query id]
                       (= category ::pages/terms) [::save-term page result])
                     [::update-location page]]})))
 
 (rf/reg-event-db
-  ::save-unknown
+  ::register-unknown-query
   (fn [db [_ term]]
-    (update db :unknown conj term)))
+    (update db :unknown-queries conj term)))
 
 ;; Store result directly and then store individual entries.
 ;; TODO: reduce overwrites for hanzi result?
@@ -287,11 +287,11 @@
   ::update-location
   [(rf/inject-cofx ::cofx/pathname)]
   (fn [{:keys [db] :as cofx} [_ [_ id :as page]]]
-    (let [{:keys [input unknown]} db
+    (let [{:keys [input unknown-queries]} db
           pathname (::cofx/pathname cofx)]
       (when (and (= input id)
-                 (not (unknown id))
-                 (not (pages/equivalent pathname page)))
+                 (not (contains? unknown-queries id))
+                 (not (pages/equivalent? pathname page)))
         {::fx/navigate-to (pages/page->pathname page)}))))
 
 (rf/reg-event-fx
