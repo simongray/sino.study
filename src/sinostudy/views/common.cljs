@@ -1,6 +1,6 @@
 (ns sinostudy.views.common
   (:require [sinostudy.navigation.pages :as pages]
-            [sinostudy.state.events :as events]
+            [sinostudy.state.events.scrolling :as scrolling]
             [sinostudy.pinyin.eval :as pe]
             [sinostudy.rim.core :as rim]
             [sinostudy.dictionary.core :as d]
@@ -23,7 +23,7 @@
         link (fn [term id]
                [:a
                 {:title    (str "Look up " term)
-                 :on-click #(rf/dispatch [::events/reset-scroll-state
+                 :on-click #(rf/dispatch [::scrolling/reset-scroll-state
                                           [::pages/terms term]])
                  :href     (str "/" (name ::pages/terms) "/" term)
                  :key      (str term "-" id)}

@@ -4,7 +4,7 @@
             [day8.re-frame.http-fx]
             [secretary.core :as secretary]
             [sinostudy.navigation.routes :as routes]
-            [sinostudy.state.events :as events]
+            [sinostudy.state.events.core :as events]
             [sinostudy.state.subs :as subs]
             [sinostudy.views.core :as views]
             [sinostudy.config :as config]))

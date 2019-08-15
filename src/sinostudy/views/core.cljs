@@ -5,7 +5,8 @@
             [cljs.reader :as reader]
             [sinostudy.state.db :as db]
             [sinostudy.state.subs :as subs]
-            [sinostudy.state.events :as events]
+            [sinostudy.state.events.core :as events]
+            [sinostudy.state.events.scrolling :as scrolling]
             [sinostudy.views.dictionary :as vd]
             [sinostudy.navigation.pages :as pages]
             [sinostudy.dictionary.core :as d])
@@ -21,7 +22,7 @@
        {:key key}
        text]
       [:a
-       {:on-click #(rf/dispatch [::events/reset-scroll-state
+       {:on-click #(rf/dispatch [::scrolling/reset-scroll-state
                                  [::pages/static to]])
         :href     to
         :key      key}
@@ -49,8 +50,7 @@
         :placeholder     "look up..."
         :auto-capitalize "off"
         :auto-correct    "off"
-        :auto-complete   "off"'
-        :spell-check     false
+        :auto-complete   "off" ':spell-check false
         :disabled        disabled?
         :value           input
         :on-change       (fn [e]

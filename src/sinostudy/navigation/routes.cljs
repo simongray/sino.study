@@ -3,7 +3,7 @@
   (:import goog.History)
   (:require [secretary.core :as secretary]
             [re-frame.core :as rf]
-            [sinostudy.state.events :as events]
+            [sinostudy.state.events.core :as events]
             [sinostudy.navigation.pages :as pages]
             [accountant.core :as accountant]))
 

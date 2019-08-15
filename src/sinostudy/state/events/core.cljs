@@ -1,4 +1,4 @@
-(ns sinostudy.state.events
+(ns sinostudy.state.events.core
   (:require [clojure.string :as str]
             [clojure.set :as set]
             [re-frame.core :as rf]
@@ -9,6 +9,7 @@
             [sinostudy.pinyin.eval :as pe]
             [sinostudy.dictionary.core :as d]
             [sinostudy.navigation.pages :as pages]
+            [sinostudy.state.events.scrolling :as scrolling]
             [sinostudy.state.coeffects :as cofx]
             [sinostudy.state.effects :as fx]))
 
@@ -97,25 +98,6 @@
   [(rf/inject-cofx ::cofx/active-element)]
   (fn [{:keys [::cofx/active-element] :as cofx} _]
     {::fx/blur active-element}))
-
-;;;; SCROLLING
-
-(rf/reg-event-db
-  ::save-scroll-state
-  (fn [db [_ page scroll-state]]
-    (if (not (empty? scroll-state))
-      (assoc-in db [:scroll-states page] scroll-state)
-      db)))
-
-(rf/reg-event-db
-  ::reset-scroll-state
-  (fn [db [_ page]]
-    (update db :scroll-states dissoc page)))
-
-(rf/reg-event-fx
-  ::load-scroll-state
-  (fn [{:keys [db]} [_ page]]
-    {::fx/set-scroll-state (get-in db [:scroll-states page])}))
 
 
 ;;;; EVALUATION
@@ -296,7 +278,7 @@
                        (update :history conj (with-meta new-page now))
                        (assoc :input (or input
                                          (mk-input new-page))))
-       :dispatch-n [[::save-scroll-state current-page scroll-state]
+       :dispatch-n [[::scrolling/save-scroll-state current-page scroll-state]
                     [::load-page (pages/shortened new-page)]]})))
 
 
