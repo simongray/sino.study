@@ -51,8 +51,7 @@
 
 (def initial-db
   "This is the db map used as the initial state of the db."
-  {:config         config
-   :query-uri      query-uri
+  {:query-uri      query-uri
    :input          nil
    :result-filters {}
    :unknown        #{}
@@ -82,4 +81,10 @@
    ;; it. In this case `actions` is a vector of possible actions options and
    ;; `checked-action` is the index of the currently selected option.
    :actions        nil
-   :checked-action 0})
+   :checked-action 0
+
+   ;; This is the content of the `config.edn` file that is read at launch.
+   ;; While the content is mostly relevant for the backend, this can be used
+   ;; to reflect this information in the frontend UI, e.g. for debugging
+   ;; purposes.
+   :config         config})
