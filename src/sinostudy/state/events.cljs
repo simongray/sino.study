@@ -77,7 +77,7 @@
 (rf/reg-event-db
   ::initialize-db
   (fn [_ _]
-    db/default-db))
+    db/initial-db))
 
 (rf/reg-event-db
   ::decompose-char
