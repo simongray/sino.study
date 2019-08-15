@@ -72,7 +72,12 @@
    ;; function of the URI.
    :history        '()
 
+   ;; A set of all unknown queries, i.e. queries that didn't resolve to anything
+   ;; through a backend request. This is used to memoise those queries for
+   ;; performance optimisation reasons, but also as a quick way to underline bad
+   ;; queries in the text input, possibly highlighting spelling mistakes.
    :unknown        #{}
+
    :queue          (sorted-set-by timestamp-comparator)
 
    ;; Result filters are a mapping from terms to user-selected result filters.
