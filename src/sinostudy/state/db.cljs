@@ -73,7 +73,14 @@
    ;; state when navigating back in history during the browsing session.
    :result-filters {}
 
+   ;; A stack of maps containing evaluations, i.e. maps of input query, output
+   ;; actions, and timestamp. Basically used to memoise query input to its
+   ;; results to speed up recollection.
    :evaluations    '()
+
+   ;; Holds a record of the query content. Not used for much at the moment, but
+   ;; be used to see the history of backend requests and whether they were
+   ;; successful or not.
    :queries        '()
 
    ;; The preferred script is registered here and this will simply use the
