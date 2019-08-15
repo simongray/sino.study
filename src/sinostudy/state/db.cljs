@@ -56,7 +56,6 @@
    ;; affected by conversion operations, e.g. `digits->diacritics`.
    :input          nil
 
-   :query-uri      query-uri
    :pages          {::pages/terms  {}
                     ::pages/static static-pages}
    :unknown        #{}
@@ -106,6 +105,8 @@
 
    ;; This is the content of the `config.edn` file that is read at launch.
    ;; While the content is mostly relevant for the backend, this can be used
-   ;; to reflect this information in the frontend UI, e.g. for debugging
-   ;; purposes.
-   :config         config})
+   ;; to monitor this information in the frontend UI, e.g. for debugging
+   ;; purposes. The `query-uri` is simply the bit of the config that defines
+   ;; which URI to send backend queries to.
+   :config         config
+   :query-uri      query-uri})
