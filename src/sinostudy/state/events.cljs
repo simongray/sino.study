@@ -35,7 +35,7 @@
 
 (defn mk-input
   "What the input field should display based on a given page."
-  [[category id]]
+  [[category id :as page]]
   (cond
     (= ::pages/terms category) (when (not (pe/hanzi-block? id)) id)))
 
