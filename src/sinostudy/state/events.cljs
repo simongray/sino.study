@@ -16,22 +16,22 @@
 (def transit-reader
   (transit/reader :json))
 
-(defn- save-dict-entries
-  "Save the individual entries of a dictionary search result into the db.
+(defn- cache-dict-entries
+  "Save the individual entries of a dictionary search result in the db.
   Note: this is a separate step from saving the search result itself!"
   [db content]
-  (let [path    [:pages ::pages/terms]
-        entries (->> content
-                     (filter #(-> % first (not= ::d/term)))
-                     (map second)
-                     (apply set/union))]
-    (loop [db*      db
-           entries* entries]
-      (if (empty? entries*)
-        db*
-        (let [entry (first entries*)
-              path* (conj path (::d/term entry))]
-          (recur (assoc-in db* path* entry) (rest entries*)))))))
+  (let [path      [:pages ::pages/terms]
+        entry-ks  #{::d/english
+                    ::d/hanzi
+                    ::d/pinyin
+                    ::d/pinyin+diacritics
+                    ::d/pinyin+digits}
+        entries   (->> (select-keys content entry-ks)
+                       (vals)
+                       (apply set/union))
+        add-entry (fn [db entry]
+                    (assoc-in db (conj path (::d/term entry)) entry))]
+    (reduce add-entry db entries)))
 
 (defn mk-input
   "What the input field should display based on a given page."
@@ -273,10 +273,13 @@
   ::save-term
   (fn [db [_ [category id :as page] result]]
     (-> db
+        ;; Cache the actual search result in the db.
         (assoc-in [:pages category id] (-> result
                                            (d/reduce-result)
                                            (d/sort-result)))
-        (save-dict-entries result))))
+
+        ;; Cache incidental, referenced entries for faster page rendering times.
+        (cache-dict-entries result))))
 
 ;; Dispatched either directly by ::load-page or indirectly through a successful
 ;; backend request. This ensures that the address bar is only updated when
