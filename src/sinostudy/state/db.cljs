@@ -78,6 +78,11 @@
    ;; queries in the text input, possibly highlighting spelling mistakes.
    :unknown        #{}
 
+   ;; A request queue is simply a pattern for avoiding doing multiple identical
+   ;; backend requests at the same time, e.g. maybe there's a slow connection so
+   ;; the user manages to click the same link multiple times or spam ENTER.
+   ;; The queue avoids this enqueuing requests and then dequeuing them when they
+   ;; eventually return. This is another performance optimisation.
    :queue          (sorted-set-by timestamp-comparator)
 
    ;; Result filters are a mapping from terms to user-selected result filters.
