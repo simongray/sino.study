@@ -20,20 +20,18 @@
   "Save the individual entries of a dictionary search result into the db.
   Note: this is a separate step from saving the search result itself!"
   [db content]
-  (if (not (::d/unknown content))
-    (let [path    [:pages ::pages/terms]
-          entries (->> content
-                       (filter #(-> % first (not= ::d/term)))
-                       (map second)
-                       (apply set/union))]
-      (loop [db*      db
-             entries* entries]
-        (if (empty? entries*)
-          db*
-          (let [entry (first entries*)
-                path* (conj path (::d/term entry))]
-            (recur (assoc-in db* path* entry) (rest entries*))))))
-    db))
+  (let [path    [:pages ::pages/terms]
+        entries (->> content
+                     (filter #(-> % first (not= ::d/term)))
+                     (map second)
+                     (apply set/union))]
+    (loop [db*      db
+           entries* entries]
+      (if (empty? entries*)
+        db*
+        (let [entry (first entries*)
+              path* (conj path (::d/term entry))]
+          (recur (assoc-in db* path* entry) (rest entries*)))))))
 
 (defn mk-input
   "What the input field should display based on a given page."
