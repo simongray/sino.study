@@ -51,8 +51,12 @@
 
 (def initial-db
   "This is the db map used as the initial state of the db."
-  {:query-uri      query-uri
+  {;; The current contents of the text input field. Shown directly in the UI.
+   ;; This usually just reflects what the user is typing in, but can also be
+   ;; affected by conversion operations, e.g. `digits->diacritics`.
    :input          nil
+
+   :query-uri      query-uri
    :result-filters {}
    :unknown        #{}
    :pages          {::pages/terms  {}
