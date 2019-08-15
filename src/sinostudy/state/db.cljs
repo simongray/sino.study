@@ -56,10 +56,23 @@
    ;; affected by conversion operations, e.g. `digits->diacritics`.
    :input          nil
 
+   ;; A page is basically a 2-tuple describing a URL in the SPA. They can
+   ;; be directly translated into the full web browser location of a page.
+   ;; There are two types of page:
+   ;;
+   ;; * Static pages that are part of the root domain, e.g. sino.study/about
+   ;; * Dynamically generated dictionary terms that appear as a sublevel of
+   ;;   sino.study/terms. For example, sino.study/terms/你好.
    :pages          {::pages/terms  {}
                     ::pages/static static-pages}
-   :unknown        #{}
+
+   ;; A basic history of the pages that have been navigated to.
+   ;; Not actually used for generating content, since the in-browser navigation
+   ;; history is sufficient to recreate pages as the page rendered is simply a
+   ;; function of the URI.
    :history        '()
+
+   :unknown        #{}
    :queue          (sorted-set-by timestamp-comparator)
 
    ;; Result filters are a mapping from terms to user-selected result filters.
