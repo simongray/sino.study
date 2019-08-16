@@ -28,9 +28,9 @@
         pinyin      (str/split pinyin-str #" ")
         traditional (first hanzi)
         simplified  (if (second hanzi) (second hanzi) traditional)]
-    {::traditional traditional
-     ::simplified  simplified
-     ::pinyin      pinyin}))
+    {:traditional traditional
+     :simplified  simplified
+     :pinyin      pinyin}))
 
 
 ;;;; DEALING WITH CLASSIFIERS
@@ -41,22 +41,22 @@
   (str/starts-with? definition "CL:"))
 
 (defn has-cls?
-  "Determine if the listing's ::definitions contain classifiers."
+  "Determine if the listing's :definitions contain classifiers."
   [listing]
-  (some cl-def? (::definitions listing)))
+  (some cl-def? (:definitions listing)))
 
 (defn detach-cls
-  "Move the classifiers of a listing from ::definitions to ::classifiers."
+  "Move the classifiers of a listing from :definitions to :classifiers."
   [listing]
   (if (has-cls? listing)
-    (let [defs    (::definitions listing)
+    (let [defs    (:definitions listing)
           cl-defs (filter cl-def? defs)
           get-cls (comp (partial map refr->m) (partial re-seq embed/refr))
           cls     (set (flatten (map get-cls cl-defs)))]
       (if cls
         (-> listing
-            (assoc ::definitions (set/difference defs cl-defs))
-            (assoc ::classifiers cls))
+            (assoc :definitions (set/difference defs cl-defs))
+            (assoc :classifiers cls))
         listing))
     listing))
 
@@ -66,58 +66,58 @@
 (defn hanzi-entry
   "Make a hanzi dictionary entry based on a script and a CC-CEDICT listing."
   [script listing]
-  (let [script-diff?  (not= (::traditional listing) (::simplified listing))
+  (let [script-diff?  (not= (:traditional listing) (:simplified listing))
         make-vars     (fn [script]
                         (let [other (case script
-                                      ::traditional ::simplified
-                                      ::simplified ::traditional)]
+                                      :traditional :simplified
+                                      :simplified :traditional)]
                           {other #{(get listing other)}}))
-        classifiers   (::classifiers listing)
-        frequency     (::frequency listing)
-        decomposition (get-in listing [::info script ::decomposition])
-        etymology     (get-in listing [::info script ::etymology])
-        radical       (get-in listing [::info script ::radical])
-        base-entry    {::term    (get listing script)
-                       ::scripts #{script}
-                       ::uses    {(::pinyin listing) (::definitions listing)}}]
+        classifiers   (:classifiers listing)
+        frequency     (:frequency listing)
+        decomposition (get-in listing [:info script :decomposition])
+        etymology     (get-in listing [:info script :etymology])
+        radical       (get-in listing [:info script :radical])
+        base-entry    {:term    (get listing script)
+                       :scripts #{script}
+                       :uses    {(:pinyin listing) (:definitions listing)}}]
     (cond-> base-entry
-            script-diff? (assoc ::variations (make-vars script))
-            classifiers (assoc ::classifiers classifiers)
-            frequency (assoc ::frequency frequency)
-            decomposition (assoc ::decomposition decomposition)
-            etymology (assoc ::etymology etymology)
-            radical (assoc ::radical radical))))
+            script-diff? (assoc :variations (make-vars script))
+            classifiers (assoc :classifiers classifiers)
+            frequency (assoc :frequency frequency)
+            decomposition (assoc :decomposition decomposition)
+            etymology (assoc :etymology etymology)
+            radical (assoc :radical radical))))
 
 (defn add-hanzi*
   "Update the hanzi dict at the specified key k with the entry v.
   The entry is either inserted as is or merged with the old entry."
   [dict k v]
   (if-let [old (get dict k)]
-    (let [scripts (set/union (::scripts old) (::scripts v))
-          cls     (set/union (::classifiers old) (::classifiers v))
-          uses    (merge-with set/union (::uses old) (::uses v))
-          vars    (merge-with set/union (::variations old) (::variations v))
-          freq    (::frequency v)
-          decomp  (::decomposition v)
-          etym    (::etymology v)
-          radical (::radical v)]
+    (let [scripts (set/union (:scripts old) (:scripts v))
+          cls     (set/union (:classifiers old) (:classifiers v))
+          uses    (merge-with set/union (:uses old) (:uses v))
+          vars    (merge-with set/union (:variations old) (:variations v))
+          freq    (:frequency v)
+          decomp  (:decomposition v)
+          etym    (:etymology v)
+          radical (:radical v)]
       (assoc dict k (cond-> old
-                            scripts (assoc ::scripts scripts)
-                            cls (assoc ::classifiers cls)
-                            uses (assoc ::uses uses)
-                            vars (assoc ::variations vars)
-                            freq (assoc ::frequency freq)
-                            decomp (assoc ::decomposition decomp)
-                            etym (assoc ::etymology etym)
-                            radical (assoc ::radical radical))))
+                            scripts (assoc :scripts scripts)
+                            cls (assoc :classifiers cls)
+                            uses (assoc :uses uses)
+                            vars (assoc :variations vars)
+                            freq (assoc :frequency freq)
+                            decomp (assoc :decomposition decomp)
+                            etym (assoc :etymology etym)
+                            radical (assoc :radical radical))))
     (assoc dict k v)))
 
 (defn add-hanzi
   "Add 1 to 2 entries in the hanzi dictionary from a CC-CEDICT listing."
   [dict listing]
   (-> dict
-      (add-hanzi* (::traditional listing) (hanzi-entry ::traditional listing))
-      (add-hanzi* (::simplified listing) (hanzi-entry ::simplified listing))))
+      (add-hanzi* (:traditional listing) (hanzi-entry :traditional listing))
+      (add-hanzi* (:simplified listing) (hanzi-entry :simplified listing))))
 
 
 ;;;; PINYIN DICT
@@ -133,7 +133,7 @@
 (defn pinyin-entry
   "Make a pinyin dictionary entry based on a CC-CEDICT listing."
   [listing]
-  (hash-set (::traditional listing) (::simplified listing)))
+  (hash-set (:traditional listing) (:simplified listing)))
 
 (defn add-pinyin
   "Add an entry to a pinyin dictionary from a CC-CEDICT listing."
@@ -241,10 +241,10 @@
   Keys (= single English words) are only added if they're above a certain
   relevance cutoff in order to limit the results list."
   [dict listing]
-  (let [definitions (::definitions listing)
+  (let [definitions (:definitions listing)
         ks          (->> (english-keys definitions)
                          (filter (partial above-cutoff? definitions)))
-        v           (hash-set (::traditional listing) (::simplified listing))]
+        v           (hash-set (:traditional listing) (:simplified listing))]
     (loop [dict* dict
            ks*   ks]
       (if (seq ks*)
@@ -260,12 +260,12 @@
   score, allowing for more accurate sorting (it is a number from 0 to 1 that
   tends towards 0). This is what puts e.g. 句子 ahead of 语句 for 'sentence'."
   [term entry]
-  (let [uses      (->> (vals (::uses entry))
+  (let [uses      (->> (vals (:uses entry))
                        (apply set/union))
         score     (partial english-relevance-score term)
         scores    (map score uses)
         max-score (apply max scores)
-        freq      (get entry ::frequency 0)]
+        freq      (get entry :frequency 0)]
     ;; Note: multiple 0.0 scores only count as a single zero!
     ;; This is done to not unfairly weigh down words with many meanings.
     (+ max-score freq)))
@@ -275,11 +275,11 @@
 (defn add-freq
   "Add word frequency (not char frequency) to a listing."
   [freq-dict listing]
-  (let [trad-freq (get freq-dict (::traditional listing) 0)
-        simp-freq (get freq-dict (::simplified listing) 0)
+  (let [trad-freq (get freq-dict (:traditional listing) 0)
+        simp-freq (get freq-dict (:simplified listing) 0)
         frequency (max trad-freq simp-freq)]
     (if (> frequency 0)
-      (assoc listing ::frequency frequency)
+      (assoc listing :frequency frequency)
       listing)))
 
 ;;; TODO: find proper thresholds for labels
@@ -309,19 +309,19 @@
                           nil)
           radical       (get info "radical")
           assoc*        (fn [coll k v]
-                          (assoc-in coll [::info script k] v))]
+                          (assoc-in coll [:info script k] v))]
       (cond-> listing
-              decomposition (assoc* ::decomposition decomposition)
-              etymology (assoc* ::etymology etymology)
-              radical (assoc* ::radical radical)))
+              decomposition (assoc* :decomposition decomposition)
+              etymology (assoc* :etymology etymology)
+              radical (assoc* :radical radical)))
     listing))
 
 (defn add-info
   "Add info from makemeahanzi to a CC-CEDICT listing."
   [makemeahanzi listing]
   (->> listing
-       (add-info* ::traditional makemeahanzi)
-       (add-info* ::simplified makemeahanzi)))
+       (add-info* :traditional makemeahanzi)
+       (add-info* :simplified makemeahanzi)))
 
 
 ;;;; CREATING DICTS AND LOOKING UP WORDS
@@ -329,11 +329,11 @@
 (defn make-report
   "Create some some rudimentary statistics about the given dict."
   [dict]
-  {:entry-count             (count (keys (::hanzi dict)))
-   :english-count           (count (keys (::english dict)))
-   :pinyin-count            (count (keys (::pinyin dict)))
-   :pinyin+digits-count     (count (keys (::pinyin+digits dict)))
-   :pinyin+diacritics-count (count (keys (::pinyin+diacritics dict)))})
+  {:entry-count             (count (keys (:hanzi dict)))
+   :english-count           (count (keys (:english dict)))
+   :pinyin-count            (count (keys (:pinyin dict)))
+   :pinyin+digits-count     (count (keys (:pinyin+digits dict)))
+   :pinyin+diacritics-count (count (keys (:pinyin+diacritics dict)))})
 
 ;; TODO: also add listings only found in makemeahanzi (e.g. 忄)
 (defn create-dict
@@ -345,15 +345,15 @@
                                 (map detach-cls)
                                 (map (partial add-freq freq-dict))
                                 (map (partial add-info makemeahanzi)))
-        add-pinyin-key     (partial add-pinyin ::pinyin-key)
-        add-digits-key     (partial add-pinyin ::pinyin+digits-key)
-        add-diacritics-key (partial add-pinyin ::pinyin+diacritics-key)]
-    (->> {::hanzi             (reduce add-hanzi {} listings*)
-          ::english           (reduce add-english {} listings*)
-          ::pinyin            (reduce add-pinyin-key {} listings*)
-          ::pinyin+digits     (reduce add-digits-key {} listings*)
-          ::pinyin+diacritics (reduce add-diacritics-key {} listings*)}
-         (#(assoc %1 ::report (make-report %1))))))
+        add-pinyin-key     (partial add-pinyin :pinyin-key)
+        add-digits-key     (partial add-pinyin :pinyin+digits-key)
+        add-diacritics-key (partial add-pinyin :pinyin+diacritics-key)]
+    (->> {:hanzi             (reduce add-hanzi {} listings*)
+          :english           (reduce add-english {} listings*)
+          :pinyin            (reduce add-pinyin-key {} listings*)
+          :pinyin+digits     (reduce add-digits-key {} listings*)
+          :pinyin+diacritics (reduce add-diacritics-key {} listings*)}
+         (#(assoc %1 :report (make-report %1))))))
 
 (defn look-up
   "Look up the specified term in each dictionary type.
@@ -364,22 +364,22 @@
    (let [term*       (pinyin-key term)                      ; unspaced
          look-up*    (fn [dict-type word] (-> dict (get dict-type) (get word)))
          limited     (fn [dict-type] (if limit (get limit dict-type) dict-type))
-         get-entries (fn [words] (set (map #(look-up* ::hanzi %) words)))
-         hanzi       (look-up* (limited ::hanzi) term)
-         pinyin      (set/union (look-up* (limited ::pinyin) term)
-                                (look-up* (limited ::pinyin) term*))
-         digits      (set/union (look-up* (limited ::pinyin+digits) term)
-                                (look-up* (limited ::pinyin+digits) term*))
-         diacritics  (set/union (look-up* (limited ::pinyin+diacritics) term)
-                                (look-up* (limited ::pinyin+diacritics) term*))
-         english     (look-up* (limited ::english) (str/lower-case term))
-         result      (cond-> {::term term}
-                             hanzi (assoc ::hanzi #{hanzi})
-                             pinyin (assoc ::pinyin (get-entries pinyin))
-                             digits (assoc ::pinyin+digits (get-entries digits))
-                             diacritics (assoc ::pinyin+diacritics (get-entries diacritics))
-                             english (assoc ::english (get-entries english)))]
-     (if (= result {::term term})
+         get-entries (fn [words] (set (map #(look-up* :hanzi %) words)))
+         hanzi       (look-up* (limited :hanzi) term)
+         pinyin      (set/union (look-up* (limited :pinyin) term)
+                                (look-up* (limited :pinyin) term*))
+         digits      (set/union (look-up* (limited :pinyin+digits) term)
+                                (look-up* (limited :pinyin+digits) term*))
+         diacritics  (set/union (look-up* (limited :pinyin+diacritics) term)
+                                (look-up* (limited :pinyin+diacritics) term*))
+         english     (look-up* (limited :english) (str/lower-case term))
+         result      (cond-> {:term term}
+                             hanzi (assoc :hanzi #{hanzi})
+                             pinyin (assoc :pinyin (get-entries pinyin))
+                             digits (assoc :pinyin+digits (get-entries digits))
+                             diacritics (assoc :pinyin+diacritics (get-entries diacritics))
+                             english (assoc :english (get-entries english)))]
+     (if (= result {:term term})
        nil
        result)))
   ([dict word]
@@ -415,10 +415,10 @@
                         [pinyin (defs-containing-term term definitions)])
         non-empty     (comp seq second)]
     (for [entry entries]
-      (assoc entry ::uses (->> (::uses entry)
-                               (map relevant-defs)
-                               (filter non-empty)
-                               (into {}))))))
+      (assoc entry :uses (->> (:uses entry)
+                              (map relevant-defs)
+                              (filter non-empty)
+                              (into {}))))))
 
 (defn filter-uses
   "Remove uses from entries if the Pinyin does not match the given term.
@@ -431,8 +431,8 @@
                                  (if f f identity)
                                  first)]
      (for [entry entries
-           :let [uses (::uses entry)]]
-       (assoc entry ::uses (into {} (filter use-matches-term? uses))))))
+           :let [uses (:uses entry)]]
+       (assoc entry :uses (into {} (filter use-matches-term? uses))))))
   ([term entries]
    (filter-uses term entries nil)))
 
@@ -441,12 +441,12 @@
   This removes irrelevant data from the result relative to the search term,
   e.g. removes definitions that do not match the search term."
   [result]
-  (let [term       (::term result)
-        pinyin     (::pinyin result)
-        digits     (::pinyin+digits result)
-        diacritics (::pinyin+diacritics result)
-        hanzi      (::hanzi result)
-        english    (::english result)]
+  (let [term       (:term result)
+        pinyin     (:pinyin result)
+        digits     (:pinyin+digits result)
+        diacritics (:pinyin+diacritics result)
+        hanzi      (:hanzi result)
+        english    (:english result)]
     ; Reduce to single hanzi entry when applicable.
     ; Note: `hanzi` can only be a set of length 1 or nil!
     (if hanzi
@@ -454,20 +454,20 @@
       (cond-> result
 
               pinyin
-              (assoc ::pinyin
+              (assoc :pinyin
                      (filter-uses term pinyin p/no-digits))
 
               digits
-              (assoc ::pinyin+digits
+              (assoc :pinyin+digits
                      (filter-uses term digits))
 
               diacritics
-              (assoc ::pinyin+diacritics
+              (assoc :pinyin+diacritics
                      (filter-uses term diacritics p/digits->diacritics))))))
 
 ;; TODO: disabled for now, re-enable when more intelligent (issue #37)
 ;english
-;(assoc ::english
+;(assoc :english
 ;       (filter-defs term english)))))
 
 (defn sort-result
@@ -475,19 +475,19 @@
   This sorts the result relative to the search term,
   e.g English word results are sorted according to relevance."
   [result]
-  (let [relevance  (memoize (partial english-relevance (::term result)))
-        relevance* (comp - (safe-comparator relevance ::term))
+  (let [relevance  (memoize (partial english-relevance (:term result)))
+        relevance* (comp - (safe-comparator relevance :term))
         sorted     (fn [f coll] (apply sorted-set-by f coll))
-        pinyin     (::pinyin result)
-        digits     (::pinyin+digits result)
-        diacritics (::pinyin+diacritics result)
-        english    (::english result)]
+        pinyin     (:pinyin result)
+        digits     (:pinyin+digits result)
+        diacritics (:pinyin+diacritics result)
+        english    (:english result)]
     (cond-> result
-            ;pinyin (assoc ::pinyin (sorted > pinyin))
-            ;digits (assoc ::pinyin+digits (sorted > digits))
-            ;diacritics (assoc ::pinyin+diacritics (sorted > diacritics))
+            ;pinyin (assoc :pinyin (sorted > pinyin))
+            ;digits (assoc :pinyin+digits (sorted > digits))
+            ;diacritics (assoc :pinyin+diacritics (sorted > diacritics))
             ;; TODO: sort Pinyin properly too
-            pinyin (assoc ::pinyin pinyin)
-            digits (assoc ::pinyin+digits digits)
-            diacritics (assoc ::pinyin+diacritics diacritics)
-            english (assoc ::english (sorted relevance* english)))))
+            pinyin (assoc :pinyin pinyin)
+            digits (assoc :pinyin+digits digits)
+            diacritics (assoc :pinyin+diacritics diacritics)
+            english (assoc :english (sorted relevance* english)))))

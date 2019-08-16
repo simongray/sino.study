@@ -3,7 +3,6 @@
             [sinostudy.events.scrolling :as scrolling]
             [sinostudy.pinyin.eval :as pe]
             [sinostudy.rim.core :as rim]
-            [sinostudy.dictionary.core :as d]
             [sinostudy.dictionary.embed :as embed]
             [sinostudy.pinyin.core :as p]
             [clojure.string :as str]
@@ -46,16 +45,16 @@
                          (map p/digits->diacritics))
         traditional (first hanzi)
         simplified  (if (second hanzi) (second hanzi) traditional)]
-    {::d/traditional traditional
-     ::d/simplified  simplified
-     ::d/pinyin      pinyin}))
+    {:traditional traditional
+     :simplified  simplified
+     :pinyin      pinyin}))
 
 (defn zh
   "Get the proper Chinese lang attribute based on the script."
   [script]
   (case script
-    ::d/traditional "zh-Hant"
-    ::d/simplified "zh-Hans"
+    :traditional "zh-Hant"
+    :simplified "zh-Hans"
     "zh"))
 
 (defn- handle-ref
@@ -65,11 +64,11 @@
         use-script (fn [coll]
                      (get coll (cond
                                  (= (count coll) 1) 0
-                                 (= script ::d/simplified) 1
+                                 (= script :simplified) 1
                                  :else 0)))]
     (cond
       (re-matches embed/refr s) (let [m      (refr->m s)
-                                      pinyin (->> (::d/pinyin m)
+                                      pinyin (->> (:pinyin m)
                                                   (map f)
                                                   (interpose " "))
                                       hanzi  (script m)]

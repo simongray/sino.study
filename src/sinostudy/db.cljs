@@ -109,7 +109,7 @@
    ;; selected script over the other whenever there is an option of both in the
    ;; UI. This currently doesn't change the term *itself* on term pages, as this
    ;; would also require mutating the URL whenever the user switches the script.
-   :script          ::d/simplified
+   :script          :simplified
 
    ;; Scroll states is a in-memory collection of the scroll state of the page
    ;; whenever a new page is reached. Since this is an SPA, the browser doesn't

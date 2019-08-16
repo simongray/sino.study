@@ -110,9 +110,9 @@
      (rf/subscribe [::content])])
   (fn [[category content]]
     (when (and (= category ::pages/terms)
-               (not (contains? content ::d/uses)))
+               (not (contains? content :uses)))
       (->> (keys content)
-           (filter (partial not= ::d/term))
+           (filter (partial not= :term))
            (sort)))))
 
 (rf/reg-sub
@@ -123,7 +123,7 @@
      (rf/subscribe [::result-filters])
      (rf/subscribe [::current-result-types])])
   (fn [[category
-        {search-term ::d/term
+        {search-term :term
          :as         content}
         result-filter
         current-result-types]]

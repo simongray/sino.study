@@ -9,12 +9,12 @@
 
 ;;;; CC-CEDICT
 
-(defn u:->umlaut
+(defn- u:->umlaut
   "Replace the CC-CEDICT substitute u: with the proper Pinyin ü."
   [pinyin]
   (str/replace pinyin "u:" "ü"))
 
-(defn join-abbr
+(defn- join-abbr
   "Join the uppercase letters in a CC-CEDICT Pinyin string into blocks."
   [pinyin]
   (let [abbr-letters  #"([A-Z]( [A-Z])+)( |$)"
@@ -29,7 +29,7 @@
     (str/replace s "5" "0")
     s))
 
-(defn split-def
+(defn split-defs
   "Split the CC-CEDICT definition string into separate, unique parts."
   [definition]
   (set (str/split definition #"/")))
@@ -42,13 +42,13 @@
         [_ trad simp pinyin defs :as entry] (re-matches pattern line)]
     (when entry
       (let [pinyin* (u:->umlaut (neutral-as-0 pinyin))]
-        {::d/traditional           trad
-         ::d/simplified            simp
-         ::d/pinyin                (join-abbr pinyin*)
-         ::d/pinyin-key            (d/pinyin-key (str/replace pinyin* #"\d" ""))
-         ::d/pinyin+digits-key     (d/pinyin-key pinyin*)
-         ::d/pinyin+diacritics-key (d/pinyin-key (p/digits->diacritics pinyin*))
-         ::d/definitions           (split-def defs)}))))
+        {:traditional           trad
+         :simplified            simp
+         :pinyin                (join-abbr pinyin*)
+         :pinyin-key            (d/pinyin-key (str/replace pinyin* #"\d" ""))
+         :pinyin+digits-key     (d/pinyin-key pinyin*)
+         :pinyin+diacritics-key (d/pinyin-key (p/digits->diacritics pinyin*))
+         :definitions           (split-defs defs)}))))
 
 (defn load-cedict
   "Load the listings of a CC-CEDICT dictionary file into Clojure maps."
@@ -56,8 +56,7 @@
   (with-open [reader (io/reader file)]
     (->> (doall (line-seq reader))
          (remove #(str/starts-with? % "#"))
-         (map line->cedict-listing)
-         (vec))))
+         (map line->cedict-listing))))
 
 
 ;;;; WORD FREQUENCY

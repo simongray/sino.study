@@ -1,5 +1,5 @@
 (ns sinostudy.navigation.handler
-  (:import (java.io ByteArrayOutputStream))
+  (:import [java.io ByteArrayOutputStream])
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
             [clojure.tools.reader :as reader]
@@ -60,10 +60,9 @@
 (defn execute-query
   "Execute a query from the ClojureScript app.
   The queries all resolve to a type, a query, and optional parameters."
-  [type query {:keys [limit]}]
-  (let [ns-keywords* (partial ns-keywords #"," 'sinostudy.dictionary.core)]
-    (cond
-      (= ::pages/terms type) (d/look-up dict query (ns-keywords* limit)))))
+  [type query opts]
+  (cond
+    (= ::pages/terms type) (d/look-up dict query)))
 
 (defn transit-result
   "Get the Transit-encoded result of a query."

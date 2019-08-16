@@ -12,8 +12,8 @@
   into components if the term is a character."
   []
   (let [script         @(rf/subscribe [::subs/script])
-        {term          ::d/term
-         decomposition ::d/decomposition} @(rf/subscribe [::subs/content])
+        {term          :term
+         decomposition :decomposition} @(rf/subscribe [::subs/content])
         attribute      @(rf/subscribe [::subs/current-attribute])
         zh             (vc/zh script)
         decomposition* (when (not= decomposition "？") decomposition)]
@@ -47,7 +47,7 @@
   "Removes definitions of the pattern 'variant of _' if the term is identical."
   [script term definitions]
   (if (= (count term) 1)
-    (let [variant-re (re-pattern (if (= script ::d/traditional)
+    (let [variant-re (re-pattern (if (= script :traditional)
                                    (str "variant of " term)
                                    (str "variant of " term
                                         "\\[|variant of .\\|" term)))]
@@ -58,8 +58,8 @@
   "List of definitions for each Pinyin variation of an entry."
   []
   (let [script @(rf/subscribe [::subs/script])
-        {term ::d/term
-         uses ::d/uses} @(rf/subscribe [::subs/content])]
+        {term :term
+         uses :uses} @(rf/subscribe [::subs/content])]
     [:section#usages
      [:dl
       (for [[pinyin definitions] uses]
@@ -82,21 +82,21 @@
   []
   (let [script       @(rf/subscribe [::subs/script])
         zh           (vc/zh script)
-        {term        ::d/term
-         radical     ::d/radical
-         frequency   ::d/frequency
-         variations  ::d/variations
-         classifiers ::d/classifiers
-         etymology   ::d/etymology} @(rf/subscribe [::subs/content])
+        {term        :term
+         radical     :radical
+         frequency   :frequency
+         variations  :variations
+         classifiers :classifiers
+         etymology   :etymology} @(rf/subscribe [::subs/content])
         label        (d/frequency-label frequency)
         entry-script (cond
-                       (contains? variations ::d/traditional) ::d/traditional
-                       (contains? variations ::d/simplified) ::d/simplified)
+                       (contains? variations :traditional) :traditional
+                       (contains? variations :simplified) :simplified)
         entry-zh     (vc/zh entry-script)]
     [:section.details
      [:table
       [:tbody
-       [:tr {:key   ::d/frequency
+       [:tr {:key   :frequency
              :title "Word frequency"}
         [:td "Freq"]
         [:td (cond
@@ -104,11 +104,11 @@
                (= label :medium) "average"
                (= label :low) "infrequent")]]
        (when entry-script
-         [:tr {:key   ::d/variations
-               :title (str (if (= ::d/traditional entry-script)
+         [:tr {:key   :variations
+               :title (str (if (= :traditional entry-script)
                              "In Traditional Chinese"
                              "In Simplified Chinese"))}
-          (if (= entry-script ::d/traditional)
+          (if (= entry-script :traditional)
             [:td "Trad"]
             [:td "Simp"])
           [:td {:lang entry-zh}
@@ -120,28 +120,28 @@
                                        [:span {:key variation}
                                         variation]))))]])
        (when classifiers
-         [:tr {:key   ::d/classifiers
+         [:tr {:key   :classifiers
                :title (str "Common classifiers")}
           [:td "Cl"]
           [:td
            (interpose ", "
-             (for [classifier (sort-by ::d/pinyin classifiers)]
+             (for [classifier (sort-by :pinyin classifiers)]
                [:span
                 {:lang zh
                  :key  (script classifier)}
                 (vc/link-term (vector (script classifier)))]))]])
        (when radical
-         [:tr {:key   ::d/radical
+         [:tr {:key   :radical
                :title "Radical"}
           [:td "Rad"]
           (if (= term radical)
             [:td "The character is a radical"]
             [:td {:lang zh} (vc/link-term (vector radical))])])
        (when etymology
-         (let [{type     ::d/type
-                hint     ::d/hint
-                semantic ::d/semantic
-                phonetic ::d/phonetic} etymology]
+         (let [{type     :type
+                hint     :hint
+                semantic :semantic
+                phonetic :phonetic} etymology]
            (when-let [etym (cond
                              (and (or (= type "pictographic")
                                       (= type "ideographic")) hint)
@@ -153,7 +153,7 @@
                               [:span {:lang zh} (vc/link-term semantic)]
                               " (" hint ") + "
                               [:span {:lang zh} (vc/link-term phonetic)]])]
-             [:tr {:key   ::d/etymology
+             [:tr {:key   :etymology
                    :title "Etymology"}
               [:td "Hint"]
               [:td etym]])))]]]))
@@ -195,11 +195,11 @@
 
 (defn- search-result-entry
   "Entry in a results-list."
-  [script search-term {term ::d/term
-                       uses ::d/uses}]
+  [script search-term {term :term
+                       uses :uses}]
   (when-let [entry-uses (result-entry-uses script search-term term uses)]
     [:article {:key term}
-     [:a {:href (str "/" (name ::d/terms) "/" term)}
+     [:a {:href (str "/" (name :terms) "/" term)}
       [:h1 {:lang (vc/zh script)}
        term]
       [:dl
@@ -211,9 +211,9 @@
   (let [script             @(rf/subscribe [::subs/script])
         content            @(rf/subscribe [::subs/content])
         result-filter      @(rf/subscribe [::subs/current-result-filter])
-        search-term        (when (= result-filter ::d/english)
+        search-term        (when (= result-filter :english)
                              @(rf/subscribe [::subs/current-id]))
-        in-current-script? #(contains? (::d/scripts %) script)]
+        in-current-script? #(contains? (:scripts %) script)]
     (when-let [entries (get content result-filter)]
       [:main#entries
        (->> entries
@@ -231,7 +231,7 @@
 (defn dictionary-page
   "A dictionary page can be 1 of 3 types: entry, search result, or unknown."
   []
-  (let [{uses ::d/uses} @(rf/subscribe [::subs/content])
+  (let [{uses :uses} @(rf/subscribe [::subs/content])
         unknown-queries @(rf/subscribe [::subs/unknown-queries])
         search-term     @(rf/subscribe [::subs/current-id])]
     (cond

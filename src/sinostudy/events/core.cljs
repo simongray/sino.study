@@ -52,16 +52,16 @@
   Note: this is a separate step from saving the search result itself!"
   [db content]
   (let [path      [:pages ::pages/terms]
-        entry-ks  #{::d/english
-                    ::d/hanzi
-                    ::d/pinyin
-                    ::d/pinyin+diacritics
-                    ::d/pinyin+digits}
+        entry-ks  #{:english
+                    :hanzi
+                    :pinyin
+                    :pinyin+diacritics
+                    :pinyin+digits}
         entries   (->> (select-keys content entry-ks)
                        (vals)
                        (apply set/union))
         add-entry (fn [db entry]
-                    (assoc-in db (conj path (::d/term entry)) entry))]
+                    (assoc-in db (conj path (:term entry)) entry))]
     (reduce add-entry db entries)))
 
 (defn mk-input

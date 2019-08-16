@@ -74,7 +74,7 @@
 (defn filters
   "Filter for what type of dictionary search result should be shown."
   []
-  (let [{search-term ::d/term} @(rf/subscribe [::subs/content])
+  (let [{search-term :term} @(rf/subscribe [::subs/content])
         current-filter @(rf/subscribe [::subs/current-result-filter])
         result-types   @(rf/subscribe [::subs/current-result-types])
         hidden?        (not (and result-types
@@ -138,13 +138,13 @@
 (defn script-changer []
   "The button used to toggle traditional/simplified Chinese script."
   (let [script     @(rf/subscribe [::subs/script])
-        text       (if (= ::d/simplified script)
+        text       (if (= :simplified script)
                      "Simpl."
                      "Trad.")
-        alt-script (if (= ::d/simplified script)
-                     ::d/traditional
-                     ::d/simplified)
-        title      (str "Click to use " (if (= ::d/simplified alt-script)
+        alt-script (if (= :simplified script)
+                     :traditional
+                     :simplified)
+        title      (str "Click to use " (if (= :simplified alt-script)
                                           "simplified characters"
                                           "traditional characters"))]
     [:a#script-changer
