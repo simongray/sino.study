@@ -1,7 +1,10 @@
 (ns user
   (:require [clojure.java.io :as io]
+            [clojure.spec.alpha :as s]
+            [clojure.spec.gen.alpha :as gen]
             [mount.core :as mount :refer [start stop]]
             [mount-up.core :as mount-up]
+            [sinostudy.spec.entry :as entry]
             [sinostudy.dictionary.core :as d]
             [sinostudy.dictionary.load :as load]
             [sinostudy.navigation.handler :as handler :refer [dict config server]]

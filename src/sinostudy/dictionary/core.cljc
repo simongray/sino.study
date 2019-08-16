@@ -293,20 +293,14 @@
 
 ;;;; CHARACTER ETYMOLOGY, DECOMPOSITION, ETC.
 
-(defn ks->ns-keywords
-  "Convert the top-level keys in a map to namespaced keywords."
-  [ns m]
-  (let [ns-k+v (fn [[k v]] [(keyword (str ns) (str k)) v])]
-    (into {} (map ns-k+v m))))
-
 (defn add-info*
   "Helper function for add-info."
   [script makemeahanzi listing]
   (if-let [info (get makemeahanzi (get listing script))]
     (let [decomposition (get info "decomposition")
-          etymology     (if-let [raw (get info "etymology")]
-                          (ks->ns-keywords 'sinostudy.dictionary.core raw)
-                          nil)
+          etymology     (when-let [raw (get info "etymology")]
+                          (into {} (for [[k v] raw]
+                                     [(keyword k) v])))
           radical       (get info "radical")
           assoc*        (fn [coll k v]
                           (assoc-in coll [:info script k] v))]

@@ -10,6 +10,7 @@
   :dependencies [[org.clojure/clojure "1.10.1"]
                  [org.clojure/clojurescript "1.10.520"]
                  [org.clojure/data.csv "0.1.4"]
+                 [org.clojure/test.check "0.10.0"]
                  [computerese "0.1.0-SNAPSHOT"]
                  [mount "0.1.16"]
                  [tolitius/mount-up "0.1.2"]
