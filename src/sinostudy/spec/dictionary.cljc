@@ -1,5 +1,5 @@
-(ns sinostudy.spec.entry
-  "Contains all specs pertaining to dictionary entries."
+(ns sinostudy.spec.dictionary
+  "Contains all specs pertaining to dictionary entries and search results."
   (:require [clojure.spec.alpha :as s]
             [clojure.string :as str]))
 
@@ -96,3 +96,26 @@
                    ::variations
                    ::classifiers
                    ::etymology]))
+
+(s/def :search-result/hanzi
+  ::entry)
+
+(s/def :search-result/pinyin
+  (s/coll-of ::entry))
+
+(s/def :search-result/pinyin+digits
+  (s/coll-of ::entry))
+
+(s/def :search-result/pinyin+diacritics
+  (s/coll-of ::entry))
+
+(s/def :search-result/english
+  (s/coll-of ::entry))
+
+(s/def ::search-result
+  (s/keys :req-un [::term]
+          :opt-un [:search-result/hanzi
+                   :search-result/pinyin
+                   :search-result/pinyin+digits
+                   :search-result/pinyin+diacritics
+                   :search-result/english]))

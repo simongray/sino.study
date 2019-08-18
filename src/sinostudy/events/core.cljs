@@ -2,9 +2,11 @@
   "For miscellaneous events that do not have their own more specific namespace."
   (:require [clojure.string :as str]
             [clojure.set :as set]
+            [cljs.spec.alpha :as s]
             [re-frame.core :as rf]
             [ajax.core :as ajax]
             [cognitect.transit :as transit]
+            [sinostudy.spec.dictionary :as sd]
             [sinostudy.db :as db]
             [sinostudy.pinyin.core :as p]
             [sinostudy.pinyin.eval :as pe]
@@ -242,15 +244,18 @@
 ;; TODO: reduce overwrites for hanzi result?
 (rf/reg-event-db
   ::save-term
-  (fn [db [_ [category id :as page] result]]
-    (-> db
-        ;; Save the actual search result or dictionary entry in the db.
-        (assoc-in [:pages category id] (-> result
-                                           (d/reduce-result)
-                                           (d/sort-result)))
+  (fn [db [_ [category id :as page] search-result]]
+    (if-let [err (s/explain-data ::sd/search-result search-result)]
+      (do (js/console.error (with-out-str (cljs.pprint/pprint err)))
+          db)
+      (-> db
+          ;; Save the actual search result or dictionary entry in the db.
+          (assoc-in [:pages category id] (-> search-result
+                                             (d/reduce-result)
+                                             (d/sort-result)))
 
-        ;; Cache incidental, referenced entries for faster page rendering times.
-        (cache-search-result-entries result))))
+          ;; Cache incidental, referenced entries for faster page rendering times.
+          (cache-search-result-entries search-result)))))
 
 ;; Dispatched either directly by ::load-page or indirectly through a successful
 ;; backend request. This ensures that the address bar is only updated when
