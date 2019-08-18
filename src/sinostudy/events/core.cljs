@@ -44,10 +44,10 @@
               (conj [::look-up (d/pinyin-key query*)])
 
               digits->diacritics?
-              (conj [::digits->diacritics query*])
+              (conj [::actions/digits->diacritics query*])
 
               diacritics->digits?
-              (conj [::diacritics->digits query*])))))
+              (conj [::actions/diacritics->digits query*])))))
 
 (defn- cache-search-result-entries
   "Save the individual entries of a dictionary search result in the db.
