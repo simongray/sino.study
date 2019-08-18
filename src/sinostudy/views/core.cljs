@@ -8,6 +8,7 @@
             [sinostudy.events.core :as events]
             [sinostudy.events.scrolling :as scrolling]
             [sinostudy.events.actions :as actions]
+            [sinostudy.views.actions :as va]
             [sinostudy.views.dictionary :as vd]
             [sinostudy.navigation.pages :as pages])
   (:require-macros [sinostudy.macros.core :as macros]))
@@ -161,40 +162,6 @@
              (conj (vec (navify from links))
                    [script-changer {:key "script-changer"}]))]]))
 
-(defn- action-text
-  [[action query]]
-  (case action
-    ::events/look-up (str "Look up " query)
-    ::actions/digits->diacritics "Convert to diacritics"
-    ::actions/diacritics->digits "Convert to digits"
-    ::actions/close-action-chooser "Cancel"))
-
-(defn- action-choice
-  [checked action]
-  (let [choose-action (fn [e]
-                        (.preventDefault e)
-                        (rf/dispatch [::actions/choose-action action]))]
-    [:li {:key action}
-     [:input {:type      :radio
-              :name      "action"
-              :value     action
-              :checked   (= action checked)
-              :id        action
-              :on-change choose-action}]
-     [:label {:for      action
-              :on-click choose-action}
-      (action-text action)]]))
-
-(defn action-chooser []
-  "The pop-in dialog that is used to select from different possible options."
-  (let [actions @(rf/subscribe [::subs/actions])
-        checked @(rf/subscribe [::subs/checked-action])]
-    (when actions
-      [:fieldset#actions
-       [:legend "Select an action"]
-       [:ol
-        (map (partial action-choice (nth actions checked)) actions)]])))
-
 ;;; Project version based on git tag
 ;;; See: https://github.com/arrdem/lein-git-version
 (defn version-digest
@@ -208,7 +175,7 @@
 (defn app []
   (let [not-home? (not= "/" @(rf/subscribe [::subs/current-nav]))]
     [:<>
-     [action-chooser]
+     [va/action-chooser]
      [header not-home?]
      [main]
      [footer]
