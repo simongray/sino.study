@@ -9,8 +9,7 @@
             [sinostudy.events.scrolling :as scrolling]
             [sinostudy.events.actions :as actions]
             [sinostudy.views.dictionary :as vd]
-            [sinostudy.navigation.pages :as pages]
-            [sinostudy.dictionary.core :as d])
+            [sinostudy.navigation.pages :as pages])
   (:require-macros [sinostudy.macros.core :as macros]))
 
 ;;;; HELPER FUNCTIONS

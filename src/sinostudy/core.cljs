@@ -5,7 +5,6 @@
             [secretary.core :as secretary]
             [sinostudy.navigation.routes :as routes]
             [sinostudy.events.core :as events]
-            [sinostudy.events.scrolling :as scrolling] ; don't remove - need to register events!
             [sinostudy.events.actions :as actions]
             [sinostudy.subs :as subs]
             [sinostudy.views.core :as views]
