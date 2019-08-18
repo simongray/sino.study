@@ -368,7 +368,7 @@
                                 (look-up* (limited :pinyin+diacritics) term*))
          english     (look-up* (limited :english) (str/lower-case term))
          result      (cond-> {:term term}
-                             hanzi (assoc :hanzi #{hanzi})
+                             hanzi (assoc :hanzi hanzi)
                              pinyin (assoc :pinyin (get-entries pinyin))
                              digits (assoc :pinyin+digits (get-entries digits))
                              diacritics (assoc :pinyin+diacritics (get-entries diacritics))
@@ -436,28 +436,29 @@
   e.g. removes definitions that do not match the search term."
   [result]
   (let [term       (:term result)
+        entry      (:hanzi result)                          ; dictionary entry, not a sequence!
         pinyin     (:pinyin result)
         digits     (:pinyin+digits result)
         diacritics (:pinyin+diacritics result)
-        hanzi      (:hanzi result)
         english    (:english result)]
-    ; Reduce to single hanzi entry when applicable.
-    ; Note: `hanzi` can only be a set of length 1 or nil!
-    (if hanzi
-      (first hanzi)
-      (cond-> result
+    ;; Reduces to a single dictionary entry when applicable, i.e. when the
+    ;; search term consists of hanzi and happened to match an entry directly.
+    ;; Otherwise, returns the search results for the given search term.
+    ;; Note: `hanzi` can only be a set of length 1 or nil!
+    (or entry
+        (cond-> result
 
-              pinyin
-              (assoc :pinyin
-                     (filter-uses term pinyin p/no-digits))
+                pinyin
+                (assoc :pinyin
+                       (filter-uses term pinyin p/no-digits))
 
-              digits
-              (assoc :pinyin+digits
-                     (filter-uses term digits))
+                digits
+                (assoc :pinyin+digits
+                       (filter-uses term digits))
 
-              diacritics
-              (assoc :pinyin+diacritics
-                     (filter-uses term diacritics p/digits->diacritics))))))
+                diacritics
+                (assoc :pinyin+diacritics
+                       (filter-uses term diacritics p/digits->diacritics))))))
 
 ;; TODO: disabled for now, re-enable when more intelligent (issue #37)
 ;english

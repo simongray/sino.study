@@ -47,13 +47,12 @@
               diacritics->digits?
               (conj [::diacritics->digits query*])))))
 
-(defn- cache-dict-entries
+(defn- cache-search-result-entries
   "Save the individual entries of a dictionary search result in the db.
   Note: this is a separate step from saving the search result itself!"
   [db content]
   (let [path      [:pages ::pages/terms]
         entry-ks  #{:english
-                    :hanzi
                     :pinyin
                     :pinyin+diacritics
                     :pinyin+digits}
@@ -245,13 +244,13 @@
   ::save-term
   (fn [db [_ [category id :as page] result]]
     (-> db
-        ;; Cache the actual search result in the db.
+        ;; Save the actual search result or dictionary entry in the db.
         (assoc-in [:pages category id] (-> result
                                            (d/reduce-result)
                                            (d/sort-result)))
 
         ;; Cache incidental, referenced entries for faster page rendering times.
-        (cache-dict-entries result))))
+        (cache-search-result-entries result))))
 
 ;; Dispatched either directly by ::load-page or indirectly through a successful
 ;; backend request. This ensures that the address bar is only updated when
