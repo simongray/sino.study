@@ -67,11 +67,7 @@
       (is (= (digit->diacritic "er2") "ér")))
     (testing "exceptions"
       (is (thrown? NumberFormatException (digit->diacritic "long")))
-      (is (thrown? NumberFormatException (digit->diacritic "")))
-      (is (thrown? ClassCastException (digit->diacritic [])))
-      (is (thrown? ClassCastException (digit->diacritic [1 2 3])))
-      (is (thrown? ClassCastException (digit->diacritic 0)))
-      (is (thrown? ClassCastException (digit->diacritic \a))))))
+      (is (thrown? ClassCastException (digit->diacritic [1 2 3]))))))
 
 (deftest test-digits->diacritics
   (testing "digits->diacritics"
