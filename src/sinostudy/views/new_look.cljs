@@ -27,8 +27,15 @@
                         :placeholder     "look up..."
                         :on-change       change-title
                         :value           input
+
+                        ;; This will mark the input as :invalid when the query
+                        ;; doesn't return a result from the backend. We simply
+                        ;; check for the existence of the query in the set of
+                        ;; unknown queries and use the built-in pattern attr.
+                        ;; to match anything BUT the current val if applicable.
                         :pattern         (when unknown-query?
                                            (str "^(?!" input ")$"))
+
                         :disabled        disabled?
                         :auto-capitalize "off"
                         :auto-correct    "off"
