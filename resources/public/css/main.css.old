@@ -1,0 +1,703 @@
+/* === GLOBAL === */
+
+* {
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, "KaiTi", "楷体", STKaiti, "华文楷体", sans-serif;
+    font-weight: 300;
+    color: #555;
+    padding: 0;
+    margin: 0;
+    hyphens: auto;
+
+    /* otherwise safari fonts become too thin */
+    -webkit-font-smoothing: subpixel-antialiased;
+}
+
+/* Hanzi are made a bit darker than latin text to make them stand out */
+:lang(zh) {
+	letter-spacing: 0.4ch;
+	color: #333;
+}
+
+:lang(en) {
+	letter-spacing: 0.2ch;
+}
+
+/* https://www.sitepoint.com/understanding-and-using-rem-units-in-css/ */
+html {
+    font-size: 62.5%; /* = 10px (down from 16px) */
+}
+
+html, body {
+    height: 100%;
+}
+
+a {
+    /* So that links won't suddenly reset a custom font to the global one. */
+    font-family: inherit;
+	color: inherit;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #4477DD;
+}
+
+/* headings and content inside them get the serif fonts */
+h1, h2, h3, h1 *, h2 *, h3 * {
+	color: #555555;
+	font-family: Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", "KaiTi", "楷体", STKaiti, "华文楷体", serif;
+}
+
+/* basic document margin */
+h1, h2, p, ol, ul, dl, dd, table {
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+}
+
+h1 + p {
+    margin-top: -1rem;
+}
+
+h1 {
+    font-size: 2.8rem;
+}
+
+h2 {
+    font-size: 2.4rem;
+}
+
+p {
+	font-size: 1.8rem;
+}
+
+ol, ul {
+    margin-left: 4rem;
+}
+
+section + section {
+    margin-top: 1.5rem;
+}
+
+dt {
+    font-size: 2.4rem;
+}
+
+li {
+    font-size: 1.8rem;
+    margin-bottom: 0.8rem;
+}
+
+table {
+    font-size: 1.4rem;
+
+    /* remove double border */
+    border-collapse: collapse;
+}
+
+td, th {
+    padding: 1rem;
+}
+
+tr {
+    border-left: 2px solid #DD8888;
+    border-right: 2px solid #DD8888;
+}
+
+tr:first-child {
+    border-top: 2px solid #DD8888;
+}
+
+tr:last-child {
+    border-bottom: 2px solid #DD8888;
+}
+
+
+
+
+/* === GLOBAL CLASSES === */
+.pinyin {
+	color: #DD8888;
+	font-family: Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", "KaiTi", "楷体", STKaiti, "华文楷体", serif;
+}
+
+.pinyin::before {
+	content: "[";
+}
+
+.pinyin::after {
+	content: "]";
+}
+
+
+
+
+
+/* === ANIMATIONS === */
+
+@keyframes fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+
+
+
+/* === MAIN & HEADER === */
+
+
+div#app {
+    height: 100%; /* also set for all parent elements */
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+
+    background-color: #444;
+    background-image: radial-gradient(ellipse at bottom, rgba(255,255,255,0.2) 0%, transparent 100%);
+    box-shadow: 0 0 15rem 0 rgba(0, 0, 0, 0.3) inset;
+}
+
+/*  would have styled BODY or HTML instead if React could access them */
+main {
+    /* take up all middle space and allow for scrolling */
+    height: 100%;
+    width: calc(100% - 1rem);
+    max-width: 65rem;
+    overflow: auto;
+    padding: 0.5rem;
+    flex-grow: 1;
+}
+
+main#splash {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+main#splash img {
+    animation: fade-in 0.5s ease;
+    width: calc(100% - 1rem);
+    margin: 2rem auto;
+}
+
+main#splash blockquote {
+    animation: fade-in 1s ease;
+    font-size: 1.8rem;
+    line-height: 1.5;
+    color: #999;
+    width: calc(100% - 6rem);
+    border-left: 0.5rem solid #333;
+    border-right: 0.5rem solid #333;
+    border-radius: 1rem;
+    padding: 0 2rem;
+    text-align: justify;
+}
+
+/* prevent squashing on mobile when the soft-keyboard is open */
+@media only screen and (max-height: 25rem) {
+    main#splash blockquote {
+        display: none;
+    }
+}
+
+main#splash a {
+    color: #DD9999;
+    font-variant: small-caps;
+    white-space: nowrap;
+}
+
+main#splash a:hover {
+    text-decoration: underline;
+}
+
+header {
+    animation: fade-in 1s ease;
+
+    width: 100%;
+
+    background: #BB5544;
+    box-shadow: 0 0 1rem 0 rgba(0, 0, 0, 0.3);
+    background-image: linear-gradient(to top, #BB5544, #CC6644);
+
+    /* make sure search results are covered by shadow */
+    z-index: 1;
+}
+
+/* 	TODO: do I need this?
+    aligner is necessary for limiting width and centering horisontally!
+	without "min-width:98%;" in .vcenter, .vcentor gets crammed,
+	so this extra class is necessary to get a max-width.
+*/
+header div#aligner {
+	max-width: 65rem; /* sync with main */
+	margin: auto;
+	padding: 0.5rem;
+	text-align: center;
+	vertical-align: middle;
+
+	/* makes logo img able to assume 0 height */
+	line-height: 0;
+}
+
+
+/* Also known as the #study-form */
+div#header-input {
+	display: flex;
+}
+
+/* Formerly known as the #study-input */
+div#header-input > input {
+	animation: fade-in 1s ease;
+    transition: all 0.3s;
+
+	font-size: 2.4rem;
+	color: #CCC;
+
+	/* fixes overflow in Chrome iPhone 5/SE device inspector */
+	max-width: 100%;
+	box-sizing: border-box;
+
+	padding: 0.5rem 3.5rem 0.5rem 0.5rem;
+	border: none;
+	border-radius: 0.3rem;
+	background: #2A2A2A url("/img/search.svg");
+	background-repeat: no-repeat;
+	background-size: auto calc(100% - 1.5rem);
+	background-position: calc(100% - 0.75rem) 50%;
+	box-shadow: inset 0 0 0.5rem 0 rgba(0, 0, 0, 1),
+	            0 0 0.5rem 0 rgba(255, 255, 255, 0.3);
+	/* Take up full width */
+    flex: 1;
+}
+
+div#header-input > input:focus {
+    padding: 0.5rem;
+	background-position: calc(100% + 3.5rem) 50%;
+}
+
+/* Grey colouring of input when action-chooser is active */
+div#header-input > input[disabled],
+div#header-input > input::placeholder {
+	color: #666;
+}
+
+/* Grey colouring of input when action-chooser is active */
+div#header-input > input.unknown {
+	text-decoration: underline;
+	text-decoration-color: #884433;
+	text-decoration-style: dotted;
+}
+
+/* Formerly known as the #study-button */
+div#header-input > button {
+	border: 0;
+	padding: 0;
+	font-size: 0;
+	width: 0;
+}
+
+header p#title {
+    color: #FFBBBB;
+    font-size: 1.8rem;
+    margin: 1.7rem 0 -0.5rem 0;
+    animation: fade-in 1s ease;
+}
+
+header p#title em {
+    color: #FFBBBB;
+    font-style: bold;
+}
+
+header p#title + div#filters {
+    margin-top: 3.2rem;
+}
+
+header p#title + div#filters.hidden {
+    margin-top: 1.8rem;
+}
+
+
+
+/* === VERSION NUMBER === */
+address {
+	animation: fade-in 3s ease;
+	color: #333;
+	font-size: 1.4rem;
+	position: absolute;
+	padding: 1rem;
+	right: 0;
+	bottom: 6rem;
+	transition: all 0.5s;
+}
+
+address.hidden {
+    opacity: 0;
+}
+
+@media only screen and (max-height: 15rem) {
+    address {
+        display: none;
+    }
+}
+
+
+
+
+/* === FILTERS === */
+div#filters {
+    transition: all 0.2s;
+    margin: 1.8rem 0 0.7rem 0; /* TODO: weird values here */
+    font-size: 1.6rem;
+    color: #FFBBBB; /* for the separating dots */
+    letter-spacing: 0.2rem;
+    word-spacing: 0.3rem;
+    text-align: center;
+}
+
+div#filters.hidden {
+    height: 0;
+    margin: 0;
+    opacity: 0;''
+}
+
+div#filters input[type=radio] {
+    /* hide the actual radio button */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+}
+
+div#filters input[type=radio] + label {
+    cursor: pointer;
+    color: white;
+    animation: fade-in 0.5s ease;
+}
+
+div#filters input[type=radio] + label:hover {
+    text-decoration: underline;
+}
+
+div#filters input[type=radio]:checked + label {
+    color: #661111;
+}
+
+div#filters input[type=radio]:checked + label:hover {
+    text-decoration: none;
+    cursor: default;
+}
+
+
+
+
+/* === ARTICLE === */
+
+article {
+    transition: all 0.2s; /* should be synchronised with filters transition */
+
+    background: white;
+    border-radius: 0.3rem;
+    padding: 1.5rem;
+
+    box-sizing: border-box; /* allow 100% width + padding with not overflow */
+    width: 100%;
+}
+
+/* deal with Firefox quirk (bottom padding on main is being ignored) */
+@-moz-document url-prefix() {
+  #entries article:last-child {
+      margin-bottom: 0.5rem;
+  }
+}
+
+/* controls where the content appears */
+article.full {
+	/* take up all middle space and allow for scrolling */
+    flex-grow: 1;
+    height: 100%; /* enables border all the way down (in tandem with article) */
+    overflow: auto;
+}
+
+
+/* === FOOTER === */
+
+footer {
+	animation: fade-in 1.5s ease;
+
+	/* text */
+	text-align: center;
+
+	/* box */
+	background: #BB5544;
+	background-image: linear-gradient(to bottom, #BB5544, #CC6644);
+	padding: 1.5rem 0;
+	width: 100%;
+
+    /* make sure search results are covered by shadow */
+    z-index: 1;
+
+    /* shadow */
+    box-shadow: 0 0 1rem 0 rgba(0, 0, 0, 0.3);
+}
+
+nav {
+	/* text-related */
+    font-size: 1.6rem;
+    word-spacing: 0.4rem;
+    line-height: 1;
+    color: #FFBBBB;
+}
+
+nav > #script-changer {
+    padding: 0.4rem;
+    border: 1pt solid #CC6666;
+    border-radius: 0.5rem;
+    color: #FFBBBB;
+    cursor: pointer;
+
+    /* nav links shouldn't jump around when changing script */
+    display: inline-block;
+    min-width: 6ch;
+
+    /* fix for #14 (translation pop-up on Chrome mobile) */
+    user-drag: none;
+    user-select: none;
+}
+
+nav > #script-changer:hover {
+	text-decoration: none;
+	color: white;
+	border-color: white;
+}
+
+footer a {
+	color: white;
+}
+
+footer a:hover {
+	color: white;
+	text-decoration: underline;
+}
+
+footer a.current-page, footer a.current-page:hover {
+	color: #661111;
+	text-decoration: none;
+}
+
+
+
+
+/* === ACTION CHOOSER === */
+
+fieldset#actions {
+    /* box */
+    padding: 1rem;
+    width: 90%;
+    max-width: 40rem;
+	background: #BB5544;
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 1rem 2rem 0 rgba(0, 0, 0, 0.2),
+                0 1rem 2rem 0 rgba(0, 0, 0, 0.19),
+                inset 0 0 1rem 0 rgba(0, 0, 0, 0.3);
+
+    /* center vertically */
+    z-index: 2;
+    position: fixed;
+    top: 50%; /* using 50% looks off somehow...*/
+    left: 50%;
+    transform: translate(-50%, -70%);
+    -webkit-transform: translate(-50%, -70%);
+    -moz-transform: translate(-50%, -70%);
+    -o-transform: translate(-50%, -70%);
+    -ms-transform: translate(-50%, -70%);
+
+    /* expand to fit content
+       https://teamtreehouse.com/community/how-can-i-make-my-divs-grow-wider-according-to-their-content */
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+
+    animation: fade-in 0.3s linear;
+}
+
+fieldset#actions * {
+    color: #FFBBBB;
+}
+
+/* the action chooser h1 is (unlike other h1 elements) styled sans-serif */
+fieldset#actions > legend {
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, "KaiTi", "楷体", STKaiti, "华文楷体", sans-serif;
+    font-size: 2.2rem;
+    text-align: center;
+
+    /* positioning is a bit weird with this thing */
+    position: relative;
+    top: 2.2rem;
+    margin: 2.2rem 0;
+    padding: 1rem 0;
+    width: 100%;
+
+    /* displays as a kind of HR */
+    border-bottom: 1px solid #CC6666;
+
+    /* fake top border of the fieldset itself */
+    border-top: none;
+}
+
+fieldset#actions > ol {
+    margin: 0;
+    padding: 0 0 0 3rem;
+}
+
+fieldset#actions > ol > li > input[type=radio] {
+    /* hide the actual radio button */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+}
+
+fieldset#actions > ol > li > label {
+    cursor: pointer;
+}
+
+/* Reveal that the options are also clickable */
+fieldset#actions > ol > li > label:hover {
+    text-decoration: underline;
+}
+
+/* Colour the currently checked button white */
+fieldset#actions > ol > li > input[type=radio]:checked + label {
+    color: white;
+}
+
+
+
+
+/* === DICTIONARY ENTRY === */
+
+article.entry {
+    display: flex;
+}
+
+article.entry h1 {
+    writing-mode: vertical-lr;
+    text-orientation: upright;
+    font-size: 8vh; /* vh better supports small screens */
+    margin-right: 1.5rem;
+
+    /* don't overflow onto usages */
+    white-space: nowrap;
+
+    /* remove hidden left margin */
+    line-height: 1;
+}
+
+article.entry div.content {
+    box-sizing: border-box; /* allow 100% height + padding with not overflow */
+    width: 100%;
+    height: 100%;
+    border-left: 2px solid #EEE;
+    padding: 0 0 2rem 1.5rem;
+
+    display: flex;
+    flex-direction: column;
+
+    /* TODO: should I find a way to make entire page scrollable */
+    overflow: auto;
+}
+
+section#usages {
+    margin-bottom: auto;
+}
+
+section.details table {
+    font-size: 1.2rem;
+    margin-bottom: 0;
+}
+
+section.details table tbody > tr > td:first-child {
+    white-space: nowrap;
+    font-weight: 400;
+    text-align: right;
+    text-transform: uppercase;
+    color: #662222;
+    background: #DD8888;
+}
+
+section.details table *:lang(zh) {
+    font-size: 2rem;
+}
+
+section.details table td:last-child {
+    width: 100%;
+}
+
+
+
+/* === DICTIONARY SEARCH RESULT === */
+
+#entries article a {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    height: 100%;
+}
+
+#entries article + article {
+    margin-top: 0.5rem;
+}
+
+#entries h1 {
+    writing-mode: vertical-lr;
+    text-orientation: upright;
+    white-space: nowrap;
+    align-self: center;
+    font-size: 3.2rem;
+    margin: 0;
+    padding-right: 1rem;
+}
+
+#entries article:hover {
+    background: #EEFFFF;
+}
+
+#entries h1 + dl {
+    padding-left: 1rem;
+    border-left: 2px solid #EEE;
+    list-style-type: none;
+    padding: 0 0 0 1rem;
+    margin: 0;
+}
+
+/* TODO: check this */
+#entries span.pinyin {
+    color: #999999;
+}
+
+#entries dl > dt {
+    font-size: 1.8rem;
+}
+
+#entries dl > dd {
+    font-size: 1.8rem;
+    margin-top: 1rem;
+}
+
+.understated {
+    color: #CCC;
+}
+
+.understated em {
+    color: initial;
+    font-style: normal;
+}

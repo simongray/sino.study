@@ -51,7 +51,8 @@
         :placeholder     "look up..."
         :auto-capitalize "off"
         :auto-correct    "off"
-        :auto-complete   "off" ':spell-check false
+        :auto-complete   "off"
+        :spell-check     false
         :disabled        disabled?
         :value           input
         :on-change       (fn [e]

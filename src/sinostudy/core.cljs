@@ -8,6 +8,7 @@
             [sinostudy.events.actions :as actions]
             [sinostudy.subs :as subs]
             [sinostudy.views.core :as views]
+            [sinostudy.views.new-look :as new-look]
             [sinostudy.config :as config]))
 
 (defn dev-setup []
@@ -17,7 +18,7 @@
 
 (defn mount-root []
   (rf/clear-subscription-cache!)
-  (reagent/render [views/app] (.getElementById js/document "app"))
+  (reagent/render [new-look/app] (.getElementById js/document "app"))
 
   ;; Start the CLJS app from current page in the address bar.
   ;; The routing mostly takes place on the frontend,
