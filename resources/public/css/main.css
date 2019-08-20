@@ -11,13 +11,25 @@
 }
 
 /* TODO: figure out how to do a dynamic font-size that works on both monitors and phone screens */
-.titleInput {
+#titleInput {
     font-size: calc(16px + 4vw);
 }
 
 /* All unknown queries are underlined in red inside the input field. */
-.titleInput:invalid {
+#titleInput:invalid {
     text-decoration: underline;
     text-decoration-color: #884433;
     text-decoration-style: dotted;
+}
+
+#titleInput::placeholder {
+    color: #DDD;
+}
+
+main.pageContent {
+    transition: all 1s;
+}
+
+main.pageContent--unknownTerm {
+    color: #DDD;
 }

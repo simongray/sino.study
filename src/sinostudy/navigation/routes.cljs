@@ -27,7 +27,7 @@
     (rf/dispatch [::events/change-location [::pages/static (str "/" page)]]))
 
   (defroute
-    (str "/" (name :pages/terms) "/:term") [term]
+    (str "/" (name ::pages/terms) "/:term") [term]
     (rf/dispatch [::events/change-location [::pages/terms term]]))
 
   (defroute

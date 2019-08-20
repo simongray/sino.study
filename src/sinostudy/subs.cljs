@@ -1,5 +1,6 @@
 (ns sinostudy.subs
   (:require [re-frame.core :as rf]
+            [sinostudy.pinyin.eval :as pe]
             [sinostudy.navigation.pages :as pages]))
 
 (rf/reg-sub
@@ -65,6 +66,21 @@
     (rf/subscribe [::history]))
   (fn [history]
     (first history)))
+
+(rf/reg-sub
+  ::current-page-type
+  (fn [_]
+    [(rf/subscribe [::current-page])
+     (rf/subscribe [::unknown-queries])])
+  (fn [[[category id] unknown-queries]]
+    (case category
+      ::pages/terms (cond
+                      (pe/hanzi-block? id) :hanzi
+                      (pe/pinyin-block? id) :pinyin
+                      (pe/pinyin-block+digits? id) :pinyin+digits
+                      (pe/pinyin-block+diacritics? id) :pinyin+diacritics)
+      ::pages/static :static
+      nil)))
 
 (rf/reg-sub
   ::current-category
