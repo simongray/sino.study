@@ -128,3 +128,4 @@ Temporary Items
 .idea/codeStyleSettings.xml
 cedict_ts.u8
 resources/version.edn
+.rebel_readline_history
